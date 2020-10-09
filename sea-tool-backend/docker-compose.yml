@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  backend: &backend
+    build:
+      context: ./
+      dockerfile: docker/dev/Dockerfile
+    command: docker/dev/start.sh
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./.env
+    networks:
+      - main
+
+networks:
+  main:
+    driver: bridge

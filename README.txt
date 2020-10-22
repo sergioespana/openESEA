@@ -14,6 +14,7 @@ If you want to collaborate in this project, please contact us.
 Some of the current and past project members:
 Sergio España, Assistant Professor in Utrecht University, is the project leader and manager.
 Vijanti Ramautar, doctoral researcher in Utrecht University is the product owner. 
+Sietse Overbeek, Assistant Professor in Utrecht University, has supervised the development of some features of the tool.
 Niels Bik developed the first version, including features to register organisations and networks, specify basic method components such as topics and indicators, and interpret the method specifications in runtime; his code is kept in a separate github repository https://github.com/nielsrowinbik/open-sea
 Henny Kruiper developed a feature to specify and deliver stakeholder surveys; his code is kept in a separate github repository https://github.com/nielsrowinbik/open-sea
 Tijmen Derikx developed a feature to specify and automatically generate infographics that present the account results; ; his code is kept in a separate github repository https://github.com/nielsrowinbik/open-sea

@@ -15,7 +15,7 @@
     "@fortawesome/vue-fontawesome": "^0.1.9",
     "apexcharts": "^3.19.0",
     "core-js": "^3.6.4",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "normalize-scss": "^7.0.1",
     "vue": "^2.6.11",
     "vue-apexcharts": "^1.5.3",

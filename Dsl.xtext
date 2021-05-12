@@ -1,0 +1,208 @@
+grammar org.example.domainmodel.Domainmodel with
+                                      org.eclipse.xtext.common.Terminals
+ 
+generate domainmodel "http://www.example.org/domainmodel/Domainmodel"
+ 
+ESEA_method: 
+	'Name:' STRING 
+	'Version:' DOUBLE
+	'isPublic:' BOOLEAN
+	'Description:' STRING	
+	(list_of_topics+=List_of_topics)
+	(list_of_indicators+=List_of_indicators)
+	(list_of_surveys+=List_of_surveys)
+	(list_of_certification_levels+=List_of_certification_levels)
+	;
+
+
+
+List_of_topics:
+// Constraint: 1 and only 1 root topic
+	'Topics:'
+	(topic+=Topic)+
+;
+	
+List_of_indicators:
+	'Indicators:'
+	(indicator+=Indicator)+
+;
+
+List_of_surveys:
+	'Surveys:'
+	(survey+=Survey)+
+;
+
+Topic:
+	'topic_id:' name=ID
+	'Name:' STRING 
+	'Description:' STRING
+	('Parent_topic:'	linkParentTopic=[Topic])?
+//  Constraint: avoid cycles	
+//	survey+=Survey*
+;
+
+Indicator:
+	'indicator_id:' name=ID
+	'Name:' STRING
+	'Description:' STRING
+	('PreUnit:' STRING)?
+	('PostUnit:' STRING)?
+	'Topic:' linkTopic=[Topic]
+	'DataType:' datatype=DATATYPE
+	'indicator_type:' indicator_type=Indicator_type
+;
+
+Indicator_type:
+	direct=Direct | indirect=Indirect
+;
+
+Direct:
+	direct='Direct'
+;
+
+Indirect:
+	indirect='Indirect'
+	'formula:' (formula=Formula)
+;
+
+Formula:
+	statement=Statement
+;
+
+
+UnaryNumeric:
+	unary_numeric_function=UNARY_NUMERIC_FUNCTION
+	'(' expression=Expression ')'
+;
+
+BinaryNumeric:
+	binary_numeric_function=BINARY_NUMERIC_FUNCTION
+	'(' expressionl=Expression ',' (INT | STRING) ')'
+;
+
+
+Statistical:
+	statistical_function=STATISTICAL_FUNCTION
+	'(' '['referenceIndicator=[Indicator]']' ')'
+	//constraint: only direct indicators should be used
+;
+
+
+
+Statement:
+	expression=Expression | if_statement=If_statement
+;
+
+If_statement:
+	'IF' expression=Expression 'THEN' thenStatement=Statement (=>'ELSE' elseStatement=Statement)?
+;
+
+
+Expression:
+	simpleExpressionl=Simple_expression ( ('=' | '<>' | '<' | '<=' | '>' | '>=') simpleExpressionr=Simple_expression)?
+;
+
+Simple_expression:
+	terml=Term ((('+' | '-') | 'OR') termr=Term)*
+;
+
+Term:
+	factorl=Factor ((('*' | '/') | 'AND') factorr=Factor)*
+;
+
+Factor:
+	basel=Base ('^' baser=Base)?
+;
+
+Base:
+	( '(' expression=Expression ')' | '['referenceIndicator=[Indicator] ']' | statistic=Statistical | unarynumeric=UnaryNumeric | binarynumeric=BinaryNumeric | BOOLEAN | STRING | INT | DOUBLE )
+;
+
+
+Survey:
+	// The optional attributes are only optional for v3
+	'survey_id:' name=ID
+	'Name:' STRING
+	'Description:' STRING
+	'ResponseType:' responsetype+=RESPONSETYPE
+	('WelcomeTxt:' STRING)?
+	('ClosingTxt:' STRING)?
+	'MinThreshold:' DOUBLE
+	('Anonymous:' BOOLEAN)?
+	(list_of_sections+=List_of_sections)
+;
+
+List_of_sections:
+	'Sections:'
+	(section+=Section)+
+;
+
+Section:
+	'section_id:' name=ID
+	'Title:' STRING
+	'Order:' INT
+	(list_of_questions+=List_of_questions)
+;
+
+List_of_questions:
+	'Questions:'
+	(question+=Question)+
+;
+
+Question:
+	'question_id:' name=ID
+	'Name:' STRING
+	'Description:' STRING
+	'isMandatory:' BOOLEAN
+	'answerType:' answertype+=ANSWERTYPE
+	'Order:' INT
+	'Indicator:' linkIndicator=[Indicator]?
+	// Constraint: questions can only be linked to direct indicators
+	'Instruction:' STRING
+	(list_of_answer_options=List_of_answer_options)?
+;
+
+List_of_answer_options:
+	'Answer_options:'
+	(answer_option+=Answer_option)+
+;
+
+Answer_option:
+	'Order:' INT
+	'Text:' STRING
+;
+
+
+List_of_certification_levels:
+	'Certification_levels:'
+	(certification_level+=Certification_level)*
+;
+
+Certification_level:
+	'certification_id:' name=ID
+	'Name:' STRING
+	'Description:' STRING
+	'Level:' DOUBLE 
+	'Colour:' STRING
+	list_of_requirements=List_of_requirements
+;
+
+List_of_requirements:
+	'Requirements:'
+	'['referenceRequirement+=[Indicator]']'(',''['referenceRequirement+=[Indicator]']')* 
+;
+
+
+enum UNARY_NUMERIC_FUNCTION: absolute='abs' | int='int' ; //abs explanation: https://support.google.com/docs/answer/3093459 , int explanation: https://support.google.com/docs/answer/3093490
+enum BINARY_NUMERIC_FUNCTION: roundup='roundUp' | rounddown='roundDown' | round='round' | countif='countIf'; // Round up explanation: https://support.google.com/docs/answer/3093443 , round down: https://support.google.com/docs/answer/3093442 , round: https://support.google.com/docs/answer/3093440, countIf: https://support.google.com/docs/answer/3093480?hl=en-GB
+enum DATATYPE: text='text' | integer='integer' | double='double' | date='date' | boolean='boolean' | list='list';
+enum ANSWERTYPE: open='open' | multipleChoice='multipleChoice' | singleChoice='singleChoice' | array='array' | mask='mask' | number='number' | radioButton='radioButton';
+enum STATISTICAL_FUNCTION: minimum='min' | maximum='max' | sum='sum' | mean='avg' | mode='mode' | median='median';
+enum RESPONSETYPE: multi='multi' | single='single' ;
+//enum PREUNIT: euro='€' | dollar='$';
+//enum POSTUNIT: percentage='%' | point='points';
+terminal BOOLEAN : ('true'|'false');
+terminal DOUBLE: INT '.' INT;
+//terminal RELATIONAL_OPERATOR : ( '=' | '<>' | '<' | '<=' | '>' | '>=' );
+//terminal ADDITION_OPERATOR : ('+' | '-');
+//terminal MULTIPLICATION_OPERATOR : ('*' | '/');

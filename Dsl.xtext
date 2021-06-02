@@ -188,23 +188,13 @@ Question:
 	'Name:' STRING
 	'Description:' STRING
 	'isMandatory:' BOOLEAN
-	'answerType:' uicomponent+=UICOMPONENT
+	'UIComponent:' uicomponent+=UICOMPONENT
 	'Order:' INT
 	'Indicator:' linkIndicator=[Indicator]?
 	// Constraint: questions can only be linked to direct indicators
 	'Instruction:' STRING
-//	(list_of_answer_options=List_of_answer_options)?
 ;
 
-//List_of_answer_options:
-//	'Answer_options:'
-//	(answer_option+=Answer_option)+
-//;
-
-//Answer_option:
-//	'Order:' INT
-//	'Text:' STRING
-//;
 
 
 List_of_certification_levels:
@@ -237,7 +227,6 @@ enum INDICATORCLASSIFICATION: performance='performance' | score='scoring';
 enum RULETYPE: warning='warning' | error='error' ;
 enum UNARY_NUMERIC_FUNCTION: absolute='abs' | int='int' ; //abs explanation: https://support.google.com/docs/answer/3093459 , int explanation: https://support.google.com/docs/answer/3093490
 enum BINARY_NUMERIC_FUNCTION: roundup='roundUp' | rounddown='roundDown' | round='round' | countif='countIf' ; // Round up explanation: https://support.google.com/docs/answer/3093443 , round down: https://support.google.com/docs/answer/3093442 , round: https://support.google.com/docs/answer/3093440, countIf: https://support.google.com/docs/answer/3093480?hl=en-GB
-//enum DATATYPE: text='text' | integer='integer' | double='double' | date='date' | boolean='boolean' | list='list';
 enum UICOMPONENT: field='field' | line='line' | textBox='textBox' | checkBox='checkBox' | dropDown='dropDown' | radioButton='radioButton';
 enum STATISTICAL_FUNCTION: minimum='min' | maximum='max' | sum='sum' | mean='avg' | mode='mode' | median='median';
 enum SURVEYTYPE: multi='multi' | single='single' ;
@@ -245,6 +234,3 @@ enum SURVEYTYPE: multi='multi' | single='single' ;
 //enum POSTUNIT: percentage='%' | point='points';
 terminal BOOLEAN : ('true'|'false');
 terminal DOUBLE: INT '.' INT;
-//terminal RELATIONAL_OPERATOR : ( '=' | '<>' | '<' | '<=' | '>' | '>=' );
-//terminal ADDITION_OPERATOR : ('+' | '-');
-//terminal MULTIPLICATION_OPERATOR : ('*' | '/');

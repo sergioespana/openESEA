@@ -1,5 +1,7 @@
 openESEA is a model-driven ethical, social and environmental accounting tool. 
 
+This project is steered by University of Utrecht. We welcome collaboration with organisations and individuals.
+
 The tool has a front end and a back end. Each folder has a readme file that explains the installation procedure.
 
 At this very moment, there are two branches of this tool:

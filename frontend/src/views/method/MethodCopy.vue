@@ -1,0 +1,3 @@
+<template>
+    Method Copy
+</template>

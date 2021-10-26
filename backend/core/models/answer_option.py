@@ -7,7 +7,7 @@ class AnswerOption(models.Model):
     order = models.IntegerField(default=1)
     text = models.CharField(max_length=255, blank=False)
 
-
+#push comments through
     def __str__(self):
         return f"{self.text}"
 

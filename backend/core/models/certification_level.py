@@ -12,6 +12,8 @@ class CertificationLevel(models.Model):
     def __str__(self):
         return self.name
 
+
+
 '''
 - Add requirements attribute (m2m)
 '''

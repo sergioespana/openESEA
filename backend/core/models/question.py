@@ -4,13 +4,13 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
-
 class questionManager(models.Manager):
 
     def create(self,  name, uiComponent, method=None, order=1, section=None, topic=None, indicator=None, isMandatory=True, answertype="TEXT", min_number=1, max_number=5, description="", instruction="", default="", options=None):
         question = Question(isMandatory=isMandatory, name=name, method=method, order=order, uiComponent=uiComponent, section=section, topic=topic, answertype=answertype, description=description, instruction=instruction, default=default, min_number=min_number, max_number=max_number)
         question.save()
 
+        # Allows creation of a question and connection to a direct indicator in 1 go (used in method wizard)
         if indicator:
             from .direct_indicator import DirectIndicator
             indicator.question = question
@@ -18,12 +18,12 @@ class questionManager(models.Manager):
 
         return question
     
+    # Checks if question already exists or creates a new one
     def get_or_create(self, **args):
         question = self.model.findQuestion(**args)
         if not question:
             question = self.model.objects.create(**args)
         return question
-
 
 
 class Question(models.Model):
@@ -106,6 +106,7 @@ class Question(models.Model):
                 optionsExists = False
         return optionsExists
 
+    # Checks if question already exists with the same amount of (answer) options
     def findQuestion(name, answertype, options, description=None) -> Any: # instruction = None
         questions = Question.objects.filter(name=name, answertype=answertype, description=description)
         for question in questions:

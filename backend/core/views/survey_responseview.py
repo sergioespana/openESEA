@@ -52,7 +52,6 @@ class SurveyResponseViewSet(BaseModelViewSet):
     permission_classes = [AllowAny,]
 
     def get_queryset(self):
-        print(self.kwargs)
         return SurveyResponse.objects.filter(esea_account=self.kwargs['esea_account_pk']) # finished=False
         
     def retrieve(self, request, organisation_pk, esea_account_pk, token):
@@ -62,7 +61,6 @@ class SurveyResponseViewSet(BaseModelViewSet):
         else:
             surveyresponse = get_object_or_404(SurveyResponse, token=token)
         serializer = SurveyResponseSerializer(surveyresponse)
-        print(serializer.data, 'test')
         return Response(serializer.data)
     
     def update(self, request, organisation_pk, esea_account_pk, token):
@@ -75,6 +73,7 @@ class SurveyResponseViewSet(BaseModelViewSet):
         serializer.save()
         return Response(serializer.data)
 
+    # Shows all responses belonging to an ESEA Account
     @action(detail=False, methods=['get'])
     def all(self, request, organisation_pk, esea_account_pk):
         if True: #self.request.user.is_authenticated:

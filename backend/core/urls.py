@@ -48,7 +48,6 @@ urlpatterns = [
     path('api-refresh/', TokenRefreshView.as_view()),
     path('import-method/', methodview.upload_method),
     path('import-employees/<int:eseaaccount_pk>/<int:survey_pk>/', esea_accountview.import_employees, name="import_employees_of_organisation"),
-    path('send-surveys/', organisationview.send_surveys, name="send_surveys_to_emails"),
     path('', include(router.urls)),
     path('', include(network_router.urls)),
     path('', include(method_router.urls)),

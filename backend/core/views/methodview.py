@@ -18,6 +18,7 @@ class MethodViewSet(viewsets.ModelViewSet):
     serializer_class = MethodSerializer
     serializer_action_classes = { 'list': MinimalMethodSerializer }
 
+    # Returns the MinimalMethodSerializer on 'list' action, and MethodSerializer for any other action
     def get_serializer_class(self):
         try:
             return self.serializer_action_classes[self.action]
@@ -54,6 +55,7 @@ class MethodViewSet(viewsets.ModelViewSet):
         
         return Response(serializer.data)
     
+    # Shows all indicators belonging to a method
     @action(detail=False, methods=['get'])
     def indicators(self, request):
         method = self.request.GET.get('method', None)
@@ -65,14 +67,14 @@ class MethodViewSet(viewsets.ModelViewSet):
                 # question_responses = QuestionResponse.objects.filter(survey_response__esea_account=esea_account_pk, survey_response__finished=True)
                 # # print(question_responses)
 
-        indirect_indicators = IndirectIndicator.objects.filter(topic__method=method)
-        direct_indicators = DirectIndicator.objects.filter(topic__method=method)
-                
+        indirect_indicators = IndirectIndicator.objects.filter(topic__method=2)
+        direct_indicators = DirectIndicator.objects.filter(topic__method=2)
         indicators = merge_indicators(direct_indicators, indirect_indicators) #calculate_indicators(indirect_indicators, direct_indicators)                 
         serializer = SurveyResponseCalculationSerializer(indicators.values(), many=True)
         return Response({ "indicators": serializer.data })
 
 
+# Uploaded method gets processed through the 'Utils > process_textual_method' script
 @method_decorator(csrf_exempt, name='dispatch')
 @api_view(['GET', 'POST'])
 @permission_classes((AllowAny, ))

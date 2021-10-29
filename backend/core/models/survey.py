@@ -47,6 +47,7 @@ class Survey(models.Model):
     def __str__(self):
         return self.name
 
+    # shows the survey responses that have been finished(=saved by the respondent)
     def finresponses(self):
         fresponses = [response for response in self.responses.all() if response.finished]
         self.finished_responses = fresponses

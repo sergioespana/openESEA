@@ -69,6 +69,7 @@ class IndirectIndicator(models.Model):
     def __str__(self):
         return self.key
     
+    # calculation_keys are all indicators that are used within the formula of this indirect indicator
     @property
     def calculation_keys(self):
         calculation_keys =  re.findall(find_square_bracket_keys, self.calculation)
@@ -78,6 +79,7 @@ class IndirectIndicator(models.Model):
             calculation_keys_uniques.remove(self.key)
         return calculation_keys_uniques
 
+    # Replaces indicator keys with corresponding value to be able to calculate the indirect indicator (used in 'utils > calculate_indicators')
     def find_values(self, key_value_list):
         calculation = self.calculation
 
@@ -90,6 +92,7 @@ class IndirectIndicator(models.Model):
                     calculation = calculation.replace(f"[{calculation_key}]", f"{value}")
         self.calculation = calculation
 
+    # Calculates indicator formula
     def calculate(self):
         if len(self.calculation_keys) and not self.has_conditionals:
             self.exception = Exception("Not all keys are replaced with values")
@@ -142,6 +145,7 @@ class IndirectIndicator(models.Model):
             except:
                 self.value = None
 
+    # Calculates conditional formulas (IF..THEN..)
     def calculate_conditionals(self):
         formula = self.calculation.replace('IF', '@@IF').replace('ELSE', '##ELSE').replace('THEN', '%%THEN')
         formula = [x.strip() for x in re.split('@@|##|%%', formula)]

@@ -3,6 +3,7 @@ from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as  _
 
 
+# Should have been called MembershipRequest
 class Membership(models.Model):
     network = models.ForeignKey('Network', related_name="memberships", on_delete=models.CASCADE)
     organisation = models.ForeignKey('Organisation', related_name="network_requests", on_delete=models.CASCADE)

@@ -10,9 +10,9 @@ class CampaignViewSet(viewsets.ModelViewSet):
     serializer_class = CampaignSerializer
 
     def get_queryset(self):
-        if  int(self.kwargs['network_pk']) == 0:
-            print('check')
-            return Campaign.objects.all()
+        # May be removed if nothing is affected by this
+        # if  int(self.kwargs['network_pk']) == 0:
+        #     return Campaign.objects.all()
         return Campaign.objects.filter(network=int(self.kwargs['network_pk']))
 
     def create(self, request, network_pk):

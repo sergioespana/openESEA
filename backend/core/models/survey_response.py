@@ -12,10 +12,10 @@ import string
 class SurveyResponseManager(models.Manager):
 
     def create(self, survey, respondent, esea_account, token=None):
-        # Generates token if none is provided, could be the default?
+        # Generates token (if none is provided) which is used to send out the Survey url to a respondent-to-be
         if token is None:
             token = "".join(random.choice(string.ascii_letters) for i in range(10))
-            
+
         surveyresponse = SurveyResponse(survey=survey, respondent=respondent, esea_account=esea_account, token=token)
         surveyresponse.save()
         return surveyresponse
@@ -37,7 +37,7 @@ class SurveyResponse(models.Model):
     def __str__(self):
         return f"'{self.survey} ({self.respondent})'"
 
-
+    # Filters question responses based on Indicator ids
     def filter_question_responses(self, question_responses):
         indicator_ids = self.survey.questions.values_list('id', flat=True,)
         return [
@@ -46,6 +46,7 @@ class SurveyResponse(models.Model):
             if question_response['direct_indicator_id'] in indicator_ids
         ]
 
+    # ??
     def save_question_responses(self, question_responses):
         filtered_question_responses = self.filter_question_responses(
             question_responses

@@ -24,6 +24,7 @@ class EseaAccount(models.Model):
             return self.campaign.network
         return None
 
+    # Shows list of additional information about the ESEA Account
     def survey_response_by_survey(self):
         arr = []
         for survey in self.method.surveys.all():

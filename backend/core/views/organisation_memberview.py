@@ -27,6 +27,7 @@ class OrganisationMemberViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
+        # Makes sure that only 1 admin exists in the organisation
         if request.data['role'] == 3:
             oldOrganisationAdmins = OrganisationMember.objects.filter(organisation=organisation_pk, role=3).exclude(user=instance.user)
             if len(oldOrganisationAdmins):
@@ -37,6 +38,7 @@ class OrganisationMemberViewSet(viewsets.ModelViewSet):
                 organisation.owner = instance.user
                 organisation.save()
 
+        # Makes sure that only 1 esea accountant exists in the organisation
         if request.data['role'] == 2:
             oldEseaAccountants = OrganisationMember.objects.filter(organisation=organisation_pk, role=2).exclude(user=instance.user)
             if len(oldEseaAccountants):

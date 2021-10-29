@@ -7,6 +7,7 @@ from .direct_indicator import DirectIndicator
 
 find_square_bracket_keys = re.compile(r"\[(.*?)\]")
 
+
 class IndirectIndicator(models.Model):
     topic = models.ForeignKey('Topic', related_name='indirect_indicators', on_delete=models.SET_NULL, null=True)
     method = models.ForeignKey("Method", related_name="indirect_indicators", on_delete=models.CASCADE, null=True)
@@ -87,7 +88,6 @@ class IndirectIndicator(models.Model):
                     if isinstance(value, dict):
                         value = max(value, key=value.get)
                     calculation = calculation.replace(f"[{calculation_key}]", f"{value}")
-
         self.calculation = calculation
 
     def calculate(self):
@@ -99,15 +99,13 @@ class IndirectIndicator(models.Model):
         self.error = None
         functionList = ['sum(', 'avg(', 'min(', 'max(', 'median(', 'mode(']
 
-        ### If there are conditionals
+        # If there are conditionals
         if self.has_conditionals:
             self.value = None
             value = self.calculate_conditionals()
-            # print('vallueee', type(value))
             self.value = value
-            # print('||', self.key, self.value)
         
-        ### if there's a function
+        # if there's a function
         elif any(func in self.calculation for func in functionList):
             key = re.findall(find_square_bracket_keys, self.formula)
             if len(key):
@@ -137,10 +135,8 @@ class IndirectIndicator(models.Model):
                     print('There are no responses to calculate the sum with.')
                     return
 
-        ### If a regular calculation can be performed
+        # If a regular calculation can be performed
         else:
-            # print(self.method)
-            # print(self.key, self.calculation)
             try:
                 self.value = eval(self.calculation)
             except:
@@ -168,7 +164,7 @@ class IndirectIndicator(models.Model):
                 print('Invalid Partial Condition: ', bracket_keys)
                 # raise Exception("invalid partial condition")
 
-            ### Skips code till it finds the corresponding then/else statements corresponding to the IF statement that fails or succeeds.
+            # Skips code till it finds the corresponding then/else statements corresponding to the IF statement that fails or succeeds.
             if search_else:
                 if 'IF' in cond:
                     ifs += 1
@@ -182,7 +178,7 @@ class IndirectIndicator(models.Model):
                     ifs = 1
                     elses = 0
 
-            ### Checks whether if statement equates to True
+            # Checks whether if statement equates to True
             if 'IF' in cond:
                 cond = cond.replace('IF', '').replace('(', '').replace(')', '').replace('"', '').strip()
                 last_if = False
@@ -216,7 +212,7 @@ class IndirectIndicator(models.Model):
                     search_else = True
                 continue
 
-            ### Serves conditional outcome
+            # Serves conditional outcome
             if (last_if and '=' in cond) or (cond == formula[-1]):
                 cond = cond.replace('(', '').replace(')', '')
                 [var, val] = cond.split('=')
@@ -243,7 +239,7 @@ class IndirectIndicator(models.Model):
             processed_cond = re.split('(<|<=|==|>=|>|=)', cond)
             for idx, value in enumerate(processed_cond):
                 if value not in allowedOperators:
-                    ### Makes eval() of string equals string possible
+                    # Makes eval() of string equals string possible
                     processed_cond[idx] = f'"{value.strip().lower()}"'
             conds[index] = ''.join(processed_cond)
 
@@ -251,163 +247,3 @@ class IndirectIndicator(models.Model):
             conds = conds[0]
 
         return conds
-
-            
-
-
-
-
-        # @property
-        # def key(self):
-        #     return self.name
-        # except Exception as e:
-        #     print('reee', e)
-        #     self.exception_detail = e
-        #     self.exception = Exception("Invalid calculation")
-        # for x in conditions:
-        #     print('-->', x)
-        #     for y, index in enumerate(x.split('THEN')):
-        #         print('\n', y, index)
-        #     #[cond, val] = [y.strip() for y in x.split('THEN')]
-        #     #print(cond)
-
-        # for condition in conditions:
-        #     if 'THEN' in condition:
-        #         bracket_keys = list(set(re.findall(find_square_bracket_keys, condition)))
-
-        #         if self.key in bracket_keys:
-        #             bracket_keys.remove(self.key)
-        #         if len(bracket_keys):
-        #             # print(bracket_keys)
-        #             raise Exception("invalid partial condition")
-
-        #         [cond, val] = [x.strip() for x in condition.split('THEN')] #
-        #         cond = cond.replace('IF', '')
-
-        #         if 'AND' in cond:
-        #             conds = [eval(n) for n in cond.split("AND")]
-
-        #             if not False in conds:
-        #                 break
-        #             cond = 'False'
-        #             continue
-                
-        #         if 'OR' in cond:
-        #             conds = [eval(n) for n in cond.split('OR')]
-        #             # print('IIIIIIIIIIIII', conds, val)
-        #             if True in conds:
-        #                 break
-        #             cond = 'False'
-        #             continue
-
-        #         if eval(cond):
-        #             break
-
-        #         if condition == conditions[-1]:
-        #             break
-        # if '=' in val:
-        #     # print(val)
-        #     [thenn, elsee] = [x.strip() for x in val.split('ELSE')]
-        #     # print('then', thenn)
-        #     # print('else', elsee)
-        #     # print('----dd---')
-        #     if eval(cond):
-        #         # print('-------')
-        #         val = thenn
-        #     else:
-        #         # print(self.key, val)
-        #         val = elsee
-
-        #     # print(val)
-        #     val = val.replace('"', '').replace('(', '').replace(')', '').replace('\\', '')
-        #     [var, val] = val.split('=')
-        #     var = var.replace('[', '').replace(']', '').strip()
-
-        #     if var != self.key:
-        #         raise Exception('Assignment variable does not match the key of this indirect indicator')
-
-        return []
-'''
-    def calculate_conditionals(self):
-        conditions = self.calculation.split("else")
-
-        for condition in conditions:
-            print('=================', condition)
-            # Checks if all required indicators have values
-            if len(re.findall(find_square_bracket_keys, condition)):
-                raise Exception("invalid partial condition")
-                
-            if condition == conditions[-1]:
-                return condition
-                break
-
-            [cond, value] = condition.split("THEN")
-            cond = cond.replace("if", "")
-
-            if 'if' in cond:
-                [cond, value] = condition.split("THEN")
-                cond = cond.replace("if", "")
-
-            if '==' in cond:
-                [val1, val2] = cond.split("==")
-                if eval(f'"{val1}"=="{val2}"'):
-                    return value
-
-            if 'AND' in cond:
-                conds = [eval(n) for n in condition.split("AND")]
-                if not False in conds:
-                    return value
-
-            if 'OR' in cond:
-                conds = [eval(n) for n in condition.split("OR")]
-                if True in conds:
-                    return value
-
-            if eval(cond):
-                return value
-        '''
-        
-
-# TODO: Accept ((cond AND cond) OR cond), instead of (cond AND cond) on itself and (cond OR cond) 
-'''
-formula = "if 'workers_cooperative'=='workers.cooperative' then if (0.67 < 0.60) then decision_making_ratio_score = 0 else decision_making_ratio_score = 10 else if (0.25 < 0.30) then decision_making_ratio_score = 15 else decision_making_ratio_score = 20"
-
-
-formula = formula.replace('if', '@@if').replace('else', '##else').replace('then', '%%then')
-formula = re.split('@@|##|%%', formula)
-print(formula)
-ifs = 1
-elses = 0
-last_if = False
-search_else = False
-
-for cond in formula:
-
-    # Skips code till it finds the corresponding else statement of the if statement that equalled to False.
-	if search_else:
-		if 'if' in cond:
-			ifs += 1
-		if 'else' in cond:
-			elses += 1
-		if ifs != elses:
-			continue
-		else:
-			search_else = False
-			last_if = True
-			ifs = 1
-			elses = 0
-
-    # Checks whether if statement equals to True
-	if 'if' in cond:
-		cond = cond.replace('if', '').strip()
-		last_if = False
-		if eval(cond):
-			last_if = True
-		else:
-			search_else = True
-
-    # Serves conditional outcome
-	if (last_if and ' = ' in cond) or (cond == formula[-1]):
-		print('\nConditional outcome:\n-', cond) #cond.replace('then ', '').replace('else', ''))
-		break
-'''

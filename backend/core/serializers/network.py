@@ -21,7 +21,7 @@ class NetworkSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         user=self.context['request'].user
 
-        ''' Sets acces level of user to the network '''
+        # Sets acces level of user to the network
         if user.is_superuser:
            representation['accesLevel'] = "admin"
         else:
@@ -34,52 +34,3 @@ class NetworkSerializer(serializers.ModelSerializer):
                 representation['accesLevel'] = member.get_role_display()
 
         return representation
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    # image = serializers.ImageField(required=False)
-    # teammembers = serializers.StringRelatedField(read_only=True, many=True)
-    # serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
-    # networkadmin = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all(), write_only=True, required=False)
-    
-
-    # def create(self, validated_data):
-    #     try:
-    #         owner = validated_data.pop('owner')
-    #     except:
-    #         owner = self.context['request'].user
-            
-    #     validated_data["owner"] = owner
-        
-    #     print(owner)
-    #     # invitation='pending'
-    #     # if owner.is_superuser:
-        
-    #     invitation='accepted'
-    #     print(validated_data)
-    #     network = Network.objects.create(**validated_data)
-    #     return network
-
-    # def update(self, instance, validated_data):
-    #     print('check')
-    #     print(validated_data)
-    #     return instance
-    # organisations = serializers.SlugRelatedField(queryset=Organisation.objects.all(), many=True, required=False, slug_field='name')
-    # methods = serializers.SlugRelatedField(queryset=Method.objects.all(), many=True, required=False, slug_field='name')
-    #     print('Test')
-    #     return instance
-    # methods = serializers.SlugRelatedField(queryset=Method.objects.all(), many=True, required=False, slug_field='id')
-    # organisations = OrganisationSerializer(many=True, read_only=True)
-    # ReadOnlyField(source="owner.username")

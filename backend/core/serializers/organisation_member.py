@@ -10,15 +10,3 @@ class OrganisationMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrganisationMember
         fields = ['id', 'invitation', 'role', 'role_name', 'organisation', 'user', 'user_name']
-
-
-
-
-    
-
-
-
-
-
-
-# user = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())

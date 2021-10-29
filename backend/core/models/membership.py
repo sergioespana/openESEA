@@ -29,8 +29,6 @@ class Membership(models.Model):
     requester = models.CharField(max_length=100, blank=False, choices=REQUESTER)
 
     def save(self, *args, **kwargs):
-        # if not self._status and self.status:
-        #     self.pub_date = now()
         if (self.status == 'accepted') and self.join_date is None:
             self.join_date = now()
         elif (not self.status == 'accepted') and self.join_date is not None:
@@ -42,16 +40,3 @@ class Membership(models.Model):
 
     def __str__(self):
         return f"{self.organisation.name} - {self.network.name}"
-
-
-
-
-
-
-
-
-
-
-    # def __init__(self, *args, **kwargs):
-    #     super(Membership, self).__init__(*args, **kwargs)
-    #     self._status = self.status

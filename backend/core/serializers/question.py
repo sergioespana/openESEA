@@ -12,20 +12,7 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Question
-        fields = [
-        'id',
-        'method',
-        'topic',
-        'section',
-        'section_name',
-        'order', 
-        'isMandatory', 
-        'name',
-        'description', 
-        'instruction', 
-        'uiComponent',
-        'direct_indicator'
-        ]
+        fields = ['id', 'method', 'topic', 'section', 'section_name', 'order', 'isMandatory', 'name','description', 'instruction', 'uiComponent', 'direct_indicator']
     
     def create(self, validated_data):
         try:
@@ -44,7 +31,6 @@ class QuestionSerializer(serializers.ModelSerializer):
         return question
 
     def update(self, instance, validated_data):
-        # print(validated_data)
         instance.method = validated_data.get('method', instance.method)
         instance.topic = validated_data.get('topic', instance.topic)
         instance.section = validated_data.get('section', instance.section)
@@ -72,43 +58,3 @@ class QuestionSerializer(serializers.ModelSerializer):
     '''
         TODO: Validation for possible UI Components.
     '''
-
-
-
-    # if len(direct_indicator_data):
-    #     direct_indicator_data = direct_indicator_data[0]
-    #     directIndicator = DirectIndicator.objects.create(question=question, method=validated_data['method'], **direct_indicator_data)
-    #     options = direct_indicator_data.pop('options')
-    
-    #     for option in options:
-    #         option_instance, _ = AnswerOption.objects.get_or_create(order=option.get('order', 1), text=option['text'])
-    #         directIndicator.options.add(option_instance.id)
-
-    # print('--------', direct_indicator_data)
-    # if len(direct_indicator_data):
-    #     direct_indicator_data = direct_indicator_data[0]
-    #     options = direct_indicator_data.pop('options')
-    #     if instance.direct_indicator.exists():
-    #         direct_indicator = instance.direct_indicator.all()[0]
-    #     else:
-    #         try:
-    #             di = DirectIndicator.objects.filter(method=instance.method, key=direct_indicator_data.get('key')).first()
-    #             di.delete()
-    #         except DirectIndicator.DoesNotExist:
-    #             pass
-    #         direct_indicator = DirectIndicator.objects.create(method=validated_data.get('method'), question=instance, key= direct_indicator_data.get('key'), name=direct_indicator_data.get('name'))
-    #     direct_indicator.method = validated_data.get('method', direct_indicator.method)
-    #     direct_indicator.key = direct_indicator_data.get('key', direct_indicator.key)
-    #     direct_indicator.name = direct_indicator_data.get('name', direct_indicator.name)
-    #     direct_indicator.description = direct_indicator_data.get('description', direct_indicator.description)
-    #     if isinstance(validated_data.topic, int): 
-    #         direct_indicator.topic = validated_data.get('topic', direct_indicator.topic)
-    #     direct_indicator.datatype = direct_indicator_data.get('datatype', direct_indicator.datatype)
-    #     direct_indicator.pre_unit = direct_indicator_data.get('pre_unit', direct_indicator.pre_unit)
-    #     direct_indicator.post_unit = direct_indicator_data.get('post_unit', direct_indicator.post_unit)
-
-    #     direct_indicator.options.clear()
-    #     for option in options:
-    #         option_instance, _ = AnswerOption.objects.get_or_create(order=option.get('order', 1), text=option['text'])
-    #         direct_indicator.options.add(option_instance.id)
-    #     direct_indicator.save()

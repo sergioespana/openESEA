@@ -6,7 +6,6 @@ from ..models import Section
 from ..serializers import SectionSerializer
 
 
-
 class SectionViewSet(viewsets.ModelViewSet):
     serializer_class = SectionSerializer
 

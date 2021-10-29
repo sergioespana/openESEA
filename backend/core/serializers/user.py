@@ -26,7 +26,6 @@ class RegisterUserSerializer(serializers.ModelSerializer):
             first_name=validated_data['first_name'],
             last_name_prefix=validated_data['last_name_prefix'],
             last_name=validated_data['last_name'],
-            # uniquetoken = validated_data['uniquetoken']
         )
         user.set_password(validated_data['password'])
         user.save()

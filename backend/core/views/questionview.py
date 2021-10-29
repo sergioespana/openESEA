@@ -5,7 +5,6 @@ from ..models import Question
 from ..serializers import QuestionSerializer
 
 
-
 class QuestionViewSet(viewsets.ModelViewSet):
     serializer_class = QuestionSerializer
 
@@ -15,7 +14,6 @@ class QuestionViewSet(viewsets.ModelViewSet):
         if (int(self.kwargs['survey_pk']) > 0):
             return Question.objects.filter(section__survey=self.kwargs['survey_pk'])
         return Question.objects.filter(method=self.kwargs['method_pk'])
-        
     
     def create(self, request, method_pk, survey_pk, section_pk):
         if int(self.kwargs['method_pk']) > 0:
@@ -26,5 +24,3 @@ class QuestionViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
-
-    

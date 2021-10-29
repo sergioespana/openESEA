@@ -5,15 +5,15 @@ from .network_member import NetworkMember
 
 
 class NetworkManager(models.Manager):
+    
     def create(self, name, owner, created_by, ispublic=True, description="", organisations=[], methods=[]):
-
         network_instance = Network(name=name, ispublic=ispublic, description=description, owner=owner, created_by=created_by)
         network_instance.save()
         
-        ''' Creates Network Member instance for the network owner '''
+        # Creates Network Member instance for the network owner
         NetworkMember.objects.create(network=network_instance, user=owner, role=2, invitation='accepted')
-
         return network_instance
+
 
 class Network(models.Model):
     objects = NetworkManager()
@@ -34,13 +34,6 @@ class Network(models.Model):
 
     def __str__(self):
         return self.name
-
-
-
-
-
-
-
 
 
 

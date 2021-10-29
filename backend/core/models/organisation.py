@@ -5,14 +5,13 @@ from .organisation_member import OrganisationMember
 
 
 class OrganisationManager(models.Manager):
+
     def create(self, name, created_by, ispublic=True, description=""):
-        
         organisation_instance = Organisation(name=name, owner=created_by, created_by=created_by, ispublic=ispublic, description=description)
         organisation_instance.save()
 
-        ''' Creates Organisation Member instance for the organisation owner '''
+        # Creates Organisation Member instance for the organisation owner
         OrganisationMember.objects.create(organisation=organisation_instance, user=created_by, role=3, invitation='accepted')
-
         return organisation_instance
 
 class Organisation(models.Model):
@@ -32,6 +31,7 @@ class Organisation(models.Model):
 
     def __str__(self):
         return self.name
+
 
 
 '''

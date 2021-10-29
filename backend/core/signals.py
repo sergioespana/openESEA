@@ -6,13 +6,9 @@ from .models import EseaAccount, Respondent, Survey, SurveyResponse, Campaign, M
 
 @receiver(post_save, sender=EseaAccount)
 def create_accountant_objects(sender, instance, created, **kwargs):
-    print('--------------------------')
     respondent = Respondent.objects.create(organisation=instance.organisation, email="accountant@mail.com", first_name="Accountant", last_name=f"of {instance.organisation.name}")
-    print(respondent)
-
     try:
         surveys = instance.method.surveys.all().filter(response_type="single")
-        print(surveys)
     except ObjectDoesNotExist:
         print('No survey with responsetype "SINGLE" was found in the connected method.')
         # instance.delete()
@@ -20,7 +16,6 @@ def create_accountant_objects(sender, instance, created, **kwargs):
         return
     
     for survey in surveys:
-        print('ddddd', survey.id)
         surveyresponse = SurveyResponse.objects.create(survey=survey, esea_account=instance, respondent=respondent, token="accountant")
     
 @receiver(post_save, sender=Campaign)

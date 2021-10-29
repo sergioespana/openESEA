@@ -19,21 +19,7 @@ class Method(models.Model):
          )
 
 
+
 '''
     Change ispublic to is_public?
 '''
-
-
-
-
-
-
-
-
-
-
-
-# organisations = models.ManyToManyField('Organisation', related_name="methods", blank=True)
-
-
-

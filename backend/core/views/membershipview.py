@@ -6,7 +6,6 @@ from ..models import Membership
 from ..serializers import MembershipSerializer
 
 
-
 class MembershipViewSet(viewsets.ModelViewSet):
     serializer_class = MembershipSerializer
 
@@ -19,13 +18,3 @@ class MembershipViewSet(viewsets.ModelViewSet):
         if organisation is not None:
             return Membership.objects.filter(organisation=organisation)
         return Membership.objects.all()
-
-
-
-    # def create(self, request, method_pk):
-    #     request.data['method'] = int(method_pk)
-    #     serializer = DirectIndicatorSerializer2(data=request.data)
-    #     serializer.is_valid(raise_exception=True)
-    #     serializer.save()
-
-    #     return Response(serializer.data)

@@ -3,10 +3,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.shortcuts import get_object_or_404
 
-
 from ..models import Survey, Method, Organisation, SurveyResponse, DirectIndicator, StakeholderGroup
 from ..serializers import SurveyDisplaySerializer
-
 
 
 class BaseModelViewSet(viewsets.ModelViewSet):
@@ -35,7 +33,6 @@ class BaseModelViewSet(viewsets.ModelViewSet):
                 permission_classes = None
 
             return [permission() for permission in (permission_classes or self.permission_classes)]
-
 
 
 class SurveyViewSet(BaseModelViewSet):
@@ -75,7 +72,6 @@ class SurveyViewSet(BaseModelViewSet):
                 return Survey.objects.filter(method__networks__organisations=org) #, stakeholder_groups__pk__in=ids, responses__user_organisation=userorganisation).distinct() #responses__finished=True
         '''
         return Survey.objects.filter(method=self.kwargs['method_pk'])
-    
 
     def create(self, request, method_pk):
         request.data['method'] = int(method_pk)
@@ -83,7 +79,6 @@ class SurveyViewSet(BaseModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
 
     def update(self, request, method_pk, *args, **kwargs):
         request.data['method'] = method_pk
@@ -94,67 +89,7 @@ class SurveyViewSet(BaseModelViewSet):
 
         return super().update(request, *args, **kwargs)
 
-
     def retrieve(self, request, method_pk, pk):
         survey = get_object_or_404(Survey, pk=pk)
         serializer = SurveyDisplaySerializer(survey) # SurveyDetailSerializer(survey)
         return Response(serializer.data) 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        # for index, question in enumerate(request.data['questions']):
-        #     di = get_object_or_404(DirectIndicator, key=question, topic__method=method_pk)
-        #     request.data['questions'][index] = di.key
-
-    # def partial_update(self, request, *args, **kwargs):
-
-    #     serializer = SurveyOverviewSerializer(self.get_object(), data=request.data, partial=True)
-    #     serializer.is_valid(raise_exception=True)
-    #     serializer.save()
-    #     return Response(serializer.data)
-    # def update(self, request, method_pk, pk):
-    #     request.data['method'] = int(method_pk)
-    #     print(request.data)
-    #     print()
-    #     if 'stakeholdergroup' in request.data.keys():
-    #         cleanedName = request.data['stakeholdergroup'].lower()
-    #         request.data['stakeholdergroup'], _ = StakeholderGroup.objects.get_or_create(name=cleanedName)
-    #     #     for index, stakeholdergroup in enumerate(request.data['stakeholders']):
-    #     #         print(stakeholdergroup)
-    #     #         request.data['stakeholders'][index], _ = StakeholderGroup.objects.get_or_create(name=stakeholdergroup)
-
-    #     # print(request.data['questions'])
-    #     # for index, question in enumerate(request.data['questions']):
-    #     #     di = get_object_or_404(DirectIndicator, key=question, topic__method=method_pk)
-    #     #     request.data['questions'][index] = di.key
-    #     survey = get_object_or_404(Survey, pk=pk, method=method_pk)
-    #     serializer = SurveyOverviewSerializer(survey, data=request.data)
-    #     serializer.is_valid(raise_exception=True)
-    #     serializer.save()
-
-    #     return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-# Not really implemented!
-# class PublicSurveyViewSet(viewsets.ReadOnlyModelViewSet):
-#     queryset = Survey.objects.all()
-#     serializer_class = SurveyOverviewSerializer
-#     authentication_classes = []
-#     permission_classes = []
-
-#     def retrieve(self, request, pk):
-#         survey = get_object_or_404(self.get_queryset(), pk=pk)
-#         serializer = SurveyDetailSerializer(survey)
-
-#         return Response(serializer.data)

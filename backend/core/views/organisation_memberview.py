@@ -5,13 +5,11 @@ from ..models import OrganisationMember, Organisation, Respondent
 from ..serializers import OrganisationMemberSerializer
 
 
-
 class OrganisationMemberViewSet(viewsets.ModelViewSet):
     serializer_class=OrganisationMemberSerializer
 
     def get_queryset(self):
         return OrganisationMember.objects.filter(organisation=int(self.kwargs['organisation_pk']))
-
 
     def create(self, request, organisation_pk):
         request.data['organisation'] = int(organisation_pk)
@@ -19,7 +17,6 @@ class OrganisationMemberViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
-    
     
     def update(self, request, organisation_pk, *args, **kwargs):
         request.data['organisation'] = organisation_pk
@@ -46,7 +43,6 @@ class OrganisationMemberViewSet(viewsets.ModelViewSet):
                 for eseaAccountant in oldEseaAccountants:
                     eseaAccountant.role = 1
                     eseaAccountant.save()
-
         
         Respondent.objects.get_or_create(organisation=organisation, email="accountant@mail.com", first_name="Accountant", last_name=f"of {organisation.name}")
         return Response(serializer.data)

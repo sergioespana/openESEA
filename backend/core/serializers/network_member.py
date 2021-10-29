@@ -10,14 +10,3 @@ class NetworkMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = NetworkMember
         fields = ['id', 'invitation', 'role', 'role_name', 'network', 'user', 'user_name']
-
-
-
-
-
-
-
-
-
-
-# user = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())

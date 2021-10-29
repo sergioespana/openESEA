@@ -6,7 +6,6 @@ from .answer_option import AnswerOptionSerializer
 
 class DirectIndicatorSerializer2(serializers.ModelSerializer):
     datatype= serializers.ChoiceField(choices=DirectIndicator.DATA_TYPES, required=False)
-    # question = serializers.StringRelatedField(read_only=True)
     topic = serializers.PrimaryKeyRelatedField(queryset=Topic.objects.all(), required=False, allow_null=True)
     method_name = serializers.ReadOnlyField(source='method.name')
     question_name = serializers.ReadOnlyField()
@@ -97,14 +96,3 @@ class DirectIndicatorSerializer2(serializers.ModelSerializer):
                 raise serializers.ValidationError('Key is not unique')
 
         return value
-
-
-
-
-
-
-    # def to_representation(self, instance):
-    #     representation = super().to_representation(instance)
-    #     representation['method'] = instance.method.name
-        
-    #     return representation

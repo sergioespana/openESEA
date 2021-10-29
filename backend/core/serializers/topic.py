@@ -6,14 +6,12 @@ from .direct_indicator2 import DirectIndicatorSerializer2
 from .indirect_indicator import IndirectIndicatorSerializer
 
 
-
 class TopicSerializer(serializers.ModelSerializer):
     parent_topic_name = serializers.StringRelatedField(source='parent_topic', read_only=True)
     method = serializers.StringRelatedField()
     questions = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
     direct_indicators = serializers.ReadOnlyField()
     indirect_indicators = serializers.ReadOnlyField()
-
 
     class Meta:
         model = Topic
@@ -28,13 +26,3 @@ class TopicSerializer(serializers.ModelSerializer):
         indirect_indicator_serializer = IndirectIndicatorSerializer(instance.indirect_indicators, many=True)
         representation['indirect_indicators'] = indirect_indicator_serializer.data
         return representation
-
-
-
-# class QuestionSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Question
-#         fields = ['id', 'isMandatory', 'name', 'description', 'instruction', 'answertype']
-
-# direct_indicators = serializers.PrimaryKeyRelatedField(queryset=DirectIndicator.objects.all(), many=True, required=False)
-# indirect_indicators = serializers.PrimaryKeyRelatedField(queryset=IndirectIndicator.objects.all(), many=True, required=False)

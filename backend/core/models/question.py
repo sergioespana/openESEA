@@ -6,22 +6,16 @@ from django.utils.translation import gettext_lazy as _
 
 
 class questionManager(models.Manager):
+
     def create(self,  name, uiComponent, method=None, order=1, section=None, topic=None, indicator=None, isMandatory=True, answertype="TEXT", min_number=1, max_number=5, description="", instruction="", default="", options=None):
         question = Question(isMandatory=isMandatory, name=name, method=method, order=order, uiComponent=uiComponent, section=section, topic=topic, answertype=answertype, description=description, instruction=instruction, default=default, min_number=min_number, max_number=max_number)
         question.save()
 
         if indicator:
             from .direct_indicator import DirectIndicator
-            # i = DirectIndicator.objects.get_object_or_404(DirectIndicator, key=indicator)
             indicator.question = question
             indicator.save(update_fields=['question'])
 
-        # if question.answertype in (question.QUESTION_TYPES_WITH_OPTIONS):
-        #     print(question, answertype, options)
-        #     for index, option in enumerate(options):
-        #         questionoption = QuestionOption.objects.create(text=option, value=index + 1, question=question)
-        #         question.options.add(questionoption)
-        #     question.save()
         return question
     
     def get_or_create(self, **args):
@@ -30,12 +24,14 @@ class questionManager(models.Manager):
             question = self.model.objects.create(**args)
         return question
 
+
+
 class Question(models.Model):
     objects = questionManager()
 
     method = models.ForeignKey("Method", related_name="questions", on_delete=models.CASCADE, null=True)
     section = models.ForeignKey('Section', related_name='questions', on_delete=models.SET_NULL, null=True)
-    topic = models.ForeignKey('Topic', related_name="questions_of_topic", on_delete=models.SET_NULL, null=True)     # Needed, cause a many to many field can not be 'on_delete=models.CASCADE'
+    topic = models.ForeignKey('Topic', related_name="questions_of_topic", on_delete=models.SET_NULL, null=True)
     topics = models.ManyToManyField("Topic", through="DirectIndicator")
     
     order = models.IntegerField(default=1)
@@ -48,7 +44,6 @@ class Question(models.Model):
     default = models.CharField(max_length=255, blank=True, default="")
     min_number= models.IntegerField(blank=True, null=True)
     max_number = models.IntegerField(blank=True, null=True)
-
 
     TEXT = "Text"
     NUMBER = "Number"
@@ -109,7 +104,6 @@ class Question(models.Model):
                     break
             if not option.equal(inputOption):
                 optionsExists = False
-
         return optionsExists
 
     def findQuestion(name, answertype, options, description=None) -> Any: # instruction = None
@@ -134,16 +128,8 @@ class Question(models.Model):
         self.min_number = min_number
         self.max_number = max_number
         self.save()
-
-        # if not self.hasOptions(options):
-        #     self.options.all().delete()
-        #     for option in options:
-        #         QuestionOption.objects.create(question=self, **option)
-
-        self.save()
         return self
 
- 
 
 
     '''
@@ -151,10 +137,3 @@ class Question(models.Model):
     - Remove answertype, made redundant because of instance.direct_indicator.datatype
     - Change isMandatory to required
     '''
-
-
-
-
-
-    #options = models.ManyToManyField(QuestionOption, blank=True, related_name="ooo") 
-    # options: QuestionOption

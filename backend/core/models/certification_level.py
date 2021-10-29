@@ -7,9 +7,11 @@ class CertificationLevel(models.Model):
     name = models.CharField(max_length=255, blank=False)
     description = models.TextField(max_length=1000, blank=True)
     level = models.IntegerField()
-    colour = models.CharField(max_length=7) ''' Hex color code '''
-    # requirements = models.ManyToManyField
-
+    colour = models.CharField(max_length=7) # Hex color code
 
     def __str__(self):
         return self.name
+
+'''
+- Add requirements attribute (m2m)
+'''

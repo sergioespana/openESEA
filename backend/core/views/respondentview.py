@@ -5,7 +5,6 @@ from ..models import Respondent
 from ..serializers import RespondentSerializer
 
 
-
 class RespondentsViewSet(viewsets.ModelViewSet):
     model = Respondent
     serializer_class = RespondentSerializer

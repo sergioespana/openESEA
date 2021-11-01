@@ -49,6 +49,7 @@ class IndirectIndicatorSerializer(WritableNestedModelSerializer):
                 
             testformula = testformula.replace(f"[{question}]", " 1 ")
 
+        # If the formula is conditonal its correctness will be checked here
         if 'IF' in value or 'THEN' in value or 'ELSE' in value:
             if value.count('IF') > value.count('THEN'):
                 raise serializers.ValidationError("Missing 'THEN' statement")

@@ -13,6 +13,7 @@ class SectionSerializer(serializers.ModelSerializer):
         model = Section
         fields = ['id', 'survey', 'order', 'title', 'questions', 'text_fragments']
 
+    # Adds questions to the JSON representation of a section
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         question_serializer = QuestionSerializer(instance.questions, many=True)

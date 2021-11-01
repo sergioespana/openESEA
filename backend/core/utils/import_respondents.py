@@ -5,6 +5,7 @@ import io
 
 from ..models import Respondent, SurveyResponse
 
+
 def import_respondents(excel_file, eseaaccount, survey):
     decoded_file = excel_file.read().decode('utf-8')
     io_string = io.StringIO(decoded_file)

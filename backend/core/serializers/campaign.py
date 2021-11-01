@@ -24,8 +24,8 @@ class CampaignSerializer(serializers.ModelSerializer):
             start_date = datetime.strptime(self.initial_data['open_survey_date'], '%Y-%m-%dT%H:%M:%S.%f%z')
 
         if start_date > value:
+            
             raise serializers.ValidationError('Closing date must be after Opening date.')
-
         return value
 
     def validate_close_validation_date(self, value):

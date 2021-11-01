@@ -19,10 +19,12 @@ class SurveyResponseSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['respondent', 'survey', 'organisation', 'method', 'token']
 
+    # When a Survey Response gets updated
     def update(self, survey_response, validated_data):
         survey_response.finished = validated_data.get('finished', survey_response.finished)
         question_responses = validated_data.pop('question_responses')
-        # question_responses_dict = dict((i.id, i) for i in survey_response.question_responses.all())
+
+        # Updates individual question response objects based on survey response changes
         for item_data in question_responses:
             qr, _ = QuestionResponse.objects.get_or_create(survey_response=survey_response, question=item_data.get('question'), direct_indicator_id=item_data.get('direct_indicator_id'))
             if 'values' in item_data.keys():
@@ -47,3 +49,5 @@ class SurveyResponseCalculationSerializer(serializers.Serializer):
     calculation = serializers.CharField(read_only=True)
     value = serializers.CharField(read_only=True)
     responses = serializers.ListField(child=serializers.CharField(read_only=True))
+
+# question_responses_dict = dict((i.id, i) for i in survey_response.question_responses.all())

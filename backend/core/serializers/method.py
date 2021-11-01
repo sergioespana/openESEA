@@ -42,10 +42,12 @@ class MethodSerializer(serializers.ModelSerializer):
         model = Method
         fields = ['id', 'created_by', 'ispublic', 'name', 'description', 'version', 'surveys', 'topics', 'networks']
 
+    # Makes sure the version has a max of 2 decimal points
     def validate_version(self, value):
         value = round(value, 2)
         return value
 
+    # Sets the correct representation of a method with nested Topics
     def to_representation(self, instance):
         mytopics = {}
 

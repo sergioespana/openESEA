@@ -8,6 +8,7 @@ class MembershipSerializer(serializers.ModelSerializer):
         model = Membership
         fields = '__all__'
     
+    # Adds organisation name & description and network name & description to the JSON representation
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['organisation_name'] = instance.organisation.name

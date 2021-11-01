@@ -22,6 +22,7 @@ class QuestionSerializer(serializers.ModelSerializer):
 
         question = Question.objects.create(**validated_data)
 
+        # Directly adds direct indicator to a question if it exists
         if direct_indicator_data:
             question.direct_indicator.clear()
             for item in direct_indicator_data:
@@ -30,6 +31,7 @@ class QuestionSerializer(serializers.ModelSerializer):
             
         return question
 
+    # When a question gets updated
     def update(self, instance, validated_data):
         instance.method = validated_data.get('method', instance.method)
         instance.topic = validated_data.get('topic', instance.topic)
@@ -41,6 +43,7 @@ class QuestionSerializer(serializers.ModelSerializer):
         instance.instruction = validated_data.get('instruction', instance.instruction)
         instance.uiComponent = validated_data.get('uiComponent', instance.uiComponent)
         
+        # If a direct indicator gets attached to the question it will be added to the question
         if 'direct_indicator' in validated_data:
             instance.direct_indicator.clear()
             for item in validated_data.get('direct_indicator'):
@@ -49,6 +52,7 @@ class QuestionSerializer(serializers.ModelSerializer):
 
         return instance
 
+    # Shows direct indicator that is connected to the question
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         direct_indicator_serializer =  DirectIndicatorSerializer2(instance.direct_indicator, many=True)

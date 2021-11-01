@@ -38,6 +38,7 @@ class EseaAccountSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         return instance
 
+    # Adds network id & name to the JSON representation
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         if instance.campaign:

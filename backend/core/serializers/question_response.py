@@ -10,6 +10,7 @@ class QuestionResponseSerializer(serializers.ModelSerializer):
         model = QuestionResponse
         fields = ['id', 'question', 'direct_indicator_id', 'values', 'value']
 
+    # Validates whether the question response is of the correct datatype (unfinished)
     def validate(self, data):
         value = data['value']
         if value:

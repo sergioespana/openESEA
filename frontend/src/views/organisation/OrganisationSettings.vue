@@ -57,86 +57,78 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
-import { required } from 'vuelidate/lib/validators'
-import useVuelidate from '@vuelidate/core'
-import imageValidator from '../../utils/imageValidator'
+    import { mapState, mapActions } from 'vuex'
+    import { required } from 'vuelidate/lib/validators'
+    import useVuelidate from '@vuelidate/core'
+    import imageValidator from '../../utils/imageValidator'
 
-export default {
-    data () {
-        return {
-            loading: false,
-            ispublicbool: [
-                { name: 'Public', value: true },
-                { name: 'Private', value: false }
-            ],
-            ispublicDialog: false,
-            deleteOrganisationDialog: false,
-            file: false
-        }
-    },
-    computed: {
-        ...mapState('organisation', ['organisation'])
-    },
-    setup: () => ({ v$: useVuelidate() }),
-    validations: {
-        organisation: {
-            name: { required },
-            description: {}
-        }
-    },
-    created () {
-        if (this.organisation.accesLevel !== 'admin' && this.organisation.accesLevel !== 'organisation admin') {
-            console.log('You may not change settings!')
-            this.$router.push({ name: 'organisationoverview', params: { OrganisationId: this.organisation.id } })
-        }
-    },
-    methods: {
-        ...mapActions('organisation', ['fetchOrganisation', 'updateOrganisation', 'deleteOrganisation']),
-        async validateImage (e) {
-            this.file = await imageValidator(e)
-        },
-        async updateDetails () {
-            if (this.v$.organisation.$invalid) { return }
-            this.loading = true
-            console.log('orgg', this.organisation)
-
-            var formData = new FormData()
-            formData.append('name', this.organisation.name)
-            formData.append('description', this.organisation.description)
-            formData.append('ispublic', this.organisation.ispublic)
-
-            if (this.file) {
-                formData.append('image', this.file)
+    export default {
+        data () {
+            return {
+                loading: false,
+                ispublicbool: [
+                    { name: 'Public', value: true },
+                    { name: 'Private', value: false }
+                ],
+                ispublicDialog: false,
+                deleteOrganisationDialog: false,
+                file: false
             }
-            await this.updateOrganisation(formData)
-            await this.fetchOrganisation({ id: this.$route.params.OrganisationId })
-            this.loading = false
         },
-        async removeOrganisation () {
-            this.deleteOrganisationDialog = false
-            await this.deleteOrganisation({ id: this.organisation?.id || 0 })
-            this.$toast.add({ severity: 'success', summary: 'Succesful', detail: 'Organisation Deleted', life: 3000 })
-            this.$router.push({ name: 'organisations' })
+        computed: {
+            ...mapState('organisation', ['organisation'])
+        },
+        setup: () => ({ v$: useVuelidate() }),
+        validations: {
+            organisation: {
+                name: { required },
+                description: {}
+            }
+        },
+        created () {
+            if (this.organisation.accesLevel !== 'admin' && this.organisation.accesLevel !== 'organisation admin') {
+                console.log('You may not change settings!')
+                this.$router.push({ name: 'organisationoverview', params: { OrganisationId: this.organisation.id } })
+            }
+        },
+        methods: {
+            ...mapActions('organisation', ['fetchOrganisation', 'updateOrganisation', 'deleteOrganisation']),
+            async validateImage (e) {
+                this.file = await imageValidator(e)
+            },
+            async updateDetails () {
+                if (this.v$.organisation.$invalid) { return }
+                this.loading = true
+                console.log('orgg', this.organisation)
+
+                var formData = new FormData()
+                formData.append('name', this.organisation.name)
+                formData.append('description', this.organisation.description)
+                formData.append('ispublic', this.organisation.ispublic)
+
+                if (this.file) {
+                    formData.append('image', this.file)
+                }
+                await this.updateOrganisation(formData)
+                await this.fetchOrganisation({ id: this.$route.params.OrganisationId })
+                this.loading = false
+            },
+            async removeOrganisation () {
+                this.deleteOrganisationDialog = false
+                await this.deleteOrganisation({ id: this.organisation?.id || 0 })
+                this.$toast.add({ severity: 'success', summary: 'Succesful', detail: 'Organisation Deleted', life: 3000 })
+                this.$router.push({ name: 'organisations' })
+            }
         }
     }
-}
 </script>
 
 <style lang="scss" scoped>
-.imageupload {
-  background-color: #2196F3;
-  color: white;
-  padding: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-}
+    .imageupload {
+    background-color: #2196F3;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    }
 </style>
-
-            // for (var key in this.organisation) {
-            //     if (key !== 'image' && key !== 'networks' && key !== 'esea_accounts') {
-            //         if (this.organisation[key].length) {
-            //             formData.append(key, this.organisation[key])
-            //         }
-            //     }
-            // }

@@ -14,67 +14,57 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import SubSidebar from '../../components/SubSidebar'
+    import { mapState } from 'vuex'
+    import SubSidebar from '../../components/SubSidebar'
 
-export default {
-    components: {
-    SubSidebar
-    },
-    data () {
-        return {
-            links: [
-                 {
-                    name: 'Overview',
-                    icon: 'pi pi-desktop',
-                    path: 'organisationoverview'
-                },
-                {
-                    name: 'Networks',
-                    icon: 'pi pi-cloud',
-                    path: 'organisationnetworks'
-                },
-                {
-                    name: 'Esea Accounts',
-                    icon: 'pi pi-book',
-                    path: 'organisationeseaaccounts'
-                },
-                {
-                    name: 'Reports',
-                    icon: 'pi pi-chart-bar',
-                    path: 'organisationreports'
-                },
-                {
-                    name: 'Team',
-                    icon: 'pi pi-users',
-                    path: 'organisationteam'
-                },
-                {
-                    name: 'Settings',
-                    icon: 'pi pi-cog',
-                    path: 'organisationsettings'
-                }
-            ]
-        }
-    },
-    computed: {
-        ...mapState('organisation', ['organisation'])
-    },
-    methods: {
-        goToPage (name) {
-            this.pagename = name
-            this.$router.push({ name: `organisation${name.toLowerCase()}`, params: { OrganisationId: this.organisation?.id } })
+    export default {
+        components: {
+        SubSidebar
+        },
+        data () {
+            return {
+                links: [
+                    {
+                        name: 'Overview',
+                        icon: 'pi pi-desktop',
+                        path: 'organisationoverview'
+                    },
+                    {
+                        name: 'Networks',
+                        icon: 'pi pi-cloud',
+                        path: 'organisationnetworks'
+                    },
+                    {
+                        name: 'Esea Accounts',
+                        icon: 'pi pi-book',
+                        path: 'organisationeseaaccounts'
+                    },
+                    {
+                        name: 'Reports',
+                        icon: 'pi pi-chart-bar',
+                        path: 'organisationreports'
+                    },
+                    {
+                        name: 'Team',
+                        icon: 'pi pi-users',
+                        path: 'organisationteam'
+                    },
+                    {
+                        name: 'Settings',
+                        icon: 'pi pi-cog',
+                        path: 'organisationsettings'
+                    }
+                ]
+            }
+        },
+        computed: {
+            ...mapState('organisation', ['organisation'])
+        },
+        methods: {
+            goToPage (name) {
+                this.pagename = name
+                this.$router.push({ name: `organisation${name.toLowerCase()}`, params: { OrganisationId: this.organisation?.id } })
+            }
         }
     }
-}
-// {
-//     name: 'Surveys',
-//     icon: 'pi pi-book',
-//     path: 'organisationsurveys'
-// },
-// {
-//     name: 'Stakeholders',
-//     icon: 'pi pi-users',
-//     path: 'organisationstakeholders'
-// },
 </script>

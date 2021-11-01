@@ -1,6 +1,5 @@
 <template>
     <form ref="form"  class="p-text-left p-fluid p-m-5 p-p-5 p-inputtext-lg"> <!-- @submit.prevent="!v$.$invalid" -->
-    <!-- {{isSaved}} - {{v$.$invalid}} * {{lazier}} + {{discardUnsavedChanges}} -->
         <div class="p-field p-m-5">
             <h3>Method Name</h3>
                 <InputText id="methodname" type="text" v-model="lazierMethod.name"  :class="{'borderless': nameErrors.length}" @blur="v$.lazierMethod.name.$touch()"  />
@@ -28,90 +27,90 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
-import { cloneDeep, isEqual } from 'lodash' // cloneDeep isEqual
-import useVuelidate from '@vuelidate/core'
-import { required, minLength, maxLength } from '../../utils/validators'
-import HandleValidationErrors from '../../utils/HandleValidationErrors'
+    import { mapState, mapActions } from 'vuex'
+    import { cloneDeep, isEqual } from 'lodash' // cloneDeep isEqual
+    import useVuelidate from '@vuelidate/core'
+    import { required, minLength, maxLength } from '../../utils/validators'
+    import HandleValidationErrors from '../../utils/HandleValidationErrors'
 
-export default {
-    setup: () => ({ v$: useVuelidate() }),
-    validations: {
-        lazierMethod: {
-            id: { required },
-            name: { required, minLength: minLength(2), maxLength: maxLength(255) },
-            description: { required }
-        }
-    },
-    data () {
-        return {
-            lazierMethod: null,
-            ispublicbool: [
-                { display: 'Public', value: true },
-                { display: 'Private', value: false }
-            ],
-            unsavedChangesDialog: false,
-            discardUnsavedChanges: false,
-            to: null
-        }
-    },
-    computed: {
-        ...mapState('method', ['method', 'error', 'isSaved']),
-        nameErrors () {
-            return HandleValidationErrors(
-                this.v$.lazierMethod.name,
-                this.error.name
-                )
+    export default {
+        setup: () => ({ v$: useVuelidate() }),
+        validations: {
+            lazierMethod: {
+                id: { required },
+                name: { required, minLength: minLength(2), maxLength: maxLength(255) },
+                description: { required }
+            }
         },
-        descriptionErrors () {
-            return HandleValidationErrors(
-                this.v$.lazierMethod.description,
-                this.error.description
-            )
-        }
-    },
-    watch: {
-        method (val) {
-            if (isEqual(this.lazierMethod, val)) { return }
-            this.lazyMethod = cloneDeep(val)
+        data () {
+            return {
+                lazierMethod: null,
+                ispublicbool: [
+                    { display: 'Public', value: true },
+                    { display: 'Private', value: false }
+                ],
+                unsavedChangesDialog: false,
+                discardUnsavedChanges: false,
+                to: null
+            }
         },
-        lazierMethod: {
-            handler (val) {
-                setTimeout(() => {
-                    if (this.v$.$invalid) { return }
-                    if (isEqual(this.method, val)) { return }
-                    this.updateMethod(val)
-                }, 200)
+        computed: {
+            ...mapState('method', ['method', 'error', 'isSaved']),
+            nameErrors () {
+                return HandleValidationErrors(
+                    this.v$.lazierMethod.name,
+                    this.error.name
+                    )
             },
-            deep: true
-        }
-    },
-    beforeRouteLeave (to, from, next) {
-        setTimeout(() => {
-        if ((this.v$.$invalid || !this.isSaved) & !this.discardUnsavedChanges) {
-            console.log('niiiiii', this.v$.$invalid, this.isSaved, this.discardUnsavedChanges)
-            this.unsavedChangesDialog = true
-            this.to = to
-        } else {
-            next(true)
-        }
-        }, 1000)
-    },
-    async created () {
-        this.fetchMethod({ id: this.method?.id })
-        this.lazierMethod = cloneDeep(this.method)
-    },
-    methods: {
-        ...mapActions('method', ['fetchMethod', 'updateMethod']),
-        unsavedChangesChoice (choice) {
-            this.unsavedChangesDialog = false
-            this.discardUnsavedChanges = choice
-            if (choice) {
-                this.$router.push(this.to)
+            descriptionErrors () {
+                return HandleValidationErrors(
+                    this.v$.lazierMethod.description,
+                    this.error.description
+                )
+            }
+        },
+        watch: {
+            method (val) {
+                if (isEqual(this.lazierMethod, val)) { return }
+                this.lazyMethod = cloneDeep(val)
+            },
+            lazierMethod: {
+                handler (val) {
+                    setTimeout(() => {
+                        if (this.v$.$invalid) { return }
+                        if (isEqual(this.method, val)) { return }
+                        this.updateMethod(val)
+                    }, 200)
+                },
+                deep: true
+            }
+        },
+        beforeRouteLeave (to, from, next) {
+            setTimeout(() => {
+            if ((this.v$.$invalid || !this.isSaved) & !this.discardUnsavedChanges) {
+                console.log('niiiiii', this.v$.$invalid, this.isSaved, this.discardUnsavedChanges)
+                this.unsavedChangesDialog = true
+                this.to = to
+            } else {
+                next(true)
+            }
+            }, 1000)
+        },
+        async created () {
+            this.fetchMethod({ id: this.method?.id })
+            this.lazierMethod = cloneDeep(this.method)
+        },
+        methods: {
+            ...mapActions('method', ['fetchMethod', 'updateMethod']),
+            unsavedChangesChoice (choice) {
+                this.unsavedChangesDialog = false
+                this.discardUnsavedChanges = choice
+                if (choice) {
+                    this.$router.push(this.to)
+                }
             }
         }
     }
-}
 </script>
 
 <style lang="scss" scoped>

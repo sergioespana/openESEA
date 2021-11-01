@@ -13,15 +13,15 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-export default {
-    computed: {
-        ...mapState('surveyResponse', ['surveyResponse'])
-    },
-    methods: {
-        informationAboutESEA () {
-            // insert link to ESEA information page
+    import { mapState } from 'vuex'
+    export default {
+        computed: {
+            ...mapState('surveyResponse', ['surveyResponse'])
+        },
+        methods: {
+            informationAboutESEA () {
+                // insert link to ESEA information page
+            }
         }
     }
-}
 </script>

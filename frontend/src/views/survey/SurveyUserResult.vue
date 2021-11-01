@@ -36,67 +36,67 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
-import SurveyQuestion from '../../components/survey/SurveyQuestion'
-export default {
-    components: {
-        SurveyQuestion
-    },
-    data () {
-        return {
-            topicNumber: 0
-        }
-    },
-    computed: {
-        ...mapState('method', ['method']),
-        ...mapState('survey', ['survey']),
-        ...mapState('surveyResponse', ['surveyResponses', 'surveyResponse']),
-        // ...mapState('surveyResponseCalculation', ['surveyResponseCalculations']),
-        answers () {
-            const answers = {}
-            if (this.surveyResponse && this.surveyResponse.question_responses) {
-                this.surveyResponse.question_responses.forEach((answer) => {
-                    console.log(answer)
-                    answers[answer.direct_indicator_id] = answer.values
-                })
-            }
-            return answers
-        }
-        // calculations() {
-		// 	const calculations = {};
-		// 	if (this.surveyResponseCalculations.length) {
-		// 		this.surveyResponseCalculations.forEach((calculation) => {
-		// 			calculations[calculation.topic] = !calculations[calculation.topic]
-		// 				? [calculation] : [...calculations[calculation.topic], calculation];
-		// 		});
-		// 	}
-		// 	return calculations;
-		// },
-    },
-    beforeRouteUpdate (to, from, next) {
-            this.initialize()
-            next()
-    },
-    created () {
-        this.initialize()
-    },
-    methods: {
-        ...mapActions('survey', ['fetchSurvey']),
-        ...mapActions('surveyResponse', ['fetchSurveyResponses', 'setSurveyResponse']),
-        // ...mapActions('surveyResponseCalculation', ['fetchSurveyResponseCalculations']),
-        async initialize () {
-            console.log(this.method)
-            await this.fetchSurvey({ mId: this.method.id, id: this.survey.id })
-            await this.fetchSurveyResponses({ mId: this.method.id, sId: this.survey.id, OrganisationId: this.$route.params.OrganisationId })
-            console.log(this.surveyResponses)
-            console.log(this.$route.params.id)
-            this.setSurveyResponse({ id: this.$route.params.id })
-            // await this.fetchSurveyResponseCalculations({ mId: this.method.id, sId: this.survey.id, id: this.surveyResponse.id })
+    import { mapState, mapActions } from 'vuex'
+    import SurveyQuestion from '../../components/survey/SurveyQuestion'
+    export default {
+        components: {
+            SurveyQuestion
         },
-        goToSurveys () {
-            console.log('d', this.$route.params)
-            this.$router.push({ name: 'organisationsurveys', params: { OrganisationId: this.$route.params.OrganisationId } })
+        data () {
+            return {
+                topicNumber: 0
+            }
+        },
+        computed: {
+            ...mapState('method', ['method']),
+            ...mapState('survey', ['survey']),
+            ...mapState('surveyResponse', ['surveyResponses', 'surveyResponse']),
+            // ...mapState('surveyResponseCalculation', ['surveyResponseCalculations']),
+            answers () {
+                const answers = {}
+                if (this.surveyResponse && this.surveyResponse.question_responses) {
+                    this.surveyResponse.question_responses.forEach((answer) => {
+                        console.log(answer)
+                        answers[answer.direct_indicator_id] = answer.values
+                    })
+                }
+                return answers
+            }
+            // calculations() {
+            // 	const calculations = {};
+            // 	if (this.surveyResponseCalculations.length) {
+            // 		this.surveyResponseCalculations.forEach((calculation) => {
+            // 			calculations[calculation.topic] = !calculations[calculation.topic]
+            // 				? [calculation] : [...calculations[calculation.topic], calculation];
+            // 		});
+            // 	}
+            // 	return calculations;
+            // },
+        },
+        beforeRouteUpdate (to, from, next) {
+                this.initialize()
+                next()
+        },
+        created () {
+            this.initialize()
+        },
+        methods: {
+            ...mapActions('survey', ['fetchSurvey']),
+            ...mapActions('surveyResponse', ['fetchSurveyResponses', 'setSurveyResponse']),
+            // ...mapActions('surveyResponseCalculation', ['fetchSurveyResponseCalculations']),
+            async initialize () {
+                console.log(this.method)
+                await this.fetchSurvey({ mId: this.method.id, id: this.survey.id })
+                await this.fetchSurveyResponses({ mId: this.method.id, sId: this.survey.id, OrganisationId: this.$route.params.OrganisationId })
+                console.log(this.surveyResponses)
+                console.log(this.$route.params.id)
+                this.setSurveyResponse({ id: this.$route.params.id })
+                // await this.fetchSurveyResponseCalculations({ mId: this.method.id, sId: this.survey.id, id: this.surveyResponse.id })
+            },
+            goToSurveys () {
+                console.log('d', this.$route.params)
+                this.$router.push({ name: 'organisationsurveys', params: { OrganisationId: this.$route.params.OrganisationId } })
+            }
         }
     }
-}
 </script>

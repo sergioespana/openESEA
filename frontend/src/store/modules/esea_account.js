@@ -14,9 +14,6 @@ export default {
         setEseaAccount (state, { data }) {
             state.eseaAccount = data || {}
         },
-        // addEseaAccountToList (state, { data }) {
-        //     state.eseaAccounts.push(data)
-        // },
         updateEseaAccount (state, { data, id }) {
             state.eseaAccounts = state.eseaAccounts.map((item) => {
                 if (item.id !== id) { return item }
@@ -57,8 +54,7 @@ export default {
             await dispatch('fetchEseaAccounts', { oId })
             await commit('setEseaAccount', response)
         },
-        async updateEseaAccount ({ state, commit }, { oId, data }) {
-            // const id = state.eseaAccount.id
+        async updateEseaAccount ({ commit }, { oId, data }) {
             const { response, error } = await EseaAccountService.put({ oId, id: data.id, data, headers: { 'Content-Type': 'multipart/form-data' } })
             if (error) {
                 commit('setError', { error })

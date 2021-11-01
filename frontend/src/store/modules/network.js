@@ -1,4 +1,5 @@
 import NetworkService from '../../services/NetworkService'
+
 export default {
     namespaced: true,
     state: {
@@ -38,7 +39,6 @@ export default {
 				commit('setError', { error })
                 return
             }
-            console.log(response.data)
             commit('setNetworks', response)
         },
         async fetchNetwork ({ commit }, payload) {
@@ -97,48 +97,3 @@ export default {
         }
     }
 }
-        // if (!data) {
-        //     [data] = state.networks
-        // }
-        // async fetchNetworkUsers ({ commit }, payload) {
-        //     const query = `network=${payload.id}`
-        //     const { response, error } = await UserService.get({ query: query })
-        //     if (error) {
-		// 		commit('setError', { error })
-        //         return
-        //     }
-        //     commit('setNetworkUsers', response)
-        // },
-    // computed: {
-    //     ...mapState('authentication', ['accesToken'])
-    // },
-    // getters: {
-    //     AuthenticationToken (state, getters, rootState, rootGetters) { // Apparently state, getters & rootState are needed here
-    //        return rootGetters['authentication/AuthenticationToken']
-    //      }
-    // },
-
-    // import { mapMutations } from 'vuex'
-// import { mapState } from 'vuex'
-// import axios from 'axios'
-// import axios from 'axios'
-// import { AxiosInstance } from '../../plugins/axios'
-// import { getRequestData } from '../../utils/helpers'
-
-//  var config = { headers: { 'Authorization': 'Bearer ' +this.accessToken }
-// axios({ method: 'get', url: 'http://localhost:8000/networks/', headers: { Authorization: 'Bearer ' + this.accessToken } })
-// axios.get('http://localhost:8000/networks/', config)
-// .then(response => (console.log(response.data)))
-
-// const { response, error } = axios({ method: 'get', url: 'http://localhost:8000/networkorganisations/1/', headers: { Authorization: 'Bearer ' + this.accessToken } })
-// if (error) {
-// 	commit('setError', { error })
-//     return
-// }
-//
-// response.data.forEach(item => console.log(item.organisations))
-// console.log(response.data[all nested dicts].organisations)
-
-// setNetworkUsers (state, { data }) {
-//     state.networkparticipants = data || {}
-// },

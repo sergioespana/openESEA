@@ -11,36 +11,19 @@
 </template>
 
 <script>
-import OrganisationList from '../../components/lists/OrganisationList'
-import OrganisationForm from '../../components/forms/OrganisationForm'
+    import OrganisationList from '../../components/lists/OrganisationList'
+    import OrganisationForm from '../../components/forms/OrganisationForm'
 
-export default {
-    components: {
-        OrganisationList,
-        OrganisationForm
+    export default {
+        components: {
+            OrganisationList,
+            OrganisationForm
 
-    },
-    data () {
-        return {
-            createOrganisationDialog: false
+        },
+        data () {
+            return {
+                createOrganisationDialog: false
+            }
         }
     }
-}
-// <div class="p-d-flex p-jc-between p-m-5">
-//     <div>
-//         <Button :label="(allOrganisations ? 'All Organisations' : 'My Organisations')" class="p-button-sm p-mr-2" @click="allOrganisations = !allOrganisations"/>
-//         <Button label="Change Display" class="p-button-sm p-mr-2" @click="tableDisplay = !tableDisplay" />
-//         <Button label="Create Organisation" icon="pi pi-plus" class="p-button-success p-button-sm" @click="createOrganisationDialog=true" />
-//     </div>
-//     <span class="p-input-icon-left">
-//         <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Organisations..." />
-//     </span>
-// </div>
-// <Divider />
-// async goToOrganisation (organisation) {
-//     if (organisation.id) {
-//         await this.setOrganisation(organisation)
-//         this.$router.push({ name: 'organisationoverview', params: { OrganisationId: organisation.id } })
-//     }
-// }
 </script>

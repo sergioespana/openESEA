@@ -1,7 +1,7 @@
 <template>
-<div class="p-d-flex p-jc-center p-ai-center" style="height: 150px; background-color: #dcedc8;">
-    <h1>Report - {{eseaAccount.organisation}}</h1>
-</div>
+    <div class="p-d-flex p-jc-center p-ai-center" style="height: 150px; background-color: #dcedc8;">
+        <h1>Report - {{eseaAccount.organisation}}</h1>
+    </div>
     <div class="p-d-flex p-grid p-nested-grid p-jc-center p-p-5" style="background-color: #F5F5F5;">
         <div class="p-grid p-col-6" style="min-width: 1000px;">
             <div v-for="indicator in surveyResult.indicators" :key="indicator.id" class="p-grid p-col-12">
@@ -33,34 +33,33 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
-export default {
-    data () {
-        return {
-        }
-    },
-    computed: {
-        ...mapState('surveyResults', ['surveyResult']),
-        ...mapState('eseaAccount', ['eseaAccount'])
-    },
-    created () {
-        this.initialize()
-    },
-    methods: {
-        ...mapActions('surveyResults', ['fetchSurveyResults']),
-        async initialize () {
-            await this.fetchSurveyResults({ oId: this.$route.params.OrganisationId, eaId: this.$route.params.EseaAccountId })
-        },
-        decimalrounder (number) {
-            if (number === null) { return }
-            if (!isNaN(number)) {
-                number = +number
-                if (Math.floor(number)) { return Math.abs(number) }
-                return number.toFixed(2)
+    import { mapActions, mapState } from 'vuex'
+    export default {
+        data () {
+            return {
             }
-            return number
+        },
+        computed: {
+            ...mapState('surveyResults', ['surveyResult']),
+            ...mapState('eseaAccount', ['eseaAccount'])
+        },
+        created () {
+            this.initialize()
+        },
+        methods: {
+            ...mapActions('surveyResults', ['fetchSurveyResults']),
+            async initialize () {
+                await this.fetchSurveyResults({ oId: this.$route.params.OrganisationId, eaId: this.$route.params.EseaAccountId })
+            },
+            decimalrounder (number) {
+                if (number === null) { return }
+                if (!isNaN(number)) {
+                    number = +number
+                    if (Math.floor(number)) { return Math.abs(number) }
+                    return number.toFixed(2)
+                }
+                return number
+            }
         }
     }
-
-}
 </script>

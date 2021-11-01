@@ -31,163 +31,153 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
-import MethodTreeSidebar from '@/components/MethodTreeSideBar'
-import IndirectIndicatorEditForm from '@/components/forms/IndirectIndicatorEditForm'
-import DirectIndicatorEditForm from '@/components/forms/DirectIndicatorEditForm'
+    import { mapState, mapActions } from 'vuex'
+    import MethodTreeSidebar from '@/components/MethodTreeSideBar'
+    import IndirectIndicatorEditForm from '@/components/forms/IndirectIndicatorEditForm'
+    import DirectIndicatorEditForm from '@/components/forms/DirectIndicatorEditForm'
 
-export default {
-    components: {
-        MethodTreeSidebar,
-        IndirectIndicatorEditForm,
-        DirectIndicatorEditForm
-    },
-    data () {
-        return {
-            checkSavingStatus: false,
-            indicatorsSavingStatus: {},
-            to: null,
-            allowRouting: false,
-            unsavedChangesDialog: false,
-            discardUnsavedChanges: false,
-            addBar: [
-                { choice: 'indicator' },
-                { choice: 'calculation' }
-            ]
-        }
-    },
-    computed: {
-        ...mapState('method', ['method', 'error']),
-         ...mapState('directIndicator', { activeDirectIndicator: 'directIndicator', directIndicators: 'directIndicators', directIndicatorErrors: 'errors' }),
-        ...mapState('indirectIndicator', { activeIndirectIndicator: 'indirectIndicator', indirectIndicators: 'indirectIndicators', indirectIndicatorErrors: 'errors' }),
-        items () {
-            this.directIndicators.forEach(direct => { direct.objType = 'direct-indicator' })
-             this.indirectIndicators.forEach(indirect => { indirect.objType = 'indirect-indicator' })
-            return this.directIndicators.concat(this.indirectIndicators)
+    export default {
+        components: {
+            MethodTreeSidebar,
+            IndirectIndicatorEditForm,
+            DirectIndicatorEditForm
         },
-        activeItem () {
-            let objType = null
-            let id = null
-            if (this.activeDirectIndicator.id) {
-                objType = 'direct-indicator'
-                id = this.activeDirectIndicator.id
-            }
-            if (this.activeIndirectIndicator.id) {
-                objType = 'indirect-indicator'
-                id = this.activeIndirectIndicator.id
-            }
-            return { objType, id }
-        },
-        errors () {
+        data () {
             return {
-                'direct-indicator': this.directIndicatorErrors,
-                'indirect-indicator': this.indirectIndicatorErrors
+                checkSavingStatus: false,
+                indicatorsSavingStatus: {},
+                to: null,
+                allowRouting: false,
+                unsavedChangesDialog: false,
+                discardUnsavedChanges: false,
+                addBar: [
+                    { choice: 'indicator' },
+                    { choice: 'calculation' }
+                ]
             }
-        }
-    },
-    watch: {
-        indicatorsSavingStatus: {
-            handler (val) {
-                console.log(this.indicatorsSavingStatus)
-                console.log(val)
-                if ((Object.keys(val).length === this.items.length) & (!Object.keys(this.directIndicatorErrors).length) & (!Object.keys(this.indirectIndicatorErrors).length)) {
-                    for (const key in val) {
-                        if (val[key]) {
-                            this.indicatorsSavingStatus = {}
-                            this.unsavedChangesDialog = true
-                            return
+        },
+        computed: {
+            ...mapState('method', ['method', 'error']),
+            ...mapState('directIndicator', { activeDirectIndicator: 'directIndicator', directIndicators: 'directIndicators', directIndicatorErrors: 'errors' }),
+            ...mapState('indirectIndicator', { activeIndirectIndicator: 'indirectIndicator', indirectIndicators: 'indirectIndicators', indirectIndicatorErrors: 'errors' }),
+            items () {
+                this.directIndicators.forEach(direct => { direct.objType = 'direct-indicator' })
+                this.indirectIndicators.forEach(indirect => { indirect.objType = 'indirect-indicator' })
+                return this.directIndicators.concat(this.indirectIndicators)
+            },
+            activeItem () {
+                let objType = null
+                let id = null
+                if (this.activeDirectIndicator.id) {
+                    objType = 'direct-indicator'
+                    id = this.activeDirectIndicator.id
+                }
+                if (this.activeIndirectIndicator.id) {
+                    objType = 'indirect-indicator'
+                    id = this.activeIndirectIndicator.id
+                }
+                return { objType, id }
+            },
+            errors () {
+                return {
+                    'direct-indicator': this.directIndicatorErrors,
+                    'indirect-indicator': this.indirectIndicatorErrors
+                }
+            }
+        },
+        watch: {
+            indicatorsSavingStatus: {
+                handler (val) {
+                    console.log(this.indicatorsSavingStatus)
+                    console.log(val)
+                    if ((Object.keys(val).length === this.items.length) & (!Object.keys(this.directIndicatorErrors).length) & (!Object.keys(this.indirectIndicatorErrors).length)) {
+                        for (const key in val) {
+                            if (val[key]) {
+                                this.indicatorsSavingStatus = {}
+                                this.unsavedChangesDialog = true
+                                return
+                            }
                         }
+                        this.allowRouting = true
+                        this.$router.push(this.to)
                     }
-                    this.allowRouting = true
-                    this.$router.push(this.to)
+                },
+                deep: true
+            }
+        },
+        beforeRouteLeave (to, from, next) {
+            if (!this.items.length) { this.allowRouting = true }
+            if (this.allowRouting || this.discardUnsavedChanges) { //  & !this.discardUnsavedChanges
+                next(true)
+            } else {
+                this.to = to
+                this.allowRouting = false
+                this.checkSavingStatus = !this.checkSavingStatus
+                next(false)
+            }
+        },
+        created () {
+            this.initialize()
+        },
+        methods: {
+            ...mapActions('method', ['fetchMethod']),
+            ...mapActions('directIndicator', ['fetchDirectIndicators', 'setDirectIndicator', 'addNewDirectIndicator', 'updateDirectIndicator', 'deleteDirectIndicator']),
+            ...mapActions('indirectIndicator', ['fetchIndirectIndicators', 'setIndirectIndicator', 'addNewIndirectIndicator', 'updateIndirectIndicator', 'deleteIndirectIndicator']),
+            async initialize () {
+                const methodId = parseInt(this.$route.params.id, 10)
+                if (this.method.id !== methodId) {
+                    await this.fetchMethod({ id: methodId })
+                    if (this.error) {
+                        this.$router.push({ name: 'methods' })
+                    }
+                }
+                await this.fetchDirectIndicators({ mId: this.method.id })
+                await this.fetchIndirectIndicators({ mId: this.method.id })
+            },
+            addBarMethod (choice) {
+                if (choice === 'indicator') { this.addDirectIndicator() }
+                if (choice === 'calculation') { this.addIndirectIndicator() }
+            },
+            addDirectIndicator () {
+                this.addNewDirectIndicator({ mId: this.method.id })
+                this.setIndirectIndicator()
+            },
+            addIndirectIndicator () {
+                this.addNewIndirectIndicator({ mId: this.method.id })
+                this.setDirectIndicator()
+            },
+            toggleActive (item) {
+                const { objType } = item
+                if (objType === 'direct-indicator' && item.id !== this.activeDirectIndicator.id) {
+                    this.setDirectIndicator(item)
+                    this.setIndirectIndicator()
+                } else if (objType === 'indirect-indicator' && item.id !== this.activeIndirectIndicator.id) {
+                    this.setIndirectIndicator(item)
+                    this.setDirectIndicator()
                 }
             },
-            deep: true
-        }
-    },
-    beforeRouteLeave (to, from, next) {
-        if (!this.items.length) { this.allowRouting = true }
-        if (this.allowRouting || this.discardUnsavedChanges) { //  & !this.discardUnsavedChanges
-            next(true)
-        } else {
-            this.to = to
-            this.allowRouting = false
-            this.checkSavingStatus = !this.checkSavingStatus
-            next(false)
-        }
-    },
-    created () {
-        this.initialize()
-    },
-    methods: {
-        ...mapActions('method', ['fetchMethod']),
-        ...mapActions('directIndicator', ['fetchDirectIndicators', 'setDirectIndicator', 'addNewDirectIndicator', 'updateDirectIndicator', 'deleteDirectIndicator']),
-        ...mapActions('indirectIndicator', ['fetchIndirectIndicators', 'setIndirectIndicator', 'addNewIndirectIndicator', 'updateIndirectIndicator', 'deleteIndirectIndicator']),
-        async initialize () {
-            const methodId = parseInt(this.$route.params.id, 10)
-            if (this.method.id !== methodId) {
-                await this.fetchMethod({ id: methodId })
-                if (this.error) {
-                    this.$router.push({ name: 'methods' })
+            saveActive (type, object) {
+                if (object.target) { return } // Checks whether the $event contains an object or only an inputEvent
+                if (type === 'direct-indicator') { this.updateDirectIndicator({ mId: this.method.id, directIndicator: object }) }
+                if (type === 'indirect-indicator') { this.updateIndirectIndicator({ mId: this.method.id, indirectIndicator: object }) }
+            },
+            deleteActive (objType, object) {
+                if (objType === 'direct-indicator') { this.deleteDirectIndicator({ mId: this.method.id, SuId: 0, SeId: 0, id: object.id }) }
+                if (objType === 'indirect-indicator') { this.deleteIndirectIndicator({ mId: this.method.id, SuID: 0, SeId: 0, id: object.id }) }
+            },
+            savingStatus (indicator, status) {
+                console.log('eeeeeeeee', status)
+                const key = indicator.objType + indicator.id
+                this.indicatorsSavingStatus[key] = status
+                console.log(this.indicatorsSavingStatus)
+            },
+            unsavedChangesChoice (choice) {
+                this.unsavedChangesDialog = false
+                this.discardUnsavedChanges = choice
+                if (choice) {
+                    this.$router.push(this.to)
                 }
-            }
-            await this.fetchDirectIndicators({ mId: this.method.id })
-            await this.fetchIndirectIndicators({ mId: this.method.id })
-        },
-        addBarMethod (choice) {
-            if (choice === 'indicator') { this.addDirectIndicator() }
-            if (choice === 'calculation') { this.addIndirectIndicator() }
-        },
-        addDirectIndicator () {
-            this.addNewDirectIndicator({ mId: this.method.id })
-            this.setIndirectIndicator()
-        },
-        addIndirectIndicator () {
-            this.addNewIndirectIndicator({ mId: this.method.id })
-            this.setDirectIndicator()
-        },
-        toggleActive (item) {
-            const { objType } = item
-            if (objType === 'direct-indicator' && item.id !== this.activeDirectIndicator.id) {
-                this.setDirectIndicator(item)
-                this.setIndirectIndicator()
-            } else if (objType === 'indirect-indicator' && item.id !== this.activeIndirectIndicator.id) {
-                this.setIndirectIndicator(item)
-                this.setDirectIndicator()
-            }
-        },
-        saveActive (type, object) {
-            if (object.target) { return } // Checks whether the $event contains an object or only an inputEvent
-            if (type === 'direct-indicator') { this.updateDirectIndicator({ mId: this.method.id, directIndicator: object }) }
-            if (type === 'indirect-indicator') { this.updateIndirectIndicator({ mId: this.method.id, indirectIndicator: object }) }
-        },
-        deleteActive (objType, object) {
-            if (objType === 'direct-indicator') { this.deleteDirectIndicator({ mId: this.method.id, SuId: 0, SeId: 0, id: object.id }) }
-            if (objType === 'indirect-indicator') { this.deleteIndirectIndicator({ mId: this.method.id, SuID: 0, SeId: 0, id: object.id }) }
-        },
-        savingStatus (indicator, status) {
-            console.log('eeeeeeeee', status)
-            const key = indicator.objType + indicator.id
-            this.indicatorsSavingStatus[key] = status
-            console.log(this.indicatorsSavingStatus)
-        },
-        unsavedChangesChoice (choice) {
-            this.unsavedChangesDialog = false
-            this.discardUnsavedChanges = choice
-            if (choice) {
-                this.$router.push(this.to)
             }
         }
     }
-}
-    // <!-- <div class="p-d-flex p-ai-center p-shadow-5" style="position: fixed; top: 10%; right: 0px; width: 100px; background-color: #fcfcfc; border: 2px solid grey;">
-    //     <div>
-    //         <div v-for="option in addBar" :key="option.choice" class="p-d-flex p-jc-center p-ai-center" style="height: 100px; width: 100px; border: 1px solid lightgrey" :style="(option.hover ? 'background-color: lightgrey;' : '')" @mouseover="option.hover=true" @mouseleave="option.hover=false" @click="addBarMethod(option.choice)">
-    //             <div>
-    //                 <i :class="option.icon? option.icon : 'pi pi-plus'" />
-    //                 <p class="p-text-italic p-m-2">{{option.choice}}</p>
-    //             </div>
-    //         </div>
-    //     </div>
-    // </div> -->
 </script>

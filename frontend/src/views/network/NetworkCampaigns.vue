@@ -39,15 +39,4 @@ export default {
         }
     }
 }
-// <div style="min-width: 1000px;">
-//     <div class="p-d-flex p-m-5 p-jc-between">
-//         <div>
-//         <Button label="Change Display" class="p-button-sm p-mr-2" @click="tableDisplay = !tableDisplay" />
-//         </div>
-//         <span class="p-input-icon-left">
-//             <i class="pi pi-search" /><InputText v-model="search" placeholder="Search Campaigns..." />
-//         </span>
-//     </div>
-//     <Divider />
-// </div>
 </script>

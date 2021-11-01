@@ -3,6 +3,7 @@ import re
 import statistics
 
 from .direct_indicator import DirectIndicator
+from .question_response import QuestionResponse
 
 
 find_square_bracket_keys = re.compile(r"\[(.*?)\]")
@@ -39,8 +40,8 @@ class IndirectIndicator(models.Model):
 
     datatype = models.CharField(max_length=50, blank=False, choices=DATA_TYPES, default="text")
     
-    PERFORMANCE = "PERFORMANCE"
-    SCORING = "SCORING"
+    PERFORMANCE = "performance"
+    SCORING = "scoring"
 
     INDICATOR_TYPES = (
         (PERFORMANCE, "performance"),
@@ -83,14 +84,17 @@ class IndirectIndicator(models.Model):
     def find_values(self, key_value_list):
         calculation = self.calculation
 
-        for calculation_key in self.calculation_keys:
-            if calculation_key in key_value_list:
-                if key_value_list[calculation_key] is not None:
-                    value = key_value_list[calculation_key]
-                    if isinstance(value, dict):
-                        value = max(value, key=value.get)
-                    calculation = calculation.replace(f"[{calculation_key}]", f"{value}")
-        self.calculation = calculation
+        if not None in key_value_list.values():
+            for calculation_key in self.calculation_keys:
+                if calculation_key in key_value_list:
+                    if key_value_list[calculation_key] is not None:
+                        print('===', key_value_list[calculation_key])
+                        value = key_value_list[calculation_key]
+                        if isinstance(value, dict):
+                            value = max(value, key=value.get)
+                        calculation = calculation.replace(f"[{calculation_key}]", f"{value}")
+
+            self.calculation = calculation
 
     # Calculates indicator formula
     def calculate(self):
@@ -112,16 +116,16 @@ class IndirectIndicator(models.Model):
         elif any(func in self.calculation for func in functionList):
             key = re.findall(find_square_bracket_keys, self.formula)
             if len(key):
+                question_responses = QuestionResponse.objects.filter(survey_response__esea_account=4, survey_response__finished=True)
                 directind = DirectIndicator.objects.filter(method=self.method, key=key[0]).first()
                 indirectind = IndirectIndicator.objects.filter(method=self.method, key=key[0]).first()
                 if directind is not None:
                     indicator = directind
-                else:
-                    indicator = indirectind
-                if True: # len(direct_indicator.responses) or not len(direct_indicator.responses)
-                    # responses = [float(r) for r in indicator.responses]
-                    responses = [1, 3, 4, 7, 8]
+                    indicator.filter_responses(question_responses)
+                    responses = [float(r) for r in indicator.responses]
+
                     if 'avg(' in self.calculation:
+                        print('cheeeeeck', self.calculation)
                         self.value = sum(responses)/len(responses) # int(direct_indicator.value)
                     elif 'sum(' in self.calculation:
                             self.value = sum(responses)
@@ -150,7 +154,7 @@ class IndirectIndicator(models.Model):
         formula = self.calculation.replace('IF', '@@IF').replace('ELSE', '##ELSE').replace('THEN', '%%THEN')
         formula = [x.strip() for x in re.split('@@|##|%%', formula)]
         formula = list(filter(lambda x: x != '', formula))
-        print(f'\n  {self.key}: Start Conditional Calculations... \nformula: {formula}')
+        print(f'\n  {self.key}:::::::::: Start Conditional Calculations... \nformula: {formula}')
 
         ifs = 1
         elses = 0
@@ -159,7 +163,6 @@ class IndirectIndicator(models.Model):
         val = None
 
         for cond in formula:
-            print('-->', cond)
             bracket_keys = list(set(re.findall(find_square_bracket_keys, cond)))
 
             if self.key in bracket_keys:
@@ -249,5 +252,5 @@ class IndirectIndicator(models.Model):
 
         if len(conds) == 1:
             conds = conds[0]
-
+        print(conds)
         return conds

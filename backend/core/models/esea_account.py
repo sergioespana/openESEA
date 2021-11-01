@@ -1,8 +1,11 @@
 from django.db import models
 from django.shortcuts import get_object_or_404
+from datetime import date
+
 from .respondent import Respondent
 from .survey_response import SurveyResponse
-from datetime import date
+from .question import Question
+
 
 
 class EseaAccount(models.Model):
@@ -28,7 +31,7 @@ class EseaAccount(models.Model):
     def survey_response_by_survey(self):
         arr = []
         for survey in self.method.surveys.all():
-            tempdict = {'id': survey.id, 'name': survey.name, 'questions': [], 'stakeholdergroup': str(survey.stakeholdergroup), 'type': survey.response_type} # 'questions': len(survey.questions.all())
+            tempdict = {'id': survey.id, 'name': survey.name, 'questions': len([q for q in Question.objects.filter(section__survey=survey)]), 'stakeholdergroup': str(survey.stakeholdergroup), 'type': survey.response_type}
             tempdict['respondees'] = [{'name':str(respondee)} for respondee in Respondent.objects.filter(response__esea_account=self, response__survey=survey).distinct()]
             tempdict['responses'] = len(self.responses.filter(survey=survey, finished=True))
             tempdict['required_response_rate'] = survey.min_threshold

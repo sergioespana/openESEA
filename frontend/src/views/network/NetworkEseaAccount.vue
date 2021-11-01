@@ -19,8 +19,7 @@
                         </span>
                     </div>
                 </template>
-                <Column field="name" header="Survey" />
-                <Column field="name" header="Name" sortable />
+                <Column field="name" header="Survey" sortable />
                 <Column field="stakeholdergroup" header="Stakeholder Group" />
                 <Column field="questions" header="Questions" sortable />
                 <Column field="respondees.length" header="Stakeholders" sortable />
@@ -32,7 +31,7 @@
                 </Column>
                 <Column field="required_response_rate" header="Response Rate Threshold" sortable>
                     <template #body='{data}'>
-                        {{data.required_response_rate}}%
+                        {{data.required_response_rate* 100}}%
                     </template>
                 </Column>
                 <Column headerStyle="width: 15rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
@@ -68,6 +67,9 @@
         methods: {
             goToSummarizedResponses (event) {
                 this.$router.push({ name: 'method-survey-results', params: { OrganisationId: 1, methodId: 1, surveyId: 1 } })
+            },
+            goToResults (data) {
+                this.$router.push({ name: 'esea-account-report', params: { OrganisationId: this.eseaAccount.organisation, EseaAccountId: this.eseaAccount.id } })
             }
         }
     }

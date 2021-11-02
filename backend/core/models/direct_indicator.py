@@ -150,6 +150,7 @@ class DirectIndicator(models.Model):
                         valuesdict[question_option.text] += 1
                     except:
                         print('doesnt exist')
+                        
         # Return single value if datatype is either singlechoice or boolean
         if (self.datatype == self.SINGLECHOICE or self.datatype == self.BOOLEAN):
             if self.question.section.survey.response_type == 'single':

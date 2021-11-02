@@ -7,7 +7,7 @@ from secrets import token_urlsafe
 
 from ..models import (Survey, SurveyResponse, QuestionResponse, DirectIndicator, IndirectIndicator, Respondent, StakeholderGroup, EseaAccount)
 from ..serializers import (SurveyResponseSerializer, QuestionResponseSerializer, SurveyResponseCalculationSerializer)
-from ..utils import map_responses_by_indicator, calculate_indicators
+from ..utils import map_responses_by_indicator, calculate_indicators, audit_data
 
 
 class BaseModelViewSet(viewsets.ModelViewSet):
@@ -64,6 +64,7 @@ class SurveyResponseViewSet(BaseModelViewSet):
         return Response(serializer.data)
     
     def update(self, request, organisation_pk, esea_account_pk, token):
+        # Bit of a hack to check whether a survey response is single or multi-respondent
         if token.isnumeric():
             surveyresponse = get_object_or_404(SurveyResponse, survey=token, esea_account=esea_account_pk)
         else:
@@ -85,14 +86,19 @@ class SurveyResponseViewSet(BaseModelViewSet):
 
             indirect_indicators = IndirectIndicator.objects.filter(method=eseaaccount.method)
             direct_indicators = DirectIndicator.objects.filter(method=eseaaccount.method)
-            for direct_indicator in direct_indicators:
-                direct_indicator.filter_responses(question_responses)
+
+            # for direct_indicator in direct_indicators:
+            #     direct_indicator.filter_responses(question_responses)
             # for item in question_responses:
             #     s = QuestionResponseSerializer(item, many=True)
           
             map_responses_by_indicator(direct_indicators, question_responses)
             indicators = calculate_indicators(indirect_indicators, direct_indicators)
-                   
+
+            # for indicator in indicators.values():
+            #     print('----->',  indicator)
+            audit_data(eseaaccount, indicators)
+
             serializer = SurveyResponseCalculationSerializer(indicators.values(), many=True)
             return Response(
                 {
@@ -120,5 +126,5 @@ class SurveyResponseViewSet(BaseModelViewSet):
 
     # def create_df(self, request, organisation_pk, esea_account_pk):
     #    /survey-responses/create_df/
-
+    #    audit-data.py (=script file)
     # call script to create df from database values

@@ -83,18 +83,17 @@ class IndirectIndicator(models.Model):
     # Replaces indicator keys with corresponding value to be able to calculate the indirect indicator (used in 'utils > calculate_indicators')
     def find_values(self, key_value_list):
         calculation = self.calculation
-
+        # print('===', self.key, '--', calculation_key, key_value_list[calculation_key])
         if not None in key_value_list.values():
             for calculation_key in self.calculation_keys:
                 if calculation_key in key_value_list:
-                    if key_value_list[calculation_key] is not None:
-                        print('===', key_value_list[calculation_key])
-                        value = key_value_list[calculation_key]
-                        if isinstance(value, dict):
-                            value = max(value, key=value.get)
-                        calculation = calculation.replace(f"[{calculation_key}]", f"{value}")
-
+                    value = key_value_list[calculation_key]
+                    if isinstance(value, dict):
+                        value = max(value, key=value.get)
+                    calculation = calculation.replace(f"[{calculation_key}]", f"{value}")
             self.calculation = calculation
+        else:
+            print('Missing values in key_value_list!')
 
     # Calculates indicator formula
     def calculate(self):
@@ -146,7 +145,9 @@ class IndirectIndicator(models.Model):
         else:
             try:
                 self.value = eval(self.calculation)
-            except:
+                return self.value
+            except Exception as e:
+                print('error!', self.calculation, self.has_conditionals)
                 self.value = None
 
     # Calculates conditional formulas (IF..THEN..)
@@ -204,6 +205,7 @@ class IndirectIndicator(models.Model):
                 if 'OR' in cond:
                     conds = cond.split("OR")
                     conds = self.process_expression(conds)
+                   
                     evaluatedconds = [eval(n) for n in conds]      
 
                     if True in evaluatedconds:
@@ -212,7 +214,9 @@ class IndirectIndicator(models.Model):
                         search_else = True
                     continue
 
+                
                 cond = self.process_expression(cond)
+                
                 if eval(cond):
                     last_if = True
                 else:
@@ -232,7 +236,7 @@ class IndirectIndicator(models.Model):
                     val = eval(val)
                 except:
                     pass
-                
+
                 return str(val)
         
     def process_expression(self, conds):
@@ -252,5 +256,5 @@ class IndirectIndicator(models.Model):
 
         if len(conds) == 1:
             conds = conds[0]
-        print(conds)
+
         return conds

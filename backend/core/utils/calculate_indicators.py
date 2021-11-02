@@ -55,7 +55,9 @@ def calculate_indicator(indicator, value_list) -> str:
             )
 
         indicator.find_values(values)
-        return indicator.calculate()
+        outcome = indicator.calculate()
+
+        return outcome
 
 
 def map_responses_by_indicator(direct_indicators, question_responses) -> None:

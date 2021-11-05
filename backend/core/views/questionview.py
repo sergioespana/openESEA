@@ -6,6 +6,8 @@ from ..serializers import QuestionSerializer
 
 
 class QuestionViewSet(viewsets.ModelViewSet):
+    authentication_classes = []
+    permission_classes = []
     serializer_class = QuestionSerializer
 
     def get_queryset(self):

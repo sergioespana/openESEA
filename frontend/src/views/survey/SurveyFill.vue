@@ -146,6 +146,7 @@
                 await this.fetchSurveyResponse({ oId: this.eseaAccount?.organisation || 0, eaId: this.eseaAccount?.id || 0, id: this.$route.params.uniquetoken })
                 console.log('++++', this.surveyResponse.question_responses)
                 await this.fetchSurvey({ mId: this.surveyResponse.method, id: this.surveyResponse.survey })
+                console.log(this.survey.name)
                 await this.fetchQuestions({ mId: this.surveyResponse.method, SuId: this.surveyResponse.survey, SeId: 0 })
                 this.loading = false
                 if (this.surveyResponse.finished) {

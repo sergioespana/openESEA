@@ -3,7 +3,7 @@ from django.core.mail import send_mail
 import csv
 import io
 
-from ..models import Respondent, SurveyResponse
+from ..models import Respondent, SurveyResponse, Organisation
 
 
 def import_respondents(excel_file, eseaaccount, survey):
@@ -35,16 +35,24 @@ def import_respondents(excel_file, eseaaccount, survey):
                 respondents.append(respondent)
             except:
                 return f"error in row {i}: {row}"
+
+    tokenlist = []
     for respondent in respondents:
         respondent.save()
         new_survey_response = SurveyResponse.objects.create(survey=survey, respondent=respondent, esea_account=eseaaccount)
+        tokenlist.append(new_survey_response.token)
         print(f'{respondent}: {new_survey_response.token}')
-        subject = f"Survey for {respondent} regarding {respondent.organisation}"
-        message = f"Hi {respondent}!\nWe would like you to take a moment to fill in the following survey as employee of {respondent.organisation} to create a report about the organisation's position in the ethical, social and environmental fields.\n\n https://esea.herokuapp.com/survey-fill/{new_survey_response.token}/" # http://localhost:8080/
-        # recepient = respondent.email
-        recepient = "seriousdeejay@gmail.com"
-        send_mail(subject, message, EMAIL_HOST_USER, [recepient], fail_silently = False)
-        break
+
+    # subject = f"Survey for {respondent} regarding {respondent.organisation}"
+    # message = f"Hi {respondent}!\nWe would like you to take a moment to fill in the following survey as employee of {respondent.organisation} to create a report about the organisation's position in the ethical, social and environmental fields.\n\n https://esea.herokuapp.com/survey-fill/{new_survey_response.token}/" # http://localhost:8080/
+    print(tokenlist)
+    org = Organisation.objects.get(id=eseaaccount.organisation.id)
+    subject = f"Here are all the tokens for your multiple respondent survey for organisation {org.name}. Go to http://localhost:8080/survey-fill/ your token"
+    message = f"here are the tokens belonging to the multiple respondents: {tokenlist}."
+    # recepient = respondent.email
+    recepient = "seriousdeejay@gmail.com"
+    send_mail(subject, message, EMAIL_HOST_USER, [recepient], fail_silently = False)
+    # break --> break's purpose is to only create the first respond/send 1 mail.
     return "The Survey has been succesfully deployed to the provided survey respondents."
 
 

@@ -36,7 +36,7 @@ class BaseModelViewSet(viewsets.ModelViewSet):
 
 
 class SurveyViewSet(BaseModelViewSet):
-    # authentication_classes = []
+    authentication_classes = []
     serializer_class = SurveyDisplaySerializer # SurveyOverviewSerializer
     permission_classes_by_action = {
         'create': (AllowAny,),
@@ -90,6 +90,7 @@ class SurveyViewSet(BaseModelViewSet):
         return super().update(request, *args, **kwargs)
 
     def retrieve(self, request, method_pk, pk):
+        print('check')
         survey = get_object_or_404(Survey, pk=pk)
         serializer = SurveyDisplaySerializer(survey) # SurveyDetailSerializer(survey)
         return Response(serializer.data) 

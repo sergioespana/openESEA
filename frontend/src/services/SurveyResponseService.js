@@ -8,10 +8,4 @@ const createUrl = ({ oId, eaId, id, query = '' }) => {
     return `${base}/${query}`
 }
 
-// const createUrl = ({ mId, sId, OrganisationId = 0, id, query = '' }) => {
-//     let base = `${API_URL}/methods/${mId}/surveys/${sId}/organisations/${OrganisationId}/responses`
-//     base = id ? `${base}/${id}` : base
-//     return `${base}/${query}`
-// }
-
 export default new BaseApiService(createUrl)

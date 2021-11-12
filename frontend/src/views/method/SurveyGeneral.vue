@@ -37,13 +37,13 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
-import Dropdown from 'primevue/dropdown'
-import { RESPONSE_TYPE } from '../../utils/constants'
-import { isEqual, cloneDeep } from 'lodash'
-import { required, maxLength, between } from '../../utils/validators'
-import HandleValidationErrors from '../../utils/HandleValidationErrors'
-import useVuelidate from '@vuelidate/core'
+    import { mapState, mapActions } from 'vuex'
+    import Dropdown from 'primevue/dropdown'
+    import { RESPONSE_TYPE } from '../../utils/constants'
+    import { isEqual, cloneDeep } from 'lodash'
+    import { required, maxLength, between } from '../../utils/validators'
+    import HandleValidationErrors from '../../utils/HandleValidationErrors'
+    import useVuelidate from '@vuelidate/core'
 
     export default {
         components: {

@@ -19,7 +19,6 @@ class NetworkMember(models.Model):
     NETWORKADMIN = 2
     GUEST = 1 
 
-    ''' Add in more status options here '''
     ROLES = (
         (NETWORKADMIN, "network admin"),
         (GUEST, "guest")

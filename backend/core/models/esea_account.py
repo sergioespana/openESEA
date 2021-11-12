@@ -1,8 +1,11 @@
 from django.db import models
 from django.shortcuts import get_object_or_404
+from datetime import date
+
 from .respondent import Respondent
 from .survey_response import SurveyResponse
-from datetime import date
+from .question import Question
+
 
 
 class EseaAccount(models.Model):
@@ -12,33 +15,23 @@ class EseaAccount(models.Model):
 
     year = models.IntegerField(default=date.today().year)
     deployed_to_respondents = models.BooleanField(default=False)
-    sufficient_responses = models.BooleanField(default=False)      # Same as Status: Enum for now
+    sufficient_responses = models.BooleanField(default=False)      # Could be replaced by status enum with 'sufficient, unsufficient, ongoing, overdue, etc.'
     response_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0)
-
-    # SUFFICIENT = "SUFFICIENT"
-    # UNSUFFICIENT = "UNSUFFICIENT"
-
-    # STATUS_OPTIONS = (
-    #     (SUFFICIENT, "Sufficient"),  # or Complete
-    #     (UNSUFFICIENT, "Unsufficient"), # or Incomplete
-    #     (ONGOING, 'Ongoing'),
-    #     # Add in more status options
-    # )
-    # status = models.CharField(max_length=100, blank=False, choices=STATUS_OPTIONS, default="UNSUFFICIENT")
 
     def __str__(self):
         return f'organisation:{self.organisation} - campaign:{self.campaign}'
     
-    @property  # Should i keep this network property?
+    @property
     def network(self):
         if self.campaign:
             return self.campaign.network
         return None
 
+    # Shows list of additional information about the ESEA Account
     def survey_response_by_survey(self):
         arr = []
         for survey in self.method.surveys.all():
-            tempdict = {'id': survey.id, 'name': survey.name, 'questions': [], 'stakeholdergroup': str(survey.stakeholdergroup), 'type': survey.response_type} # 'questions': len(survey.questions.all())
+            tempdict = {'id': survey.id, 'name': survey.name, 'questions': len([q for q in Question.objects.filter(section__survey=survey)]), 'stakeholdergroup': str(survey.stakeholdergroup), 'type': survey.response_type}
             tempdict['respondees'] = [{'name':str(respondee)} for respondee in Respondent.objects.filter(response__esea_account=self, response__survey=survey).distinct()]
             tempdict['responses'] = len(self.responses.filter(survey=survey, finished=True))
             tempdict['required_response_rate'] = survey.min_threshold
@@ -66,39 +59,3 @@ class EseaAccount(models.Model):
     def all_responses(self):
         responses = SurveyResponse.objects.filter(esea_account=self, finished=True)
         return responses
-
-
-''' 
-- Should change __str__ return
-'''
-
-
-
-
-    # @property
-    # def response_rate(self):
-    #     response_rate_dict = {}
-    #     overall_finished_responses = 0
-    #     for survey in self.method.surveys.all():
-    #         finished_responses = [response for response in self.responses.all() if (response.finished == True & response.survey == survey)]
-    #         overall_finished_responses += len(finished_responses)
-    #         sum = (len(finished_responses)/(len(self.responses.all()) or 1) * 100) 
-    #         sum = round(sum,2)
-    #         response_rate_dict[survey.name] = {'rate': sum, 'required': survey.rate}
-    #     self.all_response_rate(overall_finished_responses)
-    #     return response_rate_dict
-
-    # def sufficient_response_rate(self):
-    #     Bool = True
-    #     for survey in self.response_rate:
-    #         innerdict = self.response_rate[survey]
-    #         if (innerdict['rate'] >= innerdict['required']):
-    #             print(f'The response rate of {survey} is high enough!')
-    #         else:
-    #             print(f'The response rate of {survey} is not high enough!')
-    #             Bool = False
-
-    #     self.sufficient_responses = Bool
-    
-    # def all_response_rate(self, finished_responses):
-    #     self.all_response_rate = (finished_responses/(len(self.responses.all()) or 1)) * 100

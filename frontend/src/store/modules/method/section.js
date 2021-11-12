@@ -23,9 +23,6 @@ export default {
 	},
     mutations: {
         setSections (state, { data }) {
-			// for (const section of data) {
-			// 	console.log(section) // section.questions.sort()
-			// }
             state.sections = data
             state.debouncers = {}
 			state.errors = {}
@@ -129,7 +126,6 @@ export default {
             commit('setSection', response)
         },
         async deleteSection ({ commit }, payload) {
-            console.log('payload', payload)
             if (payload.id > 0) {
                 const { error } = await SectionService.delete(payload)
                 if (error) {
@@ -165,14 +161,3 @@ export default {
 		}
 	}
 }
-// async updateSection ({ state, commit }, { mId, sId, data }) {
-// const id = state.eseaAccount.id
-// const data = state.eseaAccount
-// const { response, error } = await SectionService.put({ mId, sId, id: data.id, data })
-// if (error) {
-//     commit('setError', { error })
-//     return
-// }
-// commit('updateList', { id: response.data?.id, data: response.data })
-// commit('setSection', response)
-// },

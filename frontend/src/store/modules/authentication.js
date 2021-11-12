@@ -100,36 +100,3 @@ export default {
         }
     }
 }
-// if (false) {
-//   console.log()
-//   return
-// }
-// console.log('response')
-// return new Promise((resolve, reject) => {
-//   await AxiosInstance.post('/api-token/', {
-//     username: usercredentials.username,
-//     password: usercredentials.password
-//   })
-//   .then(response => {
-//     context.commit('updateStorage', { access: response.data.access, refresh: response.data.refresh })
-//     resolve(context.dispatch('saveAuthenticatedUserDetails'))
-//   })
-//   .catch(err => {
-//     reject(err)
-//   })
-// })
-//   console.log('ttt', context.state.accessToken, context.state.refreshToken)
-//   return new Promise((resolve, reject) => {
-//     AxiosInstance.post('/api-refresh/', { refresh: context.state.refreshToken })
-//   .then(response => {
-//     console.log('refreshed!:', response.data.access)
-//     resolve(context.commit('updateStorage', { access: response.data.access, refresh: context.state.refreshToken }))
-//   })
-//   .catch(err => {
-//     console.log(err)
-//     reject(err)
-//   })
-// })
-    // error (state) {
-//     state.status = STATUS.ERROR
-// }

@@ -49,7 +49,6 @@ export default {
             state.indirectIndicators = state.indirectIndicators.filter(i => i.id !== id)
         },
         updateList (state, { id, data }) {
-            console.log(id, '------', data)
             if (id !== data.id) {
                 delete state.debouncers[id]
                 delete state.errors[id]
@@ -101,7 +100,6 @@ export default {
     },
     actions: {
         async fetchIndirectIndicators ({ commit }, payload) {
-            console.log('fetching indirect indicators')
             const { response, error } = await IndirectIndicatorService.get(payload)
             if (error) {
                 commit('setError', { error })

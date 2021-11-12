@@ -5,7 +5,6 @@ import store from './store'
 // import IdleVue from 'idle-vue'
 // import { useVuelidate } from '@vuelidate/core'
 // import Vuelidate from 'vuelidate'
-// import Vuelidate from 'vuelidate'
 // import VuelidatePlugin from '@vuelidate/core'
 import Primevue from 'primevue/config'
 import ToastService from 'primevue/toastservice'
@@ -15,6 +14,7 @@ import 'primevue/resources/primevue.min.css' // core css
 import 'primeicons/primeicons.css' // icons
 import 'primeflex/primeflex.css' // CSS Utility Library
 
+// Would potentially be better to load some in locally if the 3rd party component is hardly used
 import Menubar from 'primevue/menubar'
 import Menu from 'primevue/menu'
 import Card from 'primevue/card'

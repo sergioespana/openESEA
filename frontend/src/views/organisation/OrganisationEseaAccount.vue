@@ -1,5 +1,4 @@
 <template>
-{{organisation.accesLevel}}
     <div v-if="eseaAccount.campaign" class="card p-mx-5 p-mb-5">
         <div class="p-d-flex p-jc-between p-m-2">
             <div>
@@ -148,7 +147,6 @@
                 columns: [
                     { field: 'name', header: 'Name' },
                     { field: 'method', header: 'Method' },
-                    // { field: 'description', header: 'Description' },
                     { field: 'questions.length', header: 'Questions' },
                     { field: 'stakeholders', header: 'Stakeholder group' }
                 ],
@@ -249,11 +247,7 @@
                 this.$router.push({ name: 'esea-account-report', params: { OrganisationId: this.$route.params.OrganisationId, EseaAccountId: this.eseaAccount.id } })
             },
             async goToReport (event) {
-                // await this.setEseaAccount(event.data)
-                // await this.setOrganisation({ id: event.data.organisation })
-                console.log(event)
                 this.$router.push({ name: 'esea-account-report', params: { OrganisationId: this.$route.params.OrganisationId, EseaAccountId: this.$route.params.EseaAccountId } })
-                console.log(event.data)
             },
             async removeEseaAccount () {
                 this.deleteEseaAccountDialog = false
@@ -263,52 +257,10 @@
             },
             async goToMethod () {
                 this.$router.push({ name: 'newmethoddetails', params: { id: this.eseaAccount.method } })
-            // this.$router.push({ name: 'methoddetails', params: { id: this.campaign.method } })
+                // this.$router.push({ name: 'methoddetails', params: { id: this.campaign.method } })
             }
         }
     }
-
-        // <!-- <TabPanel header="surveys">
-        //     <DataTable ref="dt" autoLayout="false" :value="surveys" v-model:selection="selectedRows" selectionMode="single" dataKey="id" :loading="loading" @row-select="goToSurvey"
-        //     :paginator="true" :rows="10" :filters="filters" paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-        //     :rowsPerPageOptions="[5,10,25]" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" class="p-datatable-striped">
-
-        //         <template #loading>
-        //             Loading records, please wait...
-        //         </template>
-        //         <template # empty>
-        //             empty
-        //         </template>
-        //         <Column
-        //             v-for="column in columns"
-        //             :key="column"
-        //             :field="column.field"
-        //             :header="column.header"
-        //             ><template v-if="column.header === 'action'" #body="slotProps">
-        //                 <Button v-if="surveyWithResponse" type="button" label="Results" class="p-button-raised p-button secondary" @click="goToSurveyResult(slotProps.data)" />
-        //                 <Button v-else label="Participate"  @click="goToSurveyResult(slotProps.data)" />
-        //             </template>
-        //         </Column>
-        //         <Column headerStyle="width: 20rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
-        //         <template #body>
-        //             <Button label="Add Employees" type="button" icon="pi pi-user-plus"></Button>
-        //         </template>
-        //     </Column>
-
-        //         <<Column field="name" header="Name"></Column>
-        //         <Column v-if="false" field="description" header="Description"></Column>
-        //         <Column field="questions.length" header="Questions"></Column>
-        //         <Column field="method.name" header="Method"></Column>
-        //         <Column field="stakeholders" header="Stakeholder group"></Column>
-        //         <Column header="Action" headerStyle="width: 15%">
-        //             <template #body="slotProps">
-        //                 <Button v-if="surveyWithResponse" type="button" label="Results" class="p-button-raised p-button secondary" @click="goToSurveyResult(slotProps.data)" />
-        //                 <Button v-else label="Participate"  @click="goToSurveyResult(slotProps.data)" />
-        //             </template>
-        //         </Column>
-        //     </DataTable>
-        //     {{surveys}}
-        // </TabPanel> -->
 </script>
 
 <style lang="scss" scoped>

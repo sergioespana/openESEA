@@ -168,48 +168,6 @@
                         </div>
                     </TabPanel>
                 </TabView>
-
-                    <!-- <div class="p-my-3 p-p-3" style="background-color: #F8F8F8; border: 1px solid lightgrey;">
-                        <div class="p-grid p-ai-center">
-                            <div class="p-col-fixed p-text-bold" style="width:150px;">
-                                Name:
-                            </div>
-                            <div class="p-col">
-                                "{{direct_indicator.name}}"
-                            </div>
-                        </div>
-                        <div class="p-grid p-ai-center">
-                            <div class="p-col-fixed p-text-bold" style="width:150px;">
-                                Description:
-                            </div>
-                            <div class="p-col">
-                                "{{direct_indicator.description}}"
-                            </div>
-                        </div>
-                        <div v-if="direct_indicator.pre_unit.length" class="p-grid p-ai-center">
-                            <div class="p-col-fixed p-text-bold" style="width:150px;">
-                                Pre_unit:
-                            </div>
-                            <div class="p-col">
-                                "{{direct_indicator.pre_unit}}"
-                            </div>
-                        </div>
-                        <div v-if="direct_indicator.post_unit.length" class="p-grid p-ai-center">
-                            <div class="p-col-fixed p-text-bold" style="width:150px;">
-                                Post_unit:
-                            </div>
-                            <div class="p-col">
-                                "{{direct_indicator.post_unit}}"
-                            </div>
-                        </div>
-                        <div v-if="direct_indicator.options.length">
-                            <span class="p-text-bold">Options:</span>
-                            <ul v-for="option in direct_indicator.options" :key="option.id">
-                                <li>{{option.text}}</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div> -->
             </TabPanel>
         </TabView>
 
@@ -217,33 +175,33 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+    import { mapState, mapActions } from 'vuex'
 
-export default {
-    created () {
-        this.initialize()
-    },
-    data () {
-        return {
-            MethodDisplayToggleValue: { name: 'Surveys', value: 1 },
-            MethodDisplayToggleOptions: [
-                { name: 'Surveys', value: 1 },
-                { name: 'Topics', value: 0 }
-            ]
-        }
-    },
-    computed: {
-        ...mapState('method', ['method'])
-    },
-
-    methods: {
-        ...mapActions('method', ['fetchMethod']),
-        async initialize () {
-            await this.fetchMethod({ id: this.method?.id })
+    export default {
+        created () {
+            this.initialize()
         },
-        exportMethod () {
-            // Export Method to PDF
+        data () {
+            return {
+                MethodDisplayToggleValue: { name: 'Surveys', value: 1 },
+                MethodDisplayToggleOptions: [
+                    { name: 'Surveys', value: 1 },
+                    { name: 'Topics', value: 0 }
+                ]
+            }
+        },
+        computed: {
+            ...mapState('method', ['method'])
+        },
+
+        methods: {
+            ...mapActions('method', ['fetchMethod']),
+            async initialize () {
+                await this.fetchMethod({ id: this.method?.id })
+            },
+            exportMethod () {
+                // Export Method to PDF
+            }
         }
     }
-}
 </script>

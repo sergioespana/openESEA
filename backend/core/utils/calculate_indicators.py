@@ -2,6 +2,7 @@ from typing import Dict, List
 from ..models import DirectIndicator, IndirectIndicator
 from ..classes import Indicator
 
+
 def calculate_indicators(direct_indicators) -> Dict[str, Indicator]:
     indicators = {}
 
@@ -11,6 +12,7 @@ def calculate_indicators(direct_indicators) -> Dict[str, Indicator]:
             # print(response.all())
         #indicators[direct_indicator.key] = direct_indicator.responses
     return indicators
+
 
 def calculate_indicators(indirect_indicators: List[IndirectIndicator], direct_indicators: List[DirectIndicator],) -> Dict[str, Indicator]:
     indicators = merge_indicators(indirect_indicators, direct_indicators)
@@ -34,6 +36,7 @@ def calculate_indicators(indirect_indicators: List[IndirectIndicator], direct_in
     return indicators
 
 
+# Recursive formula that calculates an indicator based on its formula while finding the indicator values that are required in the formula
 def calculate_indicator(indicator, value_list) -> str:
     if indicator.value:
         return indicator.value
@@ -44,22 +47,22 @@ def calculate_indicator(indicator, value_list) -> str:
         return indicator.calculate()
     else:
         values = {}
-        
+
         for calculation_key in indicator.calculation_keys:
             child_indicator = value_list[calculation_key]
             values[child_indicator.key] = calculate_indicator(
                child_indicator, value_list
             )
-        print('-->', values)
+
         indicator.find_values(values)
-        return indicator.calculate()
+        outcome = indicator.calculate()
+
+        return outcome
 
 
 def map_responses_by_indicator(direct_indicators, question_responses) -> None:
     for direct_indicator in direct_indicators:
         direct_indicator.filter_responses(question_responses)
-
-
 
 
 # TODO: Remove function when direct and indirect indicators are merged.

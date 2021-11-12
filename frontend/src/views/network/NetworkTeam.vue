@@ -57,123 +57,123 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
-import InviteUsers from '@/components/dialogs/InviteUsers'
-import Dropdown from 'primevue/dropdown'
+    import { mapState, mapActions } from 'vuex'
+    import InviteUsers from '@/components/dialogs/InviteUsers'
+    import Dropdown from 'primevue/dropdown'
 
-export default {
-    components: {
-        InviteUsers,
-        Dropdown
-    },
-    data () {
-        return {
-            inviteDialog: false,
-            changeDialog: false,
-            messageDialog: false,
-            deleteDialog: false,
-            member: null,
-            search: '',
-            columns: [
-                { field: 'user_name', header: 'User' },
-                { field: 'role_name', header: 'Role' }
-                // { field: 'invitation', header: 'Invitation' }
-            ],
-            roles: [
-                { role_name: 'network admin', role: 2 },
-                { role_name: 'guest', role: 1 }
-            ]
-        }
-    },
-    computed: {
-        ...mapState('authentication', ['currentuser']),
-        ...mapState('networkTeam', ['networkmembers']),
-        ...mapState('network', ['network']),
-        ...mapState('user', ['users']),
-        permission () {
-            if (this.network.accesLevel) {
-                const accesLevel = this.network.accesLevel
-                if (accesLevel === 'admin' || accesLevel === 'network admin') {
+    export default {
+        components: {
+            InviteUsers,
+            Dropdown
+        },
+        data () {
+            return {
+                inviteDialog: false,
+                changeDialog: false,
+                messageDialog: false,
+                deleteDialog: false,
+                member: null,
+                search: '',
+                columns: [
+                    { field: 'user_name', header: 'User' },
+                    { field: 'role_name', header: 'Role' }
+                    // { field: 'invitation', header: 'Invitation' }
+                ],
+                roles: [
+                    { role_name: 'network admin', role: 2 },
+                    { role_name: 'guest', role: 1 }
+                ]
+            }
+        },
+        computed: {
+            ...mapState('authentication', ['currentuser']),
+            ...mapState('networkTeam', ['networkmembers']),
+            ...mapState('network', ['network']),
+            ...mapState('user', ['users']),
+            permission () {
+                if (this.network.accesLevel) {
+                    const accesLevel = this.network.accesLevel
+                    if (accesLevel === 'admin' || accesLevel === 'network admin') {
+                        return true
+                    }
+                }
+                return false
+            },
+            filteredMembers () {
+                return this.networkmembers.filter(member => {
+                    return (
+                        member.user_name.toLowerCase().includes(this.search.toLowerCase()) ||
+                        member.role_name.toLowerCase().includes(this.search.toLowerCase()) ||
+                        member.invitation.toLowerCase().includes(this.search.toLowerCase())
+                    )
+                })
+            }
+        },
+        created () {
+            this.getData()
+        },
+        methods: {
+            ...mapActions('networkTeam', ['fetchNetworkMembers', 'createNetworkMember', 'updateNetworkMember', 'deleteNetworkMember']),
+            ...mapActions('user', ['fetchUsers', 'setUser']),
+            ...mapActions('network', ['fetchNetwork']),
+            async getData () {
+                await this.fetchNetworkMembers({ nId: this.$route.params.NetworkId })
+                await this.fetchNetwork({ id: this.$route.params.NetworkId })
+            },
+            async openInviteDialog () {
+                await this.fetchUsers({ query: `?excludenetwork=${this.$route.params.NetworkId}` })
+                this.inviteDialog = true
+            },
+            async inviteUser (data) {
+                await this.createNetworkMember({ nId: this.$route.params.NetworkId, data: { user: data.id } })
+                this.getData()
+                this.inviteDialog = false
+            },
+            changeRole (data) {
+                console.log(data)
+                this.member = data
+                if (this.checkNetworkAdminCount(data)) {
+                    this.changeDialog = true
+                } else {
+                    this.messageDialog = true
+                }
+            },
+            checkNetworkAdminCount (data) {
+                if (this.networkmembers.filter(element => element.user_name !== data.user_name).find(element => element.role_name === 'network admin')) {
+                    console.log('===', this.networkmembers.filter(element => element.user_name !== data.user_name).find(element => element.role_name === 'network admin'))
                     return true
                 }
-            }
-            return false
-        },
-        filteredMembers () {
-            return this.networkmembers.filter(member => {
-                return (
-                    member.user_name.toLowerCase().includes(this.search.toLowerCase()) ||
-                    member.role_name.toLowerCase().includes(this.search.toLowerCase()) ||
-                    member.invitation.toLowerCase().includes(this.search.toLowerCase())
-                )
-            })
-        }
-    },
-    created () {
-        this.getData()
-    },
-    methods: {
-        ...mapActions('networkTeam', ['fetchNetworkMembers', 'createNetworkMember', 'updateNetworkMember', 'deleteNetworkMember']),
-        ...mapActions('user', ['fetchUsers', 'setUser']),
-        ...mapActions('network', ['fetchNetwork']),
-        async getData () {
-            await this.fetchNetworkMembers({ nId: this.$route.params.NetworkId })
-            await this.fetchNetwork({ id: this.$route.params.NetworkId })
-        },
-        async openInviteDialog () {
-            await this.fetchUsers({ query: `?excludenetwork=${this.$route.params.NetworkId}` })
-            this.inviteDialog = true
-        },
-        async inviteUser (data) {
-            await this.createNetworkMember({ nId: this.$route.params.NetworkId, data: { user: data.id } })
-            this.getData()
-            this.inviteDialog = false
-        },
-        changeRole (data) {
-            console.log(data)
-            this.member = data
-            if (this.checkNetworkAdminCount(data)) {
-                this.changeDialog = true
-            } else {
-                this.messageDialog = true
-            }
-        },
-        checkNetworkAdminCount (data) {
-             if (this.networkmembers.filter(element => element.user_name !== data.user_name).find(element => element.role_name === 'network admin')) {
-                console.log('===', this.networkmembers.filter(element => element.user_name !== data.user_name).find(element => element.role_name === 'network admin'))
-                return true
-            }
-            return false
-        },
-        async updateRole () {
-            await this.updateNetworkMember({ nId: this.$route.params.NetworkId, id: this.member.id, data: { user: this.member.user, role: this.member.role } })
-            this.getData()
-            this.changeDialog = false
-        },
-        deleteRole (data) {
-            this.member = data
-            this.deleteDialog = true
-        },
-        async deleteUser () {
-            if (this.checkNetworkAdminCount(this.member)) {
-                await this.deleteNetworkMember({ nId: this.$route.params.NetworkId, id: this.member.id })
-                this.fetchNetwork({ id: this.$route.params.NetworkId })
-                this.deleteDialog = false
-            } else {
-                this.deleteDialog = false
-                this.messageDialog = true
-            }
-        },
-        closeInvitationDialog () {
-            this.inviteDialog = false
-            this.getData()
-        },
-        async goToUser (user) {
-            if (user?.data?.id) {
-                await this.setUser(user)
-                this.$router.push({ name: 'userdetails', params: { id: user.data.id } })
+                return false
+            },
+            async updateRole () {
+                await this.updateNetworkMember({ nId: this.$route.params.NetworkId, id: this.member.id, data: { user: this.member.user, role: this.member.role } })
+                this.getData()
+                this.changeDialog = false
+            },
+            deleteRole (data) {
+                this.member = data
+                this.deleteDialog = true
+            },
+            async deleteUser () {
+                if (this.checkNetworkAdminCount(this.member)) {
+                    await this.deleteNetworkMember({ nId: this.$route.params.NetworkId, id: this.member.id })
+                    this.fetchNetwork({ id: this.$route.params.NetworkId })
+                    this.deleteDialog = false
+                } else {
+                    this.deleteDialog = false
+                    this.messageDialog = true
+                }
+            },
+            closeInvitationDialog () {
+                this.inviteDialog = false
+                this.getData()
+            },
+            async goToUser (user) {
+                if (user?.data?.id) {
+                    await this.setUser(user)
+                    this.$router.push({ name: 'userdetails', params: { id: user.data.id } })
+                }
             }
         }
     }
-}
 </script>

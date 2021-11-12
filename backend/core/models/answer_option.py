@@ -2,6 +2,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+
 class AnswerOption(models.Model):
     direct_indicator = models.ManyToManyField('DirectIndicator', blank=True, related_name="options") 
     order = models.IntegerField(default=1)

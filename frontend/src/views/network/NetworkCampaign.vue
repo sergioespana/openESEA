@@ -32,7 +32,7 @@
                             <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
                         </span>
                         <div>
-                            <Button label="Tool Menu" @click="toggle" :disabled="true" />    <!-- aria-haspopup="true" aria-controls="overlay_menu" -->
+                            <Button label="Tool Menu" @click="toggle" :disabled="true" />
                             <Menu id="overlay_menu" ref="menu" :model="items" :popup="true" />
                         </div>
                     </div>
@@ -141,203 +141,203 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
-import { FilterMatchMode, FilterOperator } from 'primevue/api'
-import ProgressBar from 'primevue/progressbar'
-import Slider from 'primevue/slider'
-import MultiSelect from 'primevue/multiselect'
-import dateFixer from '../../utils/datefixer'
-import moment from 'moment'
-import CampaignUpdateForm from '../../components/forms/CampaignUpdateForm.vue'
+    import { mapActions, mapState } from 'vuex'
+    import { FilterMatchMode, FilterOperator } from 'primevue/api'
+    import ProgressBar from 'primevue/progressbar'
+    import Slider from 'primevue/slider'
+    import MultiSelect from 'primevue/multiselect'
+    import dateFixer from '../../utils/datefixer'
+    import moment from 'moment'
+    import CampaignUpdateForm from '../../components/forms/CampaignUpdateForm.vue'
 
-export default {
-    components: {
-        ProgressBar,
-        Slider,
-        MultiSelect,
-        CampaignUpdateForm
-    },
-    data () {
-        return {
-            filters: {
-                global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-                organisation: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-                // organisation: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-                'country.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-                representative: { value: null, matchMode: FilterMatchMode.IN },
-                date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
-                balance: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
-                status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
-                all_response_rate: { value: null, matchMode: FilterMatchMode.BETWEEN },
-                verified: { value: null, matchMode: FilterMatchMode.EQUALS }
-            },
-            reminder: 1,
-            items: [
-                {
-                    label: '- Send Message',
-                    command: () => {
-                        console.log('Send Message')
-                        this.$toast.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted', life: 3000 })
+    export default {
+        components: {
+            ProgressBar,
+            Slider,
+            MultiSelect,
+            CampaignUpdateForm
+        },
+        data () {
+            return {
+                filters: {
+                    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+                    organisation: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+                    // organisation: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+                    'country.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+                    representative: { value: null, matchMode: FilterMatchMode.IN },
+                    date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
+                    balance: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
+                    status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
+                    all_response_rate: { value: null, matchMode: FilterMatchMode.BETWEEN },
+                    verified: { value: null, matchMode: FilterMatchMode.EQUALS }
+                },
+                reminder: 1,
+                items: [
+                    {
+                        label: '- Send Message',
+                        command: () => {
+                            console.log('Send Message')
+                            this.$toast.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted', life: 3000 })
+                        }
+                    },
+                    {
+                        label: '- Send Reminder',
+                        command: () => { this.$toast.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted', life: 3000 }) }
+                    },
+                    {
+                        label: '- Sample Test',
+                        command: () => { this.$toast.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted', life: 3000 }) }
+                    },
+                    {
+                        label: '- Add Organisations',
+                        command: () => { this.$toast.add({ severity: 'success', summary: 'Updated', detail: 'Data Updated', life: 3000 }) }
+                    },
+                    {
+                        label: '- Delete Organisations',
+                        command: () => { this.$toast.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted', life: 3000 }) }
                     }
-                },
-                {
-                    label: '- Send Reminder',
-                    command: () => { this.$toast.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted', life: 3000 }) }
-                },
-                {
-                    label: '- Sample Test',
-                    command: () => { this.$toast.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted', life: 3000 }) }
-                },
-                {
-                    label: '- Add Organisations',
-                    command: () => { this.$toast.add({ severity: 'success', summary: 'Updated', detail: 'Data Updated', life: 3000 }) }
-                },
-                {
-                    label: '- Delete Organisations',
-                    command: () => { this.$toast.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted', life: 3000 }) }
-                }
-            ],
-            selectedOrganisations: [],
-            removeOrganisationsDialog: false,
-            chosenOrganisations: [],
-            addOrganisationsDialog: false
-        }
-    },
-    computed: {
-        ...mapState('network', ['network']),
-        ...mapState('campaign', ['campaign']),
-        ...mapState('eseaAccount', ['eseaAccounts', 'eseaAccount']),
-        ...mapState('method', ['methods', 'method']),
-        ...mapState('organisation', ['organisations']),
-        timelinedates () {
-            var datearr = []
-            datearr.push({ date: this.campaign.open_survey_date, name: 'openingdate' })
-            datearr.push({ date: this.campaign.close_survey_date, name: 'closingdate' })
-            return datearr
-        },
-        timeline () {
-            const jsondate = new Date().toJSON()
-            var currentdate = moment(jsondate, 'YYYY-MM-DD')
-            var admission = moment(this.campaign.open_survey_date, 'YYYY-MM-DD')
-            var discharge = moment(this.campaign.close_survey_date, 'YYYY-MM-DD')
-            var progress = (admission.diff(currentdate, 'days') / admission.diff(discharge, 'days')) * 100
-            return progress
-        },
-        campaigntimeleft () {
-            const jsondate = new Date().toJSON()
-            var currentdate = moment(jsondate, 'YYYY-MM-DD')
-            var discharge = moment(this.campaign.close_survey_date, 'YYYY-MM-DD')
-            var daysleft = (discharge.diff(currentdate, 'days'))
-            return daysleft
-        },
-         permission () {
-            if (this.network.accesLevel) {
-                const accesLevel = this.network.accesLevel
-                if (accesLevel === 'admin' || accesLevel === 'network admin') {
-                    return true
-                }
+                ],
+                selectedOrganisations: [],
+                removeOrganisationsDialog: false,
+                chosenOrganisations: [],
+                addOrganisationsDialog: false
             }
-            return false
-        }
-    },
-    created () {
-        this.initialize()
-    },
-    methods: {
-        ...mapActions('eseaAccount', ['fetchEseaAccounts', 'setEseaAccount', 'createEseaAccount', 'deleteEseaAccount']),
-        ...mapActions('method', ['fetchMethod']),
-        ...mapActions('organisation', ['fetchOrganisations', 'setOrganisation']),
-        dateFixer,
-        async initialize () {
-            this.boolChoice = { name: 'Public', value: true }
-            await this.fetchEseaAccounts({ query: `?campaign=${this.$route.params.CampaignId}` })
-            await this.fetchMethod({ id: this.campaign.method })
-            await this.fetchOrganisations
         },
-        toggle (event) {
-            this.$refs.menu.toggle(event)
-        },
-        async addableOrganisations () {
-            await this.fetchOrganisations({ query: `?network=${this.$route.params.NetworkId}&excludecampaign=${this.$route.params.CampaignId}` })
-            this.addOrganisationsDialog = true
-        },
-        async addOrganisations () {
-            if (this.chosenOrganisations.length) {
-                for (var organisation of this.chosenOrganisations) {
-                    var newEseaAccount = { organisation: organisation.id, method: this.campaign.method, campaign: this.campaign.id }
-                    await this.createEseaAccount({ oId: organisation.id, data: newEseaAccount })
+        computed: {
+            ...mapState('network', ['network']),
+            ...mapState('campaign', ['campaign']),
+            ...mapState('eseaAccount', ['eseaAccounts', 'eseaAccount']),
+            ...mapState('method', ['methods', 'method']),
+            ...mapState('organisation', ['organisations']),
+            timelinedates () {
+                var datearr = []
+                datearr.push({ date: this.campaign.open_survey_date, name: 'openingdate' })
+                datearr.push({ date: this.campaign.close_survey_date, name: 'closingdate' })
+                return datearr
+            },
+            timeline () {
+                const jsondate = new Date().toJSON()
+                var currentdate = moment(jsondate, 'YYYY-MM-DD')
+                var admission = moment(this.campaign.open_survey_date, 'YYYY-MM-DD')
+                var discharge = moment(this.campaign.close_survey_date, 'YYYY-MM-DD')
+                var progress = (admission.diff(currentdate, 'days') / admission.diff(discharge, 'days')) * 100
+                return progress
+            },
+            campaigntimeleft () {
+                const jsondate = new Date().toJSON()
+                var currentdate = moment(jsondate, 'YYYY-MM-DD')
+                var discharge = moment(this.campaign.close_survey_date, 'YYYY-MM-DD')
+                var daysleft = (discharge.diff(currentdate, 'days'))
+                return daysleft
+            },
+            permission () {
+                if (this.network.accesLevel) {
+                    const accesLevel = this.network.accesLevel
+                    if (accesLevel === 'admin' || accesLevel === 'network admin') {
+                        return true
+                    }
                 }
+                return false
             }
-            this.addOrganisationsDialog = false
+        },
+        created () {
             this.initialize()
         },
-        async removeOrganisations () {
-            for (var eseaAccount of this.selectedOrganisations) {
-                console.log(eseaAccount)
-                await this.deleteEseaAccount({ oId: eseaAccount.organisation, id: eseaAccount.id })
+        methods: {
+            ...mapActions('eseaAccount', ['fetchEseaAccounts', 'setEseaAccount', 'createEseaAccount', 'deleteEseaAccount']),
+            ...mapActions('method', ['fetchMethod']),
+            ...mapActions('organisation', ['fetchOrganisations', 'setOrganisation']),
+            dateFixer,
+            async initialize () {
+                this.boolChoice = { name: 'Public', value: true }
+                await this.fetchEseaAccounts({ query: `?campaign=${this.$route.params.CampaignId}` })
+                await this.fetchMethod({ id: this.campaign.method })
+                await this.fetchOrganisations
+            },
+            toggle (event) {
+                this.$refs.menu.toggle(event)
+            },
+            async addableOrganisations () {
+                await this.fetchOrganisations({ query: `?network=${this.$route.params.NetworkId}&excludecampaign=${this.$route.params.CampaignId}` })
+                this.addOrganisationsDialog = true
+            },
+            async addOrganisations () {
+                if (this.chosenOrganisations.length) {
+                    for (var organisation of this.chosenOrganisations) {
+                        var newEseaAccount = { organisation: organisation.id, method: this.campaign.method, campaign: this.campaign.id }
+                        await this.createEseaAccount({ oId: organisation.id, data: newEseaAccount })
+                    }
+                }
+                this.addOrganisationsDialog = false
+                this.initialize()
+            },
+            async removeOrganisations () {
+                for (var eseaAccount of this.selectedOrganisations) {
+                    console.log(eseaAccount)
+                    await this.deleteEseaAccount({ oId: eseaAccount.organisation, id: eseaAccount.id })
+                }
+                this.removeOrganisationsDialog = false
+                this.initialize()
+            },
+            async goToEseaAccount (event) {
+                await this.setEseaAccount(event.data)
+                this.$router.push({ name: 'networkeseaaccount', params: { cId: this.campaign.id, EseaAccountId: event.data.id } })
+            },
+            async goToReport (event) {
+                await this.setEseaAccount(event.data)
+                await this.setOrganisation({ id: event.data.organisation })
+                this.$router.push({ name: 'esea-account-report', params: { OrganisationId: `${event.data.organisation}`, EseaAccountId: event.data.id } })
+                console.log(event.data)
+            },
+            async goToMethod () {
+                this.$router.push({ name: 'newmethoddetails', params: { id: this.campaign.method } })
+                // this.$router.push({ name: 'methoddetails', params: { id: this.campaign.method } })
             }
-            this.removeOrganisationsDialog = false
-            this.initialize()
-        },
-        async goToEseaAccount (event) {
-            await this.setEseaAccount(event.data)
-            this.$router.push({ name: 'networkeseaaccount', params: { cId: this.campaign.id, EseaAccountId: event.data.id } })
-        },
-        async goToReport (event) {
-            await this.setEseaAccount(event.data)
-            await this.setOrganisation({ id: event.data.organisation })
-            this.$router.push({ name: 'esea-account-report', params: { OrganisationId: `${event.data.organisation}`, EseaAccountId: event.data.id } })
-            console.log(event.data)
-        },
-        async goToMethod () {
-            this.$router.push({ name: 'newmethoddetails', params: { id: this.campaign.method } })
-            // this.$router.push({ name: 'methoddetails', params: { id: this.campaign.method } })
         }
     }
-}
 </script>
 
 <style scoped>
-.p-splitbutton {
-    width: 200px;
-}
-.custom-marker {
-    display: flex;
-    width: 2rem;
-    height: 2rem;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
-    border-radius: 50%;
-    z-index: 1;
-}
+    .p-splitbutton {
+        width: 200px;
+    }
+    .custom-marker {
+        display: flex;
+        width: 2rem;
+        height: 2rem;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        border-radius: 50%;
+        z-index: 1;
+    }
 
-::v-deep(.p-timeline-event-content)
-::v-deep(.p-timeline-event-opposite) {
-    line-height: 1;
-}
+    ::v-deep(.p-timeline-event-content)
+    ::v-deep(.p-timeline-event-opposite) {
+        line-height: 1;
+    }
 
-@media screen and (max-width: 960px) {
-    ::v-deep(.customized-timeline) {
-            .p-timeline-event:nth-child(even) {
-                flex-direction: row !important;
+    @media screen and (max-width: 960px) {
+        ::v-deep(.customized-timeline) {
+                .p-timeline-event:nth-child(even) {
+                    flex-direction: row !important;
 
-                .p-timeline-event-content {
-                    text-align: left !important;
+                    .p-timeline-event-content {
+                        text-align: left !important;
+                    }
+                }
+
+                .p-timeline-event-opposite {
+                    flex: 0;
+                }
+
+                .p-card {
+                    margin-top: 1rem;
                 }
             }
-
-            .p-timeline-event-opposite {
-                flex: 0;
-            }
-
-            .p-card {
-                margin-top: 1rem;
-            }
-        }
-}
-.p-tabview >>> .p-tabview-panels {
-    background-color: #F8F9FA;
-    border: 1px dotted lightgrey;
-}
+    }
+    .p-tabview >>> .p-tabview-panels {
+        background-color: #F8F9FA;
+        border: 1px dotted lightgrey;
+    }
 </style>

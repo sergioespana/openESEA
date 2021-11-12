@@ -4,31 +4,18 @@ from django.utils.translation import gettext_lazy as _
 from .stakeholder_group import StakeholderGroup
 
 
-'''
-method
-questions (M2M)
-stakeholdergroup - Needs to be updated!
-name
-(description)
-(welcome_text)
-(closing_text)
-min_threshold
-(anonymous)
-ResponseType/SurveyType
-'''
-
 class SurveyManager(models.Manager):
+
     def create(self, name, method, stakeholdergroup='', description="", welcome_text="", closing_text="", min_threshold=100, response_type="SINGLE", anonymous=False):
-        
-        '''Hardcodes stakeholdergroup for now'''
+        # Hardcodes stakeholdergroup for now
         stakeholdergroup = 'anyone'
         if stakeholdergroup:
             stakeholdergroup, _ = StakeholderGroup.objects.get_or_create(name=stakeholdergroup)
 
         survey = Survey(name=name, method=method, stakeholdergroup=stakeholdergroup, description=description, welcome_text=welcome_text, closing_text=closing_text, min_threshold=min_threshold, response_type=response_type, anonymous=anonymous,) # 
         survey.save()
-
         return survey
+
 
 class Survey(models.Model):
     objects = SurveyManager()
@@ -60,6 +47,7 @@ class Survey(models.Model):
     def __str__(self):
         return self.name
 
+    # shows the survey responses that have been finished(=saved by the respondent)
     def finresponses(self):
         fresponses = [response for response in self.responses.all() if response.finished]
         self.finished_responses = fresponses
@@ -67,24 +55,3 @@ class Survey(models.Model):
     def response_rate(self):
         responserate = (len(self.finished_responses)/(len(self.responses.all()) or 1)) * 100
         return responserate
-
-
-
-
-
-
-
-
-
-
-
-
-
-    #survey.questions.set(questions)
-    # questions = models.ManyToManyField('DirectIndicator', related_name="surveys", blank=False) # Might be removable?
-    # directindicators = DirectIndicator.objects.filter(topic__method=method.id)
-    # print('---', directindicators)
-    # for di in directindicators: #.iterator()
-    #     print(di)
-    #     survey.questions.add(di)
-

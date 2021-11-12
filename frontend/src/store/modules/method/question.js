@@ -121,7 +121,6 @@ export default {
             commit('setQuestions', response)
         },
         async deleteQuestion ({ commit }, payload) {
-            console.log('||||||||', payload)
 			if (payload.id > 0) {
 				const { error } = await QuestionService.delete(payload)
 				if (error) {
@@ -161,9 +160,3 @@ export default {
 		}
     }
 }
-// if (question.direct_indicator.length) {
-//     const directIndicatorId = question.direct_indicator?.[0]?.id || question.direct_indicator?.[0]
-//     question.direct_indicator = [directIndicatorId]
-// } else {
-//     question.direct_indicator = []
-// }

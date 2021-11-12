@@ -42,63 +42,63 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
-import SurveyQuestionResults from '../../components/survey/SurveyQuestionResults'
-export default {
-    components: {
-        SurveyQuestionResults
-    },
-    data () {
-        return {
-            topicNumber: 0,
-            amountDisplayButtonValue: { name: 'Percentages', value: 1 },
-            amountDisplayButtonOptions: [
-                { name: 'Percentages', value: 1 },
-                { name: 'Numbers', value: 0 }
-                ]
-        }
-    },
-    computed: {
-        ...mapState('organisation', ['organisation']),
-        ...mapState('eseaAccount', ['eseaAccount']),
-        ...mapState('survey', ['survey']),
-        ...mapState('surveyResults', ['surveyResult']),
-        answers () {
-            console.log(this.surveyResult.indicators)
-            return this.surveyResult.indicators || {}
+    import { mapState, mapActions } from 'vuex'
+    import SurveyQuestionResults from '../../components/survey/SurveyQuestionResults'
+    export default {
+        components: {
+            SurveyQuestionResults
         },
-		calculations () {
-			const calculations = {}
-			if (this.surveyResult?.calculations.length) {
-				this.surveyResult.calculations.forEach((calculation) => {
-					calculations[calculation.topic] = !calculations[calculation.topic]
-						? [calculation] : [...calculations[calculation.topic], calculation]
-				})
-			}
-            return calculations
+        data () {
+            return {
+                topicNumber: 0,
+                amountDisplayButtonValue: { name: 'Percentages', value: 1 },
+                amountDisplayButtonOptions: [
+                    { name: 'Percentages', value: 1 },
+                    { name: 'Numbers', value: 0 }
+                    ]
+            }
         },
-        methodId () {
-            return parseInt(this.$route.params.methodId, 10)
-        }
-    },
-    beforeRouteUpdate (to, from, next) {
-        this.initialize()
-        next()
-    },
-    created () {
-        this.initialize()
-    },
-    methods: {
-        ...mapActions('survey', ['fetchSurvey']),
-        ...mapActions('surveyResults', ['fetchSurveyResults']),
-        async initialize () {
-            const surveyId = parseInt(this.$route.params.surveyId, 10)
-            await this.fetchSurvey({ mId: this.eseaAccount.method?.id, id: surveyId })
-            // if (this.survey.method !== this.methodId) {
-            //     this.$router.push({ name: 'methods' })
-            // }
-            this.fetchSurveyResults({ eaId: this.eseaAccount?.id })
+        computed: {
+            ...mapState('organisation', ['organisation']),
+            ...mapState('eseaAccount', ['eseaAccount']),
+            ...mapState('survey', ['survey']),
+            ...mapState('surveyResults', ['surveyResult']),
+            answers () {
+                console.log(this.surveyResult.indicators)
+                return this.surveyResult.indicators || {}
+            },
+            calculations () {
+                const calculations = {}
+                if (this.surveyResult?.calculations.length) {
+                    this.surveyResult.calculations.forEach((calculation) => {
+                        calculations[calculation.topic] = !calculations[calculation.topic]
+                            ? [calculation] : [...calculations[calculation.topic], calculation]
+                    })
+                }
+                return calculations
+            },
+            methodId () {
+                return parseInt(this.$route.params.methodId, 10)
+            }
+        },
+        beforeRouteUpdate (to, from, next) {
+            this.initialize()
+            next()
+        },
+        created () {
+            this.initialize()
+        },
+        methods: {
+            ...mapActions('survey', ['fetchSurvey']),
+            ...mapActions('surveyResults', ['fetchSurveyResults']),
+            async initialize () {
+                const surveyId = parseInt(this.$route.params.surveyId, 10)
+                await this.fetchSurvey({ mId: this.eseaAccount.method?.id, id: surveyId })
+                // if (this.survey.method !== this.methodId) {
+                //     this.$router.push({ name: 'methods' })
+                // }
+                this.fetchSurveyResults({ eaId: this.eseaAccount?.id })
+            }
         }
     }
-}
 </script>

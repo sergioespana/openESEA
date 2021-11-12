@@ -14,9 +14,6 @@ export default {
         setCampaign (state, { data }) {
             state.campaign = data || {}
         },
-        // addCampaignToList (state, { data }) {
-        //     state.campaigns.push(data)
-        // },
         updateCampaign (state, { data, id }) {
             state.campaigns = state.campaigns.map((item) => {
                 if (item.id !== id) { return item }

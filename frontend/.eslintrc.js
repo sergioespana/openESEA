@@ -11,6 +11,7 @@ module.exports = {
     parser: 'babel-eslint'
   },
   rules: {
+    "vue/no-multiple-template-root": "off",
     // '': 'off' ,
     // '*': 'off',
     indent: 0,

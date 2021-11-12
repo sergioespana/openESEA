@@ -13,7 +13,6 @@ from ..serializers import EseaAccountSerializer
 from ..utils import import_respondents
 
 
-
 class EseaAccountViewSet(viewsets.ModelViewSet):
     serializer_class = EseaAccountSerializer
 
@@ -23,23 +22,21 @@ class EseaAccountViewSet(viewsets.ModelViewSet):
             return EseaAccount.objects.filter(campaign=campaign)
         return EseaAccount.objects.filter(organisation = self.kwargs['organisation_pk'])
 
-
     def create(self, request, organisation_pk, *args, **kwargs):
        request.data['organisation'] = int(organisation_pk)
        return super().create(request, *args, **kwargs)
-
 
     def update(self, request, organisation_pk, *args, **kwargs):
         request.data['organisation'] = organisation_pk
         return super().update(request, *args, **kwargs)
 
 
+# Import Respondents for a Survey
 @method_decorator(csrf_exempt, name='dispatch')
 @api_view(['GET', 'POST'])
 @permission_classes((AllowAny, ))
 def import_employees(request, eseaaccount_pk, survey_pk):
     if request.method == 'POST' and request.FILES.get('file', False): # and 'file' in request.FILES.keys(): # and 
-        
         
         eseaaccount = get_object_or_404(EseaAccount, pk=eseaaccount_pk)
         survey = get_object_or_404(Survey, pk=survey_pk)

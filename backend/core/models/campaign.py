@@ -6,10 +6,11 @@ from datetime import timedelta, date
 def defaultrespondingwindow():
         return now() + timedelta(days = 30)
 
+
 class Campaign(models.Model):
     created_by = models.ForeignKey('CustomUser', editable=False, on_delete=models.SET_NULL, null=True)
     network = models.ForeignKey('Network', related_name="campaigns", on_delete=models.CASCADE)
-    method = models.ForeignKey('method', on_delete=models.CASCADE) # If a method gets removed the network_method gets removed too, is this a good choice?
+    method = models.ForeignKey('method', on_delete=models.CASCADE)
 
     required = models.BooleanField(default=True)
     name = models.CharField(max_length=255)
@@ -33,5 +34,4 @@ class Campaign(models.Model):
 ''' 
 - Should have name field
 - Could have created_on = models.DateTimeField(default=now, editable=False)
-- Should return self.name in __str__ method
 '''

@@ -14,56 +14,56 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import SubSidebar from '../../components/SubSidebar.vue'
-export default {
-    components: {
-        SubSidebar
+    import { mapState } from 'vuex'
+    import SubSidebar from '../../components/SubSidebar.vue'
+    export default {
+        components: {
+            SubSidebar
+            },
+        data () {
+            return {
+                links: [
+                    {
+                        name: 'Overview',
+                        icon: 'pi pi-desktop',
+                        path: 'networkoverview'
+                    },
+                    {
+                        name: 'Organisations',
+                        icon: 'pi pi-globe',
+                        path: 'networkorganisations'
+                    },
+                    {
+                        name: 'Methods',
+                        icon: 'pi pi-file',
+                        path: 'networkmethods'
+                    },
+                    {
+                        name: 'Campaigns',
+                        icon: 'pi pi-calendar',
+                        path: 'networkcampaigns'
+                    },
+                    {
+                        name: 'Team',
+                        icon: 'pi pi-users',
+                        path: 'networkteam'
+                    },
+                    {
+                        name: 'Settings',
+                        icon: 'pi pi-cog',
+                        path: 'networksettings'
+                    }
+                ]
+            }
         },
-    data () {
-        return {
-            links: [
-                 {
-                    name: 'Overview',
-                    icon: 'pi pi-desktop',
-                    path: 'networkoverview'
-                },
-                {
-                    name: 'Organisations',
-                    icon: 'pi pi-globe',
-                    path: 'networkorganisations'
-                },
-                {
-                    name: 'Methods',
-                    icon: 'pi pi-file',
-                    path: 'networkmethods'
-                },
-                {
-                    name: 'Campaigns',
-                    icon: 'pi pi-calendar',
-                    path: 'networkcampaigns'
-                },
-                {
-                    name: 'Team',
-                    icon: 'pi pi-users',
-                    path: 'networkteam'
-                },
-                {
-                    name: 'Settings',
-                    icon: 'pi pi-cog',
-                    path: 'networksettings'
-                }
-            ]
-        }
-    },
-    computed: {
-        ...mapState('network', ['network'])
-    },
-    methods: {
-        goToPage (name) {
-            this.pagename = name
-            this.$router.push({ name: `network${name.toLowerCase()}`, params: { NetworkId: this.network?.id || 0 } })
+        computed: {
+            ...mapState('network', ['network'])
+        },
+        methods: {
+            goToPage (name) {
+                this.pagename = name
+                this.$router.push({ name: `network${name.toLowerCase()}`, params: { NetworkId: this.network?.id || 0 } })
+            }
         }
     }
-}
 </script>

@@ -7,8 +7,7 @@ from secrets import token_urlsafe
 
 from ..models import (Survey, SurveyResponse, QuestionResponse, DirectIndicator, IndirectIndicator, Respondent, StakeholderGroup, EseaAccount)
 from ..serializers import (SurveyResponseSerializer, QuestionResponseSerializer, SurveyResponseCalculationSerializer)
-from ..utils import map_responses_by_indicator, calculate_indicators
-
+from ..utils import map_responses_by_indicator, calculate_indicators, audit_data
 
 
 class BaseModelViewSet(viewsets.ModelViewSet):
@@ -38,6 +37,7 @@ class BaseModelViewSet(viewsets.ModelViewSet):
 
             return [permission() for permission in (permission_classes or self.permission_classes)]
 
+
 class SurveyResponseViewSet(BaseModelViewSet):
     serializer_class = SurveyResponseSerializer
     lookup_field = 'token'
@@ -50,8 +50,8 @@ class SurveyResponseViewSet(BaseModelViewSet):
         'all': (AllowAny,)
     }
     permission_classes = [AllowAny,]
+
     def get_queryset(self):
-        print(self.kwargs)
         return SurveyResponse.objects.filter(esea_account=self.kwargs['esea_account_pk']) # finished=False
         
     def retrieve(self, request, organisation_pk, esea_account_pk, token):
@@ -61,10 +61,10 @@ class SurveyResponseViewSet(BaseModelViewSet):
         else:
             surveyresponse = get_object_or_404(SurveyResponse, token=token)
         serializer = SurveyResponseSerializer(surveyresponse)
-        print(serializer.data, 'test')
         return Response(serializer.data)
     
     def update(self, request, organisation_pk, esea_account_pk, token):
+        # Bit of a hack to check whether a survey response is single or multi-respondent
         if token.isnumeric():
             surveyresponse = get_object_or_404(SurveyResponse, survey=token, esea_account=esea_account_pk)
         else:
@@ -74,34 +74,31 @@ class SurveyResponseViewSet(BaseModelViewSet):
         serializer.save()
         return Response(serializer.data)
 
+    # Shows all responses belonging to an ESEA Account
     @action(detail=False, methods=['get'])
-    #@permission_classes(AllowAny,)
     def all(self, request, organisation_pk, esea_account_pk):
         if True: #self.request.user.is_authenticated:
             eseaaccount = get_object_or_404(EseaAccount, pk=esea_account_pk)
             respondents = SurveyResponse.objects.filter(esea_account=esea_account_pk) #Respondent.objects.filter(organisation__esea_accounts=74)
-            # # print(respondents)
             responses = SurveyResponse.objects.filter(esea_account=esea_account_pk, finished=True)
 
             question_responses = QuestionResponse.objects.filter(survey_response__esea_account=esea_account_pk, survey_response__finished=True)
-            # # print(question_responses)
 
             indirect_indicators = IndirectIndicator.objects.filter(method=eseaaccount.method)
             direct_indicators = DirectIndicator.objects.filter(method=eseaaccount.method)
-            for direct_indicator in direct_indicators:
-                direct_indicator.filter_responses(question_responses)
+
+            # for direct_indicator in direct_indicators:
+            #     direct_indicator.filter_responses(question_responses)
             # for item in question_responses:
             #     s = QuestionResponseSerializer(item, many=True)
           
             map_responses_by_indicator(direct_indicators, question_responses)
             indicators = calculate_indicators(indirect_indicators, direct_indicators)
 
-            # print(indicators)
+            # for indicator in indicators.values():
+            #     print('----->',  indicator)
+            audit_data(eseaaccount, indicators)
 
-            #for indicator in indicators.values():
-                #print(indicator.key, '---', indicator.value)
-            #   if indicator.value is None:
-            #        print(indicator.key)                        
             serializer = SurveyResponseCalculationSerializer(indicators.values(), many=True)
             return Response(
                 {
@@ -113,7 +110,6 @@ class SurveyResponseViewSet(BaseModelViewSet):
                 }
             )
         return Response({})
-        
 
     @action(detail=True, methods=["get"])
     def calculations(self, request, organization_pk, method_pk, survey_pk, pk):
@@ -128,35 +124,7 @@ class SurveyResponseViewSet(BaseModelViewSet):
 
         return Response(serializer.data)
 
-
-
-# for di in direct_indicators:
-#     print(di.key)
-# serializer = SurveyResponseCalculationSerializer(direct_indicators, many=True)
-
-
-# class PublicSurveyResponseViewset(viewsets.ModelViewSet):
-#     serializer_class = SurveyResponseSerializer
-#     authentication_classes = []
-#     permission_classes = []
-
-#     def get_queryset(self):
-#         token = self.request.query_params.get("token")
-#         return SurveyResponse.objects.filter(
-#             survey=self.kwargs["survey_pk"],
-#             user_organization=None,
-#             token=token,
-#         )
-
-#     def perform_create(self, serializer):
-#         token = self.request.query_params.get("token", token_urlsafe())
-#         survey = get_object_or_404(Survey, pk=self.kwargs["survey_pk"])
-#         serializer.save(survey=survey, token=token)
-
-        # direct_indicator = get_object_or_404(DirectIndicator, pk=pk, topic__method=method_pk)
-        # serializer = DirectIndicatorSerializer(direct_indicator, data=request.data)
-
-    # def create(self, request, method_pk, survey_pk, organisation_pk):
-    #     surveyresponse = SurveyResponse.objects.create(survey=request.data['survey'])
-    #     serializer = SurveyResponseSerializer(surveyresponse)
-    #     return Response(serializer.data)
+    # def create_df(self, request, organisation_pk, esea_account_pk):
+    #    /survey-responses/create_df/
+    #    audit-data.py (=script file)
+    # call script to create df from database values

@@ -6,11 +6,11 @@
 </template>
 
 <script>
-import MethodHeader from '@/components/MethodHeader'
+    import MethodHeader from '@/components/MethodHeader'
 
-export default {
-    components: {
-        MethodHeader
+    export default {
+        components: {
+            MethodHeader
+        }
     }
-}
 </script>

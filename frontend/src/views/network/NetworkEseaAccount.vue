@@ -4,9 +4,6 @@
                 '{{survey.name}}' - Response Rate: {{survey.current_response_rate}}%
             </ProgressBar>
             <Divider />
-            <!-- <ProgressBar :value="value.rate + 30" :showValue="true">
-                '{{key}}' - Response Rate: {{value.rate + 30}}%
-            </ProgressBar> -->
     </div>
 
     <div>Esea Account</div>
@@ -22,31 +19,26 @@
                         </span>
                     </div>
                 </template>
-                <Column field="name" header="Survey" />
-                <Column field="name" header="Name" sortable />
-            <Column field="stakeholdergroup" header="Stakeholder Group" />
-            <Column field="questions" header="Questions" sortable />
-            <Column field="respondees.length" header="Stakeholders" sortable />
-            <Column field="responses" header="Responses" sortable />
-            <Column field="current_response_rate" header="Response Rate" sortable>
-                <template #body="{data}">
-                    <ProgressBar :value="(data.current_response_rate)" :showValue="true" />
-                </template>
-            </Column>
-            <Column field="required_response_rate" header="Response Rate Threshold" sortable>
-                <template #body='{data}'>
-                    {{data.required_response_rate}}%
-                </template>
-            </Column>
-            <Column headerStyle="width: 15rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
-                <template #body="{data}">
-                    <Button label="Survey Results" class="p-button-success" @click="data.responses? goToResults(data) : goToSurveyFill(data)"  style="width: 200px" />
-                </template>
-            </Column>
-                <!-- <Column field="stakeholdergroup" header="Stakeholder Group"
-                <Column field="sufficient_responses" header="Sufficient Responses" />
-                <Column field="responses" header="Responses" />
-                <Column field="response_rate" header="Response Rate" /> -->
+                <Column field="name" header="Survey" sortable />
+                <Column field="stakeholdergroup" header="Stakeholder Group" />
+                <Column field="questions" header="Questions" sortable />
+                <Column field="respondees.length" header="Stakeholders" sortable />
+                <Column field="responses" header="Responses" sortable />
+                <Column field="current_response_rate" header="Response Rate" sortable>
+                    <template #body="{data}">
+                        <ProgressBar :value="(data.current_response_rate)" :showValue="true" />
+                    </template>
+                </Column>
+                <Column field="required_response_rate" header="Response Rate Threshold" sortable>
+                    <template #body='{data}'>
+                        {{data.required_response_rate* 100}}%
+                    </template>
+                </Column>
+                <Column headerStyle="width: 15rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
+                    <template #body="{data}">
+                        <Button label="Survey Results" class="p-button-success" @click="data.responses? goToResults(data) : goToSurveyFill(data)"  style="width: 200px" />
+                    </template>
+                </Column>
             </DataTable>
 
         </TabPanel>
@@ -54,41 +46,40 @@
 
         </TabPanel>
     </TabView>
-
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import ProgressBar from 'primevue/progressbar'
+    import { mapState } from 'vuex'
+    import ProgressBar from 'primevue/progressbar'
 
-export default {
-    components: {
-        ProgressBar
-    },
-    data () {
-        return {
+    export default {
+        components: {
+            ProgressBar
+        },
+        data () {
+            return {
 
-        }
-    },
-    computed: {
-        ...mapState('eseaAccount', ['eseaAccount'])
-    },
-    methods: {
-        goToSummarizedResponses (event) {
-            this.$router.push({ name: 'method-survey-results', params: { OrganisationId: 1, methodId: 1, surveyId: 1 } })
+            }
+        },
+        computed: {
+            ...mapState('eseaAccount', ['eseaAccount'])
+        },
+        methods: {
+            goToSummarizedResponses (event) {
+                this.$router.push({ name: 'method-survey-results', params: { OrganisationId: 1, methodId: 1, surveyId: 1 } })
+            },
+            goToResults (data) {
+                this.$router.push({ name: 'esea-account-report', params: { OrganisationId: this.eseaAccount.organisation, EseaAccountId: this.eseaAccount.id } })
+            }
         }
     }
-}
 </script>
 
 <style type="text/css">
-/* .p-progressbar {
-background: #f42020;
-} */
-.memory-bar-style .ui-progressbar-value {
-background: #ffe600;
-}
-.cpu-bar-style .ui-progressbar-value {
-background: #7fb80e;
-}
+    .memory-bar-style .ui-progressbar-value {
+    background: #ffe600;
+    }
+    .cpu-bar-style .ui-progressbar-value {
+    background: #7fb80e;
+    }
 </style>

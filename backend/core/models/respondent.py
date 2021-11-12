@@ -8,8 +8,7 @@ class Respondent(models.Model):
     first_name = models.CharField(max_length=50)
     last_name_prefix = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50)
-    # avatar = models.ImageField(blank=True, upload_to="respondent/", default="respondent/avatar-default.png")
-    # esea_account = models.ForeignKey('ESeaAccount')
+
 
     def __str__(self):
         if self.last_name_prefix:
@@ -20,4 +19,5 @@ class Respondent(models.Model):
 
 '''
 - Should be send a reminder if he hasn't filled in the survey a week before the campaign ends based on SurveyResponse.finished
+- Might have to add Avatars
 '''

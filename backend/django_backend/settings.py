@@ -96,8 +96,9 @@ DATABASES = {
         'NAME': 'esea_db',
 
         'USER': 'postgres',
-
-        'PASSWORD': 'admin',
+        
+        #password could also be "admin"
+        'PASSWORD': 'password',
 
         'HOST': '127.0.0.1',
 

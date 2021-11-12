@@ -13,7 +13,7 @@ def calculate(data):
     fit the Benford Distribution.
     Results are returned as a list of dictionaries.
     """
-###
+#####
     results = []
 
     first_digits = list(map(lambda n: str(n)[0], data))

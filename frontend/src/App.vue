@@ -1,3 +1,4 @@
+// template is html of the page
 <template>
   <div>
       <div class="myapp" v-if="accessToken !== null" style="position: relative; height: 100%; min-width: 1400px; overflow: auto;"> <!--F5F7F6 -style="min-height: 800px; height: auto; min-width: 1100px; background-color: #F8F9FA;" position: fixed; width: 100%;-->
@@ -17,6 +18,7 @@
     </div>
 </template>
 
+// script is javascript code that is executed on the page
 <script>
   import { mapState } from 'vuex'
   import MainSidebar from './components/MainSidebar'
@@ -46,6 +48,7 @@
   }
 </script>
 
+// style is the css of the page
 <style lang="scss">
   html, body, #app {
       overflow: auto;

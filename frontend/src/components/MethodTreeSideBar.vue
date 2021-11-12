@@ -45,6 +45,7 @@ export default {
         filteredTopics () {
             return this.topics.filter((topic) => { return (topic.name.toLowerCase().includes(this.searchbar.toLowerCase())) })
         },
+        // For searching direct indicators
         filteredDirectIndicators () {
             const directindicators = this.directIndicators.filter((indicator) => { return (indicator.key?.toLowerCase().includes(this.searchbar.toLowerCase())) })
             if (this.activeComponentOption === 'Unused') {
@@ -55,6 +56,7 @@ export default {
                 return directindicators
             }
         },
+        // For searching indirect indicators
         filteredIndirectIndicators () {
             if (this.indirectIndicators.length) {
             return this.indirectIndicators.filter((indicator) => {
@@ -73,6 +75,7 @@ export default {
 		...mapActions('question', ['fetchQuestions', 'setQuestion']),
         ...mapActions('directIndicator', ['fetchDirectIndicators']),
 		...mapActions('indirectIndicator', ['fetchIndirectIndicators', 'setIndirectIndicator', 'updateIndirectIndicator']),
+        // Used when dragging and dropping an indicator into the method
         async onDrop (evt) {
             const myitem = evt.dataTransfer.getData('draggedItem')
             const parseditem = JSON.parse(myitem)

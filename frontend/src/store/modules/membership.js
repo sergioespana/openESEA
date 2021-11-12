@@ -1,3 +1,4 @@
+// requests of membership of an organisation to a network (or vise versa)
 import MembershipService from '../../services/MembershipService'
 
 export default {

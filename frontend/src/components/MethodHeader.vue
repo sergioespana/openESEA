@@ -1,3 +1,5 @@
+// used by Method.vue
+
 <template>
     <div class="p-d-flex p-ai-center p-jc-between p-px-5" style="height: 60px; background-color: #f1f1f1; border-bottom: 1px solid lightgrey;">
         <div class="p-d-flex p-ai-center">

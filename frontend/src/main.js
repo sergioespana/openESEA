@@ -14,7 +14,7 @@ import 'primevue/resources/primevue.min.css' // core css
 import 'primeicons/primeicons.css' // icons
 import 'primeflex/primeflex.css' // CSS Utility Library
 
-// Would potentially be better to load some in locally if the 3rd party component is hardly used
+// Would potentially be better to load some in locally (within the desired component file) if the 3rd party component is hardly used
 import Menubar from 'primevue/menubar'
 import Menu from 'primevue/menu'
 import Card from 'primevue/card'

@@ -1,3 +1,6 @@
+// http://localhost:8081/organisation/1/overview/
+// A specific Organisation's subpages are also part of this component, as you can see <router-view/> on line 14. e.g. http://localhost:8080/organisation/1/overview/
+
 <template>
     <div class="p-grid p-m-0 p-p-0" style="height: 100%;">
         <div class="p-col-fixed p-m-0 p-p-0" style="height: 100%;">

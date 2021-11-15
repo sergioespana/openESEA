@@ -1,3 +1,5 @@
+// http://localhost:8081/methods/3/topic-creation/
+
 <template>
     <div class="p-d-flex" style="height: calc(100vh - 145px); width: 100%; border-top: solid lightgrey; display: flex;">
         <method-tree-sidebar :topicsdisplay="true" style="height: 100%; width: 400px; flex: 0 0 400px;" />
@@ -132,6 +134,7 @@
             ...mapGetters('directIndicator', ['topicDirectIndicators']),
             ...mapState('indirectIndicator', { activeIndirectIndicator: 'indirectIndicator', indirectIndicatorErrors: 'errors' }),
             ...mapGetters('indirectIndicator', ['topicIndirectIndicators']),
+            // Get's Method items in the proper format
             items2 () {
                 return getMethodItems2(
                     this.methodTopics,
@@ -164,7 +167,6 @@
         watch: {
             TopicSavingStatus: {
                 handler (val) {
-                    console.log(Object.keys(val).length)
                     if ((Object.keys(val).length === this.topics.length) & (!Object.keys(this.topicErrors).length)) {
                         for (const key in val) {
                             if (val[key]) {
@@ -181,7 +183,6 @@
             }
         },
         beforeRouteLeave (to, from, next) {
-            console.log('cheeck')
             if (!this.topics.length) { this.allowRouting = true }
             if (this.allowRouting || this.discardUnsavedChanges) { //  & !this.discardUnsavedChanges
                 next(true)
@@ -197,6 +198,7 @@
             ...mapActions('topic', ['fetchTopics', 'setTopic', 'createTopic', 'updateTopic', 'addNewTopic', 'deleteTopic']),
             ...mapActions('directIndicator', ['fetchDirectIndicators', 'setDirectIndicator', 'addNewDirectIndicator', 'updateDirectIndicator', 'patchDirectIndicator', 'deleteDirectIndicator']),
             ...mapActions('indirectIndicator', ['fetchIndirectIndicators', 'setIndirectIndicator', 'addNewIndirectIndicator', 'updateIndirectIndicator', 'patchIndirectIndicator', 'deleteIndirectIndicator']),
+            // Handles the dragging of an item (from e.g. sidebar)
             startDrag (evt, item) {
                 evt.dataTransfer.dropEffect = 'move'
                 evt.dataTransfer.effectAllowed = 'move'
@@ -205,9 +207,9 @@
                 }
                 evt.dataTransfer.setData('draggedItem', item)
             },
+            // Handles the Dropping of a dragged item
             async onDrop (evt, topic) {
                 const myitem = evt.dataTransfer.getData('draggedItem')
-                console.log(myitem)
                 const parseditem = JSON.parse(myitem)
                 if (!topic.id || !parseditem.id) { return }
                 if ((parseditem.objType === 'direct-indicator')) {
@@ -269,7 +271,6 @@
                 }
             },
             savingStatus (topic, status) {
-                console.log('eeeeeeeee', status)
                 const key = topic.objType + topic.id
                 this.TopicSavingStatus[key] = status
             },

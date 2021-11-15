@@ -1,3 +1,5 @@
+// http://localhost:8081/methods/3/indicator-creation
+
 <template>
     <div class="p-d-flex" style="height: calc(100vh - 145px);">
         <method-tree-sidebar style="height: 100%; flex: 0 0 400px;" />
@@ -65,6 +67,7 @@
                 this.indirectIndicators.forEach(indirect => { indirect.objType = 'indirect-indicator' })
                 return this.directIndicators.concat(this.indirectIndicators)
             },
+            // activeItem.objType decides which EditForm will be shown
             activeItem () {
                 let objType = null
                 let id = null
@@ -89,7 +92,6 @@
             indicatorsSavingStatus: {
                 handler (val) {
                     console.log(this.indicatorsSavingStatus)
-                    console.log(val)
                     if ((Object.keys(val).length === this.items.length) & (!Object.keys(this.directIndicatorErrors).length) & (!Object.keys(this.indirectIndicatorErrors).length)) {
                         for (const key in val) {
                             if (val[key]) {
@@ -125,6 +127,7 @@
             ...mapActions('indirectIndicator', ['fetchIndirectIndicators', 'setIndirectIndicator', 'addNewIndirectIndicator', 'updateIndirectIndicator', 'deleteIndirectIndicator']),
             async initialize () {
                 const methodId = parseInt(this.$route.params.id, 10)
+                // Checks whether the url method's id corresponds to the id of the method in the local storage
                 if (this.method.id !== methodId) {
                     await this.fetchMethod({ id: methodId })
                     if (this.error) {
@@ -134,6 +137,7 @@
                 await this.fetchDirectIndicators({ mId: this.method.id })
                 await this.fetchIndirectIndicators({ mId: this.method.id })
             },
+            // Add either a direct or indirect indicator
             addBarMethod (choice) {
                 if (choice === 'indicator') { this.addDirectIndicator() }
                 if (choice === 'calculation') { this.addIndirectIndicator() }
@@ -146,6 +150,7 @@
                 this.addNewIndirectIndicator({ mId: this.method.id })
                 this.setDirectIndicator()
             },
+            // Activates (=Expands) indicator once it's clicked
             toggleActive (item) {
                 const { objType } = item
                 if (objType === 'direct-indicator' && item.id !== this.activeDirectIndicator.id) {
@@ -166,10 +171,8 @@
                 if (objType === 'indirect-indicator') { this.deleteIndirectIndicator({ mId: this.method.id, SuID: 0, SeId: 0, id: object.id }) }
             },
             savingStatus (indicator, status) {
-                console.log('eeeeeeeee', status)
                 const key = indicator.objType + indicator.id
                 this.indicatorsSavingStatus[key] = status
-                console.log(this.indicatorsSavingStatus)
             },
             unsavedChangesChoice (choice) {
                 this.unsavedChangesDialog = false

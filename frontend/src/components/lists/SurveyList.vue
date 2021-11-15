@@ -1,3 +1,5 @@
+http://localhost:8081/method-wizard/3/surveys/
+
 <template>
     <div class="p-m-1">
         <list-bar v-model:tabledisplay="tableDisplay" v-model:allitems="allMethods" :includecheckbox="false" v-model:search="customSearch" name="Methods">

@@ -1,3 +1,5 @@
+// http://localhost:8081/organisation/1/esea-accounts/
+
 <template>
     <div style="min-width: 1000px;">
     <esea-account-list :esea-accounts="eseaAccounts" :table="tableDisplay" :search="search" :loading="loading" @clicked-esea-account="goToEseaAccount">
@@ -9,6 +11,7 @@
         <esea-account-form :eseaAccounts="eseaAccounts" @closedialog="createEseaAccountDialog=false" />
     </Dialog>
 </template>
+
 <script>
     import { mapState } from 'vuex'
     import EseaAccountList from '../../components/lists/EseaAccountList'

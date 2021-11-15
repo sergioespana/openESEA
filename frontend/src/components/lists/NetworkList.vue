@@ -1,3 +1,5 @@
+// used by Networks.vue, OrganisationNetworks.vue
+
 <template>
     <list-bar v-model:tabledisplay="tableDisplay" v-model:allitems="allNetworks" v-model:search="customSearch" :includecheckbox="!organisationnetworks" name="Networks">
         <slot></slot>

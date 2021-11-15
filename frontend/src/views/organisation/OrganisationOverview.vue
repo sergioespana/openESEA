@@ -1,3 +1,5 @@
+// http://localhost:8081/organisation/1/overview/
+
 <template>
     <div class="p-grid nested-grid" style="min-height: 60vh;">
         <div class="p-col-12 p-m-0 p-p-0">
@@ -67,10 +69,6 @@
                 for (const method of this.methods) {
                     await this.fetchSurveys({ mId: method.id, query: `?organisation=${this.$route.params.OrganisationId}` })
                 }
-            },
-            goToSurvey (methodid, surveyid) {
-                console.log(methodid)
-                this.$router.push({ name: 'survey-fill', params: { OrganisationId: this.$route.params.OrganisationId, id: methodid, surveyId: surveyid } })
             },
             async goToEseaAccount (eseaaccount) {
                 await this.setEseaAccount(eseaaccount)

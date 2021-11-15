@@ -1,3 +1,5 @@
+http://localhost:8081/method-wizard/2/surveys/5/survey-design/
+
 <template>
     <div class="p-d-flex" style="height: 100%; border-top: 1px solid lightgrey;">
         <div class="p-d-flex p-flex-column p-jc-between" style="height: calc(100vh - 190px;); width: 300px; border: 1px solid lightgrey;">

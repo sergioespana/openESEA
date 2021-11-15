@@ -1,3 +1,5 @@
+// http://localhost:8081/method-creation
+
 <template>
     <div class="p-grid p-jc-center p-text-center p-p-5">
         <h1 class="p-col-12">Method Creation Options</h1>
@@ -12,6 +14,7 @@
             </div>
         </div>
     </div>
+
     <Dialog v-model:visible="createMethodDialog" :style="{width: '450px'}" header="Create Method" :modal="true" :dismissableMask="true" class="p-fluid">
         <method-form @closedialog="createMethodDialog = false" />
     </Dialog>
@@ -26,6 +29,7 @@
             <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="uploadMethodDialog = false"/>
         </template>
     </Dialog>
+
     <Dialog v-model:visible="copyMethodDialog" :style="{width: '700px'}" header="Copy Method" :modal="true" :dismissableMask="true">
         <p> In the near future it will be possible to copy a method instance, including its related objects to be able to modify it freely without being the owner.</p>
     </Dialog>

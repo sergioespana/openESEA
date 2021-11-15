@@ -1,3 +1,5 @@
+// http://localhost:8081/organisation/1/settings/
+
 <template>
     <div class="p-px-5" style="width: 500px">
         <form id="settingsform" v-on:submit.prevent="updateDetails" class="p-grid p-fluid p-text-left p-my-5">
@@ -53,7 +55,6 @@
             <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="removeOrganisation()" />
         </template>
     </Dialog>
-
 </template>
 
 <script>

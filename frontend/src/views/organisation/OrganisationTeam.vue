@@ -1,3 +1,5 @@
+// http://localhost:8081/organisation/1/team/
+
 <template>
      <div class="p-d-flex p-mb-5 p-mx-5" :class="permission ? 'p-jc-between' : 'p-jc-end' " style="min-width: 600px;">
         <div>
@@ -20,7 +22,7 @@
             <template #body="{data}">
                 <div v-if="(organisation?.accesLevel === 'organisation admin' || organisation?.accesLevel ==='admin')" class="p-d-flex">
                     <Button label="change" class="p-button-info p-button-sm p-mr-2" @click="changeRole(data)" />
-                    <Button label="delete" icon="pi pi-trash" class="p-button-danger p-button-sm" @click="deleteRole(data)" />
+                    <Button label="delete" icon="pi pi-trash" class="p-button-danger p-button-sm" @click="removeOrganisationMember(data)" />
                 </div>
             </template>
         </Column>
@@ -114,7 +116,6 @@
                 this.inviteDialog = false
             },
             changeRole (data) {
-                console.log(data)
                 this.member = data
                 if (this.checkOrganisationAdminCount(data)) {
                     this.changeDialog = true
@@ -122,6 +123,7 @@
                     this.messageDialog = true
                 }
             },
+            // Check if atleast one organisation admin remains when changing an admin's role
             checkOrganisationAdminCount (data) {
                 if (this.organisationmembers.filter(element => element.user_name !== data.user_name).find(element => element.role_name === 'organisation admin')) {
                     console.log('===', this.organisationmembers.filter(element => element.user_name !== data.user_name).find(element => element.role_name === 'organisation admin'))
@@ -134,7 +136,7 @@
                 this.getData()
                 this.changeDialog = false
             },
-            async deleteRole (data) {
+            async removeOrganisationMember (data) {
                 if (this.checkOrganisationAdminCount(data)) {
                     await this.deleteOrganisationMember({ oId: this.$route.params.OrganisationId, id: data.id })
                     this.fetchOrganisation({ id: this.$route.params.OrganisationId })

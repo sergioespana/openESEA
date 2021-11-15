@@ -1,26 +1,24 @@
+// http://localhost:8080/userprofile/
+// Redirects to the personal page of a person by setting up the User and going to userdetails.
+
 <template>
-<div></div>
+    <div></div>
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+    import { mapActions, mapState } from 'vuex'
 
-export default {
-    created () {
-        this.initialize()
-    },
-    computed: {
-        ...mapState('authentication', ['authenticatedUser']),
-        ...mapState('user', ['user'])
-    },
-    methods: {
-        ...mapActions('user', ['setUser']),
-        async initialize () {
-            console.log(this.authenticatedUser)
+    export default {
+        async created () {
             await this.setUser({ ...this.authenticatedUser })
-            console.log(this.user)
             this.$router.push({ name: 'userdetails', params: { id: this.user.id } })
+        },
+        computed: {
+            ...mapState('authentication', ['authenticatedUser']),
+            ...mapState('user', ['user'])
+        },
+        methods: {
+            ...mapActions('user', ['setUser'])
         }
     }
-}
 </script>

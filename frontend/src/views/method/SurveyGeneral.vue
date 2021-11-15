@@ -1,3 +1,5 @@
+// http://localhost:8081/method-wizard/2/surveys/5/settings/
+
 <template>
     <form ref="form" class="p-text-left p-fluid p-m-5 p-p-5 p-inputtext-lg" style="width: 1000px; height: 70vh">
         <!-- {{unsavedChangesDialog}}{{lazySurvey}} <hr> {{survey}} -->
@@ -68,6 +70,7 @@
         },
         computed: {
             ...mapState('survey', ['survey', 'errors', 'isSaved']),
+            // Only allow response types that are specified in the utils/constants file
             responseTypeList () {
                 return Object.entries(this.response_type).map(([text, value]) => ({ text, value }))
             },

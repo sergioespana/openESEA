@@ -1,5 +1,8 @@
+// used in <router-view name="loginview" />
+// used by AccountRecovery.vue, Login.vue, Register.vue
+
 <template>
-<div style="position: absolute; height: 100%; width: 100%;background-color: #00695C;">
+    <div style="position: absolute; height: 100%; width: 100%;background-color: #00695C;">
         <div class="centered">
             <h3 style="color: white; font-size: 60px;">Open ESEA</h3>
             <slot></slot>
@@ -15,4 +18,3 @@
         </div>
     </div>
 </template>
-// <router-view name="loginview" />

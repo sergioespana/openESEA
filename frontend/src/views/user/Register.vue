@@ -1,3 +1,5 @@
+// http://localhost:8080/register/
+
 <template>
     <unauthenticated-base>
         <form @submit.prevent="register" class="p-grid p-fluid p-shadow-10 p-px-5 p-pb-5" style="background-color: white; border-radius: 3px;">
@@ -42,98 +44,97 @@
 </template>
 
 <script>
-import useVuelidate from '@vuelidate/core'
-import { required, minLength, maxLength, email, sameAs } from 'vuelidate/lib/validators'
-import HandleValidationErrors from '../../utils/HandleValidationErrors'
-import { mapActions, mapState } from 'vuex'
-import UnauthenticatedBase from '@/components/UnauthenticatedBase'
+    import useVuelidate from '@vuelidate/core'
+    import { required, minLength, maxLength, email, sameAs } from 'vuelidate/lib/validators'
+    import HandleValidationErrors from '../../utils/HandleValidationErrors'
+    import { mapActions, mapState } from 'vuex'
+    import UnauthenticatedBase from '@/components/UnauthenticatedBase'
 
-export default {
-    components: {
-        UnauthenticatedBase
-    },
-    data () {
-        return {
+    export default {
+        components: {
+            UnauthenticatedBase
+        },
+        data () {
+            return {
+                customuser: {
+                    username: '',
+                    password: '',
+                    password2: '',
+                    email: '',
+                    first_name: '',
+                    last_name_prefix: '',
+                    last_name: ''
+                },
+                submitted: false
+            }
+        },
+        computed: {
+            ...mapState('authentication', ['errors']),
+            usernameErrors () {
+                return HandleValidationErrors(this.v$.customuser.username, this.errors.username)
+            },
+            emailErrors () {
+                return HandleValidationErrors(this.v$.customuser.email, this.errors.email)
+            },
+            passwordErrors () {
+                return HandleValidationErrors(this.v$.customuser.password, this.errors.password)
+            },
+            password2Errors () {
+                return HandleValidationErrors(this.v$.customuser.password2)
+            },
+            firstnameErrors () {
+                return HandleValidationErrors(this.v$.customuser.first_name)
+            },
+            lastnameprefixErrors () {
+                return HandleValidationErrors(this.v$.customuser.last_name_prefix)
+            },
+            lastnameErrors () {
+                return HandleValidationErrors(this.v$.customuser.last_name)
+            }
+        },
+        watch: {
             customuser: {
-                username: '',
-                password: '',
-                password2: '',
-                email: '',
-                first_name: '',
-                last_name_prefix: '',
-                last_name: ''
+                handler (val) {
+                    this.initialize()
+                },
+                deep: true
+            }
+        },
+        setup: () => ({ v$: useVuelidate() }),
+        validations: {
+            customuser: {
+                username: { required, minLength: minLength(4), maxLength: maxLength(100) },
+                password: { required, minLength: minLength(8) },
+                password2: { required, sameAsPassword: sameAs(function () { return this.customuser.password }) },
+                email: { required, email }
+                // Left out on registration, to make registration easier for the user
+                /*
+                first_name: { required, maxLength: maxLength(50) },
+                last_name_prefix: { maxLength: maxLength(50) },
+                last_name: { required, maxLength: maxLength(50) }
+                */
+            }
+        },
+        created () {
+            this.initialize()
+        },
+        methods: {
+            ...mapActions('authentication', ['userRegister']),
+            initialize () {
+                this.$store.commit('authentication/clearErrors')
             },
-            submitted: false
-        }
-    },
-    computed: {
-        ...mapState('authentication', ['errors']),
-        usernameErrors () {
-            return HandleValidationErrors(this.v$.customuser.username, this.errors.username)
-        },
-        emailErrors () {
-            return HandleValidationErrors(this.v$.customuser.email, this.errors.email)
-        },
-        passwordErrors () {
-            return HandleValidationErrors(this.v$.customuser.password, this.errors.password)
-        },
-        password2Errors () {
-            return HandleValidationErrors(this.v$.customuser.password2)
-        },
-        firstnameErrors () {
-            return HandleValidationErrors(this.v$.customuser.first_name)
-        },
-        lastnameprefixErrors () {
-            return HandleValidationErrors(this.v$.customuser.last_name_prefix)
-        },
-        lastnameErrors () {
-            return HandleValidationErrors(this.v$.customuser.last_name)
-        }
-    },
-    watch: {
-        customuser: {
-            handler (val) {
-                this.initialize()
-            },
-            deep: true
-        }
-    },
-    setup: () => ({ v$: useVuelidate() }),
-    validations: {
-        customuser: {
-            username: { required, minLength: minLength(4), maxLength: maxLength(100) },
-            password: { required, minLength: minLength(8) },
-            password2: { required, sameAsPassword: sameAs(function () { return this.customuser.password }) },
-            email: { required, email }
-            // first_name: { required, maxLength: maxLength(50) },
-            // last_name_prefix: { maxLength: maxLength(50) },
-            // last_name: { required, maxLength: maxLength(50) }
-        }
-    },
-    created () {
-        this.initialize()
-    },
-    methods: {
-        ...mapActions('authentication', ['userRegister']),
-        initialize () {
-            this.$store.commit('authentication/clearErrors')
-        },
-        register (e) {
-            this.submitted = true
-            this.v$.customuser.$touch()
-            if (this.v$.$invalid) { return }
-            console.log('succes!')
-            this.userRegister(this.customuser)
+            register (e) {
+                this.submitted = true
+                this.v$.customuser.$touch()
+                if (this.v$.$invalid) { return }
+                console.log('succes!')
+                this.userRegister(this.customuser)
+            }
         }
     }
-}
 </script>
 
 <style lang="scss" scoped>
-    // .p-inputtext {
-    //     border: none;
-    //     border-bottom: 1px solid lightgrey;
-    // }
     .borderless {
         border-bottom: 1px solid red;
     }

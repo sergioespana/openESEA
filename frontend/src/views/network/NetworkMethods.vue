@@ -1,5 +1,7 @@
+// http://localhost:8080/network/1/methods/
+
 <template>
-    <method-list :permission="permission" v-model:refresh="refresh" :networkmethods="true" :importablemethods="importableMethods" @import-method="importMethod" @drop-method="dropChosenMethod">
+    <method-list :permission="permission" v-model:refresh="refresh" :networkmethods="true" :importablemethods="importableMethods" @import-method="importMethod" @drop-method="openDropMethodDialog">
     <div v-if="permission">
         <Button label="Create Method" icon="pi pi-plus" class="p-button-success p-button-sm p-mr-2" @click="goToMethodCreation()" />
         <Button v-if="permission" :label="(importableMethods) ? 'Show owned Methods':'Import Method'" :class="(importableMethods) ? 'p-button-warning':'p-button-success'" class="p-button-sm" @click="importableMethods= !importableMethods" />
@@ -10,8 +12,8 @@
             Are you sure you want to remove the following methods?
             <div class="p-shadow-1 p-p-3 p-m-5">{{selectedMethod.name}}</div>
         <template #footer>
-        <Button label="No" icon="pi pi-times" class="p-button-text" @click="dropDialog=false" />
-        <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="dropMethod()" />
+            <Button label="No" icon="pi pi-times" class="p-button-text" @click="dropDialog=false" />
+            <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="dropMethod()" />
       </template>
     </Dialog>
 </template>
@@ -52,17 +54,18 @@
         },
         methods: {
             ...mapActions('network', ['patchNetwork']),
+            // Add method to the network
             async importMethod (method) {
                 this.importableMethods = false
-                console.log(this.network.methods)
                 this.network.methods.push(method.id)
                 await this.patchNetwork({ methods: this.network.methods })
                 this.refresh = !this.refresh
             },
-            dropChosenMethod (method) {
+            openDropMethodDialog (method) {
                 this.selectedMethod = method
                 this.dropDialog = true
             },
+            // remove method from the network
             async dropMethod () {
                 const newListOfMethods = this.network.methods.filter((item) => item !== this.selectedMethod.id)
                 await this.patchNetwork({ methods: newListOfMethods })

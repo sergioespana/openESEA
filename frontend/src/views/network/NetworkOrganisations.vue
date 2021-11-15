@@ -1,5 +1,7 @@
+// http://localhost:8080/network/1/organisations/
+
 <template>
-    <organisation-list :permission="permission" v-model:refresh="refresh" :networkorganisations="true" :invitableorganisations="invitableOrganisations" @invite-organisation="inviteChosenOrganisation" @remove-organisation="removeChosenOrganisation">
+    <organisation-list :permission="permission" v-model:refresh="refresh" :networkorganisations="true" :invitableorganisations="invitableOrganisations" @invite-organisation="openOrganisationInvitationDialog" @remove-organisation="openOrganisationRemovalDialog">
         <Button v-if="permission" :label="(invitableOrganisations) ? 'Show own Organisations':'Invite Organisations'" :class="(invitableOrganisations) ? 'p-button-warning':'p-button-success'" @click="invitableOrganisations= !invitableOrganisations" />
     </organisation-list>
 
@@ -9,8 +11,8 @@
             Are you sure you want to <b>delete</b> the following organisation(s)?
             <div class="p-shadow-1 p-p-3 p-m-5">{{selectedOrganisation.name}}</div>
         <template #footer>
-        <Button label="No" icon="pi pi-times" class="p-button-text" @click="removeDialog=false" />
-        <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="removeOrg" />
+            <Button label="No" icon="pi pi-times" class="p-button-text" @click="removeDialog=false" />
+            <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="removeOrganisation" />
       </template>
     </Dialog>
 
@@ -52,7 +54,9 @@
         },
         computed: {
             ...mapState('network', ['network']),
+            // membership stands for 'membership requests'
             ...mapState('membership', ['memberships']),
+            // Whether Network or Organisation has requested the membership
             ...mapGetters('membership', ['requestsByNetwork', 'requestsByOrganisation']),
             permission () {
                 if (this.network.accesLevel) {
@@ -76,20 +80,19 @@
                 await this.fetchMemberships({ query: `?network=${this.$route.params.NetworkId}` })
                 this.loading = false
             },
-            async removeChosenOrganisation (organisation) {
+            openOrganisationRemovalDialog (organisation) {
                 this.selectedOrganisation = organisation
                 this.removeDialog = true
             },
-            async removeOrg () {
+            async removeOrganisation () {
                 if (this.selectedOrganisation.id) {
                     var newListOfOrganisations = this.network?.organisations?.filter(item => item !== this.selectedOrganisation.id)
-                    console.log(newListOfOrganisations)
                     await this.patchNetwork({ organisations: newListOfOrganisations })
                     this.removeDialog = false
                     this.refreshData()
                 }
             },
-            inviteChosenOrganisation (organisation) {
+            openOrganisationInvitationDialog (organisation) {
                 this.selectedOrganisation = organisation
                 this.inviteDialog = true
             },

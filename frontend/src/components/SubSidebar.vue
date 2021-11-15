@@ -1,3 +1,5 @@
+// used by UserDetails.vue, Network.vue
+
 <template>
     <div class="sidebar p-shadow-5" :style="(true ? 'width: 55px;': 'width: 55px;')" style="height: 100%; background-color: #F5F7F6;">
         <div>
@@ -33,14 +35,6 @@ export default {
     },
     methods: {
         goToPage (path) {
-            console.log(path)
-            // if (!isNaN(path)) {
-            //     if (this.navElements[path].subElements) {
-            //         this.navElements[path].open = !this.navElements[path].open
-            //         return
-            //     }
-            //     path = this.navElements[path].path
-            // }
             if (path) {
                 if (path.startsWith('network')) {
                     this.$router.push({ name: path, params: { NetworkId: this.$route.params.NetworkId } })

@@ -1,5 +1,6 @@
-<template>
+// used by NetworkOrganisations.vue, OrganisationNetworks.vue
 
+<template>
     <TabView class="p-m-5 p-shadow-2">
         <TabPanel :header="incomingInvitations.length ? 'Received Invites ' + `(${incomingInvitations.length})`: 'Received Invites'">
             <div v-if="incomingInvitations.length">
@@ -64,6 +65,7 @@ export default {
     },
     computed: {
         ...mapState('membership', ['memberships']),
+        // Did the organisation or the network create the membership request?
         incomingInvitations () {
             let temp = []
             temp = this.memberships.filter(m => m.requester !== this.parenttype)
@@ -91,6 +93,7 @@ export default {
             }
             return [{ field: 'id', header: 'id' }]
         },
+        // Sets the right columns dependent whether an organisation or network send out the invite
         outgoingInvitationsColumns () {
             if (this.parenttype === 'network') {
                 return [
@@ -112,12 +115,6 @@ export default {
     methods: {
         ...mapActions('membership', ['fetchMemberships', 'deleteMembership', 'updateMembership']),
         async getMembershipRequests () {
-            // if (this.parenttype === 'network') {
-            //     await this.fetchMemberships({ query: `?network=${this.$route.params.NetworkId}` })
-            // }
-            // if (this.parenttype === 'organisation') {
-            //     await this.fetchMemberships({ query: `?organisation=${this.$route.params.OrganisationId}` })
-            // }
             this.$emit('refresh', true)
         },
         async reactOnAllRequests (choice) {

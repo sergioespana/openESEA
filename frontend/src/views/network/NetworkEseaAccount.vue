@@ -1,3 +1,5 @@
+// http://localhost:8081/network/2/campaigns/1/esea-account/1/
+
 <template>
     <div v-for="survey in eseaAccount.survey_response_by_survey" :key="survey.id" class="p-m-5">
             <ProgressBar :value="survey.current_response_rate + 1" :showValue="true">
@@ -5,8 +7,6 @@
             </ProgressBar>
             <Divider />
     </div>
-
-    <div>Esea Account</div>
     <TabView>
         <TabPanel header="Responses">
             <DataTable :value="eseaAccount.survey_response_by_survey" datakey="id" :rows="10" :paginator="true" :rowHover="true" selectionMode="single" @row-select="goToSummarizedResponses">
@@ -31,19 +31,17 @@
                 </Column>
                 <Column field="required_response_rate" header="Response Rate Threshold" sortable>
                     <template #body='{data}'>
-                        {{data.required_response_rate* 100}}%
+                        {{data.required_response_rate}}%
                     </template>
                 </Column>
                 <Column headerStyle="width: 15rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
                     <template #body="{data}">
-                        <Button label="Survey Results" class="p-button-success" @click="data.responses? goToResults(data) : goToSurveyFill(data)"  style="width: 200px" />
+                        <Button label="Survey Report" class="p-button-success" @click="data.responses? goToResults(data) : goToSurveyFill(data)"  style="width: 200px" />
                     </template>
                 </Column>
             </DataTable>
-
         </TabPanel>
         <TabPanel header="Settings">
-
         </TabPanel>
     </TabView>
 </template>
@@ -56,19 +54,20 @@
         components: {
             ProgressBar
         },
-        data () {
-            return {
-
-            }
-        },
         computed: {
             ...mapState('eseaAccount', ['eseaAccount'])
         },
         methods: {
+            // Show Summarized Survey Results in charts
             goToSummarizedResponses (event) {
-                this.$router.push({ name: 'method-survey-results', params: { OrganisationId: 1, methodId: 1, surveyId: 1 } })
+                this.$router.push({ name: 'survey-results', params: { OrganisationId: this.eseaAccount.organisation, methodId: this.eseaAccount.method, surveyId: event.data.id } })
             },
-            goToResults (data) {
+            // Show own Survey Results to the Survey if the user has filled it in
+            goToSurveyResult (event) {
+                this.$router.push({ name: 'method-survey-result', params: { OrganisationId: this.eseaAccount.organisation, methodId: this.eseaAccount.method, surveyId: event.data.id } })
+            },
+            // Go to report that shows the indicator values
+            goToResults () {
                 this.$router.push({ name: 'esea-account-report', params: { OrganisationId: this.eseaAccount.organisation, EseaAccountId: this.eseaAccount.id } })
             }
         }

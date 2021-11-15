@@ -1,3 +1,5 @@
+http://localhost:8081/organisation/1/esea-accounts/1
+
 <template>
     <div v-if="eseaAccount.campaign" class="card p-mx-5 p-mb-5">
         <div class="p-d-flex p-jc-between p-m-2">
@@ -28,7 +30,7 @@
 
         </TabPanel>
         <TabPanel header="Surveys">
-            <DataTable :value="eseaAccount.survey_response_by_survey" datakey="id" :rows="10" :paginator="true" :rowHover="true" v-model:filters="filters" filterDisplay="Menu" selectionMode="single" @row-select="gotoSurvey"
+            <DataTable :value="eseaAccount.survey_response_by_survey" datakey="id" :rows="10" :paginator="true" :rowHover="true" v-model:filters="filters" filterDisplay="Menu" selectionMode="single" @row-select="goToSurveyFill"
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[10,25,50]"
             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
             <template #header>
@@ -39,7 +41,8 @@
                         <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
                     </span>
                     <div>
-                        <SplitButton label="Tools" :model="items"></SplitButton>
+                        <Button label="Tool Menu" @click="toggle" :disabled="false" />
+                        <Menu id="overlay_menu" ref="menu" :model="items" :popup="true" />
                     </div>
                 </div>
             </template>
@@ -62,7 +65,7 @@
                 <template #body="{data}">
                     <div v-if="permission">
                         <Button v-if="(data.type === 'single')" :label="data.responses? 'Survey Results' : 'Fill in Survey'" type="button" icon="" class="p-button-success" @click="data.responses? goToResults(data) : goToSurveyFill(data)"  style="width: 200px" />
-                        <Button v-else label="Import Employees" type="button" icon="pi pi-user-plus" @click="addEmployees(data)" style="width: 200px" />
+                        <Button v-else label="Import Employees" type="button" icon="pi pi-user-plus" @click="openEmployeesImportWindow(data)" style="width: 200px" />
                     </div>
                     <div v-else></div>
                 </template>
@@ -129,15 +132,13 @@
     import { FilterMatchMode } from 'primevue/api'
     import ProgressBar from 'primevue/progressbar'
     import Listbox from 'primevue/listbox'
-    import SplitButton from 'primevue/splitbutton'
     import dateFixer from '../../utils/datefixer'
     import moment from 'moment'
 
     export default {
         components: {
             ProgressBar,
-            Listbox,
-            SplitButton
+            Listbox
         },
         data () {
             return {
@@ -214,7 +215,10 @@
                     this.fetchCampaign({ nId: this.eseaAccount.network, id: this.eseaAccount.campaign })
                 }
             },
-            addEmployees (data) {
+            toggle (event) {
+                this.$refs.menu.toggle(event)
+            },
+            openEmployeesImportWindow (data) {
                 this.surveyy = data
                 if (data.id) {
                     this.importEmployeesDialog = true
@@ -238,11 +242,13 @@
                 })
             },
             async goToSurveyFill (data) {
+                // The retrieved object structure is dependent on whether the button was clicked or the full row
+                if (data.data) {
+                    data = data.data
+                }
                 this.$router.push({ name: 'survey-fill-page', params: { uniquetoken: data.id } })
             },
-            goToSurvey (methodid, surveyid) {
-                this.$router.push({ name: 'survey-fill-page', params: { uniquetoken: 0 } })
-            },
+            // Right now this also goes to the report, but could be changed to show the summarized survey data to organisation members as well
             goToResults (data) {
                 this.$router.push({ name: 'esea-account-report', params: { OrganisationId: this.$route.params.OrganisationId, EseaAccountId: this.eseaAccount.id } })
             },
@@ -257,7 +263,7 @@
             },
             async goToMethod () {
                 this.$router.push({ name: 'newmethoddetails', params: { id: this.eseaAccount.method } })
-                // this.$router.push({ name: 'methoddetails', params: { id: this.campaign.method } })
+                /* this.$router.push({ name: 'methoddetails', params: { id: this.campaign.method } }) */
             }
         }
     }

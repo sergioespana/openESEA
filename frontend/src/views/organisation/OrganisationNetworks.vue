@@ -1,5 +1,7 @@
+// http://localhost:8081/organisation/1/networks/
+
 <template>
-    <network-list :permission="permission" v-model:refresh="refresh" :organisationnetworks="true" :joinableNetworks="joinableNetworksBool" @leave-network="leaveNetwork" @join-network="joinNetwork">
+    <network-list :permission="permission" v-model:refresh="refresh" :organisationnetworks="true" :joinableNetworks="joinableNetworksBool" @leave-network="openLeaveNetworkDialog" @join-network="openJoinNetworkDialog">
         <Button v-if="permission" :label="(joinableNetworksBool) ? 'Show own Network':'Join Network'" :class="(joinableNetworksBool) ? 'p-button-warning':'p-button-success'" @click="joinableNetworksBool= !joinableNetworksBool" />
     </network-list>
 
@@ -80,10 +82,9 @@
                 await this.fetchMemberships({ query: `?organisation=${this.$route.params.OrganisationId}` })
                 this.loading = false
             },
-            joinNetwork (network) {
+            openJoinNetworkDialog (network) {
                 this.selectedNetwork = network
                 this.requestParticipationDialog = true
-                console.log('-->', network)
             },
             async requestNetworkParticipation () {
                 this.joinableNetworksBool = false
@@ -91,17 +92,14 @@
                 this.requestParticipationDialog = false
                 this.refreshData()
             },
-            leaveNetwork (network) {
+            openLeaveNetworkDialog (network) {
                 this.selectedNetwork = network
                 this.removeDialog = true
-                console.log(network)
             },
             async removeNetwork () {
-                console.log(this.organisation.networks, this.selectedNetwork)
                 this.removeDialog = false
                 if (this.selectedNetwork) {
                     var newListOfNetworks = this.organisation.networks.filter(item => item !== this.selectedNetwork.id)
-                    console.log('>>>', newListOfNetworks, 'iii', this.selectedNetwork)
                     await this.patchOrganisation({ networks: newListOfNetworks })
                 }
                 this.refreshData()

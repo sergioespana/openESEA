@@ -1,3 +1,5 @@
+// http://localhost:8080/account-recovery/
+
 <template>
     <unauthenticated-base>
         <form v-on:submit.prevent="recoverAccount" class="p-grid p-fluid p-shadow-10 p-px-5 p-pb-5" style="background-color: white; border-radius: 3px;">
@@ -22,33 +24,35 @@
 </template>
 
 <script>
-import useVuelidate from '@vuelidate/core'
-import { required, email } from 'vuelidate/lib/validators'
-import UnauthenticatedBase from '@/components/UnauthenticatedBase'
+    import useVuelidate from '@vuelidate/core'
+    import { required, email } from 'vuelidate/lib/validators'
+    import UnauthenticatedBase from '@/components/UnauthenticatedBase'
 
-export default {
-    components: {
-        UnauthenticatedBase
-    },
-    data () {
-        return {
-            email: null,
-            emailSend: false
-        }
-    },
-    setup: () => ({ v$: useVuelidate() }),
-    validations: {
-        email: { required, email }
-    },
-    methods: {
-        sendRecoveryMail () {
-            this.emailSend = false
-            console.log('sending recovery mail...')
-            this.emailSend = true
+    export default {
+        components: {
+            UnauthenticatedBase
+        },
+        data () {
+            return {
+                email: null,
+                emailSend: false
+            }
+        },
+        // Validation done through Vuelidate
+        setup: () => ({ v$: useVuelidate() }),
+        validations: {
+            email: { required, email }
+        },
+        methods: {
+            sendRecoveryMail () {
+                this.emailSend = false
+                console.log('sending recovery mail...')
+                this.emailSend = true
+            }
         }
     }
-}
 </script>
+
 <style lang="scss" scoped>
     .borderless {
         border-bottom: 1px solid red;

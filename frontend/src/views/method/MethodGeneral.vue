@@ -1,3 +1,5 @@
+// http://localhost:8081/methods/3/method-general
+
 <template>
     <form ref="form"  class="p-text-left p-fluid p-m-5 p-p-5 p-inputtext-lg"> <!-- @submit.prevent="!v$.$invalid" -->
         <div class="p-field p-m-5">
@@ -28,7 +30,7 @@
 
 <script>
     import { mapState, mapActions } from 'vuex'
-    import { cloneDeep, isEqual } from 'lodash' // cloneDeep isEqual
+    import { cloneDeep, isEqual } from 'lodash'
     import useVuelidate from '@vuelidate/core'
     import { required, minLength, maxLength } from '../../utils/validators'
     import HandleValidationErrors from '../../utils/HandleValidationErrors'
@@ -85,6 +87,7 @@
                 deep: true
             }
         },
+        // Checks if there are any unsaved changes when the user tries to reroute to a different page
         beforeRouteLeave (to, from, next) {
             setTimeout(() => {
             if ((this.v$.$invalid || !this.isSaved) & !this.discardUnsavedChanges) {

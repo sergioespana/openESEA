@@ -1,3 +1,5 @@
+// http://localhost:8081/network/2/team/
+
 <template>
      <div class="p-d-flex p-mb-5 p-mx-5" :class="(permission) ? 'p-jc-between' : 'p-jc-end' " style="min-width: 600px;">
         <Button v-if="permission" label="Invite User" icon="pi pi-plus" class="p-button-success p-button-sm p-mr-2" @click="openInviteDialog" />
@@ -18,7 +20,7 @@
             <template #body="{data}">
                 <div v-if="(network?.accesLevel === 'network admin' || network?.accesLevel ==='admin')" class="p-d-flex">
                     <Button label="change" class="p-button-info p-button-sm p-mr-2" @click="changeRole(data)" />
-                    <Button label="delete" icon="pi pi-trash" class="p-button-danger p-button-sm" @click="deleteRole(data)" />
+                    <Button label="delete" icon="pi pi-trash" class="p-button-danger p-button-sm" @click="openMemberDeletionDialog(data)" />
                 </div>
             </template>
         </Column>
@@ -51,7 +53,7 @@
             <div class="p-shadow-1 p-p-3 p-m-5">{{this.member.user_name}}</div>
         <template #footer>
         <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteDialog=false" />
-        <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="deleteUser()" />
+        <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="removeNetworkMember()" />
       </template>
     </Dialog>
 </template>
@@ -77,7 +79,7 @@
                 columns: [
                     { field: 'user_name', header: 'User' },
                     { field: 'role_name', header: 'Role' }
-                    // { field: 'invitation', header: 'Invitation' }
+                    /* { field: 'invitation', header: 'Invitation' } */
                 ],
                 roles: [
                     { role_name: 'network admin', role: 2 },
@@ -130,7 +132,6 @@
                 this.inviteDialog = false
             },
             changeRole (data) {
-                console.log(data)
                 this.member = data
                 if (this.checkNetworkAdminCount(data)) {
                     this.changeDialog = true
@@ -138,6 +139,7 @@
                     this.messageDialog = true
                 }
             },
+            // Check if atleast one network admin remains when changing an admin's role
             checkNetworkAdminCount (data) {
                 if (this.networkmembers.filter(element => element.user_name !== data.user_name).find(element => element.role_name === 'network admin')) {
                     console.log('===', this.networkmembers.filter(element => element.user_name !== data.user_name).find(element => element.role_name === 'network admin'))
@@ -150,11 +152,11 @@
                 this.getData()
                 this.changeDialog = false
             },
-            deleteRole (data) {
+            openMemberDeletionDialog (data) {
                 this.member = data
                 this.deleteDialog = true
             },
-            async deleteUser () {
+            async removeNetworkMember () {
                 if (this.checkNetworkAdminCount(this.member)) {
                     await this.deleteNetworkMember({ nId: this.$route.params.NetworkId, id: this.member.id })
                     this.fetchNetwork({ id: this.$route.params.NetworkId })

@@ -1,3 +1,5 @@
+// http://localhost:8081/network/2/settings/
+
 <template>
     <div class="p-px-5" style="width: 500px;">
         <form id="settingsform" v-on:submit.prevent="updateDetails" class="p-grid p-fluid p-text-left p-my-5">
@@ -96,6 +98,7 @@
             async validateImage (e) {
                 this.file = await imageValidator(e)
             },
+            // Updates Network Settings when the 'Save Details' button has been clicked
             async updateDetails () {
                 if (this.v$.network.$invalid) { return }
                 this.loading = true
@@ -109,7 +112,6 @@
                 if (this.file) {
                     formData.append('image', this.file)
                 }
-                console.log('======', this.network)
                 await this.updateNetwork(formData)
                 await this.fetchNetwork({ id: this.$route.params.NetworkId })
                 this.loading = false

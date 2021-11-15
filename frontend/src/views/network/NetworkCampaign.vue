@@ -1,3 +1,5 @@
+// http://localhost:8081/network/2/campaigns/1/
+
 <template>
         <div class="card p-mx-5 p-mb-5">
             <div class="p-d-flex p-jc-between p-m-2">
@@ -32,7 +34,7 @@
                             <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
                         </span>
                         <div>
-                            <Button label="Tool Menu" @click="toggle" :disabled="true" />
+                            <Button label="Tool Menu" @click="toggle" :disabled="false" />
                             <Menu id="overlay_menu" ref="menu" :model="items" :popup="true" />
                         </div>
                     </div>
@@ -162,7 +164,7 @@
                 filters: {
                     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
                     organisation: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-                    // organisation: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+                    /* organisation: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }, */
                     'country.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
                     representative: { value: null, matchMode: FilterMatchMode.IN },
                     date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
@@ -172,6 +174,7 @@
                     verified: { value: null, matchMode: FilterMatchMode.EQUALS }
                 },
                 reminder: 1,
+                // Tool menu, for additional features
                 items: [
                     {
                         label: '- Send Message',
@@ -261,6 +264,7 @@
                 await this.fetchOrganisations({ query: `?network=${this.$route.params.NetworkId}&excludecampaign=${this.$route.params.CampaignId}` })
                 this.addOrganisationsDialog = true
             },
+            // Add Organisation(s) to the campaign
             async addOrganisations () {
                 if (this.chosenOrganisations.length) {
                     for (var organisation of this.chosenOrganisations) {
@@ -271,6 +275,7 @@
                 this.addOrganisationsDialog = false
                 this.initialize()
             },
+            // Remove Organisation(s) from the campaign
             async removeOrganisations () {
                 for (var eseaAccount of this.selectedOrganisations) {
                     console.log(eseaAccount)
@@ -291,7 +296,7 @@
             },
             async goToMethod () {
                 this.$router.push({ name: 'newmethoddetails', params: { id: this.campaign.method } })
-                // this.$router.push({ name: 'methoddetails', params: { id: this.campaign.method } })
+                /* this.$router.push({ name: 'methoddetails', params: { id: this.campaign.method } }) */
             }
         }
     }
@@ -311,33 +316,32 @@
         border-radius: 50%;
         z-index: 1;
     }
-
-    ::v-deep(.p-timeline-event-content)
-    ::v-deep(.p-timeline-event-opposite) {
-        line-height: 1;
-    }
-
-    @media screen and (max-width: 960px) {
-        ::v-deep(.customized-timeline) {
-                .p-timeline-event:nth-child(even) {
-                    flex-direction: row !important;
-
-                    .p-timeline-event-content {
-                        text-align: left !important;
-                    }
-                }
-
-                .p-timeline-event-opposite {
-                    flex: 0;
-                }
-
-                .p-card {
-                    margin-top: 1rem;
-                }
-            }
-    }
     .p-tabview >>> .p-tabview-panels {
         background-color: #F8F9FA;
         border: 1px dotted lightgrey;
     }
 </style>
+
+/* ::v-deep(.p-timeline-event-content)
+::v-deep(.p-timeline-event-opposite) {
+    line-height: 1;
+}
+@media screen and (max-width: 960px) {
+    ::v-deep(.customized-timeline) {
+            .p-timeline-event:nth-child(even) {
+                flex-direction: row !important;
+
+                .p-timeline-event-content {
+                    text-align: left !important;
+                }
+            }
+
+            .p-timeline-event-opposite {
+                flex: 0;
+            }
+
+            .p-card {
+                margin-top: 1rem;
+            }
+        }
+} */

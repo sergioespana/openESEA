@@ -245,6 +245,7 @@ const routes = [
             name: 'organisationoverview',
             component: () => import('../views/organisation/OrganisationOverview'),
             meta: {
+            requiresLogin: true,
             breadcrumb: [
                 { label: 'Organisations', to: '/organisations' },
                 { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
@@ -477,14 +478,14 @@ const routes = [
             requiresLogin: true
         }
     },
-    {
-        path: '/method-upload',
-        name: 'method-upload',
-        component: () => import('../views/method/MethodUpload'),
-        meta: {
-            requiresLogin: true
-        }
-    },
+    // {
+    //     path: '/method-upload',
+    //     name: 'method-upload',
+    //     component: () => import('../views/method/MethodUpload'),
+    //     meta: {
+    //         requiresLogin: true
+    //     }
+    // },
     {
         path: '/methods/:id/creation',
         name: 'methodwizard',
@@ -579,14 +580,14 @@ const routes = [
             // }
         ]
     },
-    {
-        path: '/method-copy',
-        name: 'method-copy',
-        component: () => import('../views/method/MethodCopy'),
-        meta: {
-            requiresLogin: true
-        }
-    },
+    // {
+    //     path: '/method-copy',
+    //     name: 'method-copy',
+    //     component: () => import('../views/method/MethodCopy'),
+    //     meta: {
+    //         requiresLogin: true
+    //     }
+    // },
     // {
     //     path: '/method-details/:id',
     //     name: 'methoddetails',

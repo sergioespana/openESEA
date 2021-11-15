@@ -1,3 +1,5 @@
+// Used by Survey.vue
+
 <template>
 <div class="p-d-flex p-ai-center p-jc-between" style="width: 100%; height: 60px; border: 1px solid lightgrey;">
     <div class="p-d-flex p-ai-center">

@@ -1,3 +1,5 @@
+// used by NetworkMethods.vue, used by Methods.vue
+
 <template>
     <list-bar v-model:tabledisplay="tableDisplay" v-model:allitems="allMethods" :includecheckbox="!networkmethods" v-model:search="customSearch" name="Methods">
         <slot></slot>
@@ -7,13 +9,13 @@
     <div v-else-if="methods.length">
          <div v-if="tableDisplay" class="p-grid p-m-5" style="height: 500px;">
             <div v-for="method in filteredMethods" :key="method.id" class="p-col-12 p-md-6 p-lg-4" style="width: 300px; height: 200px; ">
-                <div class="p-d-flex p-p-3" :class="method.hover ? 'p-shadow-2 p-m-1' : 'p-shadow-1 p-m-2'" style="height: 100%;" :style="(method.hover ? styleObject : '')" @mouseover="method.hover=true" @mouseleave="method.hover=false" @click.left="goTomethod(method)">
+                <div class="p-d-flex p-p-3" :class="method.hover ? 'p-shadow-2 p-m-1' : 'p-shadow-1 p-m-2'" style="height: 100%;" :style="(method.hover ? styleObject : '')" @mouseover="method.hover=true" @mouseleave="method.hover=false" @click.left="goToMethod(method)">
                     <!-- <img :src="method.image" alt="method Image" style="max-width: 150px; max-height: 150px; border-radius: 50%;" format="PNG" /> -->
                     <p class="p-as-center p-text-bold p-text-italic" style="width: 100%">{{method.name}}</p>
                 </div>
             </div>
          </div>
-        <DataTable v-else :value="filteredMethods"  dataKey="id" :loading="loading" selectionMode="single" @row-select="goTomethod" showGridlines autoLayout
+        <DataTable v-else :value="filteredMethods"  dataKey="id" :loading="loading" selectionMode="single" @row-select="goToMethod" showGridlines autoLayout
         :paginator="true" :rows="10" :filters="filters" paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
         :rowsPerPageOptions="[5,10,25]" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" class="p-datatable-striped"> <!-- p-datatable-sm -->
 
@@ -22,14 +24,13 @@
                     <i class="pi p-text-center p-text-bold" style="width:100%; font-size: 20px;" :class="{'true-icon pi-check': slotProps.data.ispublic, 'false-icon pi-times': !slotProps.data.ispublic}" :style="(slotProps.data.ispublic ? 'color: green;':'color: red;')"></i>
                 </template>
             </Column>
-            <Column v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" bodyStyle="" /> <!-- text-align: center; overflow: visible  contentStyle="width: 500px;" -->
+            <Column v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" /> <!-- text-align: center; overflow: visible  contentStyle="width: 500px;" -->
             <Column field="created_by" header="Creator">
                 <template #body="slotProps">
                     <div v-if="slotProps.data.created_by !== currentuser">{{slotProps.data.created_by}}</div> <div v-else class="p-text-bold">You</div>
                 </template>
             </Column>
 
-            <!-- <div v-if="networkmethods && permission"> -->
             <Column headerStyle="width: 15rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
                 <template #body="{data}">
                     <Button v-if="(data.created_by === this.currentuser && !networkmethods)" label="Update" class="p-button-sm p-mr-2" @click="updateMethod(data)"  style="width: 100px" />
@@ -40,11 +41,10 @@
                     </div>
                 </template>
             </Column>
-            <!-- </div>
-            <div v-else style="width: 0px;"><Column bodyStyle="width: 0rem;" /></div> -->
         </Datatable>
     </div>
     <div v-else class="p-text-italic">No methods to display!</div>
+
     <Dialog v-model:visible="destroyMethodDialog" :style="{width: '450px'}" header="Confirm Method Deletion" :modal="true">
         <div class="confirmation-content">
             <i class="pi pi-exclamation-triangle p-mr-3" style="font-size:1.5rem" />
@@ -127,6 +127,7 @@
         },
         methods: {
             ...mapActions('method', ['fetchMethods', 'setMethod', 'deleteMethod']),
+            // Fetches the required Methods
             async getMethods () {
                 this.loading = true
                 let query = ''
@@ -150,7 +151,7 @@
                 this.loading = false
                 this.$emit('update: refresh', true)
             },
-            async goTomethod (method) {
+            async goToMethod (method) {
                 if (method?.data) {
                     method = method.data
                 }

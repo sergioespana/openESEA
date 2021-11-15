@@ -97,8 +97,8 @@ DATABASES = {
 
         'USER': 'postgres',
         
-        #password could also be "admin"
-        'PASSWORD': 'password',
+        #password could be "admin" or "password" 
+        'PASSWORD': 'admin',
 
         'HOST': '127.0.0.1',
 

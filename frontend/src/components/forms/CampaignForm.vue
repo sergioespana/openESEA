@@ -1,3 +1,5 @@
+// used by NetworkCampaigns.vue
+
 <template>
     <form id="campaignform" @submit.prevent="createNewCampaign" class="p-input-filled p-fluid p-text-left">
         <div class="p-field ">
@@ -62,108 +64,101 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
-import useVuelidate from '@vuelidate/core'
-import { required, minLength, maxLength } from 'vuelidate/lib/validators'
-import HandleValidationErrors from '../../utils/HandleValidationErrors'
-import Calendar from 'primevue/calendar'
-import Dropdown from 'primevue/dropdown'
-import MultiSelect from 'primevue/multiselect'
+    import { mapActions, mapState } from 'vuex'
+    import useVuelidate from '@vuelidate/core'
+    import { required, minLength, maxLength } from 'vuelidate/lib/validators'
+    import HandleValidationErrors from '../../utils/HandleValidationErrors'
+    import Calendar from 'primevue/calendar'
+    import Dropdown from 'primevue/dropdown'
+    import MultiSelect from 'primevue/multiselect'
 
-export default {
-    components: {
-        Calendar,
-        Dropdown,
-        MultiSelect
-    },
-    data () {
-        return {
-            selectedOrganisations: [],
-            campaignForm: {
-                name: null,
-                network: this.$route.params.NetworkId,
-                method: null,
-                organisations: [],
-                open_survey_date: new Date(),
-                close_survey_date: new Date()
-            }
-        }
-    },
-    setup: () => ({ v$: useVuelidate() }),
-    validations: {
-        campaignForm: {
-            name: { required, minLength: minLength(4), maxLength: maxLength(255) },
-            network: { required },
-            method: { required },
-            organisations: {},
-            open_survey_date: {},
-            close_survey_date: {}
-        }
-    },
-    computed: {
-        ...mapState('campaign', ['campaign', 'error']),
-        ...mapState('network', ['network']),
-        ...mapState('method', ['methods']),
-        ...mapState('organisation', ['organisations']),
-        nameErrors () {
-            return HandleValidationErrors(this.v$.campaignForm.name, this.error.name)
+    export default {
+        components: {
+            Calendar,
+            Dropdown,
+            MultiSelect
         },
-        methodErrors () {
-            return HandleValidationErrors(this.v$.campaignForm.method, this.error.method)
-        },
-        openingDateErrors () {
-            return HandleValidationErrors(this.v$.campaignForm.open_survey_date, this.error.open_survey_date)
-        },
-        closingDateErrors () {
-            return HandleValidationErrors(this.v$.campaignForm.close_survey_date, this.error.close_survey_date)
-        }
-    },
-    created () {
-        this.fetchMethods({ query: `?network=${this.network?.id || 0}` })
-        this.initialize()
-    },
-    methods: {
-        ...mapActions('organisation', ['fetchOrganisations']),
-        ...mapActions('campaign', ['createCampaign', 'setCampaign']),
-        ...mapActions('method', ['fetchMethods']),
-        async initialize () {
-            this.campaignForm.close_survey_date = new Date(this.campaignForm.close_survey_date.setDate(this.campaignForm.open_survey_date.getDate() + 30))
-            await this.setCampaign({})
-            await this.fetchOrganisations({ query: `?network=${this.$route.params.NetworkId}` })
-        },
-        async createNewCampaign () {
-            console.log('Validating...')
-            this.v$.campaignForm.$touch()
-            if (this.v$.$invalid) { return }
-            console.log('validated.')
-
-            if (this.selectedOrganisations.length) {
-                for (var organisation of this.selectedOrganisations) {
-                    this.campaignForm.organisations.push(organisation.name)
+        data () {
+            return {
+                selectedOrganisations: [],
+                campaignForm: {
+                    name: null,
+                    network: this.$route.params.NetworkId,
+                    method: null,
+                    organisations: [],
+                    open_survey_date: new Date(),
+                    close_survey_date: new Date()
                 }
             }
-            await this.createCampaign({ nId: this.$route.params.NetworkId, data: this.campaignForm })
-            this.closeDialog()
-            if (this.campaign.id) {
-                this.$router.push({ name: 'networkcampaign', params: { NetworkId: this.$route.params.NetworkId, CampaignId: this.campaign.id } })
+        },
+        // Validation of the Campaign Form
+        setup: () => ({ v$: useVuelidate() }),
+        validations: {
+            campaignForm: {
+                name: { required, minLength: minLength(4), maxLength: maxLength(255) },
+                network: { required },
+                method: { required },
+                organisations: {},
+                open_survey_date: {},
+                close_survey_date: {}
             }
         },
-        closeDialog () {
-            this.$emit('closedialog')
+        computed: {
+            ...mapState('campaign', ['campaign', 'error']),
+            ...mapState('network', ['network']),
+            ...mapState('method', ['methods']),
+            ...mapState('organisation', ['organisations']),
+            nameErrors () {
+                return HandleValidationErrors(this.v$.campaignForm.name, this.error.name)
+            },
+            methodErrors () {
+                return HandleValidationErrors(this.v$.campaignForm.method, this.error.method)
+            },
+            openingDateErrors () {
+                return HandleValidationErrors(this.v$.campaignForm.open_survey_date, this.error.open_survey_date)
+            },
+            closingDateErrors () {
+                return HandleValidationErrors(this.v$.campaignForm.close_survey_date, this.error.close_survey_date)
+            }
+        },
+        created () {
+            this.fetchMethods({ query: `?network=${this.network?.id || 0}` })
+            this.initialize()
+        },
+        methods: {
+            ...mapActions('organisation', ['fetchOrganisations']),
+            ...mapActions('campaign', ['createCampaign', 'setCampaign']),
+            ...mapActions('method', ['fetchMethods']),
+            async initialize () {
+                // Sets the campaign's surveys closing date to 30 days from now as default
+                this.campaignForm.close_survey_date = new Date(this.campaignForm.close_survey_date.setDate(this.campaignForm.open_survey_date.getDate() + 30))
+                await this.setCampaign({})
+                await this.fetchOrganisations({ query: `?network=${this.$route.params.NetworkId}` })
+            },
+            async createNewCampaign () {
+                this.v$.campaignForm.$touch()
+                if (this.v$.$invalid) { return }
+                if (this.selectedOrganisations.length) {
+                    for (var organisation of this.selectedOrganisations) {
+                        this.campaignForm.organisations.push(organisation.name)
+                    }
+                }
+                await this.createCampaign({ nId: this.$route.params.NetworkId, data: this.campaignForm })
+                this.closeDialog()
+                if (this.campaign.id) {
+                    this.$router.push({ name: 'networkcampaign', params: { NetworkId: this.$route.params.NetworkId, CampaignId: this.campaign.id } })
+                }
+            },
+            closeDialog () {
+                this.$emit('closedialog')
+            }
         }
     }
-}
-// organisations () {
-//     var dict = []
-//     this.network.organisations.forEach(org => dict.push({ name: org }))
-//     return dict
-// }
-// Methods of a Network
 </script>
 
 <style lang="scss" scoped>
-.borderless {
-    border-bottom: 1px solid red;
+    .borderless {
+        border-bottom: 1px solid red;
 
-}
+    }
 </style>

@@ -1,3 +1,5 @@
+// used by NetworkCampaigns.vue
+
 <template>
     <list-bar v-model:tabledisplay="tableDisplay" v-model:allitems="allCampaigns" :includecheckbox="false" v-model:search="customSearch" name="Campaigns">
         <slot></slot>

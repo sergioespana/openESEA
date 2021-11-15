@@ -1,3 +1,5 @@
+// http://localhost:8080/users/user_id/
+
 <template>
     <div class="p-grid p-m-0 p-p-0" style="height: 100%;">
         <div class="p-col-fixed p-m-0 p-p-0" style="height: 100%;">
@@ -10,7 +12,7 @@
             <router-view />
         </div>
     </div>
-<!-- <input v-if="usernameedit && editing" v-model="user.username" @focus="usernameedit" @blur="usernameedit=false && console.log('check')" @keyup.enter="usernameedit=false" class="p-col-12 p-inputtext" />
+    <!-- <input v-if="usernameedit && editing" v-model="user.username" @focus="usernameedit" @blur="usernameedit=false && console.log('check')" @keyup.enter="usernameedit=false" class="p-col-12 p-inputtext" />
                             <div v-else @click="usernameedit=true">{{user.username}}</div> --> <!--@focusin="true" @focusout="usernameedit=false" -->
     <div class="p-d-flex p-jc-center" style="width: 100%; height: 100%;">
         <div style="width: 100%;">
@@ -92,142 +94,145 @@
 </template>
 
 <script>
-import useVuelidate from '@vuelidate/core'
-import { required, minLength, maxLength, email } from 'vuelidate/lib/validators'
-import HandleValidationErrors from '../../utils/HandleValidationErrors'
-import { mapActions, mapState } from 'vuex'
-import imageValidator from '../../utils/imageValidator'
-import SubSidebar from '@/components/SubSidebar'
+    import useVuelidate from '@vuelidate/core'
+    import { required, minLength, maxLength, email } from 'vuelidate/lib/validators'
+    import HandleValidationErrors from '../../utils/HandleValidationErrors'
+    import { mapActions, mapState } from 'vuex'
+    import imageValidator from '../../utils/imageValidator'
+    import SubSidebar from '@/components/SubSidebar'
 
-export default {
-    components: {
-        SubSidebar
-    },
-    data () {
-        return {
-            deleteAccountDialog: false,
-            editing: false,
-            activatefocus: false,
-            loading: false,
-            file: false,
-            editablefields: {
-                username: false,
-                fullname: false,
-                email: false,
-                accountcreation: false,
-                bio: false
-                },
-            links: [
-                 {
-                    name: 'Contact Information',
-                    icon: 'pi pi-user',
-                    path: 'profileoverview'
-                },
-                {
-                    name: 'Socials',
-                    icon: 'pi pi-comments',
-                    path: 'profilesocials'
-                },
-                {
-                    name: 'User Settings',
-                    icon: 'pi pi-cog',
-                    path: 'profilesettings'
-                }
-            ]
-        }
-    },
-    computed: {
-        ...mapState('user', ['user', 'error']),
-        ...mapState('authentication', ['currentuser', 'authenticatedUser']),
-        usernameErrors () {
-            return HandleValidationErrors(this.v$.user.username, this.error.username)
+    export default {
+        components: {
+            SubSidebar
         },
-        emailErrors () {
-            return HandleValidationErrors(this.v$.user.email, this.error.email)
-        }
-    },
-    setup: () => ({ v$: useVuelidate() }),
-    validations: {
-        user: {
-            username: { required, minLength: minLength(4), maxLength: maxLength(50) },
-            fullname: {},
-            email: { email, required }
-            // bio: {}
-        }
-    },
-    async created () {
-        await this.fetchUser({ id: this.$route.params.id })
-        this.initialize()
-    },
-    mounted  () {
-        // this.$refs.myref.focus()
-    },
-    methods: {
-        ...mapActions('user', ['fetchUser', 'updateUser', 'deleteUser']),
-        initialize () {
-            if (this.currentuser === this.user.username) {
-                this.editing = true
+        data () {
+            return {
+                deleteAccountDialog: false,
+                editing: false,
+                activatefocus: false,
+                loading: false,
+                file: false,
+                editablefields: {
+                    username: false,
+                    fullname: false,
+                    email: false,
+                    accountcreation: false,
+                    bio: false
+                    },
+                links: [
+                    {
+                        name: 'Contact Information',
+                        icon: 'pi pi-user',
+                        path: 'profileoverview'
+                    },
+                    {
+                        name: 'Socials',
+                        icon: 'pi pi-comments',
+                        path: 'profilesocials'
+                    },
+                    {
+                        name: 'User Settings',
+                        icon: 'pi pi-cog',
+                        path: 'profilesettings'
+                    }
+                ]
             }
         },
-        async updateProfile () {
-            this.v$.user.$touch()
-            if (this.v$.user.$invalid) { return }
-            this.loading = true
-            setTimeout(() => { this.loading = false }, 1000)
-            console.log('updated')
+        computed: {
+            ...mapState('user', ['user', 'error']),
+            ...mapState('authentication', ['currentuser', 'authenticatedUser']),
+            usernameErrors () {
+                return HandleValidationErrors(this.v$.user.username, this.error.username)
+            },
+            emailErrors () {
+                return HandleValidationErrors(this.v$.user.email, this.error.email)
+            }
+        },
+        setup: () => ({ v$: useVuelidate() }),
+        validations: {
+            user: {
+                username: { required, minLength: minLength(4), maxLength: maxLength(50) },
+                fullname: {},
+                email: { email, required }
+                // bio: {} Isn't an attribute in the user Model yet (backend).
+            }
+        },
+        async created () {
+            await this.fetchUser({ id: this.$route.params.id })
+            this.initialize()
+        },
+        mounted  () {
+            /*
+                this.$refs.myref.focus()
+            */
+        },
+        methods: {
+            ...mapActions('user', ['fetchUser', 'updateUser', 'deleteUser']),
+            initialize () {
+                if (this.currentuser === this.user.username) {
+                    this.editing = true
+                }
+            },
+            async updateProfile () {
+                this.v$.user.$touch()
+                if (this.v$.user.$invalid) { return }
+                this.loading = true
+                setTimeout(() => { this.loading = false }, 1000)
 
-            var formData = new FormData()
-            for (var key in this.user) {
-                if (key !== 'image') {
-                    if (this.user[key].length) {
-                        formData.append(key, this.user[key])
+                // formData can be used to construct objects to send through a Post Request.
+                var formData = new FormData()
+                for (var key in this.user) {
+                    if (key !== 'image') {
+                        if (this.user[key].length) {
+                            formData.append(key, this.user[key])
+                        }
                     }
                 }
+                // Add image file to formData object if an image was uploaded.
+                if (this.file) {
+                    formData.append('image', this.file)
+                }
+                await this.updateUser(formData)
+                await this.fetchUser({ id: this.$route.params.id })
+                setTimeout(() => { this.loading = false }, 1000)
+            },
+            async deleteAccount () {
+                if (this.currentuser === this.user.username) {
+                    await this.deleteUser({ id: this.user.id })
+                    this.$router.push({ name: 'logout' })
+                }
+            },
+            // Used to change an attribute (e.g. bio) to an input field in order for it to be changed.
+            delayedfocus (id) {
+                if (this.editing) {
+                    this.editablefields[`${id}`] = true
+                    setTimeout(() => { document.getElementById(`${id}`).focus() }, 50)
+                }
+            },
+            async validateImage (e) {
+                this.file = await imageValidator(e)
             }
-            if (this.file) {
-                formData.append('image', this.file)
-            }
-            await this.updateUser(formData)
-            await this.fetchUser({ id: this.$route.params.id })
-            setTimeout(() => { this.loading = false }, 1000)
-            // this updateUser({})
-        },
-        async deleteAccount () {
-            if (this.currentuser === this.user.username) {
-                await this.deleteUser({ id: this.user.id })
-                this.$router.push({ name: 'logout' })
-            }
-        },
-        delayedfocus (id) {
-            if (this.editing) {
-                this.editablefields[`${id}`] = true
-                setTimeout(() => { document.getElementById(`${id}`).focus() }, 50)
-            }
-        },
-        async validateImage (e) {
-            this.file = await imageValidator(e)
         }
     }
-}
 </script>
 
 <style lang="scss" scoped>
-.p-inputtext {
-    border: none;
-    border-bottom: 1px solid lightgrey;
-}
-.borderless {
-    border-bottom: 1px solid red;
+    .p-inputtext {
+        border: none;
+        border-bottom: 1px solid lightgrey;
+    }
+    .borderless {
+        border-bottom: 1px solid red;
 
-}
-.imageupload {
-  background-color: #2196F3;
-  color: white;
-  padding: 5px;
-  margin: 0px 50px;
-  border-radius: 5px;
-  cursor: pointer;
-}
+    }
+    .imageupload {
+    background-color: #2196F3;
+    color: white;
+    padding: 5px;
+    margin: 0px 50px;
+    border-radius: 5px;
+    cursor: pointer;
+    }
 </style>
 
 // <div class="p-col-4 p-shadow-1" style="border-style: solid; border-color: #f2f2f2; border-width: thin; opacity: 0.6"></div>

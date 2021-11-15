@@ -1,3 +1,6 @@
+// http://localhost:8081/method-wizard/3/surveys/6/
+// A specific Survey's subpages are also part of this component, as you can see <router-view/> on line 15. e.g. http://localhost:8081/method-wizard/3/surveys/6/settings/
+
 <template>
     <div style="height: 100%; width: 100%; display: flex; flex-direction: column;">
         <survey-header />

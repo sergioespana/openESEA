@@ -1,3 +1,5 @@
+// used by MethodTopicCreation.vue
+
 <template>
     <form v-if="active" ref="form" class="p-d-flex p-m-0 p-fluid p-text-left"
         :style="[(active) ? 'border: 2px solid #9ecaed;':'border: 1px solid lightgrey;', (valid) ? '': 'border: 2px solid rgba(255, 0, 0, 0.5);']"> <!-- @submit.prevent="!v$.$invalid" -->

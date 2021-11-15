@@ -20,6 +20,7 @@
 
 // script is javascript code that is executed on the page
 <script>
+  // Import of Store states(mapState)/functions(mapState) and Custom components
   import { mapState } from 'vuex'
   import MainSidebar from './components/MainSidebar'
   import MainTopbar from './components/MainTopbar.vue'
@@ -29,21 +30,25 @@
       MainSidebar,
       MainTopbar
     },
+    // local data
     data () {
       return {
           expandedSidebar: false
       }
     },
+    computed: {
+      ...mapState('authentication', ['accessToken', 'currentuser'])
+    },
+    // functions
     methods: {
-    toggle (event) {
-              this.$refs.menu.toggle(event)
-          },
+      /*
+      toggle (event) {
+        this.$refs.menu.toggle(event)
+      },
+      */
       changeSidebar (value) {
           this.expandedSidebar = value
       }
-    },
-    computed: {
-      ...mapState('authentication', ['accessToken', 'currentuser'])
     }
   }
 </script>

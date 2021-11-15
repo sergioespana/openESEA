@@ -1,3 +1,5 @@
+// used by Organisations.vue, NetworkOrganisations.vue
+
 <template>
     <list-bar v-model:tabledisplay="tableDisplay" v-model:allitems="allOrganisations" :includecheckbox="!networkorganisations" v-model:search="customSearch" name="Organisations">
         <slot></slot>
@@ -117,6 +119,7 @@
         },
         methods: {
             ...mapActions('organisation', ['fetchOrganisations', 'setOrganisation', 'deleteOrganisation']),
+            // Fetches the required Organisations
             async getOrganisations () {
                 this.loading = true
                 setTimeout(() => { this.failedLoad = true }, 10000)
@@ -155,33 +158,6 @@
                     this.$emit('remove-organisation', organisation)
                 }
             }
-
-            //  async goToOrganisation (organisation) {
-            // if (this.removeMode) {
-            //     this.selectedOrganisations = []
-            //     this.selectedOrganisations.push(organisation)
-            //     this.removeDialog = true
-            // } else {
-            // await this.setOrganisation({ ...organisation })
-            // this.$router.push({ name: 'organisationoverview', params: { OrganisationId: organisation.id } })
-            // }
-            // async destroyOrganisation () {
-            //     if (this.selectedOrganisation) {
-            //         this.deleteOrganisation({ id: this.selectedOrganisation?.id })
-            //     }
-            //     this.selectedOrganisation = null
-            //     this.destroyOrganisationDialog = false
-            // }
-    //             <!-- <Dialog v-model:visible="destroyOrganisationDialog" :style="{width: '450px'}" header="Confirm Organisation Deletion" :modal="true">
-    //     <div class="confirmation-content">
-    //         <i class="pi pi-exclamation-triangle p-mr-3" style="font-size:1.5rem" />
-    //         <span>Are you sure you want to completely delete the following Organisation: <b>{{selectedOrganisation.name}}</b>?</span>
-    //     </div>
-    //     <template #footer>
-    //         <Button label="No" icon="pi pi-times" class="p-button-text" @click="destroyOrganisationDialog = false"/>
-    //         <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="destroyOrganisation()" />
-    //     </template>
-    // </Dialog>
         }
     }
 </script>

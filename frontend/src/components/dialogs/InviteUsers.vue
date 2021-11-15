@@ -1,3 +1,5 @@
+// used by NetworkTeam.vue, OrganisationTeam.vue
+
 <template>
     <div class="p-d-flex p-jc-between p=ai-center p-my-5">
         <span>Select the users that you would like to invite to your team.</span>
@@ -21,42 +23,36 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+    import { mapState, mapActions } from 'vuex'
 
-export default {
-    props: {
-        users: {
-            type: Array,
-            default: () => []
+    export default {
+        props: {
+            users: {
+                type: Array,
+                default: () => []
+                }
+        },
+        data () {
+            return {
+                columns: [
+                    { field: 'username', header: 'Username' },
+                    { field: 'email', header: 'E-mail' },
+                    { field: 'first_name', header: 'First Name' }
+                ],
+                search: ''
             }
-    },
-    data () {
-        return {
-            columns: [
-                { field: 'username', header: 'Username' },
-                { field: 'email', header: 'E-mail' },
-                { field: 'first_name', header: 'First Name' }
-            ],
-            search: ''
-        }
-    },
-    computed: {
-        ...mapState('network', ['network']),
-        filteredUsers () {
-            return this.users.filter(user => { return user.username.toLowerCase().includes(this.search.toLowerCase()) })
-        }
-    },
-    // async created () {
-    //     await this.fetchUsers({ query: `?excludenetwork=${this.$route.params.NetworkId}` })
-    // },
-    methods: {
-        ...mapActions('user', ['fetchUsers']),
-        // ...mapActions('networkTeam', ['createNetworkMember']),
-        async inviteUser (data) {
-            this.$emit('inviteduser', data)
-            // await this.createNetworkMember({ nId: this.$route.params.NetworkId, data: { user: data.id } })
-            // this.$emit('closedialog')
+        },
+        computed: {
+            ...mapState('network', ['network']),
+            filteredUsers () {
+                return this.users.filter(user => { return user.username.toLowerCase().includes(this.search.toLowerCase()) })
+            }
+        },
+        methods: {
+            ...mapActions('user', ['fetchUsers']),
+            async inviteUser (data) {
+                this.$emit('inviteduser', data)
+            }
         }
     }
-}
 </script>

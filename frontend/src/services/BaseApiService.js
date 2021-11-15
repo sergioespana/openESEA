@@ -1,3 +1,6 @@
+// All the different type of requests that are required for the backend
+// Used in the ...Service.js files
+
 import apiCall from '../utils/api'
 
 export default class BaseApiService {

@@ -1,3 +1,5 @@
+// Don't Touch this file. Used for sending request and getting responses from the backend server
+
 import axios from 'axios'
 import requestAuthInterceptor from '../utils/requestAuthInterceptor'
 // import responseAuthInterceptor from '../utils/responseAuthInterceptor'

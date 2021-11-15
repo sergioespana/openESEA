@@ -1,4 +1,4 @@
-import { AxiosInstance } from '../plugins/axios'
+import { AxiosInstance } from '../../plugins/axios'
 
 export default {
     get () {

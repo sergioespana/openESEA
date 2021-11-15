@@ -1,3 +1,5 @@
+// Used by MainSidebar.vue
+
 <template>
     <div :style="(sidebar ? 'width: 350px':'width: 55px')" class="sidebar">
         <div style="height: 100%;">
@@ -24,66 +26,66 @@
 </template>
 
 <script>
-export default {
-    props: {
-        sidebar: {
-            type: Boolean,
-            default: false
-        }
-    },
-    data () {
-        return {
-            fullwidth: true,
-            navElements: [
-                {
-                    name: 'Dashboard',
-                    icon: 'pi pi-home',
-                    path: 'home'
-                },
-                {
-                    name: 'Networks',
-                    icon: 'pi pi-cloud',
-                    path: 'networks'
-                },
-                {
-                    name: 'Organisations',
-                    icon: 'pi pi-globe',
-                    path: 'organisations'
-                },
-                {
-                    name: 'Methods',
-                    icon: 'pi pi-briefcase',
-                    path: 'methods'
-                },
-                {
-                    name: 'Users',
-                    icon: 'pi pi-users',
-                    path: 'users'
-                },
-                {
-                    name: 'Log out',
-                    icon: 'pi pi-sign-out',
-                    path: 'logout'
-                }
-            ]
-        }
-    },
-    methods: {
-        goToPage (path) {
-            if (!isNaN(path)) {
-                if (this.navElements[path].subElements) {
-                    this.navElements[path].open = !this.navElements[path].open
-                    return
-                }
-                path = this.navElements[path].path
+    export default {
+        props: {
+            sidebar: {
+                type: Boolean,
+                default: false
             }
-            if (path) {
-                console.log(path)
-                this.$router.push({ name: path })
+        },
+        data () {
+            return {
+                fullwidth: true,
+                navElements: [
+                    {
+                        name: 'Dashboard',
+                        icon: 'pi pi-home',
+                        path: 'home'
+                    },
+                    {
+                        name: 'Networks',
+                        icon: 'pi pi-cloud',
+                        path: 'networks'
+                    },
+                    {
+                        name: 'Organisations',
+                        icon: 'pi pi-globe',
+                        path: 'organisations'
+                    },
+                    {
+                        name: 'Methods',
+                        icon: 'pi pi-briefcase',
+                        path: 'methods'
+                    },
+                    {
+                        name: 'Users',
+                        icon: 'pi pi-users',
+                        path: 'users'
+                    },
+                    {
+                        name: 'Log out',
+                        icon: 'pi pi-sign-out',
+                        path: 'logout'
+                    }
+                ]
+            }
+        },
+        methods: {
+            goToPage (path) {
+                if (!isNaN(path)) {
+                    if (this.navElements[path].subElements) {
+                        this.navElements[path].open = !this.navElements[path].open
+                        return
+                    }
+                    path = this.navElements[path].path
+                }
+                if (path) {
+                    console.log(path)
+                    this.$router.push({ name: path })
+                }
             }
         }
     }
-}
 </script>
 
 <style lang="scss" scoped>
@@ -144,9 +146,5 @@ export default {
     .sidebar-element:hover .sidebar-icon {
         font-size: 20px;
     }
-    // .a {
-    //     background-color: rgba($color: lightgrey, $alpha: 0.1);
-    //     font-size: 22px;
-    // }
     }
 </style>

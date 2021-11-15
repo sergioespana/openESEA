@@ -8,115 +8,116 @@
         </div>
     </div>
 </template>
+
 <script>
-import { mapState } from 'vuex'
+    import { mapState } from 'vuex'
 
-export default {
-    components: {
-    },
-    props: {
-        formula: {
-            type: String,
-            default: ''
+    export default {
+        components: {
         },
-        keyy: {
-            type: String
-        }
-    },
-    data () {
-        return {
-            lazyFormula: this.formula || '',
-            autoComplete: false,
-            positionLeft: null,
-            positionRight: null
-        }
-    },
-    computed: {
-        ...mapState('directIndicator', ['directIndicators']),
-        ...mapState('indirectIndicator', ['indirectIndicators', 'indirectIndicator']),
-        indicators () {
-            return this.directIndicators.concat(this.indirectIndicators)
-        }
-    },
-    watch: {
-        lazyFormula (val) {
-            this.lazyFormula = val.replace(' then', '\nthen')
-            this.lazyFormula = val.replace(' else', '\nelse')
-            console.log(val)
-            this.$emit('output', val)
-        }
-    },
-    mounted () {
-        const self = this
-        this.$refs.expression.$el.addEventListener('keyup', self.checkUserPosition, false)
-        this.$refs.expression.$el.addEventListener('click', self.checkUserPosition, false)
-        document.addEventListener('click', function (event) {
-            if (self.$refs.focuswindow !== event.target && !self.$refs.focuswindow?.contains(event.target)) { self.removeAutoComplete() }
-        })
-    },
-    methods: {
-        showIndicators () {
-            this.autoComplete = true
+        props: {
+            formula: {
+                type: String,
+                default: ''
+            },
+            keyy: {
+                type: String
+            }
         },
-        removeAutoComplete () {
-            this.autoComplete = false
+        data () {
+            return {
+                lazyFormula: this.formula || '',
+                autoComplete: false,
+                positionLeft: null,
+                positionRight: null
+            }
         },
-        checkUserPosition (e) {
-            console.log('user is moving!')
-                    this.positionleft = null
-                    this.positionright = null
-                    const userPosition = e.target.selectionStart
+        computed: {
+            ...mapState('directIndicator', ['directIndicators']),
+            ...mapState('indirectIndicator', ['indirectIndicators', 'indirectIndicator']),
+            indicators () {
+                return this.directIndicators.concat(this.indirectIndicators)
+            }
+        },
+        watch: {
+            lazyFormula (val) {
+                this.lazyFormula = val.replace(' then', '\nthen')
+                this.lazyFormula = val.replace(' else', '\nelse')
+                console.log(val)
+                this.$emit('output', val)
+            }
+        },
+        mounted () {
+            const self = this
+            this.$refs.expression.$el.addEventListener('keyup', self.checkUserPosition, false)
+            this.$refs.expression.$el.addEventListener('click', self.checkUserPosition, false)
+            document.addEventListener('click', function (event) {
+                if (self.$refs.focuswindow !== event.target && !self.$refs.focuswindow?.contains(event.target)) { self.removeAutoComplete() }
+            })
+        },
+        methods: {
+            showIndicators () {
+                this.autoComplete = true
+            },
+            removeAutoComplete () {
+                this.autoComplete = false
+            },
+            checkUserPosition (e) {
+                console.log('user is moving!')
+                        this.positionleft = null
+                        this.positionright = null
+                        const userPosition = e.target.selectionStart
 
-                    if (this.lazyFormula.includes('#iff')) {
-                        this.lazyFormula = this.lazyFormula.replace('#iff', `if ([indicator_key] = null)\nthen [${this.keyy}] = null\nelse [${this.keyy}] = null`)
-                    }
-                    if (this.lazyFormula.includes('#ife')) {
-                        this.lazyFormula = this.lazyFormula.replace('#ife', 'if () \nthen \nelse')
-                    }
-
-                    // Following three for loops look for the 1). left bracket and 2). right bracket or 3). empty space
-                    for (var i = userPosition - 1; i >= 0; i--) {
-                        if (this.lazyFormula[i] === ']') { break }
-                        if (this.lazyFormula[i] === '[') {
-                            this.positionleft = i
-                            break
+                        if (this.lazyFormula.includes('#iff')) {
+                            this.lazyFormula = this.lazyFormula.replace('#iff', `if ([indicator_key] = null)\nthen [${this.keyy}] = null\nelse [${this.keyy}] = null`)
                         }
-                    }
-                    for (i = userPosition; i <= this.lazyFormula.length; i++) {
-                        if (this.lazyFormula[i] === '[') { break }
-                        if (this.lazyFormula[i] === ']') {
-                            this.positionright = i + 1
-                            break
+                        if (this.lazyFormula.includes('#ife')) {
+                            this.lazyFormula = this.lazyFormula.replace('#ife', 'if () \nthen \nelse')
                         }
-                    }
-                    if (Number.isInteger(this.positionleft) && !this.positionright) {
-                        for (i = this.positionleft; i <= this.lazyFormula.length; i++) {
-                            if ((this.lazyFormula[i] === ')') || (this.lazyFormula[i] === ' ')) {
-                                this.positionright = i
+
+                        // Following three for loops look for the 1). left bracket and 2). right bracket or 3). empty space
+                        for (var i = userPosition - 1; i >= 0; i--) {
+                            if (this.lazyFormula[i] === ']') { break }
+                            if (this.lazyFormula[i] === '[') {
+                                this.positionleft = i
                                 break
                             }
                         }
-                    }
-                    console.log('left: ', this.positionleft, 'right: ', this.positionright)
-                    if (Number.isInteger(this.positionleft)) {
-                        this.showIndicators()
-                        return
-                    }
-                    this.removeAutoComplete()
-        },
-        chooseIndicator (indicator) {
-            const tempString = this.lazyFormula.split('')
-            let removablePart = this.lazyFormula.length - this.positionleft
-            if (Number.isInteger(this.positionright)) {
-                removablePart = (this.positionright) - (this.positionleft)
+                        for (i = userPosition; i <= this.lazyFormula.length; i++) {
+                            if (this.lazyFormula[i] === '[') { break }
+                            if (this.lazyFormula[i] === ']') {
+                                this.positionright = i + 1
+                                break
+                            }
+                        }
+                        if (Number.isInteger(this.positionleft) && !this.positionright) {
+                            for (i = this.positionleft; i <= this.lazyFormula.length; i++) {
+                                if ((this.lazyFormula[i] === ')') || (this.lazyFormula[i] === ' ')) {
+                                    this.positionright = i
+                                    break
+                                }
+                            }
+                        }
+                        console.log('left: ', this.positionleft, 'right: ', this.positionright)
+                        if (Number.isInteger(this.positionleft)) {
+                            this.showIndicators()
+                            return
+                        }
+                        this.removeAutoComplete()
+            },
+            chooseIndicator (indicator) {
+                const tempString = this.lazyFormula.split('')
+                let removablePart = this.lazyFormula.length - this.positionleft
+                if (Number.isInteger(this.positionright)) {
+                    removablePart = (this.positionright) - (this.positionleft)
+                }
+                tempString.splice((this.positionleft), removablePart, `[${indicator.key}]`)
+                this.lazyFormula = tempString.join('')
+                this.removeAutoComplete()
             }
-            tempString.splice((this.positionleft), removablePart, `[${indicator.key}]`)
-            this.lazyFormula = tempString.join('')
-            this.removeAutoComplete()
         }
     }
-}
-// findIndicators (string) {
+    // findIndicators (string) {
 //     let results = []
 //     this.getAllResults()
 
@@ -143,10 +144,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    .autocomplete-item {
-        background-color: white;
-    }
-    .autocomplete-item:hover {
-        background-color: lightgrey;
-    }
+        .autocomplete-item {
+            background-color: white;
+        }
+        .autocomplete-item:hover {
+            background-color: lightgrey;
+        }
 </style>

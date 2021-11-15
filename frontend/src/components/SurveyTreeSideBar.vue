@@ -1,3 +1,5 @@
+// Used by SurveyCreation.vue
+
 <template>
     <div>
         <div class="p-d-flex p-mt-2">

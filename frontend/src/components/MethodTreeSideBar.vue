@@ -1,4 +1,4 @@
-// used by MethodIndicatorCreation.vue, MethodTopicCreation.vue
+// Used by MethodIndicatorCreation.vue, MethodTopicCreation.vue
 
 <template>
     <div style="width: 400px; border-right: 1px solid lightgrey;" @drop='onDrop($event)'  @dragover.prevent @dragenter.prevent>
@@ -102,9 +102,9 @@
             }
         }
     }
-    </script>
+</script>
 
-    <style lang="scss" scoped>
+<style lang="scss" scoped>
     .p-tree {
         background: none;
         border: 1px solid lightgray;

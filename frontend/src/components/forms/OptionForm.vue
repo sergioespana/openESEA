@@ -1,3 +1,5 @@
+// Used by DirectindicatorEditForm.vue
+
 <template>
     <div class="p-grid p-col-12">
         <div class="p-col-1">
@@ -11,60 +13,60 @@
 </template>
 
 <script>
-import { required } from '../../utils/validators'
-import useVuelidate from '@vuelidate/core'
+    import { required } from '../../utils/validators'
+    import useVuelidate from '@vuelidate/core'
 
-export default {
-    props: {
-        option: {
-            type: Object,
-            required: true
+    export default {
+        props: {
+            option: {
+                type: Object,
+                required: true
+            },
+            order: {
+                type: Number,
+                required: true
+            },
+            disabled: {
+                type: Boolean,
+                required: true
+            }
         },
-        order: {
-            type: Number,
-            required: true
+        data () {
+            return {
+                lazyOption: this.option
+            }
         },
-        disabled: {
-            type: Boolean,
-            required: true
-        }
-    },
-    data () {
-        return {
-            lazyOption: this.option
-        }
-    },
-    watch: {
-        option (val) {
-            this.lazyOption = val
+        watch: {
+            option (val) {
+                this.lazyOption = val
+            },
+            lazyOption (val) {
+                if (this.v$.lazyOption.$invalid) { return }
+                if (val !== this.option && val.text && val.value) {
+                    this.$emit('update', this.lazyOption)
+                }
+            }
         },
-        lazyOption (val) {
-            if (this.v$.lazyOption.$invalid) { return }
-            if (val !== this.option && val.text && val.value) {
-                 this.$emit('update', this.lazyOption)
+        setup: () => ({ v$: useVuelidate() }),
+        validations: {
+            lazyOption: {
+                text: { required }
+            }
+        },
+        methods: {
+            deleteOption () {
+                this.$emit('delete')
             }
         }
-    },
-    setup: () => ({ v$: useVuelidate() }),
-    validations: {
-        lazyOption: {
-            text: { required }
-        }
-    },
-    methods: {
-        deleteOption () {
-            this.$emit('delete')
-        }
     }
-}
 </script>
 
 <style lang="scss" scoped>
-.p-inputtext {
-    border: none;
-    border-bottom: 1px solid lightgrey;
-}
-.borderless {
-    border-bottom: 1px solid red;
-}
+    .p-inputtext {
+        border: none;
+        border-bottom: 1px solid lightgrey;
+    }
+    .borderless {
+        border-bottom: 1px solid red;
+    }
 </style>

@@ -1,3 +1,5 @@
+// Not used?
+
 <template>
     <div class="p-p-3 p-py-1 p-shadow-1 p-text-left" :style="[(hover) ? 'background-color: white;':'background-color: #F7F7F7;']" style="border: 1px solid lightgrey;"  @mouseover="hover=true" @mouseleave="hover=false"> <!-- #dcdcdc"> -->
         <!-- <h3 class="p-col p-text-center p-m-0">Direct Indicator - [{{directIndicator.key || 'No Key'}}]</h3> -->
@@ -12,45 +14,45 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+    import { mapState, mapActions } from 'vuex'
 
-export default {
-    props: {
-        directIndicator: {
-            type: Object,
-            required: true
+    export default {
+        props: {
+            directIndicator: {
+                type: Object,
+                required: true
+            },
+            active: {
+                type: Boolean
+            },
+            valid: {
+                type: Boolean,
+                default: undefined
+            }
         },
-        active: {
-            type: Boolean
+        data () {
+            return {
+                hover: false
+            }
         },
-        valid: {
-            type: Boolean,
-            default: undefined
-        }
-    },
-    data () {
-        return {
-            hover: false
-        }
-    },
-    computed: {
-        ...mapState('method', ['method'])
-    },
-    methods: {
-        ...mapActions('directIndicator', ['patchDirectIndicator']),
-        async removeFromTopic () {
-            await this.patchDirectIndicator({ mId: this.method.id, id: this.directIndicator.id, data: { topic: null } })
+        computed: {
+            ...mapState('method', ['method'])
+        },
+        methods: {
+            ...mapActions('directIndicator', ['patchDirectIndicator']),
+            async removeFromTopic () {
+                await this.patchDirectIndicator({ mId: this.method.id, id: this.directIndicator.id, data: { topic: null } })
+            }
         }
     }
-}
 </script>
 
 <style lang="scss" scoped>
-.attribute-name {
-    font-size: 20px;
-    font-weight: bold;
-}
-.value {
-    font-weight: normal;
-}
+    .attribute-name {
+        font-size: 20px;
+        font-weight: bold;
+    }
+    .value {
+        font-weight: normal;
+    }
 </style>

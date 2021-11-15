@@ -1,3 +1,5 @@
+// used by NetworkCampaign.vue
+
 <template>
     <form @submit.prevent="editCampaign" class="p-input-filled p-fluid p-text-left p-p-5">
         <div class="p-field p-grid">
@@ -53,69 +55,69 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
-import useVuelidate from '@vuelidate/core'
-import { required } from 'vuelidate/lib/validators'
-import HandleValidationErrors from '../../utils/HandleValidationErrors'
-import Calendar from 'primevue/calendar'
-import Dropdown from 'primevue/dropdown'
+    import { mapState, mapActions } from 'vuex'
+    import useVuelidate from '@vuelidate/core'
+    import { required } from 'vuelidate/lib/validators'
+    import HandleValidationErrors from '../../utils/HandleValidationErrors'
+    import Calendar from 'primevue/calendar'
+    import Dropdown from 'primevue/dropdown'
 
-export default {
-    components: {
-        Calendar,
-        Dropdown
-    },
-    data () {
-        return {
-            deleteCampaignDialog: false,
-            loading: false
-        }
-    },
-    setup: () => ({ v$: useVuelidate() }),
-    validations: {
-        campaign: {
-            name: { required },
-            method: {},
-            open_survey_date: {},
-            close_survey_date: {}
-        }
-    },
-    computed: {
-        ...mapState('campaign', ['campaign', 'error']),
-        ...mapState('method', ['methods']),
-        nameErrors () {
-            return HandleValidationErrors(this.v$.campaign.name, this.error.name)
+    export default {
+        components: {
+            Calendar,
+            Dropdown
         },
-        methodErrors () {
-            return HandleValidationErrors(this.v$.campaign.method, this.error.method)
+        data () {
+            return {
+                deleteCampaignDialog: false,
+                loading: false
+            }
         },
-        openingDateErrors () {
-            return HandleValidationErrors(this.v$.campaign.open_survey_date, this.error.open_survey_date)
+        setup: () => ({ v$: useVuelidate() }),
+        validations: {
+            campaign: {
+                name: { required },
+                method: {},
+                open_survey_date: {},
+                close_survey_date: {}
+            }
         },
-        closingDateErrors () {
-            return HandleValidationErrors(this.v$.campaign.close_survey_date, this.error.close_survey_date)
-        }
-    },
-    async created () {
-        await this.fetchMethods({ query: `?network=${this.$route.params.NetworkId}` })
-    },
-    methods: {
-        ...mapActions('campaign', ['updateCampaign', 'deleteCampaign']),
-        ...mapActions('method', ['fetchMethods']),
-        async editCampaign () {
-            this.v$.campaign.$touch()
-            if (this.v$.campaign.$invalid) { return }
-            this.loading = true
-            var newcampaign = this.campaign
-            delete newcampaign.image
-            await this.updateCampaign({ nId: this.$route.params.NetworkId, data: newcampaign })
-            setTimeout(() => { this.loading = false }, 500)
+        computed: {
+            ...mapState('campaign', ['campaign', 'error']),
+            ...mapState('method', ['methods']),
+            nameErrors () {
+                return HandleValidationErrors(this.v$.campaign.name, this.error.name)
+            },
+            methodErrors () {
+                return HandleValidationErrors(this.v$.campaign.method, this.error.method)
+            },
+            openingDateErrors () {
+                return HandleValidationErrors(this.v$.campaign.open_survey_date, this.error.open_survey_date)
+            },
+            closingDateErrors () {
+                return HandleValidationErrors(this.v$.campaign.close_survey_date, this.error.close_survey_date)
+            }
         },
-        async destroyCampaign () {
-            this.deleteCampaignDialog = false
-            await this.deleteCampaign({ nId: this.$route.params.NetworkId, id: this.$route.params.CampaignId })
-            this.$router.push({ name: 'networkcampaigns' })
+        async created () {
+            await this.fetchMethods({ query: `?network=${this.$route.params.NetworkId}` })
+        },
+        methods: {
+            ...mapActions('campaign', ['updateCampaign', 'deleteCampaign']),
+            ...mapActions('method', ['fetchMethods']),
+            async editCampaign () {
+                this.v$.campaign.$touch()
+                if (this.v$.campaign.$invalid) { return }
+                this.loading = true
+                var newcampaign = this.campaign
+                delete newcampaign.image
+                await this.updateCampaign({ nId: this.$route.params.NetworkId, data: newcampaign })
+                setTimeout(() => { this.loading = false }, 500)
+            },
+            async destroyCampaign () {
+                this.deleteCampaignDialog = false
+                await this.deleteCampaign({ nId: this.$route.params.NetworkId, id: this.$route.params.CampaignId })
+                this.$router.push({ name: 'networkcampaigns' })
+            }
         }
     }
-}
 </script>

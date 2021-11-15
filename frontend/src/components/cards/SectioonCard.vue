@@ -1,3 +1,5 @@
+// used by SectioonForm.vue
+
 <template>
     <div class="p-text-left p-px-5 p-shadow-2"> <!-- #dcdcdc"> -->
         <h3 class="p-text-italic">
@@ -7,12 +9,12 @@
 </template>
 
 <script>
-export default {
-    props: {
-        title: {
-            type: String,
-            required: true
+    export default {
+        props: {
+            title: {
+                type: String,
+                required: true
+            }
         }
     }
-}
 </script>

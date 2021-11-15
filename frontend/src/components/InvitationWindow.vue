@@ -51,94 +51,94 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
-export default {
-    props: {
-        parenttype: {
-            type: String,
-            required: true
-        }
-    },
-    data () {
-        return {
-        }
-    },
-    computed: {
-        ...mapState('membership', ['memberships']),
-        // Did the organisation or the network create the membership request?
-        incomingInvitations () {
-            let temp = []
-            temp = this.memberships.filter(m => m.requester !== this.parenttype)
-            return temp
-        },
-        outgoingInvitations () {
-            let temp = []
-            temp = this.memberships.filter(m => m.requester === this.parenttype)
-            return temp
-        },
-        incomingInvitationsColumns () {
-            if (this.parenttype === 'network') {
-                return [
-                    { field: 'organisation_name', header: 'Name' },
-                    { field: 'organisation_description', header: 'Description' },
-                    { field: 'status', header: 'Status' }
-                ]
+    import { mapState, mapActions } from 'vuex'
+    export default {
+        props: {
+            parenttype: {
+                type: String,
+                required: true
             }
-            if (this.parenttype === 'organisation') {
-                return [
-                    { field: 'network_name', header: 'Name' },
-                    { field: 'network_description', header: 'Description' },
-                    { field: 'status', header: 'Status' }
-                ]
-            }
-            return [{ field: 'id', header: 'id' }]
         },
-        // Sets the right columns dependent whether an organisation or network send out the invite
-        outgoingInvitationsColumns () {
-            if (this.parenttype === 'network') {
-                return [
-                    { field: 'organisation_name', header: 'Name' },
-                    { field: 'organisation_description', header: 'Description' },
-                    { field: 'status', header: 'Status' }
-                ]
+        data () {
+            return {
             }
-            if (this.parenttype === 'organisation') {
-                return [
-                    { field: 'network_name', header: 'Name' },
-                    { field: 'network_description', header: 'Description' },
-                    { field: 'status', header: 'Status' }
-                ]
-            }
-            return [{ field: 'id', header: 'Id' }]
-        }
-    },
-    methods: {
-        ...mapActions('membership', ['fetchMemberships', 'deleteMembership', 'updateMembership']),
-        async getMembershipRequests () {
-            this.$emit('refresh', true)
         },
-        async reactOnAllRequests (choice) {
-            for (const request of this.memberships) {
+        computed: {
+            ...mapState('membership', ['memberships']),
+            // Did the organisation or the network create the membership request?
+            incomingInvitations () {
+                let temp = []
+                temp = this.memberships.filter(m => m.requester !== this.parenttype)
+                return temp
+            },
+            outgoingInvitations () {
+                let temp = []
+                temp = this.memberships.filter(m => m.requester === this.parenttype)
+                return temp
+            },
+            incomingInvitationsColumns () {
+                if (this.parenttype === 'network') {
+                    return [
+                        { field: 'organisation_name', header: 'Name' },
+                        { field: 'organisation_description', header: 'Description' },
+                        { field: 'status', header: 'Status' }
+                    ]
+                }
+                if (this.parenttype === 'organisation') {
+                    return [
+                        { field: 'network_name', header: 'Name' },
+                        { field: 'network_description', header: 'Description' },
+                        { field: 'status', header: 'Status' }
+                    ]
+                }
+                return [{ field: 'id', header: 'id' }]
+            },
+            // Sets the right columns dependent whether an organisation or network send out the invite
+            outgoingInvitationsColumns () {
+                if (this.parenttype === 'network') {
+                    return [
+                        { field: 'organisation_name', header: 'Name' },
+                        { field: 'organisation_description', header: 'Description' },
+                        { field: 'status', header: 'Status' }
+                    ]
+                }
+                if (this.parenttype === 'organisation') {
+                    return [
+                        { field: 'network_name', header: 'Name' },
+                        { field: 'network_description', header: 'Description' },
+                        { field: 'status', header: 'Status' }
+                    ]
+                }
+                return [{ field: 'id', header: 'Id' }]
+            }
+        },
+        methods: {
+            ...mapActions('membership', ['fetchMemberships', 'deleteMembership', 'updateMembership']),
+            async getMembershipRequests () {
+                this.$emit('refresh', true)
+            },
+            async reactOnAllRequests (choice) {
+                for (const request of this.memberships) {
+                    if (choice === 'accepted') {
+                        await this.updateMembership({ id: request.id, data: { network: request.network, organisation: request.organisation, requester: request.requester, status: choice } })
+                    } else if (choice === 'denied') {
+                        await this.deleteMembership({ id: request.id })
+                    }
+                }
+                this.getMembershipRequests()
+            },
+            async reactOnRequest (request, choice) {
                 if (choice === 'accepted') {
                     await this.updateMembership({ id: request.id, data: { network: request.network, organisation: request.organisation, requester: request.requester, status: choice } })
                 } else if (choice === 'denied') {
                     await this.deleteMembership({ id: request.id })
                 }
-            }
-            this.getMembershipRequests()
-        },
-        async reactOnRequest (request, choice) {
-             if (choice === 'accepted') {
-                await this.updateMembership({ id: request.id, data: { network: request.network, organisation: request.organisation, requester: request.requester, status: choice } })
-            } else if (choice === 'denied') {
+                this.getMembershipRequests()
+            },
+            async cancelRequest (request) {
                 await this.deleteMembership({ id: request.id })
+                this.getMembershipRequests()
             }
-            this.getMembershipRequests()
-        },
-        async cancelRequest (request) {
-            await this.deleteMembership({ id: request.id })
-            this.getMembershipRequests()
         }
     }
-}
 </script>

@@ -1,3 +1,5 @@
+// Used by MethodCreation.vue
+
 <template>
     <form id="methodform" @submit.prevent="createNewMethod" class="p-input-filled p-fluid p-text-left">
         <div class="p-field">

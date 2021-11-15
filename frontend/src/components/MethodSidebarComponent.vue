@@ -1,3 +1,5 @@
+// Used by MethodSidebarComponent.vue
+
 <template>
     <div class="p-text-left">
         <div class="p-m-2" style="height: 50px;">
@@ -19,60 +21,60 @@
 </template>
 
 <script>
-export default {
-    props: {
-        items: {
-            type: Array,
-            default: function () {
-                return []
-            }
-        },
-        activeItem: {
-            type: Object
-        },
-        itemType: {
-            type: String
-        }
-    },
-    data () {
-        return {
-            ComponentOptions: ['Unused', 'Used', 'All'],
-            filterOption: 'Unused',
-            searchbar: ''
-        }
-    },
-    computed: {
-        filteredItems () {
-            if (this.itemType !== 'topic') {
-                if (this.filterOption === 'Unused') {
-                    return this.items.filter(item => !(item.topic > 0))
-                } else if (this.filterOption === 'Used') {
-                    return this.items.filter(item => item.topic > 0)
+    export default {
+        props: {
+            items: {
+                type: Array,
+                default: function () {
+                    return []
                 }
+            },
+            activeItem: {
+                type: Object
+            },
+            itemType: {
+                type: String
             }
-            return this.items
-        }
-    },
-    watch: {
-        filterOption (val) {
-            this.$emit('filteroption', val)
         },
-        searchbar () {
-             this.$emit('update:searchbar', this.searchbar)
-        }
-    },
-    methods: {
-        startDrag (evt, item) {
-            console.log(item)
-            evt.dataTransfer.dropEffect = 'move'
-            evt.dataTransfer.effectAllowed = 'move'
-            if (typeof item === 'object') {
-                item = JSON.stringify(item)
+        data () {
+            return {
+                ComponentOptions: ['Unused', 'Used', 'All'],
+                filterOption: 'Unused',
+                searchbar: ''
             }
-            evt.dataTransfer.setData('draggedItem', item)
+        },
+        computed: {
+            filteredItems () {
+                if (this.itemType !== 'topic') {
+                    if (this.filterOption === 'Unused') {
+                        return this.items.filter(item => !(item.topic > 0))
+                    } else if (this.filterOption === 'Used') {
+                        return this.items.filter(item => item.topic > 0)
+                    }
+                }
+                return this.items
+            }
+        },
+        watch: {
+            filterOption (val) {
+                this.$emit('filteroption', val)
+            },
+            searchbar () {
+                this.$emit('update:searchbar', this.searchbar)
+            }
+        },
+        methods: {
+            startDrag (evt, item) {
+                console.log(item)
+                evt.dataTransfer.dropEffect = 'move'
+                evt.dataTransfer.effectAllowed = 'move'
+                if (typeof item === 'object') {
+                    item = JSON.stringify(item)
+                }
+                evt.dataTransfer.setData('draggedItem', item)
+            }
         }
     }
-}
 </script>
 
 <style lang="scss" scoped>

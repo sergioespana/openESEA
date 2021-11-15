@@ -1,4 +1,4 @@
-// http://localhost:8081/organisations/4/esea-accounts/4/report
+// http://localhost:8081/organisations/4/esea-accounts/4/report/
 
 <template>
     <div class="p-d-flex p-jc-center p-ai-center" style="height: 150px; background-color: #dcedc8;">
@@ -36,6 +36,7 @@
 
 <script>
     import { mapActions, mapState } from 'vuex'
+
     export default {
         data () {
             return {

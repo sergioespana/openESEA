@@ -1,3 +1,5 @@
+// Used to Connect files to a specific
+
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
@@ -29,9 +31,6 @@ const routes = [
         components: {
         anonymousview: () => import('../views/user/Register.vue')
         }
-        // {
-        // a: () => import('../views/user/Register.vue')
-        // }
     },
     {
         path: '/login',
@@ -46,7 +45,6 @@ const routes = [
         components: {
             anonymousview: () => import('../views/user/Logout.vue')
         }
-        // anonymousview: Logout
     },
     {
         path: '/account-recovery',
@@ -167,20 +165,6 @@ const routes = [
             ]
             }
         },
-        // {
-        //   path: 'method/:MethodId',
-        //   name: 'networkmethod',
-        //   component: () => import('../views/network/NetworkMethod'),
-        //   meta: {
-        //     requiresLogin: true,
-        //     breadcrumb: [
-        //       { label: 'Networks', to: '/networks' },
-        //       { label: '', to: { name: 'networkoverview', params: { id: '' } } },
-        //       { label: 'Methods', to: { name: 'networkmethods' } },
-        //       { label: 'BIA', to: { name: 'networkmethod' } }
-        //     ]
-        //   }
-        // },
         {
             path: 'organisations',
             name: 'networkorganisations',
@@ -226,15 +210,6 @@ const routes = [
         breadcrumb: [{ label: 'networks', to: '/networks' }, { label: '', to: { name: 'networkoverview', params: { id: '' } } }]
         }
     },
-    // {
-    //   path: '/networks/:id',
-    //   name: 'networkdetails',
-    //   component: () => import('../views/NetworkDetails.vue'),
-    //   meta: {
-    //     requiresLogin: true,
-    //     breadcrumb: [{ label: 'networks', to: '/networks' }, { label: '', to: { name: 'networkdetails', params: { id: '' } } }]
-    //   }
-    // },
     {
         path: '/organisation/:OrganisationId',
         name: 'organisation',
@@ -253,33 +228,7 @@ const routes = [
             ]
             }
         },
-        //   {
-        //     path: 'methods',
-        //     name: 'organisationmethods',
-        //     component: () => import('../views/organisation/OrganisationMethods'),
-        //     meta: {
-        //       breadcrumb: [
-        //         { label: 'Organisations', to: '/organisations' },
-        //         { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
-        //         { label: 'Methods', to: { name: 'organisationmethods' } }
-        //       ]
-        //     }
-        //     },
-        //     {
-        //       path: 'method/:MethodId',
-        //       name: 'organisationmethod',
-        //       component: () => import('../views/organisation/OrganisationMethod'),
-        //       meta: {
-        //         requiresLogin: true,
-        //         breadcrumb: [
-        //           { label: 'Organisations', to: '/organisations' },
-        //           { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
-        //           { label: 'Methods', to: { name: 'organisationmethods' } },
-        //           { label: 'BIA', to: { name: 'organisationmethod' } }
-        //         ]
-        //       }
-        //     },
-            {
+        {
             path: 'esea-accounts',
             name: 'organisationeseaaccounts',
             component: () => import('../views/organisation/OrganisationEseaAccounts'),
@@ -291,8 +240,8 @@ const routes = [
                 { label: 'Esea Accounts', to: { name: 'organisationeseaaccounts' } }
                 ]
             }
-            },
-            {
+        },
+        {
             path: 'esea-accounts/:EseaAccountId',
             name: 'organisationeseaaccount',
             component: () => import('../views/organisation/OrganisationEseaAccount'),
@@ -305,18 +254,18 @@ const routes = [
                 { label: 'esea_account', to: { name: 'organisationeseaaccount' } }
                 ]
             }
-            },
+        },
         {
-        path: 'reports',
-        name: 'organisationreports',
-        component: () => import('../views/organisation/OrganisationReports'),
-        meta: {
-            breadcrumb: [
-            { label: 'Organisations', to: '/organisations' },
-            { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
-            { label: 'Reports', to: { name: 'organisationreports' } }
-            ]
-        }
+            path: 'reports',
+            name: 'organisationreports',
+            component: () => import('../views/organisation/OrganisationReports'),
+            meta: {
+                breadcrumb: [
+                { label: 'Organisations', to: '/organisations' },
+                { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
+                { label: 'Reports', to: { name: 'organisationreports' } }
+                ]
+            }
         },
         // {
         // path: 'surveys',
@@ -398,70 +347,6 @@ const routes = [
         ]
         }
     },
-    // {
-    //   path: '/organisations/:id',
-    //   name: 'organisationdetails',
-    //   component: () => import('../views/OrganisationDetails.vue'),
-    //   meta: {
-    //     requiresLogin: true,
-    //     breadcrumb: [
-    //       { label: 'Organisations', to: '/organisations' },
-    //       { label: '', to: { name: 'organisationdetails', params: { id: '' } } }
-    //     ]
-    //   }
-    // },
-    // {
-    //   path: '/organisations/:id/reports',
-    //   name: 'organisationreports',
-    //   component: () => import('../views/OrganisationReports.vue'),
-    //   meta: {
-    //     requiresLogin: true,
-    //     breadcrumb: [
-    //       { label: 'Organisations', to: '/organisations' },
-    //       { label: '', to: { name: 'organisationdetails', params: { id: '' } } },
-    //       { label: 'Reports', to: { name: 'organisationreports', params: { id: '' } } }
-    //     ]
-    //   }
-    // },
-    // {
-    //   path: '/organisations/:id/surveys',
-    //   name: 'organisationsurveys',
-    //   component: () => import('../views/OrganisationSurveys.vue'),
-    //   meta: {
-    //     requiresLogin: true,
-    //     breadcrumb: [
-    //       { label: 'Organisations', to: '/organisations' },
-    //       { label: '', to: { name: 'organisationdetails', params: { id: '' } } },
-    //       { label: 'Surveys', to: { name: 'organisationsurveys', params: { id: '' } } }
-    //     ]
-    //   }
-    // },
-    // {
-    //   path: '/organisations/:id/stakeholders',
-    //   name: 'organisationstakeholders',
-    //   component: () => import('../views/OrganisationStakeholders.vue'),
-    //   meta: {
-    //     requiresLogin: true,
-    //     breadcrumb: [
-    //       { label: 'Organisations', to: '/organisations' },
-    //       { label: '', to: { name: 'organisationdetails', params: { id: '' } } },
-    //       { label: 'Stakeholders', to: { name: 'organisationstakeholders', params: { id: '' } } }
-    //     ]
-    //   }
-    // },
-    // {
-    //   path: '/organisations/:id/networks',
-    //   name: 'organisationnetworks',
-    //   component: () => import('../views/OrganisationNetworks.vue'),
-    //   meta: {
-    //     requiresLogin: true,
-    //     breadcrumb: [
-    //       { label: 'organisations', to: '/organisations' },
-    //       { label: '', to: { name: 'organisationdetails', params: { id: '' } } },
-    //       { label: 'Networks', to: { name: 'organisationnetworks', params: { id: '' } } }
-    //     ]
-    //   }
-    // },
     {
         path: '/methods',
         name: 'methods',
@@ -478,14 +363,6 @@ const routes = [
             requiresLogin: true
         }
     },
-    // {
-    //     path: '/method-upload',
-    //     name: 'method-upload',
-    //     component: () => import('../views/method/MethodUpload'),
-    //     meta: {
-    //         requiresLogin: true
-    //     }
-    // },
     {
         path: '/methods/:id/creation',
         name: 'methodwizard',
@@ -518,22 +395,6 @@ const routes = [
                 requiresLogin: true
                 }
             },
-            // {
-            //     path: '/methods/:id/method-design',
-            //     name: 'method-create',
-            //     component: () => import('../views/method/MethodCreate'),
-            //     meta: {
-            //     requiresLogin: true
-            //     }
-            // },
-            // {
-            //     path: '/method-wizard/:id/survey-creation',
-            //     name: 'survey-create',
-            //     component: () => import('../views/method/SurveyCreate'),
-            //     meta: {
-            //     requiresLogin: true
-            //     },
-            //     children: [
             {
                 path: '/method-wizard/:id/surveys',
                 name: 'method-wizard-surveys',
@@ -576,26 +437,8 @@ const routes = [
                     requiresLogin: true
                     }
             }
-            //     ]
-            // }
         ]
     },
-    // {
-    //     path: '/method-copy',
-    //     name: 'method-copy',
-    //     component: () => import('../views/method/MethodCopy'),
-    //     meta: {
-    //         requiresLogin: true
-    //     }
-    // },
-    // {
-    //     path: '/method-details/:id',
-    //     name: 'methoddetails',
-    //     component: () => import('../views/files_unused/MethodDetails.vue'),
-    //     meta: {
-    //     requiresLogin: true
-    //     }
-    // },
     {
         path: '/newmethods/:id',
         name: 'newmethoddetails',
@@ -604,14 +447,6 @@ const routes = [
             requiresLogin: true
         }
     },
-    // {
-    //   path: '/methods/:id/surveys',
-    //   name: 'methodsurveys',
-    //   component: () => import('../views/MethodSurveys.vue'),
-    //   meta: {
-    //     requiresLogin: true
-    //   }
-    // },
     {
         path: '/organisations/:OrganisationId/methods/:id/surveys/:surveyId',
         name: 'survey-fill',

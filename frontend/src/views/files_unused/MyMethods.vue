@@ -104,7 +104,7 @@
 </template>
 
 <script>
-import { AxiosInstance } from '../plugins/axios'
+import { AxiosInstance } from '../../plugins/axios'
 import { mapActions, mapState } from 'vuex'
 
 export default {

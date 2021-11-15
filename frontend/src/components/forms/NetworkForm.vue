@@ -1,3 +1,5 @@
+// Used by Networks.vue
+
 <template>
     <form id="networkform" @submit.prevent="createNewNetwork" class="p-input-filled p-fluid p-text-left">
         <div class="p-field">
@@ -27,70 +29,69 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
-import useVuelidate from '@vuelidate/core'
-import { required, maxLength } from 'vuelidate/lib/validators'
-import HandleValidationErrors from '../../utils/HandleValidationErrors'
-import Dropdown from 'primevue/dropdown'
+    import { mapState, mapActions } from 'vuex'
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from 'vuelidate/lib/validators'
+    import HandleValidationErrors from '../../utils/HandleValidationErrors'
+    import Dropdown from 'primevue/dropdown'
 
-export default {
-    setup: () => ({ v$: useVuelidate() }),
-    components: {
-        Dropdown
-    },
-    data () {
-        return {
-            ispublicbool: [
-                { display: 'Public', value: true },
-                { display: 'Private', value: false }
-            ],
+    export default {
+        setup: () => ({ v$: useVuelidate() }),
+        components: {
+            Dropdown
+        },
+        data () {
+            return {
+                ispublicbool: [
+                    { display: 'Public', value: true },
+                    { display: 'Private', value: false }
+                ],
+                networkForm: {
+                    name: null,
+                    description: '',
+                    ispublic: true,
+                    owner: null
+                }
+            }
+        },
+        validations: {
             networkForm: {
-                name: null,
-                description: '',
-                ispublic: true,
-                owner: null
+                name: { required, maxLength: maxLength(255) },
+                description: { maxLength: maxLength(1000) },
+                ispublic: { required },
+                owner: { required }
             }
-        }
-    },
-    validations: {
-        networkForm: {
-            name: { required, maxLength: maxLength(255) },
-            description: { maxLength: maxLength(1000) },
-            ispublic: { required },
-            owner: { required }
-        }
-    },
-    computed: {
-        ...mapState('network', ['network', 'error']),
-        ...mapState('user', ['users']),
-        ...mapState('authentication', ['authenticatedUser']),
-        nameErrors () {
-            return HandleValidationErrors(this.v$.networkForm.name, this.error.name)
-        }
-    },
-    created () {
-        this.initialize()
-    },
-    methods: {
-        ...mapActions('network', ['setNetwork', 'createNetwork']),
-        ...mapActions('user', ['fetchUsers']),
-        async initialize () {
-            await this.setNetwork({})
-            await this.fetchUsers({})
-            // this.networkForm.owner = this.authenticatedUser.id
         },
-        async createNewNetwork () {
-            this.v$.networkForm.$touch()
-            if (this.v$.$invalid) { return }
+        computed: {
+            ...mapState('network', ['network', 'error']),
+            ...mapState('user', ['users']),
+            ...mapState('authentication', ['authenticatedUser']),
+            nameErrors () {
+                return HandleValidationErrors(this.v$.networkForm.name, this.error.name)
+            }
+        },
+        created () {
+            this.initialize()
+        },
+        methods: {
+            ...mapActions('network', ['setNetwork', 'createNetwork']),
+            ...mapActions('user', ['fetchUsers']),
+            async initialize () {
+                await this.setNetwork({})
+                await this.fetchUsers({})
+            },
+            async createNewNetwork () {
+                this.v$.networkForm.$touch()
+                if (this.v$.$invalid) { return }
 
-            await this.createNetwork({ data: this.networkForm })
-            if (this.network?.id) {
-                this.$router.push({ name: 'networkoverview', params: { NetworkId: this.network.id } })
+                await this.createNetwork({ data: this.networkForm })
+                if (this.network?.id) {
+                    this.$router.push({ name: 'networkoverview', params: { NetworkId: this.network.id } })
+                }
+            },
+            closeDialog () {
+                this.$emit('closedialog')
             }
-        },
-        closeDialog () {
-            this.$emit('closedialog')
         }
     }
-}
 </script>

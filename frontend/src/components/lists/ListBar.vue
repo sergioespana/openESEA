@@ -1,3 +1,5 @@
+// Used in all the ...List.vue files
+
 <template>
      <div class="p-d-flex p-jc-between p-ai-center p-m-5">
             <div class="p-d-flex p-ai-center">
@@ -25,49 +27,45 @@
 </template>
 
 <script>
-export default {
-    props: {
-        name: {
-            type: String,
-            default: 'items'
+    export default {
+        props: {
+            name: {
+                type: String,
+                default: 'items'
+            },
+            tabledisplay: {
+                type: Boolean,
+                default: false
+            },
+            includecheckbox: {
+                type: Boolean,
+                default: false
+            },
+            showpublicitems: {
+                type: Boolean,
+                default: false
+            }
         },
-        tabledisplay: {
-            type: Boolean,
-            default: false
+        data () {
+            return {
+                allItems: false,
+                search: ''
+            }
         },
-        includecheckbox: {
-            type: Boolean,
-            default: false
+        watch: {
+            search () {
+                this.$emit('update:search', this.search)
+            }
         },
-        showpublicitems: {
-            type: Boolean,
-            default: false
-        }
-    },
-    data () {
-        return {
-            allItems: false,
-            search: ''
-        }
-    },
-    watch: {
-        search () {
-             this.$emit('update:search', this.search)
-        }
-    },
-    methods: {
-        changeDisplay () {
-            console.log('check')
-            const tabledisplay = !this.tabledisplay
-            this.$emit('update:tabledisplay', tabledisplay)
-        },
-        changeShownItems () {
-            this.$emit('update:allitems', this.allItems)
+        methods: {
+            changeDisplay () {
+                console.log('check')
+                const tabledisplay = !this.tabledisplay
+                this.$emit('update:tabledisplay', tabledisplay)
+            },
+            changeShownItems () {
+                this.$emit('update:allitems', this.allItems)
+            }
         }
     }
-}
-//   <!-- <Button label="Join Network" />
-//   <Button label="Remove Network" /> -->
-//   !-- <Button v-if="true" :label="joinButton? 'Show own Networks' : 'Join Network'" :icon="joinButton? '' : 'pi pi-plus'" :class="joinButton? 'p-button-warning' : 'p-button-success'" class="p-mx-2 p-button-sm" @click="joinableNetworks" />
-//   <Button v-if="true" :label="removeMode ? 'Select the networks to remove': 'Enable Remove Mode'" icon="pi pi-trash" class="p-button-sm" :class="removeMode ? 'p-button-danger' : 'p-button-warning'" :disabled="!networks.length" @click="removeMode = !removeMode" /> -->
 </script>

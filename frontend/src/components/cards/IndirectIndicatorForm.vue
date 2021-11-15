@@ -1,3 +1,5 @@
+// Used by MethodTopicCreation.vue
+
 <template>
     <div class="p-p-3 p-py-1 p-shadow-2" :style="[(hover) ? 'background-color: white;':'background-color: #F7F7F7;']" style="border: 1px solid lightgrey; width: 100%;" @mouseover="hover=true" @mouseleave="hover=false"> <!-- #dcdcdc"> -->
         <div class="p-d-flex p-jc-between p-jc-between p-ai-center" style="width: 100%;">
@@ -11,40 +13,40 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+    import { mapState, mapActions } from 'vuex'
 
-export default {
-    props: {
-        indirectIndicator: {
-            type: String,
-            required: undefined
-        }
-    },
-    data () {
-        return {
-            hover: false
-        }
-    },
-    computed: {
-        ...mapState('method', ['method'])
-    },
-    methods: {
-        ...mapActions('indirectIndicator', ['patchIndirectIndicator']),
-        async removeFromTopic () {
-            await this.patchIndirectIndicator({ mId: this.method.id, id: this.indirectIndicator.id, data: { topic: null } })
+    export default {
+        props: {
+            indirectIndicator: {
+                type: String,
+                required: undefined
+            }
+        },
+        data () {
+            return {
+                hover: false
+            }
+        },
+        computed: {
+            ...mapState('method', ['method'])
+        },
+        methods: {
+            ...mapActions('indirectIndicator', ['patchIndirectIndicator']),
+            async removeFromTopic () {
+                await this.patchIndirectIndicator({ mId: this.method.id, id: this.indirectIndicator.id, data: { topic: null } })
+            }
         }
     }
-}
 </script>
 
 <style lang="scss" scoped>
-.attribute-name {
-    min-width: 400px;
-    margin-right: 50px;
-    font-size: 16px;
-    font-weight: bold;
-}
-.value {
-    font-weight: normal;
-}
+    .attribute-name {
+        min-width: 400px;
+        margin-right: 50px;
+        font-size: 16px;
+        font-weight: bold;
+    }
+    .value {
+        font-weight: normal;
+    }
 </style>

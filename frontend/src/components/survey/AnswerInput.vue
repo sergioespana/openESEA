@@ -61,209 +61,136 @@
     import Dropdown from 'primevue/dropdown'
     import { isEqual } from 'lodash'
 
-export default {
-    model: {
-        prop: 'value',
-        event: 'input'
-    },
-    components: {
-        Dropdown,
-        // InputMask
-        Calendar
-    },
-    props: {
-        value: {
-            type: [String, Number, Array, Boolean],
-            default: null
+    export default {
+        model: {
+            prop: 'value',
+            event: 'input'
         },
-        // required: {
-        //     type: Boolean,
-        //     default: false
-        // },
-        indicator: {
-            type: Object,
-            default: () => { return { } }
+        components: {
+            Dropdown,
+            // InputMask
+            Calendar
         },
-        uiComponent: {
-            type: String
-        },
-        optionTextKey: {
-            type: String,
-            default: 'text'
-        },
-        optionValueKey: {
-            type: String,
-            default: 'value'
-        },
-        readonly: {
-            type: Boolean,
-            default: false
-        }
-    },
-    data () {
-        return {
-            lazyValue: []
-        }
-    },
-    watch: {
-        value (val) {
-            setTimeout(() => {
-                this.getValues()
-            }, 5000)
-        },
-        lazyValue: {
-            handler (val) {
-                setTimeout(() => {
-                console.log('cheeeck', val)
-                if ((val === 'undefined') || (val === this.value)) {
-                    console.log('value is undefined or same as this.value')
-                    return
-                }
-
-                if (this.indicator.datatype === 'date') {
-                    val.setDate(val.getDate() + 1)
-                }
-                console.log('+++', val)
-                if (!Array.isArray(val)) {
-                    this.$emit('input', [val])
-                    return
-                }
-
-                if (typeof (val || val?.[0]) === 'undefined') {
-                    return
-                }
-                console.log('--->', val)
-                this.$emit('input', val)
-                }, 1000)
+        props: {
+            value: {
+                type: [String, Number, Array, Boolean],
+                default: null
             },
-            deep: true
-        }
-    },
-    created () {
-        console.log('this vlaue', this.value)
-        this.getValues()
-    },
-    methods: {
-        focusedField () {
-            this.$emit('focuscheck', true)
+            // required: {
+            //     type: Boolean,
+            //     default: false
+            // },
+            indicator: {
+                type: Object,
+                default: () => { return { } }
+            },
+            uiComponent: {
+                type: String
+            },
+            optionTextKey: {
+                type: String,
+                default: 'text'
+            },
+            optionValueKey: {
+                type: String,
+                default: 'value'
+            },
+            readonly: {
+                type: Boolean,
+                default: false
+            }
         },
-        getValues () {
-            if (
-                !this.value ||
-                this.value[1] === null ||
-                (!this.value?.[0].length && this.value[1] === '') ||
-                this.value?.[0] === this.lazyValue ||
-                this.value?.[1] === this.lazyValue
-                ) {
-                    return
-                }
+        data () {
+            return {
+                lazyValue: []
+            }
+        },
+        watch: {
+            value (val) {
+                setTimeout(() => {
+                    this.getValues()
+                }, 5000)
+            },
+            lazyValue: {
+                handler (val) {
+                    setTimeout(() => {
+                    console.log('cheeeck', val)
+                    if ((val === 'undefined') || (val === this.value)) {
+                        console.log('value is undefined or same as this.value')
+                        return
+                    }
 
-            if (this.value) {
-                if (this.indicator.datatype === 'text') {
-                    if (isEqual(this.lazyValue, this.value?.[1])) { return true }
-                    this.lazyValue = this.value?.[1]
-                }
-                if (this.indicator.datatype === 'integer') {
-                    if (isEqual(this.lazyValue, parseInt(this.value?.[1]))) { return }
-                    this.lazyValue = parseInt(this.value?.[1]) || null
-                }
-                if (this.indicator.datatype === 'double') {
-                    if (isEqual(this.lazyValue, parseFloat(this.value?.[1]))) { return }
-                    this.lazyValue = parseFloat(this.value?.[1]) || null
-                }
-                if (this.indicator.datatype === 'date') {
-                    if (this.value[1].length) {
-                        var tempval = new Date(this.value?.[1])
-                        }
-                    if (isEqual(this.lazyValue, tempval)) { return }
-                    console.log(this.lazyValue, tempval)
-                    this.lazyValue = tempval || null
-                }
-                const questionWithSingleChoices = ['singlechoice', 'boolean']
-                if (questionWithSingleChoices.includes(this.indicator.datatype)) {
-                    if (isEqual(this.lazyValue, this.value?.[1])) { return }
-                    console.log(this.lazyValue, this.value?.[1])
-                    this.lazyValue = this.value?.[1] || null
-                }
-                if (this.indicator.datatype === 'multiplechoice') {
-                    if (isEqual(this.lazyValue, this.value[0])) { return }
-                    this.lazyValue = this.value?.[0] || []
+                    if (this.indicator.datatype === 'date') {
+                        val.setDate(val.getDate() + 1)
+                    }
+                    console.log('+++', val)
+                    if (!Array.isArray(val)) {
+                        this.$emit('input', [val])
+                        return
+                    }
+
+                    if (typeof (val || val?.[0]) === 'undefined') {
+                        return
+                    }
+                    console.log('--->', val)
+                    this.$emit('input', val)
+                    }, 1000)
+                },
+                deep: true
+            }
+        },
+        created () {
+            console.log('this vlaue', this.value)
+            this.getValues()
+        },
+        methods: {
+            focusedField () {
+                this.$emit('focuscheck', true)
+            },
+            getValues () {
+                if (
+                    !this.value ||
+                    this.value[1] === null ||
+                    (!this.value?.[0].length && this.value[1] === '') ||
+                    this.value?.[0] === this.lazyValue ||
+                    this.value?.[1] === this.lazyValue
+                    ) {
+                        return
+                    }
+
+                if (this.value) {
+                    if (this.indicator.datatype === 'text') {
+                        if (isEqual(this.lazyValue, this.value?.[1])) { return true }
+                        this.lazyValue = this.value?.[1]
+                    }
+                    if (this.indicator.datatype === 'integer') {
+                        if (isEqual(this.lazyValue, parseInt(this.value?.[1]))) { return }
+                        this.lazyValue = parseInt(this.value?.[1]) || null
+                    }
+                    if (this.indicator.datatype === 'double') {
+                        if (isEqual(this.lazyValue, parseFloat(this.value?.[1]))) { return }
+                        this.lazyValue = parseFloat(this.value?.[1]) || null
+                    }
+                    if (this.indicator.datatype === 'date') {
+                        if (this.value[1].length) {
+                            var tempval = new Date(this.value?.[1])
+                            }
+                        if (isEqual(this.lazyValue, tempval)) { return }
+                        console.log(this.lazyValue, tempval)
+                        this.lazyValue = tempval || null
+                    }
+                    const questionWithSingleChoices = ['singlechoice', 'boolean']
+                    if (questionWithSingleChoices.includes(this.indicator.datatype)) {
+                        if (isEqual(this.lazyValue, this.value?.[1])) { return }
+                        console.log(this.lazyValue, this.value?.[1])
+                        this.lazyValue = this.value?.[1] || null
+                    }
+                    if (this.indicator.datatype === 'multiplechoice') {
+                        if (isEqual(this.lazyValue, this.value[0])) { return }
+                        this.lazyValue = this.value?.[0] || []
+                    }
                 }
             }
         }
     }
-}
-    // type: {
-    //     type: String,
-    //     default: 'text'
-    //     // validator: v => Object.values(QUESTION_TYPES).includes(v)
-    // },
-    // if (this.lazyValue !== this.value) {
-    //     this.lazyValue = this.value[1]
-    // }
-    // console.log(this.value)
-    // if (this.value) {
-    //     try {
-    //         this.lazyValue = parseInt(this.value[1])
-    //     } catch {
-    //         this.lazyValue = this.value[1]
-    //     }
-        // this.lazyValue = this.type === this.questionTypes.CHECKBOX ? this.splitValue(val) : val
-    // }
-
-    // if (this.type === this.questionTypes.RADIO) {
-    //     console.log('----', this.value)
-    //     try {
-    //         this.lazyValue = this.value[1]
-    //     } catch {
-    //         this.lazyValue = null
-    // }
-    // console.log(this.lazyValue)
-    // } else {
-    // this.lazyValue = this.value
-    // }
-    // console.log(this.options)
-    // console.log(this.value)
-    // console.log(this.lazyValue)
-    // if (this.type === this.questionTypes.CHECKBOX) {
-        // this.lazyValue = this.splitValue(this.lazyValue)
-    // }
-    // methods: {
-    //     splitValue (value) {
-    //         console.value('sss', value)
-    //         return value ? value.split(',') : value
-    //     }
-    // }
-    // lazyvalue watch
-    // console.log(this.lazyValue)
-
-    // if (this.type === this.questionTypes.RADIO)
-
-    // if (this.type === this.questionTypes.CHECKBOX) {
-    // console.log('==========', val)
-    // const checked = this.splitValue(this.value)
-    // console.log('>>>>>>', checked)
-    // if (!val.length) {
-    // this.lazyValue = checked
-    // console.log(this.lazyValue)
-    //    return
-    // }
-    // if (val === checked) return
-    // }
-    // <!-- <InputText v-if="uiComponent === 'field'" type="text" v-model="lazyValue" :disabled="readonly" required /> -->
-    // <!-- Field
-    //     - Text
-    //     - Integer
-    //     - Double
-    //     - Date
-    // -->
-    // <!-- Line -->
-    // <!-- Textbox -->
 </script>
-
-// <style lang="scss" scoped>
-//     .p-inputtext {
-//         border: 0px solid black;
-//         border-bottom: 1px solid lightgrey;
-//     }
-// </style>

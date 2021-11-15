@@ -1,3 +1,5 @@
+// Used by MethodCreation.vue
+
 <template>
     <form ref="form"  class="p-fluid p-p-5 p-input-filled p-inputtext-lg">
         <div class=" p-mb-5">
@@ -18,91 +20,74 @@
 </template>
 
 <script>
-import { isEqual } from 'lodash'
-import useVuelidate from '@vuelidate/core'
-import { required, minLength, maxLength } from '../../utils/validators'
-import HandleValidationErrors from '../../utils/HandleValidationErrors'
+    import { isEqual } from 'lodash'
+    import useVuelidate from '@vuelidate/core'
+    import { required, minLength, maxLength } from '../../utils/validators'
+    import HandleValidationErrors from '../../utils/HandleValidationErrors'
 
-export default {
-    props: {
-        method: {
-            type: Object,
-            default: () => ({})
-        },
-        errors: {
-            type: Object,
-            default: () => ({})
-        }
-    },
-    data () {
-        return {
-            lazyMethod: { ...this.method } || {}
-        }
-    },
-    computed: {
-        nameErrors () {
-            return HandleValidationErrors(
-                this.v$.lazyMethod.name,
-                this.errors.name
-                )
-        },
-        descriptionErrors () {
-            return HandleValidationErrors(
-                this.v$.lazyMethod.description,
-                this.errors.description
-            )
-        }
-    },
-    watch: {
-        method (val) {
-            if (!isEqual(this.lazyMethod, val)) {
-                this.lazyMethod = { ...val }
+    export default {
+        props: {
+            method: {
+                type: Object,
+                default: () => ({})
+            },
+            errors: {
+                type: Object,
+                default: () => ({})
             }
         },
-        lazyMethod: {
-            handler (val) {
-                if (this.v$.lazyMethod.$invalid) { return }
-                if (isEqual(this.method && val)) { return }
-                this.$emit('input', this.lazyMethod)
+        data () {
+            return {
+                lazyMethod: { ...this.method } || {}
+            }
+        },
+        computed: {
+            nameErrors () {
+                return HandleValidationErrors(
+                    this.v$.lazyMethod.name,
+                    this.errors.name
+                    )
             },
-            deep: true,   
-        }
-    },
-    setup: () => ({ v$: useVuelidate() }),
-    validations: {
-        lazyMethod: {
-            id: { required },
-            name: { required, minLength: minLength(2), maxLength: maxLength(255) },
-            description: { required }
+            descriptionErrors () {
+                return HandleValidationErrors(
+                    this.v$.lazyMethod.description,
+                    this.errors.description
+                )
+            }
+        },
+        watch: {
+            method (val) {
+                if (!isEqual(this.lazyMethod, val)) {
+                    this.lazyMethod = { ...val }
+                }
+            },
+            lazyMethod: {
+                handler (val) {
+                    if (this.v$.lazyMethod.$invalid) { return }
+                    if (isEqual(this.method && val)) { return }
+                    this.$emit('input', this.lazyMethod)
+                },
+                deep: true,   
+            }
+        },
+        setup: () => ({ v$: useVuelidate() }),
+        validations: {
+            lazyMethod: {
+                id: { required },
+                name: { required, minLength: minLength(2), maxLength: maxLength(255) },
+                description: { required }
+            }
         }
     }
-}
-// lazyMethod: {
-//     deep: true,
-//     handler: function (val) {
-//         console.log('lll', val, this.method)
-//         console.log('>>', val)
-//         if (this.v$.lazyMethod.$invalid) {
-//             console.log('invalid!', this.v$.lazyMethod.$invalid, this.lazyMethod)
-//             return
-//         }
-//         if (isEqual(this.method, val)) {
-//             console.log('equal!')
-//             return
-//         }
-//         console.log('>>', val)
-//         this.$emit('input', val)
-//     }
-// }
 </script>
 
 <style lang="scss" scoped>
-.p-inputtext {
-    border: none;
-    border-bottom: 1px solid lightgrey;
-}
-.borderless {
-    border-bottom: 1px solid red;
+    .p-inputtext {
+        border: none;
+        border-bottom: 1px solid lightgrey;
+    }
+    .borderless {
+        border-bottom: 1px solid red;
 
-}
+    }
 </style>

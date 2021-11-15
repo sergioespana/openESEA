@@ -19,6 +19,7 @@
 <script>
     import { mapState } from 'vuex'
     import SubSidebar from '../../components/SubSidebar.vue'
+
     export default {
         components: {
             SubSidebar

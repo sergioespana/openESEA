@@ -58,7 +58,7 @@
 
 <script>
 import { mapActions, mapState } from 'vuex'
-import { AxiosInstance } from '../plugins/axios'
+import { AxiosInstance } from '../../plugins/axios'
 export default {
     props: {
         columns: {

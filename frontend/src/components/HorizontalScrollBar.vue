@@ -76,6 +76,7 @@
             }
         },
         created () {
+            // Gets window size in order to show correct amount of items
             window.addEventListener('resize', this.checkWindowSize)
             setTimeout(() => { this.failedLoad = true }, 10000)
         },
@@ -93,7 +94,6 @@
             },
             changeDisplayedItems () {
                 this.itemsbar = this.items.slice(((this.currentPage - 1) * this.itemsPerPage), (this.currentPage * this.itemsPerPage))
-                console.log('itemsbar', this.itemsPerPage)
 
                 if (!this.itemsbar.length || (this.itemsbar.length % this.itemsPerPage !== 0)) {
                     const placeholderItems = this.itemsPerPage - (this.itemsbar.length % this.itemsPerPage)

@@ -1,3 +1,5 @@
+// Used by App.vue
+
 <template>
     <div class="menubar p-shadow-2">
         <i class="bars pi pi-bars p-p-5" @click="expandedSidebar = !expandedSidebar" />
@@ -13,30 +15,31 @@
         </div>
     </div>
 </template>
-<script>
-import { mapState } from 'vuex'
 
-export default {
-    data () {
-        return {
-            expandedSidebar: false,
-            search: ''
-        }
-    },
-    computed: {
-        ...mapState('authentication', ['currentuser'])
-    },
-    watch: {
-        expandedSidebar (val) {
-            this.$emit('sidebar', val)
-        }
-    },
-    methods: {
-        goToProfile () {
-            this.$router.push({ name: 'userprofile' })
+<script>
+    import { mapState } from 'vuex'
+
+    export default {
+        data () {
+            return {
+                expandedSidebar: false,
+                search: ''
+            }
+        },
+        computed: {
+            ...mapState('authentication', ['currentuser'])
+        },
+        watch: {
+            expandedSidebar (val) {
+                this.$emit('sidebar', val)
+            }
+        },
+        methods: {
+            goToProfile () {
+                this.$router.push({ name: 'userprofile' })
+            }
         }
     }
-}
 </script>
 
 <style lang="scss" scoped>

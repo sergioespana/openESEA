@@ -13,21 +13,22 @@
 </template>
 
 <script>
-export default {
-    props: {
-        name: {
-            type: String,
-            required: true
-        },
-        description: {
-            type: String,
-            default: undefined
-        },
-        isSubTopic: {
-            type: Boolean,
-            default: false
+    export default {
+        props: {
+            name: {
+                type: String,
+                required: true
+            },
+            description: {
+                type: String,
+                default: undefined
+            },
+            isSubTopic: {
+                type: Boolean,
+                default: false
+            }
         }
     }
-}
 </script>
+
 // style="border-bottom: 2px solid lightgrey; background-color: #f1f1f1;"

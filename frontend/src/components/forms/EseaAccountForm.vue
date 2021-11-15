@@ -23,73 +23,74 @@
 </template>
 
 <script>
-import useVuelidate from '@vuelidate/core'
-import { required } from 'vuelidate/lib/validators'
-import Dropdown from 'primevue/dropdown'
-import { mapActions, mapState } from 'vuex'
+    import useVuelidate from '@vuelidate/core'
+    import { required } from 'vuelidate/lib/validators'
+    import Dropdown from 'primevue/dropdown'
+    import { mapActions, mapState } from 'vuex'
 
-export default {
-    components: {
-        Dropdown
-    },
-    props: {
-        eseaAccounts: {
-            type: Array
-        }
-    },
-    data () {
-        return {
+    export default {
+        components: {
+            Dropdown
+        },
+        props: {
+            eseaAccounts: {
+                type: Array
+            }
+        },
+        data () {
+            return {
+                eseaaccountForm: {
+                    method: null,
+                    year: null
+                }
+            }
+        },
+        computed: {
+            ...mapState('method', ['methods']),
+            ...mapState('eseaAccount', ['eseaAccount']),
+            filteredEseaAccounts () {
+                return this.eseaAccounts.filter(eseaAccount => eseaAccount.year === this.eseaaccountForm.year && eseaAccount.method_name.includes(this.eseaaccountForm.method.name)) // .filter(eseaAccount => { return eseaAccount.year.includes(2020) })
+            },
+            possibleyears () {
+                const currentyear = new Date().getFullYear()
+                const minyear = currentyear - 10
+                const years = []
+
+                for (let i = minyear; i <= currentyear; i++) {
+                    years.push(i)
+                }
+                return years
+            }
+        },
+        setup: () => ({ v$: useVuelidate() }),
+        validations: {
             eseaaccountForm: {
-                method: null,
-                year: null
-            }
-        }
-    },
-    computed: {
-        ...mapState('method', ['methods']),
-        ...mapState('eseaAccount', ['eseaAccount']),
-        filteredEseaAccounts () {
-            return this.eseaAccounts.filter(eseaAccount => eseaAccount.year === this.eseaaccountForm.year && eseaAccount.method_name.includes(this.eseaaccountForm.method.name)) // .filter(eseaAccount => { return eseaAccount.year.includes(2020) })
-        },
-        possibleyears () {
-            const currentyear = new Date().getFullYear()
-            const minyear = currentyear - 10
-            const years = []
-
-            for (let i = minyear; i <= currentyear; i++) {
-                years.push(i)
-            }
-            return years
-        }
-    },
-    setup: () => ({ v$: useVuelidate() }),
-    validations: {
-        eseaaccountForm: {
-            method: { required },
-            year: { required }
-        }
-    },
-    async created () {
-        await this.fetchMethods({})
-    },
-    methods: {
-        ...mapActions('method', ['fetchMethods']),
-        ...mapActions('eseaAccount', ['createEseaAccount']),
-        async createNewEseaMethod () {
-            console.log('Validating new Esea Account...')
-            this.v$.eseaaccountForm.$touch()
-            if (this.v$.$invalid) { return }
-            await this.createEseaAccount({ oId: this.$route.params.OrganisationId, data: { method: this.eseaaccountForm.method.id, year: this.eseaaccountForm.year } })
-
-            if (this.eseaAccount.id) {
-                this.$router.push({ name: 'organisationeseaaccount', params: { EseaAccountId: this.eseaAccount.id } })
+                method: { required },
+                year: { required }
             }
         },
-        closeDialog () {
-            this.$emit('closedialog')
+        async created () {
+            await this.fetchMethods({})
+        },
+        methods: {
+            ...mapActions('method', ['fetchMethods']),
+            ...mapActions('eseaAccount', ['createEseaAccount']),
+            async createNewEseaMethod () {
+                console.log('Validating new Esea Account...')
+                this.v$.eseaaccountForm.$touch()
+                if (this.v$.$invalid) { return }
+                await this.createEseaAccount({ oId: this.$route.params.OrganisationId, data: { method: this.eseaaccountForm.method.id, year: this.eseaaccountForm.year } })
+
+                if (this.eseaAccount.id) {
+                    this.$router.push({ name: 'organisationeseaaccount', params: { EseaAccountId: this.eseaAccount.id } })
+                }
+            },
+            closeDialog () {
+                this.$emit('closedialog')
+            }
         }
     }
-}
-// <!-- <Calendar id="year" v-model="eseaaccountForm.year" placeholder="Year" appendTo="body" :showIcon="true" view="year" dateFormat="yy"  yearRange="2000:2030" />
-// <InputNumber id="integeronly" v-model="eseaaccountForm.year" :min="2000" :max="2050" /> -->
 </script>
+
+/<!-- <Calendar id="year" v-model="eseaaccountForm.year" placeholder="Year" appendTo="body" :showIcon="true" view="year" dateFormat="yy"  yearRange="2000:2030" />
+// <InputNumber id="integeronly" v-model="eseaaccountForm.year" :min="2000" :max="2050" /> -->

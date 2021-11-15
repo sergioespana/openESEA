@@ -27,11 +27,11 @@ def audit_data(eseaaccount):
 
         # DirectIndicator.objects.filter(datatype=)
 
-# eseaaccount.objects.get(organisation=organisation_id, campaign=campaign_id)
-# sr_list = surveyresponse.objects.filter(eseaaccount=eseaaccount)
-# for sr in sr_list:
-#     question_list = question.objects.filter(survey=sr.survey)
-#     for question in question_list:
-#         questionresponse.objects.filter(question__survey=survey)
+    # eseaaccount.objects.get(organisation=organisation_id, campaign=campaign_id)
+    # sr_list = surveyresponse.objects.filter(eseaaccount=eseaaccount)
+    # for sr in sr_list:
+    #     question_list = question.objects.filter(survey=sr.survey)
+    #     for question in question_list:
+    #         questionresponse.objects.filter(question__survey=survey)
 
-#         question_response > question > survey
+    #         question_response > question > survey

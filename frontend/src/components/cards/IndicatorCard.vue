@@ -1,3 +1,5 @@
+// used by DirectIndicatorEditForm.vue
+
 <template>
     <div class="p-m-3 p-px-5 p-py-3 p-shadow-1 p-text-left" :style="[(valid) ? 'border: 1px solid lightgrey;': 'border: 2px solid rgba(255, 0, 0, 0.3);', (hover) ? 'background-color: white;':'background-color: #F2F2F2;']" style="border-radius: 5px;"> <!-- #dcdcdc"> -->
         <h3 class="p-col p-text-center p-m-0">Direct Indicator - [{{keyy || 'No Key'}}]</h3>
@@ -9,30 +11,30 @@
 </template>
 
 <script>
-export default {
-    props: {
-        keyy: {
-            type: String,
-            required: undefined
-        },
-        datatype: {
-            type: String,
-            default: undefined
-        },
-        name: {
-            type: String,
-            default: undefined
-        },
-        valid: {
-            type: Boolean,
-            default: undefined
-        },
-        hover: {
-            type: Boolean,
-            default: false
+    export default {
+        props: {
+            keyy: {
+                type: String,
+                required: undefined
+            },
+            datatype: {
+                type: String,
+                default: undefined
+            },
+            name: {
+                type: String,
+                default: undefined
+            },
+            valid: {
+                type: Boolean,
+                default: undefined
+            },
+            hover: {
+                type: Boolean,
+                default: false
+            }
         }
     }
-}
 </script>
 
 <style lang="scss" scoped>

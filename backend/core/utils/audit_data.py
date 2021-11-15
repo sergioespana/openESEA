@@ -4,7 +4,8 @@
 # import pandas as pd
 
 
-def audit_data(eseaaccount, indicators):
+def audit_data(eseaaccount):
+    print('this works!', eseaaccount)
     # Create a little bit of everything multiple respondent survey questions
         # -What is your avg. monthly salary?
         # -What is your avg. yearly salary?
@@ -21,7 +22,16 @@ def audit_data(eseaaccount, indicators):
 
     # Create Aggregrated data for the csv
 
-    for indicator in indicators.values():
-        print(indicator.name, indicator.value)
+    # for indicator in indicators.values():
+    #     print(indicator.name, indicator.value)
 
         # DirectIndicator.objects.filter(datatype=)
+
+# eseaaccount.objects.get(organisation=organisation_id, campaign=campaign_id)
+# sr_list = surveyresponse.objects.filter(eseaaccount=eseaaccount)
+# for sr in sr_list:
+#     question_list = question.objects.filter(survey=sr.survey)
+#     for question in question_list:
+#         questionresponse.objects.filter(question__survey=survey)
+
+#         question_response > question > survey

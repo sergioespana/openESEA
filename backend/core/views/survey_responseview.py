@@ -7,7 +7,7 @@ from secrets import token_urlsafe
 
 from ..models import (Survey, SurveyResponse, QuestionResponse, DirectIndicator, IndirectIndicator, Respondent, StakeholderGroup, EseaAccount)
 from ..serializers import (SurveyResponseSerializer, QuestionResponseSerializer, SurveyResponseCalculationSerializer)
-from ..utils import map_responses_by_indicator, calculate_indicators, audit_data
+from ..utils import map_responses_by_indicator, calculate_indicators
 
 
 class BaseModelViewSet(viewsets.ModelViewSet):
@@ -97,7 +97,6 @@ class SurveyResponseViewSet(BaseModelViewSet):
 
             # for indicator in indicators.values():
             #     print('----->',  indicator)
-            audit_data(eseaaccount, indicators)
 
             serializer = SurveyResponseCalculationSerializer(indicators.values(), many=True)
             return Response(

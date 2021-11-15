@@ -3,7 +3,7 @@ from rest_framework_nested import routers
 from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView)
 
 from .views import (membershipview, respondentview, userview, networkview, network_memberview, organisationview, organisation_memberview, methodview, surveyview, sectionview, questionview, text_fragmentview, 
-                    topicview, direct_indicatorview2, indirect_indicatorview, survey_responseview, campaignview, esea_accountview)
+                    topicview, direct_indicatorview2, indirect_indicatorview, survey_responseview, campaignview, esea_accountview, reportview)
  
 
 router = routers.DefaultRouter()
@@ -48,6 +48,7 @@ urlpatterns = [
     path('api-refresh/', TokenRefreshView.as_view()),
     path('import-method/', methodview.upload_method),
     path('import-employees/<int:eseaaccount_pk>/<int:survey_pk>/', esea_accountview.import_employees, name="import_employees_of_organisation"),
+    path('audit-account/<int:eseaaccount_pk>/', reportview.audit_eseaaccount, name="audit_esea_account"),
     path('', include(router.urls)),
     path('', include(network_router.urls)),
     path('', include(method_router.urls)),

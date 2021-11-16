@@ -19,7 +19,8 @@ class Organisation(models.Model):
 
     owner = models.ForeignKey('CustomUser', on_delete=models.SET_NULL, related_name='organisationowner', null=True)
     created_by = models.ForeignKey('CustomUser', editable=False, on_delete=models.SET_NULL, null=True)
-    
+    # Created on
+
     ispublic = models.BooleanField(default=True)
     name = models.CharField(max_length=255, unique=True, blank=False)
     description = models.TextField(max_length=1000, blank=True)

@@ -21,22 +21,24 @@ def audit_data(eseaaccount_pk):
     
     # indirect_indicators = IndirectIndicator.objects.filter(method=eseaaccount.method)
     # direct_indicators = DirectIndicator.objects.filter(method=eseaaccount.method)
-    questions = DirectIndicator.objects.filter(method=eseaaccount.method)
+    questions = Question.objects.filter(method=eseaaccount.method)
 
     # map_responses_by_indicator(direct_indicators, question_responses)
 
     df = pd.DataFrame(columns = [ question.name for question in questions])
-    df.insert(0, 'Respondent_id', [int(survey_response.respondent.id) for survey_response in survey_responses])
+    df.insert(0, 'Response_id', [int(survey_response.id) for survey_response in survey_responses])
+    df.insert(1, 'Survey', [survey_response.survey.name for survey_response in survey_responses])
     # df.set_index('Respondent_id', inplace=True)
     for survey_response in survey_responses:
         questionresponses = QuestionResponse.objects.filter(survey_response=survey_response, survey_response__finished=True)
         for questionresponse in questionresponses:
-            df.loc[df['Respondent_id'] == int(survey_response.respondent.id), [questionresponse.question.name]] = questionresponse.value
-            
-    pd.set_option('display.width', 40)
-   
-    print(df.tail(5))
+            print(questionresponse.question.name, questionresponse.value)
+            df.loc[df['Response_id'] == int(survey_response.id), [questionresponse.question.name]] = questionresponse.value
+            # print(df[questionresponse.question.name])
 
+    # pd.set_option('display.width', 20, 'max_colwidth', 800)
+    print(df)
+   
     # Create a little bit of everything multiple respondent survey questions
         # -What is your avg. monthly salary?
         # -What is your avg. yearly salary?

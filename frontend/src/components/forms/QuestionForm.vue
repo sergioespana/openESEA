@@ -93,7 +93,6 @@
                 lazyQuestion: cloneDeep(this.question) || {},
                 uiComponents: UI_COMPONENTS,
                 requiredList: [{ name: 'Required', value: true }, { name: 'Optional', value: 'false' }],
-                refreshSidebar: false,
                 loading: false,
                 failedToUpDate: false
             }
@@ -122,9 +121,6 @@
         watch: {
             question: {
                 handler (val) {
-                    if (this.refreshSidebar) {
-                        this.fetchIndicators()
-                    }
                     if (isEqual(this.lazyQuestion, val)) { return }
                     this.lazyQuestion = cloneDeep(val)
                 },
@@ -150,10 +146,15 @@
             },
             checkSavingStatus () {
                 this.$emit('savingstatus', this.v$.lazyQuestion.$invalid)
+            },
+            uiComponentsList (val) {
+                if (this.uiComponentsList.length === 1) {
+                    this.lazyQuestion.uiComponent = this.uiComponentsList[0]
+                    console.log('length:', val.length, this.uiComponentsList)
+                }
             }
         },
         methods: {
-            ...mapActions('directIndicator', ['fetchDirectIndicators']),
             ...mapActions('question', ['updateQuestion', 'deleteQuestion']),
             async onDrop (evt) {
                 const myitem = evt.dataTransfer.getData('draggedItem')
@@ -161,20 +162,14 @@
                 delete parseditem.method
                 delete parseditem.question
                 this.lazyQuestion.direct_indicator = [parseditem]
-                this.refreshSidebar = true
-                await this.fetchDirectIndicators({ mId: this.$route.params.id })
             },
             deleteIndicator () {
                 this.lazyQuestion.direct_indicator = []
-            },
-            async fetchIndicators () {
-                this.refreshSidebar = false
             },
             async updateThisQuestion () {
                 this.loading = true
                 this.failedToUpDate = false
                 setTimeout(() => { this.failedToUpDate = true }, 5000)
-                console.log('......')
                 await this.updateQuestion({
                     mId: this.$route.params.id,
                     SuId: this.$route.params.SurveyId,

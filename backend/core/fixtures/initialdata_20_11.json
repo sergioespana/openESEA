@@ -182,10 +182,7 @@
             6,
             7
         ],
-        "methods": [
-            2,
-            3
-        ]
+        "methods": []
     }
 },
 {
@@ -232,7 +229,7 @@
         "organisation": 4,
         "user": 2,
         "invitation": "accepted",
-        "role": 2
+        "role": 3
     }
 },
 {
@@ -296,26 +293,6 @@
     }
 },
 {
-    "model": "core.organisationmember",
-    "pk": 10,
-    "fields": {
-        "organisation": 1,
-        "user": 2,
-        "invitation": "pending",
-        "role": 2
-    }
-},
-{
-    "model": "core.organisationmember",
-    "pk": 11,
-    "fields": {
-        "organisation": 4,
-        "user": 1,
-        "invitation": "pending",
-        "role": 3
-    }
-},
-{
     "model": "core.organisation",
     "pk": 1,
     "fields": {
@@ -343,7 +320,7 @@
     "model": "core.organisation",
     "pk": 4,
     "fields": {
-        "owner": 1,
+        "owner": 2,
         "created_by": 2,
         "ispublic": true,
         "name": "Ben & Jerry's",
@@ -511,83 +488,6 @@
     }
 },
 {
-    "model": "core.respondent",
-    "pk": 1,
-    "fields": {
-        "organisation": 4,
-        "email": "accountant@mail.com",
-        "first_name": "Accountant",
-        "last_name_prefix": "",
-        "last_name": "of Ben & Jerry's"
-    }
-},
-{
-    "model": "core.respondent",
-    "pk": 2,
-    "fields": {
-        "organisation": 6,
-        "email": "accountant@mail.com",
-        "first_name": "Accountant",
-        "last_name_prefix": "",
-        "last_name": "of Triodos"
-    }
-},
-{
-    "model": "core.respondent",
-    "pk": 3,
-    "fields": {
-        "organisation": 7,
-        "email": "accountant@mail.com",
-        "first_name": "Accountant",
-        "last_name_prefix": "",
-        "last_name": "of Greyston Bakery"
-    }
-},
-{
-    "model": "core.respondent",
-    "pk": 4,
-    "fields": {
-        "organisation": 4,
-        "email": "accountant@mail.com",
-        "first_name": "Accountant",
-        "last_name_prefix": "",
-        "last_name": "of Ben & Jerry's"
-    }
-},
-{
-    "model": "core.respondent",
-    "pk": 5,
-    "fields": {
-        "organisation": 6,
-        "email": "accountant@mail.com",
-        "first_name": "Accountant",
-        "last_name_prefix": "",
-        "last_name": "of Triodos"
-    }
-},
-{
-    "model": "core.respondent",
-    "pk": 22,
-    "fields": {
-        "organisation": 1,
-        "email": "accountant@mail.com",
-        "first_name": "Accountant",
-        "last_name_prefix": "",
-        "last_name": "of Shell"
-    }
-},
-{
-    "model": "core.respondent",
-    "pk": 48,
-    "fields": {
-        "organisation": 4,
-        "email": "dpettersen0@oracle.com",
-        "first_name": "Dara",
-        "last_name_prefix": "",
-        "last_name": "Pettersen"
-    }
-},
-{
     "model": "core.method",
     "pk": 2,
     "fields": {
@@ -642,7 +542,7 @@
         "description": "This survey has to be filled in by the ESEA accountant",
         "welcome_text": "Welcome ESEA accountant",
         "closing_text": "Bye",
-        "min_threshold": 1,
+        "min_threshold": 100,
         "anonymous": false,
         "response_type": "single"
     }
@@ -657,9 +557,9 @@
         "description": "This survey should be answered by all employees of the company",
         "welcome_text": "Welcome Employee",
         "closing_text": "Bye",
-        "min_threshold": 0,
+        "min_threshold": 50,
         "anonymous": true,
-        "response_type": "multi"
+        "response_type": "multiple"
     }
 },
 {
@@ -672,7 +572,7 @@
         "description": "This survey has to be filled in upon registration",
         "welcome_text": "",
         "closing_text": "",
-        "min_threshold": 1,
+        "min_threshold": 100,
         "anonymous": false,
         "response_type": "single"
     }
@@ -729,6 +629,15 @@
         "survey": 8,
         "order": 1,
         "title": "General information"
+    }
+},
+{
+    "model": "core.section",
+    "pk": 12,
+    "fields": {
+        "survey": 7,
+        "order": 1,
+        "title": "Some more Questions"
     }
 },
 {
@@ -894,6 +803,16 @@
         "parent_topic": 15,
         "name": "Certification",
         "description": "This topic defines indicators used for determining the certification level of an organisation"
+    }
+},
+{
+    "model": "core.topic",
+    "pk": 21,
+    "fields": {
+        "method": 3,
+        "parent_topic": 15,
+        "name": "Multiple Respondent Questions",
+        "description": ""
     }
 },
 {
@@ -1551,9 +1470,104 @@
         "topic": 16,
         "order": 2,
         "isMandatory": true,
-        "name": "Please select the company type”",
+        "name": "Please select the company type",
         "description": "Company type",
         "instruction": "Select the company type",
+        "default": "",
+        "min_number": 1,
+        "max_number": 5,
+        "answertype": "TEXT",
+        "uiComponent": "radiobutton"
+    }
+},
+{
+    "model": "core.question",
+    "pk": 46,
+    "fields": {
+        "method": 3,
+        "section": 12,
+        "topic": null,
+        "order": 1,
+        "isMandatory": true,
+        "name": "What is your age?",
+        "description": "",
+        "instruction": "",
+        "default": "",
+        "min_number": 1,
+        "max_number": 5,
+        "answertype": "TEXT",
+        "uiComponent": "field"
+    }
+},
+{
+    "model": "core.question",
+    "pk": 47,
+    "fields": {
+        "method": 3,
+        "section": 12,
+        "topic": null,
+        "order": 1,
+        "isMandatory": true,
+        "name": "How safe do you feel at work?",
+        "description": "",
+        "instruction": "",
+        "default": "",
+        "min_number": 1,
+        "max_number": 5,
+        "answertype": "TEXT",
+        "uiComponent": "radiobutton"
+    }
+},
+{
+    "model": "core.question",
+    "pk": 48,
+    "fields": {
+        "method": 3,
+        "section": 12,
+        "topic": null,
+        "order": 1,
+        "isMandatory": true,
+        "name": "How many years have you worked at this company?",
+        "description": "",
+        "instruction": "",
+        "default": "",
+        "min_number": 1,
+        "max_number": 5,
+        "answertype": "TEXT",
+        "uiComponent": "field"
+    }
+},
+{
+    "model": "core.question",
+    "pk": 49,
+    "fields": {
+        "method": 3,
+        "section": 12,
+        "topic": null,
+        "order": 1,
+        "isMandatory": true,
+        "name": "How satisfied are you with the company?",
+        "description": "",
+        "instruction": "",
+        "default": "",
+        "min_number": 1,
+        "max_number": 5,
+        "answertype": "TEXT",
+        "uiComponent": "radiobutton"
+    }
+},
+{
+    "model": "core.question",
+    "pk": 50,
+    "fields": {
+        "method": 3,
+        "section": 12,
+        "topic": null,
+        "order": 1,
+        "isMandatory": true,
+        "name": "How much do you think your company has a positive impact on the society?",
+        "description": "",
+        "instruction": "",
         "default": "",
         "min_number": 1,
         "max_number": 5,
@@ -1588,9 +1602,9 @@
         "order": 2,
         "text": "No",
         "direct_indicator": [
-            21,
+            19,
             20,
-            19
+            21
         ]
     }
 },
@@ -1601,9 +1615,9 @@
         "order": 1,
         "text": "Yes",
         "direct_indicator": [
-            21,
+            19,
             20,
-            19
+            21
         ]
     }
 },
@@ -1670,7 +1684,10 @@
         "text": "1",
         "direct_indicator": [
             45,
-            46
+            47,
+            51,
+            46,
+            50
         ]
     }
 },
@@ -1682,7 +1699,10 @@
         "text": "2",
         "direct_indicator": [
             45,
-            46
+            47,
+            51,
+            46,
+            50
         ]
     }
 },
@@ -1694,7 +1714,10 @@
         "text": "3",
         "direct_indicator": [
             45,
-            46
+            47,
+            51,
+            46,
+            50
         ]
     }
 },
@@ -1706,7 +1729,10 @@
         "text": "4",
         "direct_indicator": [
             45,
-            46
+            47,
+            51,
+            46,
+            50
         ]
     }
 },
@@ -1718,7 +1744,80 @@
         "text": "5",
         "direct_indicator": [
             45,
-            46
+            47,
+            51,
+            46,
+            50
+        ]
+    }
+},
+{
+    "model": "core.answeroption",
+    "pk": 26,
+    "fields": {
+        "order": 6,
+        "text": "6",
+        "direct_indicator": [
+            47,
+            51,
+            46,
+            50
+        ]
+    }
+},
+{
+    "model": "core.answeroption",
+    "pk": 27,
+    "fields": {
+        "order": 7,
+        "text": "7",
+        "direct_indicator": [
+            47,
+            51,
+            46,
+            50
+        ]
+    }
+},
+{
+    "model": "core.answeroption",
+    "pk": 28,
+    "fields": {
+        "order": 8,
+        "text": "8",
+        "direct_indicator": [
+            47,
+            51,
+            46,
+            50
+        ]
+    }
+},
+{
+    "model": "core.answeroption",
+    "pk": 29,
+    "fields": {
+        "order": 9,
+        "text": "9",
+        "direct_indicator": [
+            47,
+            51,
+            46,
+            50
+        ]
+    }
+},
+{
+    "model": "core.answeroption",
+    "pk": 30,
+    "fields": {
+        "order": 10,
+        "text": "10",
+        "direct_indicator": [
+            47,
+            51,
+            46,
+            50
         ]
     }
 },
@@ -2223,7 +2322,7 @@
     "fields": {
         "question": 43,
         "method": 3,
-        "topic": 19,
+        "topic": 21,
         "key": "employee_satisfaction",
         "name": "Employee satisfaction",
         "description": "How satisfied are employees within the organisation",
@@ -2238,7 +2337,7 @@
     "fields": {
         "question": 44,
         "method": 3,
-        "topic": 19,
+        "topic": 21,
         "key": "employee_opinion_on_inclusiveness",
         "name": "Inclusiveness of the company",
         "description": "Inclusiveness of the company",
@@ -2248,388 +2347,78 @@
     }
 },
 {
-    "model": "core.questionresponse",
-    "pk": 1,
+    "model": "core.directindicator",
+    "pk": 47,
     "fields": {
-        "survey_response": 1,
-        "question": 20,
-        "direct_indicator_id": 21,
-        "value": "No",
-        "values": []
+        "question": 49,
+        "method": 3,
+        "topic": 21,
+        "key": "satisfaction_level",
+        "name": "Overall satisfaction level defined by the employees",
+        "description": "",
+        "pre_unit": "",
+        "post_unit": "",
+        "datatype": "singlechoice"
     }
 },
 {
-    "model": "core.questionresponse",
-    "pk": 2,
+    "model": "core.directindicator",
+    "pk": 48,
     "fields": {
-        "survey_response": 1,
-        "question": 35,
-        "direct_indicator_id": 36,
-        "value": "100000",
-        "values": []
+        "question": 46,
+        "method": 3,
+        "topic": 21,
+        "key": "employee_age",
+        "name": "Age of an employee",
+        "description": "",
+        "pre_unit": "",
+        "post_unit": "years",
+        "datatype": "integer"
     }
 },
 {
-    "model": "core.questionresponse",
-    "pk": 3,
+    "model": "core.directindicator",
+    "pk": 49,
     "fields": {
-        "survey_response": 1,
-        "question": 34,
-        "direct_indicator_id": 35,
-        "value": "100000",
-        "values": []
+        "question": 48,
+        "method": 3,
+        "topic": 21,
+        "key": "years_of_employment",
+        "name": "How many years an employee has been involved in the company.",
+        "description": "",
+        "pre_unit": "",
+        "post_unit": "years",
+        "datatype": "integer"
     }
 },
 {
-    "model": "core.questionresponse",
-    "pk": 6,
+    "model": "core.directindicator",
+    "pk": 50,
     "fields": {
-        "survey_response": 46,
-        "question": 43,
-        "direct_indicator_id": 45,
-        "value": "4",
-        "values": []
+        "question": 47,
+        "method": 3,
+        "topic": 21,
+        "key": "work_safety",
+        "name": "I feel safe at work on a scale from 1 to 10.",
+        "description": "",
+        "pre_unit": "",
+        "post_unit": "",
+        "datatype": "singlechoice"
     }
 },
 {
-    "model": "core.questionresponse",
-    "pk": 7,
+    "model": "core.directindicator",
+    "pk": 51,
     "fields": {
-        "survey_response": 46,
-        "question": 44,
-        "direct_indicator_id": 46,
-        "value": "2",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 8,
-    "fields": {
-        "survey_response": 4,
-        "question": 36,
-        "direct_indicator_id": 37,
-        "value": "50",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 9,
-    "fields": {
-        "survey_response": 4,
-        "question": 37,
-        "direct_indicator_id": 38,
-        "value": "80",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 10,
-    "fields": {
-        "survey_response": 4,
-        "question": 38,
-        "direct_indicator_id": 40,
-        "value": "1600",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 11,
-    "fields": {
-        "survey_response": 4,
-        "question": 39,
-        "direct_indicator_id": 41,
-        "value": "1800",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 12,
-    "fields": {
-        "survey_response": 4,
-        "question": 40,
-        "direct_indicator_id": 44,
-        "value": "yes",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 13,
-    "fields": {
-        "survey_response": 4,
-        "question": 41,
-        "direct_indicator_id": 42,
-        "value": "3",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 14,
-    "fields": {
-        "survey_response": 4,
-        "question": 42,
-        "direct_indicator_id": 43,
-        "value": "9",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 15,
-    "fields": {
-        "survey_response": 5,
-        "question": 45,
-        "direct_indicator_id": 39,
-        "value": "cooperative",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 16,
-    "fields": {
-        "survey_response": 1,
-        "question": 17,
-        "direct_indicator_id": 18,
-        "value": "3000",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 17,
-    "fields": {
-        "survey_response": 1,
-        "question": 16,
-        "direct_indicator_id": 17,
-        "value": "3000",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 18,
-    "fields": {
-        "survey_response": 1,
-        "question": 33,
-        "direct_indicator_id": 34,
-        "value": "50000",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 19,
-    "fields": {
-        "survey_response": 1,
-        "question": 32,
-        "direct_indicator_id": 33,
-        "value": "2500000",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 20,
-    "fields": {
-        "survey_response": 1,
-        "question": 31,
-        "direct_indicator_id": 32,
-        "value": "7000000",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 21,
-    "fields": {
-        "survey_response": 1,
-        "question": 30,
-        "direct_indicator_id": 31,
-        "value": "300000",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 22,
-    "fields": {
-        "survey_response": 1,
-        "question": 29,
-        "direct_indicator_id": 30,
-        "value": "30000",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 23,
-    "fields": {
-        "survey_response": 1,
-        "question": 28,
-        "direct_indicator_id": 29,
-        "value": "10000",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 24,
-    "fields": {
-        "survey_response": 1,
-        "question": 27,
-        "direct_indicator_id": 28,
-        "value": "25000",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 25,
-    "fields": {
-        "survey_response": 1,
-        "question": 26,
-        "direct_indicator_id": 27,
-        "value": "10000",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 26,
-    "fields": {
-        "survey_response": 1,
-        "question": 24,
-        "direct_indicator_id": 25,
-        "value": "3000",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 27,
-    "fields": {
-        "survey_response": 1,
-        "question": 23,
-        "direct_indicator_id": 24,
-        "value": "1000",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 28,
-    "fields": {
-        "survey_response": 1,
-        "question": 25,
-        "direct_indicator_id": 26,
-        "value": "2200",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 29,
-    "fields": {
-        "survey_response": 1,
-        "question": 22,
-        "direct_indicator_id": 23,
-        "value": "1100",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 30,
-    "fields": {
-        "survey_response": 1,
-        "question": 19,
-        "direct_indicator_id": 20,
-        "value": "No",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 31,
-    "fields": {
-        "survey_response": 1,
-        "question": 18,
-        "direct_indicator_id": 19,
-        "value": "Yes",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 32,
-    "fields": {
-        "survey_response": 1,
-        "question": 15,
-        "direct_indicator_id": 16,
-        "value": "30",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 33,
-    "fields": {
-        "survey_response": 1,
-        "question": 14,
-        "direct_indicator_id": 15,
-        "value": "20",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 34,
-    "fields": {
-        "survey_response": 1,
-        "question": 11,
-        "direct_indicator_id": 11,
-        "value": "250",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 35,
-    "fields": {
-        "survey_response": 1,
-        "question": 12,
-        "direct_indicator_id": 12,
-        "value": "600",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 36,
-    "fields": {
-        "survey_response": 1,
-        "question": 13,
-        "direct_indicator_id": 13,
-        "value": "2000",
-        "values": []
-    }
-},
-{
-    "model": "core.questionresponse",
-    "pk": 37,
-    "fields": {
-        "survey_response": 1,
-        "question": 21,
-        "direct_indicator_id": 22,
-        "value": "1",
-        "values": []
+        "question": 50,
+        "method": 3,
+        "topic": 21,
+        "key": "company_contribution",
+        "name": "I feel as if my company contributes to a better working world. (scale 1-10).",
+        "description": "",
+        "pre_unit": "",
+        "post_unit": "",
+        "datatype": "singlechoice"
     }
 },
 {
@@ -3087,7 +2876,7 @@
         "topic": 19,
         "method": 3,
         "key": "public_salaries_score",
-        "formula": "IF ([public_salaries] == \"yes\") THEN [public_salaries_score] = 10 ELSE [public_salaries_score] = 0",
+        "formula": "IF ([public_salaries] = \"yes\") THEN [public_salaries_score] = 10 ELSE [public_salaries_score] = 0",
         "name": "Public salaries score",
         "description": "Public salaries score",
         "pre_unit": "",
@@ -3103,11 +2892,27 @@
         "topic": 19,
         "method": 3,
         "key": "decision_making_ratio_score",
-        "formula": "IF ([company_type]==\"cooperative\") THEN IF ([decision_making_ratio]<0.6) THEN ([decision_making_ratio_score]=0) ELSE ([decision_making_ratio_score]=10) ELSE IF ([decision_making_ratio]<0.3) THEN [decision_making_ratio_score]=0 ELSE [decision_making_ratio_score]=10",
+        "formula": " IF ([company_type]=\"workers cooperative\") THEN IF ([decision_making_ratio]<0.6) THEN ([decision_making_ratio_score]=0) ELSE ([decision_making_ratio_score]=10) ELSE IF ([decision_making_ratio]<0.3) THEN [decision_making_ratio_score]=0 ELSE [decision_making_ratio_score]=10",
         "name": "Decision making ratio score",
         "description": "Decision making ratio score",
         "pre_unit": "",
         "post_unit": "",
+        "datatype": "text",
+        "type": "scoring"
+    }
+},
+{
+    "model": "core.indirectindicator",
+    "pk": 50,
+    "fields": {
+        "topic": 19,
+        "method": 3,
+        "key": "average_employee_satisfaction_score",
+        "formula": "avg([average_employee_satisfaction])",
+        "name": "Average employee satisfaction score",
+        "description": "Average employee satisfaction score",
+        "pre_unit": "",
+        "post_unit": "points",
         "datatype": "text",
         "type": "scoring"
     }
@@ -3119,7 +2924,7 @@
         "topic": 19,
         "method": 3,
         "key": "workplace_quality_score",
-        "formula": "IF([company_size]==\"micro\") OR ([company_size]==\"small\") THEN [workplace_quality_score]=(0.3*[public_salaries_score] + 0.3*[decision_making_ratio_score] + 0.4*[average_employee_satisfaction]) ELSE IF ([company_size] ==\"medium\") OR ([company_size] ==\"large\") THEN [workplace_quality_score] = ((0.4*[public_salaries_score]) + (0.2 * [decision_making_ratio_score]) + (0.4 * [average_employee_satisfaction]))",
+        "formula": "IF([company_size]=\"micro\") OR ([company_size]=\"small\") THEN [workplace_quality_score]=(0.3*[public_salaries_score] + 0.3*[decision_making_ratio_score] + 0.4*[average_employee_satisfaction_score]) ELSE IF ([company_size] =\"medium\") OR ([company_size] =\"large\") THEN [workplace_quality_score] = ((0.4*[public_salaries_score]) + (0.2 * [decision_making_ratio_score]) + (0.4 * [average_employee_satisfaction_score]))",
         "name": "Workplace quality score",
         "description": "Workplace quality score",
         "pre_unit": "",
@@ -3174,193 +2979,6 @@
         "post_unit": "",
         "datatype": "text",
         "type": "performance"
-    }
-},
-{
-    "model": "core.campaign",
-    "pk": 1,
-    "fields": {
-        "created_by": null,
-        "network": 2,
-        "method": 2,
-        "required": true,
-        "name": "Campaign 2021",
-        "image": "campaign/campaign-default.png",
-        "year": 2021,
-        "open_survey_date": "2021-10-22T16:55:00.300Z",
-        "close_survey_date": "2021-11-21T17:51:00.300Z",
-        "close_validation_date": "2021-12-05T17:51:00.300Z"
-    }
-},
-{
-    "model": "core.campaign",
-    "pk": 2,
-    "fields": {
-        "created_by": null,
-        "network": 2,
-        "method": 3,
-        "required": true,
-        "name": "Campaign newmethod 2021",
-        "image": "campaign/campaign-default.png",
-        "year": 2021,
-        "open_survey_date": "2021-10-25T13:25:58.959Z",
-        "close_survey_date": "2021-11-24T14:19:58.959Z",
-        "close_validation_date": "2021-12-08T14:19:58.959Z"
-    }
-},
-{
-    "model": "core.surveyresponse",
-    "pk": 1,
-    "fields": {
-        "survey": 5,
-        "esea_account": 1,
-        "respondent": 1,
-        "token": "accountant",
-        "finished": true
-    }
-},
-{
-    "model": "core.surveyresponse",
-    "pk": 2,
-    "fields": {
-        "survey": 5,
-        "esea_account": 2,
-        "respondent": 2,
-        "token": "accountant",
-        "finished": false
-    }
-},
-{
-    "model": "core.surveyresponse",
-    "pk": 4,
-    "fields": {
-        "survey": 6,
-        "esea_account": 4,
-        "respondent": 4,
-        "token": "accountant",
-        "finished": true
-    }
-},
-{
-    "model": "core.surveyresponse",
-    "pk": 5,
-    "fields": {
-        "survey": 8,
-        "esea_account": 4,
-        "respondent": 4,
-        "token": "accountant",
-        "finished": true
-    }
-},
-{
-    "model": "core.surveyresponse",
-    "pk": 6,
-    "fields": {
-        "survey": 6,
-        "esea_account": 5,
-        "respondent": 5,
-        "token": "accountant",
-        "finished": false
-    }
-},
-{
-    "model": "core.surveyresponse",
-    "pk": 7,
-    "fields": {
-        "survey": 8,
-        "esea_account": 5,
-        "respondent": 5,
-        "token": "accountant",
-        "finished": false
-    }
-},
-{
-    "model": "core.surveyresponse",
-    "pk": 46,
-    "fields": {
-        "survey": 7,
-        "esea_account": 4,
-        "respondent": 48,
-        "token": "PIwRhgeIAj",
-        "finished": true
-    }
-},
-{
-    "model": "core.eseaaccount",
-    "pk": 1,
-    "fields": {
-        "method": 2,
-        "organisation": 4,
-        "campaign": 1,
-        "year": 2021,
-        "deployed_to_respondents": false,
-        "sufficient_responses": false,
-        "response_rate": "0.00"
-    }
-},
-{
-    "model": "core.eseaaccount",
-    "pk": 2,
-    "fields": {
-        "method": 2,
-        "organisation": 6,
-        "campaign": 1,
-        "year": 2021,
-        "deployed_to_respondents": false,
-        "sufficient_responses": false,
-        "response_rate": "0.00"
-    }
-},
-{
-    "model": "core.eseaaccount",
-    "pk": 4,
-    "fields": {
-        "method": 3,
-        "organisation": 4,
-        "campaign": 2,
-        "year": 2021,
-        "deployed_to_respondents": false,
-        "sufficient_responses": false,
-        "response_rate": "0.00"
-    }
-},
-{
-    "model": "core.eseaaccount",
-    "pk": 5,
-    "fields": {
-        "method": 3,
-        "organisation": 6,
-        "campaign": 2,
-        "year": 2021,
-        "deployed_to_respondents": false,
-        "sufficient_responses": false,
-        "response_rate": "0.00"
-    }
-},
-{
-    "model": "core.eseaaccount",
-    "pk": 6,
-    "fields": {
-        "method": 3,
-        "organisation": 7,
-        "campaign": 2,
-        "year": 2021,
-        "deployed_to_respondents": false,
-        "sufficient_responses": false,
-        "response_rate": "0.00"
-    }
-},
-{
-    "model": "core.eseaaccount",
-    "pk": 17,
-    "fields": {
-        "method": 2,
-        "organisation": 7,
-        "campaign": 1,
-        "year": 2021,
-        "deployed_to_respondents": false,
-        "sufficient_responses": false,
-        "response_rate": "0.00"
     }
 }
 ]

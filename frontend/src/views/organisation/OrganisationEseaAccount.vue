@@ -1,6 +1,8 @@
 http://localhost:8081/organisation/1/esea-accounts/1
 
 <template>
+    <router-view />
+
     <div v-if="eseaAccount.campaign" class="card p-mx-5 p-mb-5">
         <div class="p-d-flex p-jc-between p-m-2">
             <div>
@@ -79,6 +81,9 @@ http://localhost:8081/organisation/1/esea-accounts/1
         </TabPanel>
         <TabPanel header="Report">
             d
+        </TabPanel>
+        <TabPanel header="Auditing">
+            <Button label="Go to auditing page" @click="goToAuditingPage" />
         </TabPanel>
         <TabPanel header="Settings" :disabled="!permission">
             <div class="p-col-8 p-fluid p-text-left p-p-5" style="width: 600px">

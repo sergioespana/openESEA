@@ -91,7 +91,7 @@
                     setTimeout(() => {
                         if (this.v$.$invalid) { return }
                         if (isEqual(this.survey, val)) { return }
-                        this.updateSurvey({ mId: this.$route.params.id, survey: val })
+                            this.updateSurveyForm(val)
                     }, 200)
                 },
                 deep: true
@@ -119,6 +119,10 @@
                 if (choice) {
                     this.$router.push(this.to)
                 }
+            },
+            // 'Asynchronous + Await' to avoid double POSTING a Survey
+            async updateSurveyForm (val) {
+                await this.updateSurvey({ mId: this.$route.params.id, survey: val })
             }
         }
     }

@@ -245,6 +245,19 @@ const routes = [
             path: 'esea-accounts/:EseaAccountId',
             name: 'organisationeseaaccount',
             component: () => import('../views/organisation/OrganisationEseaAccount'),
+            children: [
+                {
+                    path: 'auditing-page',
+                    name: 'organisationauditing',
+                    component: () => import('../views/organisation/OrganisationAuditing.vue'),
+                    meta: {
+                    requiresLogin: true
+                }
+                // surveys view,
+                // settings view,
+                // report view,
+            }
+            ],
             meta: {
                 requiresLogin: true,
                 breadcrumb: [

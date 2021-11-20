@@ -8,6 +8,8 @@ class QuestionResponse(models.Model):
     direct_indicator_id = models.IntegerField()
     values = models.ManyToManyField('AnswerOption', related_name="question_responses", blank=True)
     value = models.CharField(max_length=255, blank=True, null=True)
+    # Timestamp
+    # When the Survey Response.finished == True, create a new QuestionResponse while keeping the old QuestionResponse
 
     class Meta:
         verbose_name = _('question_response')
@@ -19,3 +21,4 @@ class QuestionResponse(models.Model):
    
 
 ''' Attribute 'Value' should contain Question Response '''
+# QuestionResponse.objects.filter(newest=true)

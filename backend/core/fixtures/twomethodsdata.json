@@ -1451,7 +1451,7 @@
         "topic": 16,
         "order": 2,
         "isMandatory": true,
-        "name": "Please select the company type”",
+        "name": "Please select the company typeï¿½",
         "description": "Company type",
         "instruction": "Select the company type",
         "default": "",

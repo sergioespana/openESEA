@@ -21,7 +21,8 @@
                     <i class="pi pi-search" /><InputText ref="searchbarQuestions" v-model="searchIndicator" @blur="checksSearchbarContentIndicator" placeholder="Search Direct Indicators..." style="width: 100%;" />
                 </span>
             </div>
-            <div style="height: calc(100vh - 390px); overflow-y: scroll;">
+            <ProgressSpinner v-if="loaded" class="p-d-flex p-jc-center"/>
+            <div v-else style="height: calc(100vh - 390px); overflow-y: scroll;">
             <div v-for="indicator in filteredDirectIndicators" :key="indicator.id" class="directIndicators p-m-2" style="font-size: 16px; padding: 10px; overflow: hidden; border: 1px solid lightgrey; cursor: grab;"  @dragstart="startDrag($event, indicator)" @dragover.prevent @dragenter.prevent :draggable="true">
                 {{indicator.key}}
             </div>
@@ -62,8 +63,12 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
+import ProgressSpinner from 'primevue/progressspinner'
 
 export default {
+    components: {
+        ProgressSpinner
+    },
     data () {
         return {
             libraryComponents: ['Indicators', 'Questions', 'Sections'],
@@ -74,11 +79,12 @@ export default {
             searchQuestion: '',
             searchbarIndicators: false,
             searchIndicator: '',
-            searchSection: ''
+            searchSection: '',
+            loaded: true
         }
     },
     computed: {
-        ...mapState('question', ['questions']),
+        ...mapState('question', ['questions', 'updatedList']),
         ...mapState('directIndicator', ['directIndicators']),
         ...mapState('section', ['sections']),
         filteredSections () {
@@ -100,17 +106,13 @@ export default {
             }
         }
     },
-    mounted () {
-        this.fetchDirectIndicators({ mId: this.$route.params.id })
-    },
-    async created () {
-        this.fetchData()
+    async mounted () {
+        await this.fetchDirectIndicators({ mId: this.$route.params.id })
+        console.log('is it being mounted again?')
+        this.loaded = false
     },
     methods: {
         ...mapActions('directIndicator', ['fetchDirectIndicators']),
-        async fetchData () {
-            await this.fetchDirectIndicators({ mId: this.$route.params.id })
-        },
         startDrag (evt, item) {
             console.log(item)
             evt.dataTransfer.dropEffect = 'move'

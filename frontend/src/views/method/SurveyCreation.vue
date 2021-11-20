@@ -3,7 +3,7 @@ http://localhost:8081/method-wizard/2/surveys/5/survey-design/
 <template>
     <div class="p-d-flex" style="height: 100%; border-top: 1px solid lightgrey;">
         <div class="p-d-flex p-flex-column p-jc-between" style="height: calc(100vh - 190px;); width: 300px; border: 1px solid lightgrey;">
-            <survey-tree-side-bar style="height: 100%;" />
+            <survey-tree-side-bar style="height: 100%;" :key="updateSidebar" />
         </div>
         <div class="p-col p-d-flex p-jc-center" style="height: calc(100vh - 195px); width: 100%; background-color: white; text-align: center; overflow-y: auto;">
             <div class="p-text-left p-fluid" style="width: 1200px;">
@@ -63,14 +63,15 @@ http://localhost:8081/method-wizard/2/surveys/5/survey-design/
                 to: null,
                 allowRouting: false,
                 unsavedChangesDialog: false,
-                discardUnsavedChanges: false
+                discardUnsavedChanges: false,
+                updateSidebar: 0
             }
         },
         computed: {
             ...mapState('method', ['method']),
             ...mapState('survey', ['survey']),
             ...mapState('section', ['sections', 'section', 'errors']),
-            ...mapState('question', ['questions', 'question']),
+            ...mapState('question', ['questions', 'question', 'updatedList']),
             ...mapGetters('question', ['sectionQuestions']),
             items () {
                 return getSurveyItems(
@@ -122,6 +123,12 @@ http://localhost:8081/method-wizard/2/surveys/5/survey-design/
                     }
                 },
                 deep: true
+            },
+            // Used to rerender the sidebar component
+            updatedList (val) {
+                if (val) {
+                    this.updateSidebar += 1
+                }
             }
         },
         created () {
@@ -131,7 +138,6 @@ http://localhost:8081/method-wizard/2/surveys/5/survey-design/
             ...mapActions('survey', ['fetchSurvey', 'updateSurvey', 'saveSurvey']),
             ...mapActions('section', ['fetchSections', 'createSection', 'setSection', 'updateSection', 'addNewSection', 'deleteSection']),
             ...mapActions('question', ['fetchQuestions', 'setQuestion', 'addNewQuestion', 'updateQuestion', 'deleteQuestion']),
-            ...mapActions('directIndicator', ['fetchDirectIndicators']),
             async initialize () {
                 if (this.survey.id !== parseInt(this.$route.params.SurveyId)) {
                     this.$router.push({ name: 'method-wizard-surveys' })
@@ -145,14 +151,12 @@ http://localhost:8081/method-wizard/2/surveys/5/survey-design/
                 this.setQuestion()
             },
             addQuestion (section) {
-                console.log('hmm')
                 this.addNewQuestion({ section: section?.id })
             },
             toggleActive (item) {
                 console.log('check', item.objType, item.id, this.question.id)
                 const { objType } = item
                 const section = { id: item.section || item.id }
-                console.log('eee')
                 if (objType === 'section') {
                     this.setSection(section)
                     this.setQuestion()
@@ -161,7 +165,6 @@ http://localhost:8081/method-wizard/2/surveys/5/survey-design/
                 }
             },
             savingStatus (object, status) {
-                console.log('eeeeeeeee', status)
                 const key = object.objType + object.id
                 this.SectionAndQuestionSavingStatus[key] = status
             },

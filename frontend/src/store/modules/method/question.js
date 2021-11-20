@@ -11,7 +11,8 @@ export default {
         error: undefined,
 		debouncers: {},
 		errors: {},
-		isSaved: {}
+		isSaved: {},
+		updatedList: false
     },
 	getters: {
 		getById: state => id => state.questions.find(object => object.id === id),
@@ -63,6 +64,9 @@ export default {
 				if (item.id !== id) return item
 				return Object.assign(item, data)
 			})
+			if (data.id > 0) {
+				state.updatedList = true
+			}
 		},
 		addNewQuestion (state, { section }) {
 			const question = { ...baseQuestion, id: random(-1000000, -1), section }
@@ -87,7 +91,7 @@ export default {
 					commit('setIsSaved', { id: question.id, isSaved: true })
 					commit('updateList', { id: question.id, data: response.data })
 				},
-				1000
+				200
 			)
 		},
 		setIsSaved (state, { id, isSaved = false }) {
@@ -130,8 +134,8 @@ export default {
 			}
 			commit('deleteQuestion', payload)
         },
-        updateQuestion ({ state, commit }, { mId, SuId, SeId, question }) {
-            console.log('____')
+        async updateQuestion ({ state, commit }, { mId, SuId, SeId, question }) {
+			state.updatedList = false
 			if (!question || !mId) return
 			if (!state.debouncers[question.id]) {
 				commit('setDebouncer', { id: question.id, commit })
@@ -141,7 +145,7 @@ export default {
 			}
 			commit('setIsSaved', { id: question.id })
 			if (!question.name) { return }
-			state.debouncers[question.id]({ mId, SuId, SeId, question })
+			await state.debouncers[question.id]({ mId, SuId, SeId, question })
 		},
 		setQuestion ({ state, commit }, { id } = {}) {
             if (id) {

@@ -6,6 +6,9 @@ from .models import EseaAccount, Respondent, Survey, SurveyResponse, Campaign, M
 
 @receiver(post_save, sender=EseaAccount)
 def create_accountant_objects(sender, instance, created, **kwargs):
+    if 'raw' in kwargs and kwargs['raw']:
+        return
+
     respondent = Respondent.objects.create(organisation=instance.organisation, email="accountant@mail.com", first_name="Accountant", last_name=f"of {instance.organisation.name}")
     try:
         surveys = instance.method.surveys.all().filter(response_type="single")
@@ -20,6 +23,9 @@ def create_accountant_objects(sender, instance, created, **kwargs):
     
 @receiver(post_save, sender=Campaign)
 def create_esea_accounts(sender, instance, created, **kwargs):
+    if 'raw' in kwargs and kwargs['raw']:
+        return
+
     for organisation in instance.network.organisations.all():
         eseaaccount, _ = EseaAccount.objects.get_or_create(organisation=organisation, method=instance.method, campaign=instance)
         
@@ -27,9 +33,13 @@ def create_esea_accounts(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Membership)
 def accept_request(sender, instance, created, **kwargs):
+    if 'raw' in kwargs and kwargs['raw']:
+        return
+        
     if instance.status == ('accepted' or 'denied'):
         network = instance.network
         organisation = instance.organisation
         if organisation not in network.organisations.all():
             network.organisations.add(organisation)
         instance.delete()
+

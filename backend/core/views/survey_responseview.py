@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import action, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
@@ -50,14 +50,17 @@ class SurveyResponseViewSet(BaseModelViewSet):
         'destroy': (IsAuthenticated,),
         'all': (AllowAny,)
     }
-    permission_classes = [AllowAny,]
+    permission_classes = [AllowAny,]            
+    
+    # http://localhost:8000/organisations/3/esea-accounts/20/responses/
+    # htp://localhost:8000/organisations/3/esea-accounts/20/surveys/6/responses/0/
 
     def get_queryset(self):
         return SurveyResponse.objects.filter(esea_account=self.kwargs['esea_account_pk']) # finished=False
         
     def retrieve(self, request, organisation_pk, esea_account_pk, token):
-        print(token)
         # Get Accountant response that belongs to an Survey & Esea Account
+        ## SurveyResponse, survey=survey_pk, esea_account=esea_account_pk
         if 'survey' in token:
             token = token.replace('survey=', '')
             try : 
@@ -80,13 +83,20 @@ class SurveyResponseViewSet(BaseModelViewSet):
     def update(self, request, organisation_pk, esea_account_pk, token):
         # Bit of a hack to check whether a survey response is single or multi-respondent
         if token.isnumeric():
-            surveyresponse = get_object_or_404(SurveyResponse, survey=token, esea_account=esea_account_pk)
+            surveyresponse = get_object_or_404(SurveyResponse, pk=token)
+            # surveyresponse = get_object_or_404(SurveyResponse, survey=token, esea_account=esea_account_pk)
         else:
             surveyresponse = get_object_or_404(SurveyResponse, token=token)
         serializer = SurveyResponseSerializer(surveyresponse, data = request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+
+    def destroy(self, request, organisation_pk, esea_account_pk, token):
+        instance = get_object_or_404(SurveyResponse, pk=token)
+        self.perform_destroy(instance)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     # Shows all responses belonging to an ESEA Account
     @action(detail=False, methods=['get'])

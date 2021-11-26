@@ -217,7 +217,9 @@
                 if (parseInt(this.$route.params.uniquetoken) !== this.surveyResponse.survey) {
                     console.log('clearly not the same')
                 }
-                if ((this.$route.params.uniquetoken !== this.surveyResponse.token) && (this.$route.params.uniquetoken !== 'accountant') && (parseInt(this.$route.params.uniquetoken) !== this.surveyResponse.survey)) {
+                var SurveyId = parseInt(this.$route.params.uniquetoken.replace('survey=', ''))
+                console.log(SurveyId === this.surveyResponse.survey)
+                if ((this.$route.params.uniquetoken !== this.surveyResponse.token) && (SurveyId !== this.surveyResponse.survey) && (parseInt(this.$route.params.uniquetoken) !== this.surveyResponse.survey)) { // (this.$route.params.uniquetoken !== 'accountant')
                     console.log('Not possible')
                     return
                 }
@@ -228,7 +230,7 @@
                 await this.updateSurveyResponse({
                     oId: this.eseaAccount?.organisation,
                     eaId: this.eseaAccount?.id,
-                    token: this.$route.params.uniquetoken,
+                    token: this.surveyResponse.id, // this.$route.params.uniquetoken,
                     surveyResponse: {
                         ...this.surveyResponse
                     }

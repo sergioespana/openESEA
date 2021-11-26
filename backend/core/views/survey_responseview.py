@@ -3,6 +3,7 @@ from rest_framework.decorators import action, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from django.shortcuts import get_object_or_404
+from django.http import HttpResponse
 from secrets import token_urlsafe
 
 from ..models import (Survey, SurveyResponse, QuestionResponse, DirectIndicator, IndirectIndicator, Respondent, StakeholderGroup, EseaAccount)
@@ -55,10 +56,22 @@ class SurveyResponseViewSet(BaseModelViewSet):
         return SurveyResponse.objects.filter(esea_account=self.kwargs['esea_account_pk']) # finished=False
         
     def retrieve(self, request, organisation_pk, esea_account_pk, token):
-        print(token, esea_account_pk)
-        if token.isnumeric():
+        print(token)
+        # Get Accountant response that belongs to an Survey & Esea Account
+        if 'survey' in token:
+            token = token.replace('survey=', '')
+            try : 
+                token = int(token)
+                surveyresponse = get_object_or_404(SurveyResponse, survey=token, esea_account=esea_account_pk)
+            except ValueError  :
+                print("This string doesn't contain an integer")
+                return HttpResponse(status=400)
+        
+        # Get Response by PK
+        elif token.isnumeric():
             surveyresponse = get_object_or_404(SurveyResponse, pk=token)
-            # surveyresponse = get_object_or_404(SurveyResponse, survey=token, esea_account=esea_account_pk)
+
+        # Get Response by unique token (multiple respondent responses)
         else:
             surveyresponse = get_object_or_404(SurveyResponse, token=token)
         serializer = SurveyResponseSerializer(surveyresponse)

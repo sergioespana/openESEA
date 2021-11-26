@@ -251,7 +251,8 @@ http://localhost:8081/organisation/1/esea-accounts/1
                 if (data.data) {
                     data = data.data
                 }
-                this.$router.push({ name: 'survey-fill-page', params: { uniquetoken: data.id } })
+                console.log('======>', data)
+                this.$router.push({ name: 'survey-fill-page', params: { uniquetoken: `survey=${data.id}` } })
             },
             // Right now this also goes to the report, but could be changed to show the summarized survey data to organisation members as well
             goToResults (data) {

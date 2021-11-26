@@ -143,8 +143,9 @@
             ...mapActions('surveyResponse', ['fetchSurveyResponse', 'setSurveyResponse', 'updateSurveyResponse', 'createSurveyResponse', 'setSurveyResponse']),
             ...mapActions('question', ['fetchQuestions']),
             async initialize () {
+                // Unique Token can be a 'pk', 'survey=survey_pk' or 'survey response token' (more on this in the backend, survey_responseview..py in the retrieve function.
                 await this.fetchSurveyResponse({ oId: this.eseaAccount?.organisation || 0, eaId: this.eseaAccount?.id || 0, id: this.$route.params.uniquetoken })
-                console.log('++++', this.surveyResponse.question_responses)
+                console.log('++++', this.eseaAccount, this.surveyResponse.question_responses)
                 await this.fetchSurvey({ mId: this.surveyResponse.method, id: this.surveyResponse.survey })
                 console.log(this.survey.name)
                 await this.fetchQuestions({ mId: this.surveyResponse.method, SuId: this.surveyResponse.survey, SeId: 0 })

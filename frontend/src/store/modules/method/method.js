@@ -19,6 +19,7 @@ export default {
                 console.log('debouncing', response)
                 commit('setIsSaved', { isSaved: true })
                 commit('clearError')
+                commit('setMethod', response)
                 commit('updateList', { id: method.id, data: response.data })
             }
         }, 1000)
@@ -30,7 +31,7 @@ export default {
             state.isSaved = true
         },
         setMethod (state, { data }) {
-            state.method = { ...data } || baseMethod
+            state.method = data || baseMethod
             state.error = []
             state.isSaved = true
         },
@@ -118,7 +119,7 @@ export default {
         setMethod ({ state, commit }, { id }) {
             if (id) {
                 const data = state.methods.find(m => m.id === id)
-                commit('setMethod', { data })
+                commit('setMethod', { data: data })
             } else {
                 commit('setMethod', {})
             }

@@ -1,13 +1,11 @@
 // template is html of the page
 <template>
-  <div>
+  <div style="height: 100vh;">
       <div class="myapp" v-if="accessToken !== null" style="position: relative; height: 100%; min-width: 1400px; overflow: auto;"> <!--F5F7F6 -style="min-height: 800px; height: auto; min-width: 1100px; background-color: #F8F9FA;" position: fixed; width: 100%;-->
           <main-topbar @sidebar="changeSidebar" style="position: fixed;" />
           <div class="p-d-flex" style="height: 100%; width: 100%; padding-top: 70px;">
               <main-sidebar :sidebar="expandedSidebar" />
-              <!-- <div style="height: 100%; position: relative; background-color: blue;" :style="(expandedSidebar) ? 'width: 350px;': 'width: 55px;'"></div> -->
-              <!-- <sub-sidebar /> -->
-              <div :style="(expandedSidebar) ? 'margin-left: 350px': 'margin-left: 55px;'" style="width: 100%;">
+              <div :style="(expandedSidebar) ? 'padding-left: 350px': 'padding-left: 55px;'" style="width: 100%;">
                   <router-view />
                   <router-view name="surveyview" style="width: 100%;"/>
               </div>

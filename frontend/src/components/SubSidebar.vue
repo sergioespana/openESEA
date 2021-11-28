@@ -1,7 +1,7 @@
 // used by UserDetails.vue, Network.vue
 
 <template>
-    <div class="sidebar p-shadow-5" :style="(true ? 'width: 55px;': 'width: 55px;')" style="height: 100%; background-color: #F5F7F6;">
+    <div class="sidebar p-shadow-5 p-m-0 p-p-0" :style="(true ? 'width: 55px;': 'width: 55px;')" style="height: 100%; background-color: #F5F7F6;">
         <div>
             <h3 v-if="false" class="p-text-bold">Patagonia</h3>
             <Divider />

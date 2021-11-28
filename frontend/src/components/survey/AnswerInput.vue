@@ -5,7 +5,7 @@
 
     -->
     <div class="p-p-0 p-my-3 p-text-left p-d-flex p-ai-center p-fluid p-input-filled">
-        <!-- {{lazyValue}} -- {{value}} ++ {{ checkboxvals }} -->
+        <!-- {{lazyValue}} -- {{value}} ++ {{ checkboxvals }} {{ indicator.id }} --> {{answer}} - {{lazyValue}} --> {{value}}
         <span class="p-mr-2"> {{indicator?.pre_unit}} </span>
         <div v-if="uiComponent === 'field'">
             <div v-if="indicator.datatype === 'text'">
@@ -109,7 +109,7 @@
             value (val) {
                 setTimeout(() => {
                     this.getValues()
-                }, 5000)
+                }, 2000)
             },
             lazyValue: {
                 handler (val) {
@@ -125,7 +125,7 @@
                     }
                     console.log('+++', val)
                     if (!Array.isArray(val)) {
-                        this.$emit('input', [val])
+                        this.$emit('input', val)
                         return
                     }
 
@@ -160,20 +160,20 @@
 
                 if (this.value) {
                     if (this.indicator.datatype === 'text') {
-                        if (isEqual(this.lazyValue, this.value?.[1])) { return true }
-                        this.lazyValue = this.value?.[1]
+                        if (isEqual(this.lazyValue, this.value)) { return true }
+                        this.lazyValue = this.value
                     }
                     if (this.indicator.datatype === 'integer') {
                         if (isEqual(this.lazyValue, parseInt(this.value?.[1]))) { return }
-                        this.lazyValue = parseInt(this.value?.[1]) || null
+                        this.lazyValue = parseInt(this.value) || null
                     }
                     if (this.indicator.datatype === 'double') {
                         if (isEqual(this.lazyValue, parseFloat(this.value?.[1]))) { return }
-                        this.lazyValue = parseFloat(this.value?.[1]) || null
+                        this.lazyValue = parseFloat(this.value) || null
                     }
                     if (this.indicator.datatype === 'date') {
                         if (this.value[1].length) {
-                            var tempval = new Date(this.value?.[1])
+                            var tempval = new Date(this.value)
                             }
                         if (isEqual(this.lazyValue, tempval)) { return }
                         console.log(this.lazyValue, tempval)
@@ -181,13 +181,13 @@
                     }
                     const questionWithSingleChoices = ['singlechoice', 'boolean']
                     if (questionWithSingleChoices.includes(this.indicator.datatype)) {
-                        if (isEqual(this.lazyValue, this.value?.[1])) { return }
-                        console.log(this.lazyValue, this.value?.[1])
-                        this.lazyValue = this.value?.[1] || null
+                        if (isEqual(this.lazyValue, this.value)) { return }
+                        console.log(this.lazyValue, this.value)
+                        this.lazyValue = this.value || null
                     }
                     if (this.indicator.datatype === 'multiplechoice') {
-                        if (isEqual(this.lazyValue, this.value[0])) { return }
-                        this.lazyValue = this.value?.[0] || []
+                        if (isEqual(this.lazyValue, this.value)) { return }
+                        this.lazyValue = this.value || []
                     }
                 }
             }

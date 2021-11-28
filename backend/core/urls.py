@@ -23,7 +23,10 @@ organisation_router.register(r'esea-accounts', esea_accountview.EseaAccountViewS
 organisation_router.register(r'members', organisation_memberview.OrganisationMemberViewSet, basename="organisation-members")
 
 esea_account_router = routers.NestedSimpleRouter(organisation_router, r'esea-accounts', lookup="esea_account")
-esea_account_router.register(r'responses', survey_responseview.SurveyResponseViewSet, basename='esea-account-responses')
+# esea_account_router.register(r'surveys', surveyview.SurveyViewSet, basename="esea-account-surveys")
+
+# esea_account_survey_router = routers.NestedSimpleRouter(esea_account_router, r'surveys', lookup="survey")
+esea_account_router.register(r'responses', survey_responseview.SurveyResponseViewSet, basename='responses')
 
 method_router = routers.NestedSimpleRouter(router, r'methods', lookup="method")
 method_router.register(r'surveys', surveyview.SurveyViewSet, basename="method-surveys")

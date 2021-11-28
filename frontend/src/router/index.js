@@ -453,7 +453,7 @@ const routes = [
         ]
     },
     {
-        path: '/newmethods/:id',
+        path: '/newmethods/:id/',
         name: 'newmethoddetails',
         component: () => import('../views/method/NewMethods.vue'),
         meta: {
@@ -461,7 +461,7 @@ const routes = [
         }
     },
     {
-        path: '/organisations/:OrganisationId/methods/:id/surveys/:surveyId',
+        path: '/organisations/:OrganisationId/methods/:id/surveys/:surveyId/',
         name: 'survey-fill',
         component: () => import('../views/survey/SurveyResponse.vue'),
         meta: {
@@ -469,7 +469,7 @@ const routes = [
         }
     },
     {
-        path: '/organisations/:OrganisationId/methods/:methodId/surveys/:surveyId/result/:id',
+        path: '/organisations/:OrganisationId/esea-accounts/:EseaAccountId/surveys/:SurveyId/result/',
         name: 'method-survey-result',
         component: () => import('../views/survey/SurveyUserResult.vue'),
         meta: {
@@ -477,7 +477,7 @@ const routes = [
         }
     },
     {
-        path: '/organisations/:OrganisationId/esea-accounts/:EseaAccountId/surveys/:surveyId/results',
+        path: '/organisations/:OrganisationId/esea-accounts/:EseaAccountId/surveys/:SurveyId/results/',
         name: 'survey-results',
         component: () => import('../views/survey/SurveyResults'),
         meta: {

@@ -30,17 +30,20 @@ class QuestionResponseSerializer(serializers.ModelSerializer):
                         raise serializers.ValidationError('Question response should be of type double')
 
                 if Di.datatype == 'date':
-                    print('is it a date?')
+                    pass
+                    # print('is it a date?')
                     # try:
                     # except:
 
                 if Di.datatype in ['boolean', 'singlechoice']:
-                    print('Is only one value returned?')
+                    pass
+                    # print('Is only one value returned?')
                     # try:
                     # except:
 
                 if Di.datatype == 'multiplechoice':
-                    print('is a list of QuestionOptions returned?')
+                    pass
+                    # print('is a list of QuestionOptions returned?')
                     # try:
                     # except:
 

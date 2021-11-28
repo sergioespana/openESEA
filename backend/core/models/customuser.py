@@ -10,6 +10,7 @@ class CustomUser(AbstractUser):
     first_name = models.CharField(max_length=50, blank=True)
     last_name_prefix = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
+    bio = models.TextField(max_length=1000, blank=True, default="")
 
     # Login with Username, might want to change to e-mail
     USERNAME_FIELD = 'username'

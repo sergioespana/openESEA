@@ -10,6 +10,7 @@
                     <p><span class="p-text-bold">Respondent:</span> {{surveyResponse.respondent}} <br> <span class="p-text-bold">Organisation:</span> {{surveyResponse.organisation}} </p>
                 </div>
             </div>
+            {{surveyResponse}}
             <div v-if="this.survey.sections.length" class="p-grid p-col-6 p-m-5" style="border-radius: 10px">
                 <div v-if="sectionNumber === 0" class="p-col-12 p-text-left p-p-5" style="border-radius: 10px; background-color: #F1F1F1;"><h3>{{survey.welcome_text}}</h3></div>
                 <Divider />
@@ -17,6 +18,7 @@
                 <div class="p-col-6 p-text-right">
                     <ProgressBar :value="progress + 0.1">{{progress}}% completed</ProgressBar></div>
                 <div class="p-col-12 p-text-left"><h3>Section: '{{currentSection.title}}'</h3></div>
+                {{answers}}
                 <section-component class="p-col-12 p-my-2"
                     v-for="item, index in currentSection.mergedQuestionsAndTextFragments"
                     tabindex="0"
@@ -76,6 +78,7 @@
         },
         data () {
             return {
+                questionresponses: null,
                 loading: true,
                 failedload: false,
                 sectionNumber: 0,
@@ -92,6 +95,23 @@
             ...mapState('surveyResponse', ['surveyResponse', 'surveyResponses']),
             ...mapState('eseaAccount', ['eseaAccount']),
             ...mapState('question', ['questions']),
+            answers () {
+                if (this.loading) { return null } else {
+                var answers = {}
+                // console.log(']]]]', this.surveyResponse)
+				this.surveyResponse.question_responses.forEach((response) => {
+					// if (answer.question === 36) { console.log('vallueee', answer) }
+                     const relevantquestion = this.questions.find(q => q.id === response.question)
+                    if (relevantquestion.uiComponent === 'checkbox') {
+                        answers[response.question] = response.values
+                    } else {
+                        answers[response.question] = response.value
+                    }
+				})
+                // console.log(')))', answers)
+                return answers
+                }
+            },
             currentSection () {
                 const section = this.survey.sections[this.sectionNumber]
                 const mergedQuestionsAndTextFragments = section?.questions.concat(section.text_fragments)
@@ -107,15 +127,6 @@
                 // for (const section in this.survey?.sections) { totalSections = totalSections + this.survey?.topics[topic].sub_topics.length }
 
                 return sectionList
-            },
-            answers () {
-                const answers = {}
-                if (this.surveyResponse.question_responses) {
-                    this.surveyResponse.question_responses.forEach((answer) => {
-                        answers[answer.question] = [answer.values, answer.value]
-                    })
-                }
-                return answers
             },
             progress () {
                 var progress
@@ -150,9 +161,11 @@
                 console.log(this.survey.name)
                 await this.fetchQuestions({ mId: this.surveyResponse.method, SuId: this.surveyResponse.survey, SeId: 0 })
                 this.loading = false
+                console.log('eee', this.surveyResponse.question_responses)
                 if (this.surveyResponse.finished) {
                     this.$router.push({ name: 'survey-thank-you' })
                 }
+                this.questionresponses = this.surveyResponse.question_responses
             },
             previousSection () {
                 if (this.sectionNumber > 0) {
@@ -184,8 +197,6 @@
             async finishSurvey () {
                 console.log('cc')
                 await this.fetchSurveyResponse({ oId: this.eseaAccount?.organisation || 0, eaId: this.eseaAccount?.id || 0, id: this.$route.params.uniquetoken })
-
-                console.log('eee')
                 this.checkRequiredQuestions = true
                 this.missedQuestions = []
                 await this.checkMandatoryFields()
@@ -199,20 +210,23 @@
                 }
             },
             updateAnswer (id, questionId, answer) {
-                console.log(answer, id, questionId)
-                let questionResponse = this.surveyResponse.question_responses.find(response => response.question === questionId)
-                if (!questionResponse) {
+                if (answer.answer === null) { return }
+                console.log('====>', answer, id, questionId, this.questionresponses)
+                var responseIndex = this.questionresponses.findIndex(response => response.question === questionId)
+            //     console.log(responseIndex)
+                var questionResponse = null
+                if (responseIndex > -1) {
+                    questionResponse = this.questionresponses.splice(responseIndex, 1)[0]
+                } else {
                     questionResponse = { question: questionId, direct_indicator_id: id, values: [], value: null }
                 }
-                // if (!questionResponse) { return }
-                const relevantquestion = this.questions.find(q => q.id === questionId)
-                if (relevantquestion.uiComponent === 'checkbox') {
-                    console.log('------->', answer.answer)
+                if (answer.datatype === 'multiplechoice') {
                     questionResponse.values = answer.answer
                 } else {
-                    questionResponse.value = answer.answer?.[0] || ''
+                    questionResponse.value = answer.answer
                 }
-                this.surveyResponse.question_responses = [questionResponse]
+                this.questionresponses.push(questionResponse)
+                this.surveyResponse.question_responses = this.questionresponses
 
                 if (parseInt(this.$route.params.uniquetoken) !== this.surveyResponse.survey) {
                     console.log('clearly not the same')

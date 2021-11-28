@@ -7,24 +7,24 @@
             <div class="p-col-8 p-text-left">
             <h1>{{survey.name}}</h1>
             <h3>{{survey.description}}</h3>
-            <p>Respondents: {{ surveyResult.respondents }} of {{ surveyResult.responses }} </p>
-            <!-- {{surveyResult}} -->
+            <p>Respondents: {{ surveyResult.responses }} of {{ surveyResult.respondents }} </p>
+            {{surveyResult}}
             <!-- {{survey.topics[0].sub_topics[0].questions}} -->
             </div>
         </div>
         <div class="p-grid p-col-6 p-p-3" style="min-width: 800px;">
-            <div v-for="topic in survey.topics" :key="topic.id" class="p-grid p-col-12 p-p-5" style="background-color: #F5F5F5; border-radius: 10px;">
-                <div class="p-col-12 p-text-left"><h3>Topic: '{{topic.name}}</h3></div>
+            <div v-for="section in survey.sections" :key="section.id" class="p-grid p-col-12 p-p-5" style="background-color: #F5F5F5; border-radius: 10px;">
+                <div class="p-col-12 p-text-left"><h3>Topic: '{{section.title}}</h3></div>
                 <survey-question-results
-					v-for="question in topic.questions"
+					v-for="question in section.questions"
 					:key="`question-${question.id}`"
 					:question="question"
 					:answers="answers[question.key]"
 					:amountdisplaychoice="amountDisplayButtonValue"
-					class="mt-6"
+					class="p-col-12 mt-6 p-m-2"
 				/>
 
-                <div v-for="subtopic in topic.sub_topics" :key="subtopic.id" class="p-col-12 p-p-3 p-my-3" style="background-color: white; border-radius: 10px;">
+                <!-- <div v-for="subtopic in topic.sub_topics" :key="subtopic.id" class="p-col-12 p-p-3 p-my-3" style="background-color: white; border-radius: 10px;">
                     <div class="p-col-12 p-text-left"><h3>Topic: '{{subtopic.name}}</h3></div>
                     <survey-question-results
 						v-for="question in subtopic.questions"
@@ -34,9 +34,8 @@
                         :amountdisplaychoice="amountDisplayButtonValue"
 						class="mt-6"
 					/>
-                </div>
+                </div> -->
             </div>
-            <Button label="Go to surveys" class="p-button-success p-mt-4" style="width: 100%" @click="goToSurveys"/>
         </div>
     </div>
 </template>
@@ -97,7 +96,7 @@
                 // if (this.survey.method !== this.methodId) {
                 //     this.$router.push({ name: 'methods' })
                 // }
-                this.fetchSurveyResults({ eaId: this.eseaAccount?.id })
+                this.fetchSurveyResults({ oId: this.$route.params.OrganisationId, eaId: this.eseaAccount?.id })
             }
         }
     }

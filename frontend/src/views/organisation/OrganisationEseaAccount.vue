@@ -66,7 +66,7 @@ http://localhost:8081/organisation/1/esea-accounts/1
             <Column header="Actions" headerStyle="width: 15rem; text-align: center" bodyStyle="text-align: center; overflow: visible" :style="permission ? '': 'display:none;'">
                 <template #body="{data}">
                     <div v-if="permission">
-                        <Button v-if="(data.type === 'single')" :label="data.responses? 'Survey Results' : 'Fill in Survey'" type="button" icon="" class="p-button-success" @click="data.responses? goToResults(data) : goToSurveyFill(data)"  style="width: 200px" />
+                        <Button v-if="(data.type === 'single')" :label="data.responses ? 'Survey Results' : 'Fill in Survey'" type="button" icon="" class="p-button-success" @click="data.responses? goToResults(data) : goToSurveyFill(data)"  style="width: 200px" />
                         <Button v-else label="Import Employees" type="button" icon="pi pi-user-plus" @click="openEmployeesImportWindow(data)" style="width: 200px" />
                     </div>
                     <div v-else></div>
@@ -251,12 +251,21 @@ http://localhost:8081/organisation/1/esea-accounts/1
                 if (data.data) {
                     data = data.data
                 }
-                console.log('======>', data)
+                if (data.responses) {
+                    this.goToResults(data)
+                    return
+                }
                 this.$router.push({ name: 'survey-fill-page', params: { uniquetoken: `survey=${data.id}` } })
             },
-            // Right now this also goes to the report, but could be changed to show the summarized survey data to organisation members as well
+            // Right now this also goes to the report, but could be changed to show the summarized survey data to organisation members as well EseaAccountId
             goToResults (data) {
-                this.$router.push({ name: 'esea-account-report', params: { OrganisationId: this.$route.params.OrganisationId, EseaAccountId: this.eseaAccount.id } })
+                console.log(data)
+                if (data.type === 'single') {
+                this.$router.push({ name: 'method-survey-result', params: { OrganisationId: this.$route.params.OrganisationId, EseaAccountId: this.$route.params.EseaAccountId, SurveyId: data.id } })
+                } else {
+                    this.$router.push({ name: 'survey-results', params: { OrganisationId: this.$route.params.OrganisationId, EseaAccountId: this.$route.params.EseaAccountId, SurveyId: data.id } })
+                }
+                // this.$router.push({ name: 'esea-account-report', params: { OrganisationId: this.$route.params.OrganisationId, EseaAccountId: this.eseaAccount.id } })
             },
             async goToReport (event) {
                 this.$router.push({ name: 'esea-account-report', params: { OrganisationId: this.$route.params.OrganisationId, EseaAccountId: this.$route.params.EseaAccountId } })

@@ -1,4 +1,5 @@
 <template>
+
 <div class="p-px-5" style="border-color: #00008B; border-radius: 5px;" :style="[(checkanswerrequired && (requiredBorder || requiredStatus)) ? 'border: 1px solid red': 'border: 1px solid lightgrey', (active && !requiredBorder) ? 'border: 1px solid green' : '']">
             <p class="p-text-left"><span v-if="checkanswerrequired" style="color: red; font-size: 25px">*</span>{{question.name}} <i v-if="question.description" class="pi pi-question p-ml-2 p-p-1" v-tooltip="question?.description" style="background-color: green; color: white; border-radius: 50%;" /></p>
             <answer-input
@@ -13,9 +14,10 @@
             required
             @input="changeAnswer"
             />
-            {{question.required}}
+            <!-- {{question.required}}
             -- {{foo}} >>
             {{requiredQuestion}}
+            {{answer}} -->
             <!-- <div v-if="question.description">
                 <p class="p-text-justify p-text-italic p-text-light p-m-0" style="color: grey;"><span class="p-text-bold">Description:</span><br>
                 <small>{{question.description}}</small></p>
@@ -92,6 +94,9 @@ export default {
             console.log('this question is required')
             this.requiredQuestion = val
         }
+    },
+    created () {
+        console.log('loaded')
     },
     methods: {
         changeAnswer (answer) {

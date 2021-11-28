@@ -19,6 +19,17 @@ export default {
 		getById: state => id => state.surveyResponses.find(
 			object => object.id === id
 		)
+		// ),
+		// answers: state => {
+		// 	if (state.surveyResponse.question_responses) {
+		// 		var answers = {}
+		// 		state.surveyResponse.question_responses.forEach((answer) => {
+		// 			if (answer.question === 36) { console.log('vallueee', answer) }
+		// 			answers[answer.question] = [answer.values, answer.value]
+		// 		})
+		// 	}
+		// 	return answers
+		// }
 	},
 	mutations: {
 		setSurveyResponses (state, { data }) {

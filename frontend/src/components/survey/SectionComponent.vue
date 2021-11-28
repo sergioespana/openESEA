@@ -5,7 +5,7 @@
     </div> <!-- {{requireStatus}} {{item.required}} {{answer}} {{focused}} {{refresh}} -- {{activeField}} active: {{active}} -->
     <div class="p-px-2" v-if="item.direct_indicator" style="background-color: white; border-radius: 5px;" :style="[(active) ? 'border: 1px solid blue;' : 'border: 1px solid lightgrey', (((requireStatus && item.isMandatory) || item.required) && (!active)) ? 'border: 1px solid red' : '', hover ? 'background-color: #F1F1F1;' : '']" @mouseover="hover = true" @mouseleave="hover = false">
         <p class="p-text-left"><span v-if="item.isMandatory" style="color: red; font-size: 25px">*</span>{{item.name}} <i v-if="item.description" class="pi pi-question p-ml-2 p-p-1" v-tooltip="(item?.description && item?.instruction)" style="background-color: green; color: white; border-radius: 50%;" /></p>
-       <!-- {{answer}} {{requireStatus}} {{active}} {{item.required}} ?? {{answer}} {{item}} -->
+       <!-- {{answer}} {{requireStatus}} {{active}} {{item.required}} ?? {{answer}} {{item}} --> {{answer}}
         <answer-input
         :value="answer"
         :uiComponent="item.uiComponent"
@@ -69,12 +69,12 @@ export default {
     methods: {
         changeAnswer (answer) {
             console.log('====', answer)
-            this.$emit('input', { answer: answer })
+            this.$emit('input', { answer: answer, datatype: this.item.direct_indicator?.[0].datatype || 'no indicator' })
         },
         checkRequirementStatus () {
             console.log('check Requirements', this.item, this.answer, this.focused)
             if (this.focused && this.item.isMandatory) {
-                if (!this.answer?.[0].length && (!this.answer?.[1].length || this.answer?.[1] === null) && !this.item.text) { // === ('' || null))
+                if ((!this.answer.length || (!this.answer?.[0] === null || this.answer === null)) && !this.item.text) { // === ('' || null))
                     this.requireStatus = true
                 } else {
                     this.requireStatus = false

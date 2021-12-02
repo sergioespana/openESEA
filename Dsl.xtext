@@ -1,0 +1,249 @@
+grammar org.example.domainmodel.Domainmodel with
+                                      org.eclipse.xtext.common.Terminals
+ 
+generate domainmodel "http://www.example.org/domainmodel/Domainmodel"
+ 
+ESEA_method: 
+	'Name:' STRING 
+	'Version:' DOUBLE
+	'isPublic:' BOOLEAN
+	'Description:' STRING	
+	list_of_topics+=List_of_topics
+	list_of_indicators+=List_of_indicators
+	list_of_surveys+=List_of_surveys
+	list_of_certification_levels+=List_of_certification_levels
+	list_of_validation_rules+=List_of_validation_rules
+	(registration_survey=Survey)?
+	//Constraint: The registration survey should be single respondent
+;
+
+
+
+List_of_topics:
+// Constraint: 1 and only 1 root topic
+	'Topics:'
+	(topic+=Topic)+
+;
+	
+List_of_indicators:
+	'Indicators:'
+	(indicator+=Indicator)+
+;
+
+List_of_surveys:
+	'Surveys:'
+	(survey+=Survey)+
+;
+
+List_of_validation_rules:
+	'Validation_rules:'
+	(validationRule+=ValidationRule)+
+;
+
+Topic:
+	'topic_id:' name=ID
+	'Name:' STRING 
+	'Description:' STRING
+	('Parent_topic:'	linkParentTopic=[Topic])?
+//  Constraint: avoid cycles	
+;
+
+Indicator:
+	'Indicator_id:' name=ID
+	'Name:' STRING
+	'Description:' STRING
+	('PreUnit:' STRING)?
+	('PostUnit:' STRING)?
+	'Topic:' linkTopic=[Topic]
+	'Indicator_type:' indicator_type=Indicator_type
+	'DataType:' datatype=Datatype
+	//Constraint: only direct indicators can have datatype list
+;
+
+Datatype:
+	text='text' | integer='integer' | double='double' | date='date' | boolean='boolean' | singleChoice=SingleChoice | multipleChoice=MultipleChoice
+;
+
+MultipleChoice:
+	'multipleChoice'
+	'Answer_options:'
+	(answer_option+=Answer_option)+
+;
+
+SingleChoice:
+	'singleChoice'
+	'Answer_options:'
+	(answer_option+=Answer_option)+
+;
+
+Answer_option:
+	'Order:' INT
+	'Text:' STRING
+;
+
+Indicator_type:
+	direct=Direct | indirect=Indirect
+;
+
+Direct:
+	direct='Direct'
+	('Condition:' expression=Expression)?
+	// Constraint: We should be able to reference answer options
+;
+
+Indirect:
+	indirect='Indirect'
+	'Formula:' formula=Formula
+	'Type:' indicatorClassification=INDICATORCLASSIFICATION
+;
+
+Formula:
+	statement=Statement
+;
+
+
+UnaryNumeric:
+	unary_numeric_function=UNARY_NUMERIC_FUNCTION
+	'(' expression=Expression ')'
+;
+
+BinaryNumeric:
+	binary_numeric_function=BINARY_NUMERIC_FUNCTION
+	'(' expressionl=Expression ',' (INT | STRING) ')'
+;
+
+
+Statistical:
+	statistical_function=STATISTICAL_FUNCTION
+	'(' '['referenceIndicator=[Indicator]']' ')'
+	//constraint: only direct indicators should be used
+;
+
+
+
+Statement:
+	expression=Expression | if_statement=If_statement
+;
+
+If_statement:
+	'IF' expression=Expression 'THEN' thenStatement=Statement (=>'ELSE' elseStatement=Statement)?
+;
+
+
+Expression:
+	simpleExpressionl=Simple_expression ( ('=' | '<>' | '<' | '<=' | '>' | '>=' | '==') simpleExpressionr=Simple_expression)?
+;
+
+Simple_expression:
+	terml=Term ((('+' | '-') | 'OR') termr=Term)*
+;
+
+Term:
+	factorl=Factor ((('*' | '/') | 'AND') factorr=Factor)*
+;
+
+Factor:
+	basel=Base ('^' baser=Base)?
+;
+
+Base:
+	( '(' expression=Expression ')' | '['referenceIndicator=[Indicator] ']' | statistic=Statistical | unarynumeric=UnaryNumeric | binarynumeric=BinaryNumeric | BOOLEAN | STRING | INT | DOUBLE )
+;
+// We should add a constraint so that statistical functions cannot be used in conditions of validation rules
+// In formulas indicators should not reference themselves
+
+
+Survey:
+	// The optional attributes are only optional for v3
+	'survey_id:' name=ID
+	'Name:' STRING
+	'Description:' STRING
+	'SurveyType:' surveytype+=SURVEYTYPE
+	('WelcomeTxt:' STRING)?
+	('ClosingTxt:' STRING)?
+	'MinThreshold:' DOUBLE
+	('Anonymous:' BOOLEAN)?
+	list_of_sections+=List_of_sections
+;
+
+List_of_sections:
+	'Sections:'
+	(section+=Section)+
+;
+
+Section:
+	'section_id:' name=ID
+	'Title:' STRING
+	'Order:' INT
+	list_of_questions+=List_of_questions
+	(list_of_fragments+=List_of_fragments)?
+;
+
+List_of_fragments:
+	'TextFragments:'
+	(text_fragment+=Text_fragment)*
+;
+
+Text_fragment:
+	'Text:' STRING
+	'Order:' INT
+;
+
+List_of_questions:
+	'Questions:'
+	(question+=Question)+
+;
+
+// Constraint: the UIComponent should depend on the datatype
+
+Question:
+	'question_id:' name=ID
+	'Name:' STRING
+	'Description:' STRING
+	'isMandatory:' BOOLEAN
+	'UIComponent:' uicomponent+=UICOMPONENT
+	'Order:' INT
+	'Indicator:' linkIndicator=[Indicator]?
+	// Constraint: questions can only be linked to direct indicators
+	'Instruction:' STRING
+;
+
+
+
+List_of_certification_levels:
+	'Certification_levels:'
+	(certification_level+=Certification_level)*
+;
+
+Certification_level:
+	'certification_id:' name=ID
+	'Name:' STRING
+	'Description:' STRING
+	'Level:' DOUBLE 
+	'Colour:' STRING
+	list_of_requirements=List_of_requirements
+;
+
+List_of_requirements:
+	'Requirements:'
+	'['referenceRequirement+=[Indicator]']'(',''['referenceRequirement+=[Indicator]']')* 
+;
+
+ValidationRule:
+	'Type:' ruletype=RULETYPE
+	'Condition:' expression=Expression
+	'Message:' STRING
+;
+//So far, the validation rules should only be triggered when the user validates the data or submits the survey response. It should only be possible to submit when there are no errors. And when there are warnings someone should confirm that they want to submit the data with the warnings
+
+
+
+enum INDICATORCLASSIFICATION: performance='performance' | score='scoring' | certification='certification';
+enum RULETYPE: warning='warning' | error='error' ;
+enum UNARY_NUMERIC_FUNCTION: absolute='abs' | int='int' ; //abs explanation: https://support.google.com/docs/answer/3093459 , int explanation: https://support.google.com/docs/answer/3093490
+enum BINARY_NUMERIC_FUNCTION: roundup='roundUp' | rounddown='roundDown' | round='round' | countif='countIf' ; // Round up explanation: https://support.google.com/docs/answer/3093443 , round down: https://support.google.com/docs/answer/3093442 , round: https://support.google.com/docs/answer/3093440, countIf: https://support.google.com/docs/answer/3093480?hl=en-GB
+enum UICOMPONENT: field='field' | line='line' | textBox='textBox' | checkBox='checkBox' | dropDown='dropDown' | radioButton='radioButton';
+enum STATISTICAL_FUNCTION: minimum='min' | maximum='max' | sum='sum' | mean='avg' | mode='mode' | median='median';
+enum SURVEYTYPE: multi='multi' | single='single' ;
+terminal BOOLEAN : ('true'|'false');
+terminal DOUBLE: INT '.' INT;

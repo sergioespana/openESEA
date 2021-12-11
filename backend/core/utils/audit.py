@@ -9,7 +9,54 @@ from ..models import EseaAccount, SurveyResponse, Question, QuestionResponse, In
 
 def audit_data(eseaaccount_pk):
     print('this works!', eseaaccount_pk)
+    eseaaccount = get_object_or_404(EseaAccount, pk=eseaaccount_pk)
 
+    # per esea method (all esea accounts + indicators)
+    iso_df = calculate_iso_forest()
+
+    iso_row = []
+    if (iso_df.index == eseaaccount.name).any():
+        iso_row = iso_df.loc[eseaaccount.name]
+    
+
+    def create_boxplot(data):
+        # create boxplot
+        return boxplot
+
+    # 'recommended audit' per question that has numerical values
+    for indicator in indicators:
+        boxplot = create_boxplot(data[indicator.key])
+        benfordslaw = calculate_benfords_law(data[indicator_column])
+        outliers = outlier_detection(data[indicator.key])
+
+        # Check if indicator/company combination is found in iso dataframe
+        iso_forest = True if indicator.key in iso_row.index else False 
+        scoring_scheme = calculate_scheme()
+
+    # return indicators with for each (boxplot, benfordslaw, outliers, iso_forest, scoring_scheme)
+    indicators: [
+        {
+            'indicator': 1,
+            'boxplot': 'boxplot_image',
+            'benfordslaw': {
+                    'value': 'Bool (1 or 0)',
+                    'image': 'benfordslaw_image'
+                },
+            'outliers': 'outliers (= 1 or 0)',
+            'iso_forest': 'iso_forest (= 1 or 1)',
+            'scoring_scheme': '' # ID of indicator with highest absolute score if it impacts total score and thus certification indicator
+        }
+    ]
+
+
+
+
+
+
+
+
+
+    '''
     # Get eseaaccount
     eseaaccount = get_object_or_404(EseaAccount, pk=eseaaccount_pk)
 
@@ -68,3 +115,7 @@ def audit_data(eseaaccount_pk):
     #         questionresponse.objects.filter(question__survey=survey)
 
     #         question_response > question > survey
+
+
+        anomalies = []
+    '''

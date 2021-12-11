@@ -26,6 +26,6 @@ from ..utils import audit_data
 def audit_eseaaccount(request, eseaaccount_pk):
     print('check', eseaaccount_pk)
     output = audit_data(eseaaccount_pk)
-
+    
     # Return audit output to frontend
     return Response({'works'})

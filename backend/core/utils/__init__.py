@@ -2,4 +2,9 @@ from .calculate_indicators import (map_responses_by_indicator, calculate_indicat
 from .process_yaml_method import process_yaml_method
 from .process_textual_method import process_textual_method
 from .import_respondents import import_respondents
-from .audit_data import audit_data 
+from .audit import audit_data
+
+from .audit_benfords_law import calculate_benfords_law
+from .audit_iso_forest import calculate_iso_forest
+from .audit_outlier_detection import outlier_detection
+from .audit_scoring_scheme import calculate_scoring_scheme

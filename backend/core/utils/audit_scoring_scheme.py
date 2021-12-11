@@ -1,6 +1,5 @@
-    
-    
 def calculate_scoring_scheme():
+    print('yeeee')
     return True
 
     '''

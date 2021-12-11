@@ -1,52 +1,106 @@
 import pandas as pd
+import numpy as np
+import os
+
 from django.shortcuts import get_object_or_404
 
-from .calculate_indicators import map_responses_by_indicator
+from .calculate_indicators import map_responses_by_indicator, calculate_indicators, merge_indicators
+from .audit_benfords_law import calculate_benfords_law
+from .audit_scoring_scheme import calculate_scoring_scheme
+from .audit_iso_forest import calculate_iso_forest
+from .audit_outlier_detection import outlier_detection
 from ..models import EseaAccount, SurveyResponse, Question, QuestionResponse, IndirectIndicator, DirectIndicator
 
-# import pandas as pd
 
 
 def audit_data(eseaaccount_pk):
     print('this works!', eseaaccount_pk)
+
     eseaaccount = get_object_or_404(EseaAccount, pk=eseaaccount_pk)
 
-    # per esea method (all esea accounts + indicators)
-    iso_df = calculate_iso_forest()
+    direct_indicators = DirectIndicator.objects.filter(method=eseaaccount.method)
+    indirect_indicators = IndirectIndicator.objects.filter(method=eseaaccount.method)
+    indicators = merge_indicators(direct_indicators, indirect_indicators)
 
+    df = pd.DataFrame({indicator.key: [] for indicator in indicators.values()}) 
+
+    # Right now only has the esea account itself, should contain all esea accounts belonging to an esea method
+    organisation_list = [eseaaccount]
+
+    for organisation in organisation_list:
+        question_responses = QuestionResponse.objects.filter(survey_response__esea_account=eseaaccount_pk, survey_response__finished=True)
+        map_responses_by_indicator(direct_indicators, question_responses)
+        indicators = calculate_indicators(indirect_indicators, direct_indicators)
+
+        account_dict = dict()
+        for indicator in indicators.values():
+            if not indicator.value:
+                value = np.nan
+            else:    
+                value = indicator.value
+
+            account_dict[indicator.key] = value
+
+        account_dict['organisation_id'] = organisation.organisation
+        df = df.append(account_dict, ignore_index=True)
+
+    df = df.set_index('organisation_id')
+    print('===>', df)
+
+    ## Use outlier detection methods on the above created dataframe
+
+    if False:
+        pathname = os.getcwd() + '/uploadedfiles/XES_esea.csv'
+        df = pd.read_csv(pathname, delimiter=';', quotechar='|')
+        df = df.set_index('Org')
+        
+        eseaaccount = print(df.index[0])
+
+    # per esea method (all esea accounts + indicators)
+    # iso_df = calculate_iso_forest()
+
+    iso_df = df
     iso_row = []
-    if (iso_df.index == eseaaccount.name).any():
-        iso_row = iso_df.loc[eseaaccount.name]
-    
+    if (iso_df.index == eseaaccount.organisation).any():
+        iso_row = iso_df.loc[eseaaccount.organisation]
 
     def create_boxplot(data):
         # create boxplot
         return boxplot
 
+    indicators = direct_indicators + indirect_indicators
+
+    # For now, with our dummy .csv dataset
+    
+    indicators = df.columns[1:]
+
+    print('---->', df[indicators[0]])
     # 'recommended audit' per question that has numerical values
     for indicator in indicators:
-        boxplot = create_boxplot(data[indicator.key])
-        benfordslaw = calculate_benfords_law(data[indicator_column])
-        outliers = outlier_detection(data[indicator.key])
+        if indicator.datatype in ['integer', 'double']:
+            boxplot = create_boxplot(data[indicator])
+            
+            benfordslaw = calculate_benfords_law(data[indicator_column])
+            outliers = outlier_detection(data[indicator.key])
 
-        # Check if indicator/company combination is found in iso dataframe
-        iso_forest = True if indicator.key in iso_row.index else False 
-        scoring_scheme = calculate_scheme()
+            # Check if indicator/company combination is found in iso dataframe
+            iso_forest = True if indicator.key in iso_row.index else False 
+            scoring_scheme = calculate_scoring_scheme()
 
-    # return indicators with for each (boxplot, benfordslaw, outliers, iso_forest, scoring_scheme)
-    indicators: [
-        {
-            'indicator': 1,
-            'boxplot': 'boxplot_image',
-            'benfordslaw': {
-                    'value': 'Bool (1 or 0)',
-                    'image': 'benfordslaw_image'
-                },
-            'outliers': 'outliers (= 1 or 0)',
-            'iso_forest': 'iso_forest (= 1 or 1)',
-            'scoring_scheme': '' # ID of indicator with highest absolute score if it impacts total score and thus certification indicator
-        }
-    ]
+        # return indicators with for each (boxplot, benfordslaw, outliers, iso_forest, scoring_scheme)
+        indicators =  [
+            {
+                'indicator': 1,
+                'boxplot': 'boxplot_image',
+                'benfordslaw': {
+                        'value': 'Bool (1 or 0)',
+                        'image': 'benfordslaw_image'
+                    },
+                'outliers': 'outliers (= 1 or 0)',
+                'iso_forest': 'iso_forest (= 1 or 1)',
+                'scoring_scheme': '' # ID of indicator with highest absolute score if it impacts total score and thus certification indicator
+            }
+        ]
 
 
 

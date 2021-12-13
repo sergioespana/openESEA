@@ -1,16 +1,17 @@
 <template>
-    <div class="p-grid vertical-container p-m-5">
+    <div class="p-grid p-mx-5">
+        <div class="p-col-12 p-as-start">
         <div class="p-col-12 p-d-flex p-ai-center p-jc-between">
             <h2 class="p-text-left">Documentation Request</h2>
             <Button @click="(helpDialog = !helpDialog)" label="Help" class="p-button-sm p-button-warning" icon="pi pi-external-link" />
         </div>
-        <div class="p-col-12 card">
+        <div class="card">
             <DataTable :value="questions" rowGroupMode="rowspan" groupRowsBy="section.name" sortMode="single" sortField="section.name" :sortOrder="1" responsiveLayout="scroll"
             v-model:expandedRowGroups="expandedRowGroups" @rowgroupExpand="onRowGroupExpand" @rowgroupCollapse="onRowGroupCollapse" v-model:selection="selectedQuestions" dataKey="name">
                 <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
                 <Column field="section.name" header="Section"></Column>
                 <Column field="name" header="name" sortable></Column>
-                <Column field="responses" header="Responses" sortable></Column>
+                <Column field="response" header="Responses" sortable></Column>
                 <Column field="recommendations" headerStyle="width: 5rem;">
                     <template #body="">
                         <Tag v-if="true" severity="danger" value="Recommendation"></Tag>
@@ -23,6 +24,10 @@
                 </Column>
             </DataTable>
         </div>
+        </div>
+        <div class="p-text-right p-col-12 p-as-end">
+            <Button class="p-my-5" label="Request documentation" icon="pi pi-check" />
+        </div>
     </div>
 
     <Dialog v-model:visible="helpDialog" style="width: 500px;" header="Help" :modal="true" dismissableMask="true">
@@ -34,9 +39,9 @@
         </template>
     </Dialog>
 
-        <Dialog v-model:visible="messageToOrganisationDialog" style="width: 500px;" header="Message to Organisation" :modal="true" dismissableMask="true">
-            <h5>Receiver: Sjaak Chocolonely</h5>
-            <Textarea class="p-col-12" id="description" v-model="message" :autoResize="true" rows="3" />
+    <Dialog v-model:visible="messageToOrganisationDialog" style="width: 500px;" header="Message to Organisation" :modal="true" dismissableMask="true">
+        <h5>Receiver: Sjaak Chocolonely</h5>
+        <Textarea class="p-col-12" id="description" v-model="message" :autoResize="true" rows="3" />
         <template #footer>
             <Button label="Cancel" class="p-button-sm" icon="pi pi-times" @click="(messageToOrganisationDialog = false)" />
             <Button label="Save" class="p-button-sm p-button-success" icon="pi pi-check" @click="saveMessage()" />
@@ -61,20 +66,20 @@ export default {
             questions: [
                 {
                     name: 'What is the total number of men staff?',
-                    responses: 5,
+                    response: 5,
                     recommendations: '',
                     section: { name: 'Gender' }
                 },
                 {
                     name: 'What is the total number of women staff?',
-                    responses: 5,
+                    response: 7,
                     recommendations: '',
                     section: { name: 'Gender' }
 
                 },
                 {
                     name: 'What is the average monthly salary per employee?',
-                    responses: 5,
+                    response: '$4000',
                     recommendations: '',
                     section: { name: 'Salary' }
                 }

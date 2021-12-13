@@ -1,6 +1,6 @@
 <template>
     <div style="background-color: white; height: 100%;">
-        <div class="p-d-flex p-ai-center">
+        <div class="p-d-flex p-ai-center" style="background-color: #f7f7f7;" @click="goToEseaAccount()">
             <i class="pi pi-angle-left p-mx-3" style="fontSize: 2rem"></i>
             <h4>ESEA account</h4>
         </div>
@@ -19,6 +19,7 @@
 
 <script>
 import Steps from 'primevue/steps'
+import { mapState } from 'vuex'
 
 export default {
     components: {
@@ -48,9 +49,15 @@ export default {
             }]
         }
     },
+    computed: {
+        ...mapState('eseaAccount', ['eseaAccount'])
+    },
     methods: {
         goToPage () {
             this.$router.push({ name: 'questionselection', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } })
+        },
+        goToEseaAccount () {
+            this.$router.push({ name: 'organisationeseaaccount', params: { OrganisationId: this.eseaAccount.organisation, EseaAccountId: this.$route.params.EseaAccountId } })
         }
     }
 }

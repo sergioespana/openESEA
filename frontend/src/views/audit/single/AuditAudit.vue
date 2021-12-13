@@ -1,8 +1,57 @@
 <template>
-    <div>check3</div>
+    <div class="p-grid p-mx-5">
+        <div class="p-col-12 p-as-start">
+            <div class="p-col-12 p-d-flex p-ai-center p-jc-between">
+                <h2 class="p-text-left">Audit</h2>
+                <Button @click="(helpDialog = !helpDialog)" label="Help" class="p-button-sm p-button-warning" icon="pi pi-external-link" />
+            </div>
+            <div class="card">
+                 <DataTable :value="questions" rowGroupMode="rowspan" groupRowsBy="section.name" sortMode="single" sortField="section.name" :sortOrder="1" responsiveLayout="scroll"
+                v-model:expandedRowGroups="expandedRowGroups" @rowgroupExpand="onRowGroupExpand" @rowgroupCollapse="onRowGroupCollapse" v-model:selection="selectedQuestions" dataKey="name">
+                    <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
+                    <Column field="section.name" header="Section"></Column>
+                    <Column field="name" header="name" sortable></Column>
+                    <Column field="response" header="Responses" sortable></Column>
+                    <Column field="recommendations" header="Recommendations">
+                    </Column>
+                    <Column headerStyle="width: 10rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
+                        <template #body="">
+                            <Button icon="pi pi-check" disabled="true" class="p-button-sm" />
+                        </template>
+                    </Column>
+                </DataTable>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
 export default {
+    data () {
+        return {
+            helpDialog: false,
+            questions: [
+                {
+                    name: 'What is the total number of men staff?',
+                    response: 5,
+                    recommendations: 'Awaiting documentation',
+                    section: { name: 'Gender' }
+                },
+                {
+                    name: 'What is the total number of women staff?',
+                    response: 7,
+                    recommendations: 'Open',
+                    section: { name: 'Gender' }
+
+                },
+                {
+                    name: 'What is the average monthly salary per employee?',
+                    response: '$4000',
+                    recommendations: 'Verified',
+                    section: { name: 'Salary' }
+                }
+            ]
+        }
+    }
 }
 </script>

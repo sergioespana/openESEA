@@ -32,6 +32,10 @@ class EseaAccount(models.Model):
         arr = []
         for survey in self.method.surveys.all():
             tempdict = {'id': survey.id, 'name': survey.name, 'questions': len([q for q in Question.objects.filter(section__survey=survey)]), 'stakeholdergroup': str(survey.stakeholdergroup), 'type': survey.response_type}
+            if len(self.responses.filter(survey=survey)):
+                tempdict['auditor'] = self.responses.filter(survey=survey).first().auditor
+            else:
+                tempdict['auditor'] = None
             tempdict['respondees'] = [{'name':str(respondee)} for respondee in Respondent.objects.filter(response__esea_account=self, response__survey=survey).distinct()]
             tempdict['responses'] = len(self.responses.filter(survey=survey, finished=True))
             tempdict['required_response_rate'] = survey.min_threshold

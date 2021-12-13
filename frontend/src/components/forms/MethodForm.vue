@@ -67,7 +67,7 @@
                     if (isEqual(this.method && val)) { return }
                     this.$emit('input', this.lazyMethod)
                 },
-                deep: true,   
+                deep: true
             }
         },
         setup: () => ({ v$: useVuelidate() }),

@@ -215,138 +215,189 @@ const routes = [
         name: 'organisation',
         component: () => import('../views/organisation/Organisation'),
         children: [
-        {
-            path: 'overview',
-            name: 'organisationoverview',
-            component: () => import('../views/organisation/OrganisationOverview'),
-            meta: {
-            requiresLogin: true,
-            breadcrumb: [
-                { label: 'Organisations', to: '/organisations' },
-                { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
-                { label: 'Overview', to: { name: 'organisationoverview' } }
-            ]
-            }
-        },
-        {
-            path: 'esea-accounts',
-            name: 'organisationeseaaccounts',
-            component: () => import('../views/organisation/OrganisationEseaAccounts'),
-            meta: {
+            {
+                path: 'overview',
+                name: 'organisationoverview',
+                component: () => import('../views/organisation/OrganisationOverview'),
+                meta: {
                 requiresLogin: true,
                 breadcrumb: [
-                { label: 'Organisations', to: '/organisations' },
-                { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
-                { label: 'Esea Accounts', to: { name: 'organisationeseaaccounts' } }
+                    { label: 'Organisations', to: '/organisations' },
+                    { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
+                    { label: 'Overview', to: { name: 'organisationoverview' } }
                 ]
-            }
-        },
-        {
-            path: 'esea-accounts/:EseaAccountId',
-            name: 'organisationeseaaccount',
-            component: () => import('../views/organisation/OrganisationEseaAccount'),
-            children: [
-                {
-                    path: 'auditing-page',
-                    name: 'organisationauditing',
-                    component: () => import('../views/organisation/OrganisationAuditing.vue'),
-                    meta: {
-                    requiresLogin: true
                 }
-                // surveys view,
-                // settings view,
-                // report view,
-            }
-            ],
-            meta: {
+            },
+            {
+                path: 'esea-accounts',
+                name: 'organisationeseaaccounts',
+                component: () => import('../views/organisation/OrganisationEseaAccounts'),
+                meta: {
+                    requiresLogin: true,
+                    breadcrumb: [
+                    { label: 'Organisations', to: '/organisations' },
+                    { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
+                    { label: 'Esea Accounts', to: { name: 'organisationeseaaccounts' } }
+                    ]
+                }
+            },
+            {
+                path: 'esea-accounts/:EseaAccountId',
+                name: 'organisationeseaaccount',
+                component: () => import('../views/organisation/OrganisationEseaAccount'),
+                children: [
+                    {
+                        path: 'auditing-page',
+                        name: 'organisationauditing',
+                        component: () => import('../views/organisation/OrganisationAuditing.vue'),
+                        meta: {
+                        requiresLogin: true
+                    }
+                    // surveys view,
+                    // settings view,
+                    // report view,
+                }
+                ],
+                meta: {
+                    requiresLogin: true,
+                    breadcrumb: [
+                    { label: 'Organisations', to: '/organisations' },
+                    { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
+                    { label: 'Esea Accounts', to: { name: 'organisationeseaaccounts' } },
+                    { label: 'esea_account', to: { name: 'organisationeseaaccount' } }
+                    ]
+                }
+            },
+            {
+                path: 'reports',
+                name: 'organisationreports',
+                component: () => import('../views/organisation/OrganisationReports'),
+                meta: {
+                    breadcrumb: [
+                    { label: 'Organisations', to: '/organisations' },
+                    { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
+                    { label: 'Reports', to: { name: 'organisationreports' } }
+                    ]
+                }
+            },
+            // {
+            // path: 'surveys',
+            // name: 'organisationsurveys',
+            // component: () => import('../views/organisation/OrganisationSurveys'),
+            // meta: {
+            //     breadcrumb: [
+            //     { label: 'Organisations', to: '/organisations' },
+            //     { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
+            //     { label: 'Surveys', to: { name: 'organisationsurveys' } }
+            //     ]
+            // }
+            // },
+            // {
+            //     path: 'stakeholders',
+            //     name: 'organisationstakeholders',
+            //     component: () => import('../views/organisation/OrganisationStakeholders'),
+            //     meta: {
+            //     breadcrumb: [
+            //         { label: 'Organisations', to: '/organisations' },
+            //         { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
+            //         { label: 'Stakeholders', to: { name: 'organisationstakeholders' } }
+            //     ]
+            //     }
+            // },
+            {
+                path: 'networks',
+                name: 'organisationnetworks',
+                component: () => import('../views/organisation/OrganisationNetworks'),
+                meta: {
+                breadcrumb: [
+                    { label: 'Organisations', to: '/organisations' },
+                    { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
+                    { label: 'Networks', to: { name: 'organisationnetworks' } }
+                ]
+                }
+            },
+            {
+                path: 'team',
+                name: 'organisationteam',
+                component: () => import('../views/organisation/OrganisationTeam'),
+                meta: {
                 requiresLogin: true,
                 breadcrumb: [
-                { label: 'Organisations', to: '/organisations' },
-                { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
-                { label: 'Esea Accounts', to: { name: 'organisationeseaaccounts' } },
-                { label: 'esea_account', to: { name: 'organisationeseaaccount' } }
+                    { label: 'Organisations', to: '/organisations' },
+                    { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
+                    { label: 'Team', to: { name: 'organisationteam' } }
                 ]
-            }
-        },
-        {
-            path: 'reports',
-            name: 'organisationreports',
-            component: () => import('../views/organisation/OrganisationReports'),
-            meta: {
+                }
+            },
+            {
+                path: 'settings',
+                name: 'organisationsettings',
+                component: () => import('../views/organisation/OrganisationSettings'),
+                meta: {
                 breadcrumb: [
-                { label: 'Organisations', to: '/organisations' },
-                { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
-                { label: 'Reports', to: { name: 'organisationreports' } }
+                    { label: 'Organisations', to: '/organisations' },
+                    { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
+                    { label: 'Settings', to: { name: 'organisationsettings' } }
                 ]
+                }
             }
-        },
-        // {
-        // path: 'surveys',
-        // name: 'organisationsurveys',
-        // component: () => import('../views/organisation/OrganisationSurveys'),
-        // meta: {
-        //     breadcrumb: [
-        //     { label: 'Organisations', to: '/organisations' },
-        //     { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
-        //     { label: 'Surveys', to: { name: 'organisationsurveys' } }
-        //     ]
-        // }
-        // },
-        // {
-        //     path: 'stakeholders',
-        //     name: 'organisationstakeholders',
-        //     component: () => import('../views/organisation/OrganisationStakeholders'),
-        //     meta: {
-        //     breadcrumb: [
-        //         { label: 'Organisations', to: '/organisations' },
-        //         { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
-        //         { label: 'Stakeholders', to: { name: 'organisationstakeholders' } }
-        //     ]
-        //     }
-        // },
-        {
-            path: 'networks',
-            name: 'organisationnetworks',
-            component: () => import('../views/organisation/OrganisationNetworks'),
-            meta: {
-            breadcrumb: [
-                { label: 'Organisations', to: '/organisations' },
-                { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
-                { label: 'Networks', to: { name: 'organisationnetworks' } }
-            ]
-            }
-        },
-        {
-            path: 'team',
-            name: 'organisationteam',
-            component: () => import('../views/organisation/OrganisationTeam'),
-            meta: {
-            requiresLogin: true,
-            breadcrumb: [
-                { label: 'Organisations', to: '/organisations' },
-                { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
-                { label: 'Team', to: { name: 'organisationteam' } }
-            ]
-            }
-        },
-        {
-            path: 'settings',
-            name: 'organisationsettings',
-            component: () => import('../views/organisation/OrganisationSettings'),
-            meta: {
-            breadcrumb: [
-                { label: 'Organisations', to: '/organisations' },
-                { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
-                { label: 'Settings', to: { name: 'organisationsettings' } }
-            ]
-            }
-        }
         ],
         meta: {
         breadcrumb: [
             { label: 'Organisations', to: '/organisations' },
             { label: '', to: { name: 'organisation', params: { id: '' } } }
         ]
+        }
+    },
+    // Audit
+    {
+        path: '/esea-accounts/:EseaAccountId/survey-audit/:SurveyId',
+        name: 'auditEseaAccount',
+        component: () => import('../views/audit/AuditEseaAccount.vue'),
+        children: [
+            {
+                path: 'single-question-selection',
+                name: 'questionselection',
+                component: () => import('../views/audit/single/AuditQuestionSelection.vue'),
+                meta: {
+                    requiresLogin: true
+                }
+            },
+            {
+                path: 'documentation-request',
+                name: 'documentationrequest',
+                component: () => import('../views/audit/single/AuditDocumentationRequest.vue'),
+                meta: {
+                    requiresLogin: true
+                }
+            },
+            {
+                path: 'documentation-upload',
+                name: 'documentationupload',
+                component: () => import('../views/audit/single/AuditDocumentationUpload.vue'),
+                meta: {
+                    requiresLogin: true
+                }
+            },
+            {
+                path: 'audit-progress',
+                name: 'singleauditaudit',
+                component: () => import('../views/audit/single/AuditAudit.vue'),
+                meta: {
+                    requiresLogin: true
+                }
+            },
+            {
+                path: 'audit-results',
+                name: 'singleauditresults',
+                component: () => import('../views/audit/single/AuditResults.vue'),
+                meta: {
+                    requiresLogin: true
+                }
+            }
+        ],
+        meta: {
+            requiresLogin: true
         }
     },
     {

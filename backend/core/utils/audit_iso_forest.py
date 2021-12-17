@@ -11,10 +11,10 @@ def calculate_iso_forest():
     #fitting the model on one feature for unsupervised learning
     model.fit(df[['column']])
 
-
     df['scores']=model.decision_function(df[['column']])
     df['anomaly']=model.predict(df[['column']])
     df2.tail()
+
 
     anomaly=df.loc[df['anomaly']==-1]
 

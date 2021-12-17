@@ -21,9 +21,10 @@ def outlier_detection(data):
     
     data_mean = np.mean(data)
 
-    # if indicator_audit object:
-    #     lower_limit = indicator_audit.cut_offLowerLimit
-    #     upper_limit = indicator_audit.cut_offUpperLimit
+
+    # if indicator.indicator_audit object:
+    #     lower_limit = indicator.indicator_audit.cut_offLowerLimit
+    #     upper_limit = indicator.indicator_audit.cut_offUpperLimit
     # else:
     if True:
         data_std = np.std(data)

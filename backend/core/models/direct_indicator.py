@@ -53,7 +53,7 @@ class DirectIndicator(models.Model):
 
     DATA_TYPES = (
         (TEXT, "text"),
-        (INTEGER, "Integer"),
+        (INTEGER, "integer"),
         (DOUBLE, "double"),
         (DATE, "date"),
         (BOOLEAN, "boolean"),

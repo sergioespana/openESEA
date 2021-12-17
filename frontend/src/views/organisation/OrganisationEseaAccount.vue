@@ -24,13 +24,7 @@ http://localhost:8081/organisation/1/esea-accounts/1
             '{{survey.name}}' - Response Rate: {{survey.current_response_rate }}%
         </ProgressBar>
     </div>
-    <TabView :activeIndex="1">
-        <TabPanel header="Method">
-            <h4>Method: <span class="p-text-light p-text-italic">'{{eseaAccount.method_name}}'</span></h4>
-            <h4>Description: <span class="p-text-light p-text-italic">''</span></h4>
-            <Button label="Go to Method" @click="goToMethod" />
-
-        </TabPanel>
+    <TabView :activeIndex="0">
         <TabPanel header="Surveys">
             <DataTable :value="eseaAccount.survey_response_by_survey" datakey="id" :rows="10" :paginator="true" :rowHover="true" v-model:filters="filters" filterDisplay="Menu" selectionMode="single" @row-select="goToSurveyFill"
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[10,25,50]"
@@ -79,11 +73,41 @@ http://localhost:8081/organisation/1/esea-accounts/1
             </Column>
             </DataTable>
         </TabPanel>
-        <TabPanel header="Report">
-            d
+        <TabPanel header="Method">
+            <h4>Method: <span class="p-text-light p-text-italic">'{{eseaAccount.method_name}}'</span></h4>
+            <h4>Description: <span class="p-text-light p-text-italic">''</span></h4>
+            <Button label="Go to Method" @click="goToMethod" />
         </TabPanel>
-        <TabPanel header="Auditing">
-            <Button label="Go to auditing page" @click="goToAuditingPage" />
+         <TabPanel header="Auditing">
+            <DataTable :value="eseaAccount.survey_response_by_survey" datakey="id" :rows="10" :paginator="true" :rowHover="true" v-model:filters="filters" filterDisplay="Menu" selectionMode="single" @row-select="goToSurveyFill"
+            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[10,25,50]"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+                <template #header>
+                    <div class="p-d-flex p-jc-between p-ai-center">
+                        <h5 class="p-m-0">Surveys</h5>
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search" />
+                            <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
+                        </span>
+                        <div>
+                            <Button label="Tool Menu" @click="toggle" :disabled="false" />
+                            <Menu id="overlay_menu" ref="menu" :model="items" :popup="true" />
+                        </div>
+                    </div>
+                </template>
+                <Column field="name" header="Name" sortable />
+                <Column field="auditor" header="Auditor" sortable />
+                <Column field="recommendations" header="Recommendations" sortable />
+                <Column header="Status" headerStyle="width: 15rem; text-align: center" bodyStyle="text-align: center; overflow: visible" :style="permission ? '': 'display:none;'">
+                    <template #body="{data}">
+                        <div v-if="permission">
+                            <div v-if="data.auditobject">{{data.auditobject}}</div>
+                            <Button v-else label="Start Audit" type="button" class="p-button-sm" @click="startAudit(data)"  style="width: 200px" />
+                        </div>
+                        <div v-else></div>
+                    </template>
+                </Column>
+            </DataTable>
         </TabPanel>
         <TabPanel header="Settings" :disabled="!permission">
             <div class="p-col-8 p-fluid p-text-left p-p-5" style="width: 600px">
@@ -129,6 +153,10 @@ http://localhost:8081/organisation/1/esea-accounts/1
             <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="removeEseaAccount()" />
         </template>
     </Dialog>
+
+    <Dialog v-model:visible="startAuditDialog" style="width: 500px" header="New Audit Process" :modal="true" :dismissableMask="true">
+        <audit-form @closedialog="startAuditDialog=false" :survey="selected_survey"/>
+    </Dialog>
 </template>
 
 <script>
@@ -140,10 +168,13 @@ http://localhost:8081/organisation/1/esea-accounts/1
     import dateFixer from '../../utils/datefixer'
     import moment from 'moment'
 
+    import AuditForm from '../../components/forms/AuditForm'
+
     export default {
         components: {
             ProgressBar,
-            Listbox
+            Listbox,
+            AuditForm
         },
         data () {
             return {
@@ -158,7 +189,9 @@ http://localhost:8081/organisation/1/esea-accounts/1
                 ],
                 deleteEseaAccountDialog: false,
                 importEmployeesDialog: false,
+                startAuditDialog: false,
                 surveyy: null,
+                selected_survey: null,
                 stakeholderupload: null,
                 items: [
                     {
@@ -279,6 +312,11 @@ http://localhost:8081/organisation/1/esea-accounts/1
             async goToMethod () {
                 this.$router.push({ name: 'newmethoddetails', params: { id: this.eseaAccount.method } })
                 /* this.$router.push({ name: 'methoddetails', params: { id: this.campaign.method } }) */
+            },
+            startAudit (data) {
+                this.selected_survey = data.id
+                this.startAuditDialog = true
+                console.log('start audit ---->', data.id)
             }
         }
     }

@@ -1,5 +1,4 @@
-// No View, maybe it can be put in 
-
+// No View, maybe it can be put in
 
 <template>
     <div class="p-mx-5" style="min-width: 1000px;">

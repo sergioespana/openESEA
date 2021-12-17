@@ -1,4 +1,4 @@
-from sklearn.ensemble import IsolationForest
+# from sklearn.ensemble import IsolationForest
 import pandas as pd
 
 def calculate_iso_forest():

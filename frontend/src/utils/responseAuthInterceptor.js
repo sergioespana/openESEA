@@ -7,7 +7,7 @@ export default [
         console.log('ddd')
         if (error.response && error.response.status === 401 && store.state.authentication.authenticatedUser && error.config.url.startsWith(API_URL)) {
             console.log('Not authenticated')
-            
+
             // store.dispatch('auth/removeToken')
             // router.push({ name: 'login', params: { nextUrl: router.currentRoute.fullPath } })
         }

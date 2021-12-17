@@ -42,6 +42,8 @@ class DirectIndicator(models.Model):
     description = models.TextField(max_length=1000, blank=True, null=True, default="")
     pre_unit = models.CharField(max_length=30, blank=True, default="") # Examples pre_unit: $,€.
     post_unit = models.CharField(max_length=30, blank=True, default="") #  Examples post_unit: %, points, persons
+    cut_off_lower_limit = models.DecimalField(max_digits=15, decimal_places=3, blank=True, null=True)
+    cut_off_upper_limit = models.DecimalField(max_digits=15, decimal_places=3, blank=True, null=True)
 
     TEXT = "text"
     INTEGER = "integer"
@@ -81,11 +83,13 @@ class DirectIndicator(models.Model):
     def __str__(self):
         return self.name
 
-    def update(self, key, name, answertype, topic=None, isMandatory=True, options=None, description=None, instruction=None, default=None, min_number=None, max_number=None, pre_unit="", post_unit=""): # Add datatype?
+    def update(self, key, name, answertype, topic=None, isMandatory=True, options=None, description=None, instruction=None, default=None, min_number=None, max_number=None, pre_unit="", post_unit="", cut_off_lower_limit=None, cut_off_upper_limit=None): # Add datatype?
         self.key = key
         self.topic = topic
         self.pre_unit = pre_unit
         self.post_unit = post_unit
+        self.cut_off_lower_limit = cut_off_lower_limit
+        self.cut_off_upper_limit = cut_off_upper_limit
         self.question = self.question.update(name=name, answertype=answertype, isMandatory=isMandatory, options=options, description=description, instruction=instruction, default=default, min_number=min_number, max_number=max_number)
 
         self.save()

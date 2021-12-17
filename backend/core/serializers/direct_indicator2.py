@@ -25,7 +25,9 @@ class DirectIndicatorSerializer2(serializers.ModelSerializer):
             'topic', 
             'datatype', 
             'pre_unit', 
-            'post_unit', 
+            'post_unit',
+            'cut_off_lower_limit',
+            'cut_off_upper_limit',
             'options'
             ]
 
@@ -51,6 +53,9 @@ class DirectIndicatorSerializer2(serializers.ModelSerializer):
         instance.datatype = validated_data.get('datatype', instance.datatype)
         instance.pre_unit = validated_data.get('pre_unit', instance.pre_unit)
         instance.post_unit = validated_data.get('post_unit', instance.post_unit)
+        instance.cut_off_lower_limit = validated_data.get('cut_off_lower_limit', instance.cut_off_lower_limit)
+        instance.cut_off_upper_limit = validated_data.get('cut_off_upper_limit', instance.cut_off_upper_limit)
+    
 
         # Updates options, required when option order is changed for examples
         if 'options' in validated_data:

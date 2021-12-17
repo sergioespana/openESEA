@@ -12,12 +12,15 @@ find_square_bracket_keys = re.compile(r"\[(.*?)\]")
 class IndirectIndicator(models.Model):
     topic = models.ForeignKey('Topic', related_name='indirect_indicators', on_delete=models.SET_NULL, null=True)
     method = models.ForeignKey("Method", related_name="indirect_indicators", on_delete=models.CASCADE, null=True)
+    
     key = models.CharField(max_length=255, blank=False)
     formula = models.CharField(max_length=1000, unique=False, blank=False)
     name = models.CharField(max_length=255, unique=False, blank=False)
     description = models.TextField(blank=True, null=True)
     pre_unit = models.CharField(max_length=30, blank=True, default="")      # Examples: $,€
     post_unit = models.CharField(max_length=30, blank=True, default="")     # Examples: %, points, persons
+    cut_off_lower_limit = models.DecimalField(max_digits=15, decimal_places=3, blank=True, null=True)
+    cut_off_upper_limit = models.DecimalField(max_digits=15, decimal_places=3, blank=True, null=True)
     
     TEXT = "text"
     INTEGER = "integer"

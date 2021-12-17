@@ -2,7 +2,7 @@ import pandas as pd
 from pandas import read_csv
 import numpy as np
 
-def outlier_detection(data):
+def outlier_detection(organisation, indicator, data):
     # data = for one indicator the answer from all esea accounts
 
     # for indicator in esea method:
@@ -20,25 +20,22 @@ def outlier_detection(data):
     # Set upper and lower limit to 3 standard deviation
     
     data_mean = np.mean(data)
-
-
-    # if indicator.indicator_audit object:
-    #     lower_limit = indicator.indicator_audit.cut_offLowerLimit
-    #     upper_limit = indicator.indicator_audit.cut_offUpperLimit
-    # else:
-    if True:
+    print(data, data_mean)
+    
+    if indicator.cut_off_lower_limit and indicator.cut_off_upper_limit:                 # indicator.indicator_audit object:
+        lower_limit = indicator.cut_off_lower_limit
+        upper_limit = indicator.cut_off_upper_limit
+    else:
         data_std = np.std(data)
         anomaly_cut_off = data_std * 3
+        print('------', anomaly_cut_off)
         lower_limit  = data_mean - anomaly_cut_off 
         upper_limit = data_mean + anomaly_cut_off
 
     # Generate outliers
     #for index, value in data.iteritems():
-    value = data[company_index]
+    value = data[organisation]
+    print('value:', value, 'upper_limit:', upper_limit, 'lower_limit:', lower_limit)
     if value > upper_limit or value < lower_limit:
-        return anomaly
-    
-
-    anomalies.append({ 'indicator': indicator, 'value': anomaly })
-
-    return True
+        return True
+    return False

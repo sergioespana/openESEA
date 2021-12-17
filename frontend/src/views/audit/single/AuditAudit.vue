@@ -6,9 +6,8 @@
                 <Button @click="(helpDialog = !helpDialog)" label="Help" class="p-button-sm p-button-warning" icon="pi pi-external-link" />
             </div>
             <div class="card">
-                 <DataTable :value="questions" rowGroupMode="rowspan" groupRowsBy="section.name" sortMode="single" sortField="section.name" :sortOrder="1" responsiveLayout="scroll"
-                v-model:expandedRowGroups="expandedRowGroups" @rowgroupExpand="onRowGroupExpand" @rowgroupCollapse="onRowGroupCollapse" v-model:selection="selectedQuestions" dataKey="name">
-                    <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
+                 <DataTable :value="questions" rowGroupMode="rowspan" groupRowsBy="section.name" selectionMode="single" @row-select="goToQuestion" sortMode="single" sortField="section.name" :sortOrder="1" responsiveLayout="scroll"
+                v-model:expandedRowGroups="expandedRowGroups" @rowgroupExpand="onRowGroupExpand" @rowgroupCollapse="onRowGroupCollapse" dataKey="name">
                     <Column field="section.name" header="Section"></Column>
                     <Column field="name" header="name" sortable></Column>
                     <Column field="response" header="Responses" sortable></Column>
@@ -21,6 +20,9 @@
                     </Column>
                 </DataTable>
             </div>
+        </div>
+        <div class="p-text-right p-col-12">
+            <Button class="p-my-5" label="Finish" icon="pi pi-check" @click="finishAudit()" />
         </div>
     </div>
 </template>
@@ -51,6 +53,19 @@ export default {
                     section: { name: 'Salary' }
                 }
             ]
+        }
+    },
+    methods: {
+        finishAudit () {
+            console.log('finishing audit')
+        },
+        goToQuestion (question) {
+            console.log('go to Question')
+            question = { id: 5 }
+            if (question.id) {
+                // await this.setQuestion(question)
+                this.$router.push({ name: 'singleauditquestion', params: { QuestionId: question.id } })
+            }
         }
     }
 }

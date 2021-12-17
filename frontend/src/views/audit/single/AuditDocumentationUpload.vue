@@ -5,8 +5,7 @@
             <Button @click="(helpDialog = !helpDialog)" label="Help" class="p-button-sm p-button-warning" icon="pi pi-external-link" />
         </div>
         <DataTable class="p-col-12 p-m-0 p-p-0" :value="questions" rowGroupMode="rowspan" groupRowsBy="section.name" sortMode="single" sortField="section.name" :sortOrder="1" responsiveLayout="scroll"
-        v-model:expandedRowGroups="expandedRowGroups" @rowgroupExpand="onRowGroupExpand" @rowgroupCollapse="onRowGroupCollapse" v-model:selection="selectedQuestions" dataKey="name">
-            <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
+        v-model:expandedRowGroups="expandedRowGroups" @rowgroupExpand="onRowGroupExpand" @rowgroupCollapse="onRowGroupCollapse" dataKey="name">
             <Column field="section.name" header="Section"></Column>
             <Column field="name" header="name" sortable></Column>
             <Column field="response" header="Responses" sortable></Column>

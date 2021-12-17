@@ -401,6 +401,14 @@ const routes = [
         }
     },
     {
+        path: '/audit-question/:QuestionId',
+        name: 'singleauditquestion',
+        component: () => import('../views/audit/single/AuditQuestion.vue'),
+        meta: {
+            requiresLogin: true
+        }
+    },
+    {
         path: '/organisations',
         name: 'organisations',
         component: () => import('../views/organisation/Organisations.vue'),

@@ -4,7 +4,7 @@
     "pk": 1,
     "fields": {
         "password": "pbkdf2_sha256$216000$3cQaV2ZoTzRh$Ll5YWsJQ25/h20k0e9zPmyIRTsF93naa046DvWsvtBo=",
-        "last_login": "2021-11-26T18:03:55.211Z",
+        "last_login": "2021-12-13T14:07:46.591Z",
         "is_superuser": true,
         "is_staff": true,
         "is_active": true,
@@ -517,17 +517,6 @@
         "first_name": "Accountant",
         "last_name_prefix": "",
         "last_name": "of Triodos"
-    }
-},
-{
-    "model": "core.respondent",
-    "pk": 22,
-    "fields": {
-        "organisation": 1,
-        "email": "accountant@mail.com",
-        "first_name": "Accountant",
-        "last_name_prefix": "",
-        "last_name": "of Shell"
     }
 },
 {
@@ -1521,6 +1510,237 @@
     }
 },
 {
+    "model": "core.respondent",
+    "pk": 189,
+    "fields": {
+        "organisation": 1,
+        "email": "dpettersen0@oracle.com",
+        "first_name": "Dara",
+        "last_name_prefix": "",
+        "last_name": "Pettersen"
+    }
+},
+{
+    "model": "core.respondent",
+    "pk": 190,
+    "fields": {
+        "organisation": 1,
+        "email": "tbremmer1@prnewswire.com",
+        "first_name": "Tracie",
+        "last_name_prefix": "van",
+        "last_name": "Bremmer"
+    }
+},
+{
+    "model": "core.respondent",
+    "pk": 191,
+    "fields": {
+        "organisation": 1,
+        "email": "vjaffrey2@aol.com",
+        "first_name": "Viola",
+        "last_name_prefix": "",
+        "last_name": "Jaffrey"
+    }
+},
+{
+    "model": "core.respondent",
+    "pk": 192,
+    "fields": {
+        "organisation": 1,
+        "email": "rspick3@about.com",
+        "first_name": "Randy",
+        "last_name_prefix": "",
+        "last_name": "Spick"
+    }
+},
+{
+    "model": "core.respondent",
+    "pk": 193,
+    "fields": {
+        "organisation": 1,
+        "email": "kdandie4@addthis.com",
+        "first_name": "Kaine",
+        "last_name_prefix": "",
+        "last_name": "Dandie"
+    }
+},
+{
+    "model": "core.respondent",
+    "pk": 194,
+    "fields": {
+        "organisation": 1,
+        "email": "eflucks5@dell.com",
+        "first_name": "Edsel",
+        "last_name_prefix": "",
+        "last_name": "Flucks"
+    }
+},
+{
+    "model": "core.respondent",
+    "pk": 195,
+    "fields": {
+        "organisation": 1,
+        "email": "ngrunguer6@weibo.com",
+        "first_name": "Nestor",
+        "last_name_prefix": "",
+        "last_name": "Grunguer"
+    }
+},
+{
+    "model": "core.respondent",
+    "pk": 196,
+    "fields": {
+        "organisation": 1,
+        "email": "odingle7@biblegateway.com",
+        "first_name": "Osgood",
+        "last_name_prefix": "",
+        "last_name": "Dingle"
+    }
+},
+{
+    "model": "core.respondent",
+    "pk": 197,
+    "fields": {
+        "organisation": 1,
+        "email": "mkonert8@yahoo.com",
+        "first_name": "Maury",
+        "last_name_prefix": "",
+        "last_name": "Konert"
+    }
+},
+{
+    "model": "core.respondent",
+    "pk": 198,
+    "fields": {
+        "organisation": 1,
+        "email": "vbartlet9@reuters.com",
+        "first_name": "Viviyan",
+        "last_name_prefix": "",
+        "last_name": "Bartlet"
+    }
+},
+{
+    "model": "core.respondent",
+    "pk": 199,
+    "fields": {
+        "organisation": 1,
+        "email": "mheynsa@twitter.com",
+        "first_name": "Myra",
+        "last_name_prefix": "",
+        "last_name": "Heyns"
+    }
+},
+{
+    "model": "core.respondent",
+    "pk": 200,
+    "fields": {
+        "organisation": 1,
+        "email": "fburwinb@netvibes.com",
+        "first_name": "Florencia",
+        "last_name_prefix": "",
+        "last_name": "BURWIN"
+    }
+},
+{
+    "model": "core.respondent",
+    "pk": 201,
+    "fields": {
+        "organisation": 1,
+        "email": "sdewsc@alibaba.com",
+        "first_name": "Sibeal",
+        "last_name_prefix": "",
+        "last_name": "Dews"
+    }
+},
+{
+    "model": "core.respondent",
+    "pk": 202,
+    "fields": {
+        "organisation": 1,
+        "email": "ewillischd@is.gd",
+        "first_name": "Eloisa",
+        "last_name_prefix": "",
+        "last_name": "Willisch"
+    }
+},
+{
+    "model": "core.respondent",
+    "pk": 203,
+    "fields": {
+        "organisation": 1,
+        "email": "oeverette@amazonaws.com",
+        "first_name": "Olga",
+        "last_name_prefix": "",
+        "last_name": "Everett"
+    }
+},
+{
+    "model": "core.respondent",
+    "pk": 204,
+    "fields": {
+        "organisation": 1,
+        "email": "apaprotnyf@squarespace.com",
+        "first_name": "Alfy",
+        "last_name_prefix": "",
+        "last_name": "Paprotny"
+    }
+},
+{
+    "model": "core.respondent",
+    "pk": 205,
+    "fields": {
+        "organisation": 1,
+        "email": "jdanielotg@home.pl",
+        "first_name": "Janie",
+        "last_name_prefix": "",
+        "last_name": "Danielot"
+    }
+},
+{
+    "model": "core.respondent",
+    "pk": 206,
+    "fields": {
+        "organisation": 1,
+        "email": "rwilloughbyh@mlb.com",
+        "first_name": "Rowena",
+        "last_name_prefix": "",
+        "last_name": "Willoughby"
+    }
+},
+{
+    "model": "core.respondent",
+    "pk": 207,
+    "fields": {
+        "organisation": 1,
+        "email": "egillbeei@gov.uk",
+        "first_name": "Elisabetta",
+        "last_name_prefix": "",
+        "last_name": "Gillbee"
+    }
+},
+{
+    "model": "core.respondent",
+    "pk": 208,
+    "fields": {
+        "organisation": 1,
+        "email": "mpayj@ustream.tv",
+        "first_name": "Minnie",
+        "last_name_prefix": "",
+        "last_name": "Pay"
+    }
+},
+{
+    "model": "core.respondent",
+    "pk": 271,
+    "fields": {
+        "organisation": 3,
+        "email": "mpayj@ustream.tv",
+        "first_name": "Minnie",
+        "last_name_prefix": "",
+        "last_name": "Pay"
+    }
+},
+{
     "model": "core.method",
     "pk": 2,
     "fields": {
@@ -1549,7 +1769,7 @@
         "created_by": 1,
         "ispublic": true,
         "name": "Testing Method",
-        "description": "...",
+        "description": "Method used for testing the ESEA Application",
         "version": "1.00"
     }
 },
@@ -2947,6 +3167,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "courses",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -2962,6 +3184,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "courses",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -2977,6 +3201,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "courses",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -2992,6 +3218,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "departments",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3007,6 +3235,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "departments",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3022,6 +3252,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "graduates",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3037,6 +3269,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "graduates",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3052,6 +3286,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "singlechoice"
     }
 },
@@ -3067,6 +3303,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "singlechoice"
     }
 },
@@ -3082,6 +3320,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "singlechoice"
     }
 },
@@ -3097,6 +3337,8 @@
         "description": "(e.g., LEED BD+C Platinum or Certified Living Building)",
         "pre_unit": "",
         "post_unit": "m^2",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3112,6 +3354,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "m^2",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3127,6 +3371,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "m^2",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3142,6 +3388,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "m^2",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3157,6 +3405,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "m^2",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3172,6 +3422,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "m^2",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3187,6 +3439,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "m^2",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3202,6 +3456,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "m^2",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3217,6 +3473,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "m^2",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3232,6 +3490,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "MMBtu",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3247,6 +3507,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "KWh",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3262,6 +3524,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "KWh",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3277,6 +3541,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "MMBtu",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3292,6 +3558,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "MMBtu",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3307,6 +3575,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "KWh",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3322,6 +3592,8 @@
         "description": "The number of staff members that identify as woman",
         "pre_unit": "",
         "post_unit": "persons",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3337,6 +3609,8 @@
         "description": "The number of staff members that identify as man",
         "pre_unit": "",
         "post_unit": "persons",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3352,6 +3626,8 @@
         "description": "The type of company",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "singlechoice"
     }
 },
@@ -3367,6 +3643,8 @@
         "description": "The average salary of women in the organisation",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "double"
     }
 },
@@ -3382,6 +3660,8 @@
         "description": "The average salary of men in the organisation",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "double"
     }
 },
@@ -3397,6 +3677,8 @@
         "description": "The number of women involved in decision making",
         "pre_unit": "",
         "post_unit": "persons",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3412,6 +3694,8 @@
         "description": "The number of men involved in decision making",
         "pre_unit": "",
         "post_unit": "persons",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3427,6 +3711,8 @@
         "description": "Are all salaries visible to the public",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "singlechoice"
     }
 },
@@ -3442,6 +3728,8 @@
         "description": "How satisfied are employees within the organisation",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "singlechoice"
     }
 },
@@ -3457,6 +3745,8 @@
         "description": "Inclusiveness of the company",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "singlechoice"
     }
 },
@@ -3472,6 +3762,8 @@
         "description": "The salary that you are getting paid as employee on a yearly basis.",
         "pre_unit": "$",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3487,6 +3779,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "singlechoice"
     }
 },
@@ -3502,6 +3796,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3517,6 +3813,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3532,6 +3830,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "singlechoice"
     }
 },
@@ -3547,6 +3847,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "kg",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3562,6 +3864,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "kg",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3577,6 +3881,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "kWh",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -3592,6 +3898,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "kWh",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "integer"
     }
 },
@@ -6258,6 +6566,94 @@
     }
 },
 {
+    "model": "core.questionresponse",
+    "pk": 273,
+    "fields": {
+        "survey_response": 276,
+        "question": 43,
+        "direct_indicator_id": 45,
+        "value": "4",
+        "values": []
+    }
+},
+{
+    "model": "core.questionresponse",
+    "pk": 274,
+    "fields": {
+        "survey_response": 276,
+        "question": 44,
+        "direct_indicator_id": 46,
+        "value": "4",
+        "values": []
+    }
+},
+{
+    "model": "core.questionresponse",
+    "pk": 275,
+    "fields": {
+        "survey_response": 276,
+        "question": 51,
+        "direct_indicator_id": 51,
+        "value": "6",
+        "values": []
+    }
+},
+{
+    "model": "core.questionresponse",
+    "pk": 276,
+    "fields": {
+        "survey_response": 276,
+        "question": 50,
+        "direct_indicator_id": 48,
+        "value": "5",
+        "values": []
+    }
+},
+{
+    "model": "core.questionresponse",
+    "pk": 277,
+    "fields": {
+        "survey_response": 276,
+        "question": 49,
+        "direct_indicator_id": 47,
+        "value": "34000",
+        "values": []
+    }
+},
+{
+    "model": "core.questionresponse",
+    "pk": 278,
+    "fields": {
+        "survey_response": 276,
+        "question": 48,
+        "direct_indicator_id": 50,
+        "value": "12",
+        "values": []
+    }
+},
+{
+    "model": "core.questionresponse",
+    "pk": 279,
+    "fields": {
+        "survey_response": 276,
+        "question": 47,
+        "direct_indicator_id": 49,
+        "value": "24",
+        "values": []
+    }
+},
+{
+    "model": "core.questionresponse",
+    "pk": 280,
+    "fields": {
+        "survey_response": 193,
+        "question": 45,
+        "direct_indicator_id": 39,
+        "value": "cooperative",
+        "values": []
+    }
+},
+{
     "model": "core.indirectindicator",
     "pk": 20,
     "fields": {
@@ -6269,6 +6665,8 @@
         "description": null,
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "SCORING"
     }
@@ -6285,6 +6683,8 @@
         "description": null,
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "SCORING"
     }
@@ -6301,6 +6701,8 @@
         "description": null,
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "SCORING"
     }
@@ -6317,6 +6719,8 @@
         "description": null,
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "SCORING"
     }
@@ -6333,6 +6737,8 @@
         "description": null,
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "SCORING"
     }
@@ -6349,6 +6755,8 @@
         "description": null,
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "SCORING"
     }
@@ -6365,6 +6773,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "SCORING"
     }
@@ -6381,6 +6791,8 @@
         "description": null,
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "SCORING"
     }
@@ -6397,6 +6809,8 @@
         "description": null,
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "SCORING"
     }
@@ -6413,6 +6827,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "SCORING"
     }
@@ -6429,6 +6845,8 @@
         "description": null,
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "SCORING"
     }
@@ -6445,6 +6863,8 @@
         "description": null,
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "SCORING"
     }
@@ -6461,6 +6881,8 @@
         "description": null,
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "SCORING"
     }
@@ -6477,6 +6899,8 @@
         "description": null,
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "SCORING"
     }
@@ -6493,6 +6917,8 @@
         "description": null,
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "SCORING"
     }
@@ -6509,6 +6935,8 @@
         "description": null,
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "SCORING"
     }
@@ -6525,6 +6953,8 @@
         "description": "The total staff in terms of full time employees",
         "pre_unit": "",
         "post_unit": "persons",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "performance"
     }
@@ -6541,6 +6971,8 @@
         "description": "The size of the company based on the number of full time employees",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "performance"
     }
@@ -6557,6 +6989,8 @@
         "description": "The gender ratio",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "performance"
     }
@@ -6573,6 +7007,8 @@
         "description": "The gender pay gap",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "performance"
     }
@@ -6589,6 +7025,8 @@
         "description": "The gender decision making ratio",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "performance"
     }
@@ -6605,6 +7043,8 @@
         "description": "The gender ratio score",
         "pre_unit": "",
         "post_unit": "points",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "scoring"
     }
@@ -6621,6 +7061,8 @@
         "description": "Gender pay gap score",
         "pre_unit": "",
         "post_unit": "points",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "scoring"
     }
@@ -6637,6 +7079,8 @@
         "description": "Gender decision making score",
         "pre_unit": "",
         "post_unit": "points",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "scoring"
     }
@@ -6653,6 +7097,8 @@
         "description": "Gender equity score",
         "pre_unit": "",
         "post_unit": "points",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "scoring"
     }
@@ -6669,6 +7115,8 @@
         "description": "Decision making ratio",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "performance"
     }
@@ -6685,6 +7133,8 @@
         "description": "Average employee satisfaction",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "performance"
     }
@@ -6701,6 +7151,8 @@
         "description": "Average employee opinion on inclusion",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "performance"
     }
@@ -6717,6 +7169,8 @@
         "description": "Public salaries score",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "scoring"
     }
@@ -6733,6 +7187,8 @@
         "description": "Decision making ratio score",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "scoring"
     }
@@ -6749,6 +7205,8 @@
         "description": "Workplace quality score",
         "pre_unit": "",
         "post_unit": "points",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "scoring"
     }
@@ -6765,6 +7223,8 @@
         "description": "This indicator determines whether a company should receive a bronze certification",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "scoring"
     }
@@ -6781,6 +7241,8 @@
         "description": "This indicator determines whether a company should receive a silver certification",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "performance"
     }
@@ -6797,6 +7259,8 @@
         "description": "This indicator determines whether a company should receive a gold certification",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "performance"
     }
@@ -6813,6 +7277,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "SCORING"
     }
@@ -6829,6 +7295,8 @@
         "description": null,
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "SCORING"
     }
@@ -6845,6 +7313,8 @@
         "description": null,
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "SCORING"
     }
@@ -6861,6 +7331,8 @@
         "description": "",
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "SCORING"
     }
@@ -6877,6 +7349,8 @@
         "description": null,
         "pre_unit": "",
         "post_unit": "",
+        "cut_off_lower_limit": null,
+        "cut_off_upper_limit": null,
         "datatype": "text",
         "type": "SCORING"
     }
@@ -6920,6 +7394,7 @@
         "survey": 5,
         "esea_account": 1,
         "respondent": 1,
+        "auditor": null,
         "token": "accountant",
         "finished": true
     }
@@ -6931,6 +7406,7 @@
         "survey": 5,
         "esea_account": 2,
         "respondent": 2,
+        "auditor": null,
         "token": "accountant",
         "finished": false
     }
@@ -6942,6 +7418,7 @@
         "survey": 6,
         "esea_account": 4,
         "respondent": 4,
+        "auditor": null,
         "token": "accountant",
         "finished": true
     }
@@ -6953,6 +7430,7 @@
         "survey": 8,
         "esea_account": 4,
         "respondent": 4,
+        "auditor": null,
         "token": "accountant",
         "finished": true
     }
@@ -6964,6 +7442,7 @@
         "survey": 6,
         "esea_account": 5,
         "respondent": 5,
+        "auditor": null,
         "token": "accountant",
         "finished": true
     }
@@ -6975,6 +7454,7 @@
         "survey": 8,
         "esea_account": 5,
         "respondent": 5,
+        "auditor": null,
         "token": "accountant",
         "finished": true
     }
@@ -6986,6 +7466,7 @@
         "survey": 7,
         "esea_account": 4,
         "respondent": 48,
+        "auditor": null,
         "token": "PIwRhgeIAj",
         "finished": true
     }
@@ -6997,6 +7478,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 100,
+        "auditor": null,
         "token": "vbwAcSfNnc",
         "finished": true
     }
@@ -7008,6 +7490,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 101,
+        "auditor": null,
         "token": "UxmPkGQBoc",
         "finished": true
     }
@@ -7019,6 +7502,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 102,
+        "auditor": null,
         "token": "uqcIJMfhBj",
         "finished": true
     }
@@ -7030,6 +7514,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 103,
+        "auditor": null,
         "token": "ZgBnsSFZfx",
         "finished": true
     }
@@ -7041,6 +7526,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 104,
+        "auditor": null,
         "token": "nbCJIeVzoz",
         "finished": true
     }
@@ -7052,6 +7538,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 105,
+        "auditor": null,
         "token": "JFGtPGYJVF",
         "finished": true
     }
@@ -7063,6 +7550,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 106,
+        "auditor": null,
         "token": "jAWfAWXleP",
         "finished": true
     }
@@ -7074,6 +7562,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 107,
+        "auditor": null,
         "token": "IJmuPQzilJ",
         "finished": true
     }
@@ -7085,6 +7574,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 108,
+        "auditor": null,
         "token": "FeDyUPeHFy",
         "finished": true
     }
@@ -7096,6 +7586,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 109,
+        "auditor": null,
         "token": "YDerQeXBTU",
         "finished": true
     }
@@ -7107,6 +7598,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 110,
+        "auditor": null,
         "token": "PYJUuTOuRD",
         "finished": true
     }
@@ -7118,6 +7610,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 111,
+        "auditor": null,
         "token": "uaxJCPjfKD",
         "finished": true
     }
@@ -7129,6 +7622,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 112,
+        "auditor": null,
         "token": "ZYjyRPFsvR",
         "finished": true
     }
@@ -7140,6 +7634,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 113,
+        "auditor": null,
         "token": "lzDOvjLZfd",
         "finished": true
     }
@@ -7151,6 +7646,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 114,
+        "auditor": null,
         "token": "jTYFNiteBo",
         "finished": true
     }
@@ -7162,6 +7658,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 115,
+        "auditor": null,
         "token": "gtwZhRHHqi",
         "finished": true
     }
@@ -7173,6 +7670,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 116,
+        "auditor": null,
         "token": "JVKaJTdfhH",
         "finished": true
     }
@@ -7184,6 +7682,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 117,
+        "auditor": null,
         "token": "fTWnwlGcXJ",
         "finished": true
     }
@@ -7195,6 +7694,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 118,
+        "auditor": null,
         "token": "YNDdVhYcJk",
         "finished": true
     }
@@ -7206,6 +7706,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 119,
+        "auditor": null,
         "token": "viDdovoTXq",
         "finished": true
     }
@@ -7217,6 +7718,7 @@
         "survey": 7,
         "esea_account": 5,
         "respondent": 122,
+        "auditor": null,
         "token": "olIUhdoSmN",
         "finished": false
     }
@@ -7228,6 +7730,7 @@
         "survey": 7,
         "esea_account": 5,
         "respondent": 123,
+        "auditor": null,
         "token": "uniWsomrvR",
         "finished": false
     }
@@ -7239,6 +7742,7 @@
         "survey": 7,
         "esea_account": 5,
         "respondent": 124,
+        "auditor": null,
         "token": "GhvJPpNBJQ",
         "finished": false
     }
@@ -7250,6 +7754,7 @@
         "survey": 7,
         "esea_account": 5,
         "respondent": 125,
+        "auditor": null,
         "token": "ijBuGIoScd",
         "finished": false
     }
@@ -7261,6 +7766,7 @@
         "survey": 7,
         "esea_account": 5,
         "respondent": 126,
+        "auditor": null,
         "token": "wCRkdDrZjy",
         "finished": false
     }
@@ -7272,6 +7778,7 @@
         "survey": 7,
         "esea_account": 5,
         "respondent": 127,
+        "auditor": null,
         "token": "oFQqhtrTEd",
         "finished": false
     }
@@ -7283,6 +7790,7 @@
         "survey": 7,
         "esea_account": 5,
         "respondent": 128,
+        "auditor": null,
         "token": "sciRtFbNse",
         "finished": false
     }
@@ -7294,6 +7802,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 129,
+        "auditor": null,
         "token": "OJQcYyxgPC",
         "finished": true
     }
@@ -7305,6 +7814,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 130,
+        "auditor": null,
         "token": "ToIZWTbkgv",
         "finished": false
     }
@@ -7316,6 +7826,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 131,
+        "auditor": null,
         "token": "oObFBBQWzF",
         "finished": false
     }
@@ -7327,6 +7838,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 132,
+        "auditor": null,
         "token": "serCfnUHng",
         "finished": false
     }
@@ -7338,6 +7850,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 133,
+        "auditor": null,
         "token": "TfeXuQKZRv",
         "finished": false
     }
@@ -7349,6 +7862,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 134,
+        "auditor": null,
         "token": "oVwoJPHcZC",
         "finished": false
     }
@@ -7360,6 +7874,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 135,
+        "auditor": null,
         "token": "IPybPFqTzU",
         "finished": false
     }
@@ -7371,6 +7886,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 136,
+        "auditor": null,
         "token": "EAeXWGfasp",
         "finished": false
     }
@@ -7382,6 +7898,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 137,
+        "auditor": null,
         "token": "TiinXnKbdW",
         "finished": false
     }
@@ -7393,6 +7910,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 138,
+        "auditor": null,
         "token": "tYHbjiPEza",
         "finished": false
     }
@@ -7404,6 +7922,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 139,
+        "auditor": null,
         "token": "vyEmfzruhp",
         "finished": false
     }
@@ -7415,6 +7934,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 140,
+        "auditor": null,
         "token": "ZhPObYDvzJ",
         "finished": false
     }
@@ -7426,6 +7946,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 141,
+        "auditor": null,
         "token": "ZlRakwTYay",
         "finished": false
     }
@@ -7437,6 +7958,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 142,
+        "auditor": null,
         "token": "BCSwolmNUc",
         "finished": false
     }
@@ -7448,6 +7970,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 143,
+        "auditor": null,
         "token": "HdlmdlRrBX",
         "finished": false
     }
@@ -7459,6 +7982,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 144,
+        "auditor": null,
         "token": "OBpMCKkBgC",
         "finished": false
     }
@@ -7470,6 +7994,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 145,
+        "auditor": null,
         "token": "CtmYQHAiyG",
         "finished": false
     }
@@ -7481,6 +8006,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 146,
+        "auditor": null,
         "token": "vlpRZulZAI",
         "finished": false
     }
@@ -7492,6 +8018,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 147,
+        "auditor": null,
         "token": "LEcvTIPLpN",
         "finished": false
     }
@@ -7503,6 +8030,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 148,
+        "auditor": null,
         "token": "lYNBaIHVzj",
         "finished": false
     }
@@ -7514,6 +8042,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 149,
+        "auditor": null,
         "token": "ycoOApwsMw",
         "finished": false
     }
@@ -7525,6 +8054,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 150,
+        "auditor": null,
         "token": "ArCNUbdYKs",
         "finished": false
     }
@@ -7536,6 +8066,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 151,
+        "auditor": null,
         "token": "ThGFDXHtMu",
         "finished": false
     }
@@ -7547,6 +8078,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 152,
+        "auditor": null,
         "token": "hUTxLmysEW",
         "finished": false
     }
@@ -7558,6 +8090,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 153,
+        "auditor": null,
         "token": "NsADzxPxuf",
         "finished": false
     }
@@ -7569,6 +8102,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 154,
+        "auditor": null,
         "token": "woKdVxwNnf",
         "finished": false
     }
@@ -7580,6 +8114,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 155,
+        "auditor": null,
         "token": "SKsbxqPJaO",
         "finished": false
     }
@@ -7591,6 +8126,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 156,
+        "auditor": null,
         "token": "gjKZWdzpHI",
         "finished": false
     }
@@ -7602,6 +8138,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 157,
+        "auditor": null,
         "token": "NkIFbOAAyq",
         "finished": false
     }
@@ -7613,6 +8150,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 158,
+        "auditor": null,
         "token": "aNnDZJFFEB",
         "finished": false
     }
@@ -7624,6 +8162,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 159,
+        "auditor": null,
         "token": "DliCgiFOEQ",
         "finished": false
     }
@@ -7635,6 +8174,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 160,
+        "auditor": null,
         "token": "EgZsrnvoob",
         "finished": false
     }
@@ -7646,6 +8186,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 161,
+        "auditor": null,
         "token": "BcWSQUIMza",
         "finished": false
     }
@@ -7657,6 +8198,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 162,
+        "auditor": null,
         "token": "sYPtGpfTDe",
         "finished": false
     }
@@ -7668,6 +8210,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 163,
+        "auditor": null,
         "token": "rHvgKkRSfR",
         "finished": false
     }
@@ -7679,6 +8222,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 164,
+        "auditor": null,
         "token": "BqQLAtkGsp",
         "finished": false
     }
@@ -7690,6 +8234,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 165,
+        "auditor": null,
         "token": "NcmTGBiUvg",
         "finished": false
     }
@@ -7701,6 +8246,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 166,
+        "auditor": null,
         "token": "lAWSQmDrge",
         "finished": false
     }
@@ -7712,6 +8258,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 167,
+        "auditor": null,
         "token": "tgkrqwRHyy",
         "finished": false
     }
@@ -7723,6 +8270,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 168,
+        "auditor": null,
         "token": "viFMwwYcFA",
         "finished": false
     }
@@ -7734,6 +8282,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 169,
+        "auditor": null,
         "token": "XpIHXZVwfj",
         "finished": false
     }
@@ -7745,6 +8294,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 170,
+        "auditor": null,
         "token": "orTsJtFqwT",
         "finished": false
     }
@@ -7756,6 +8306,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 171,
+        "auditor": null,
         "token": "khfwBtDffm",
         "finished": false
     }
@@ -7767,6 +8318,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 172,
+        "auditor": null,
         "token": "dPpZFIoBMR",
         "finished": false
     }
@@ -7778,6 +8330,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 173,
+        "auditor": null,
         "token": "zZoevdlvZP",
         "finished": false
     }
@@ -7789,6 +8342,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 174,
+        "auditor": null,
         "token": "WooylhtbGj",
         "finished": false
     }
@@ -7800,6 +8354,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 175,
+        "auditor": null,
         "token": "SAbKwnArCf",
         "finished": false
     }
@@ -7811,6 +8366,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 176,
+        "auditor": null,
         "token": "vKIGyHxxXH",
         "finished": false
     }
@@ -7822,6 +8378,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 177,
+        "auditor": null,
         "token": "vKdFEhbQuN",
         "finished": false
     }
@@ -7833,6 +8390,7 @@
         "survey": 7,
         "esea_account": 6,
         "respondent": 178,
+        "auditor": null,
         "token": "xzgGCTXBWZ",
         "finished": false
     }
@@ -7844,6 +8402,7 @@
         "survey": 5,
         "esea_account": 1,
         "respondent": 179,
+        "auditor": null,
         "token": "accountant",
         "finished": false
     }
@@ -7855,6 +8414,7 @@
         "survey": 5,
         "esea_account": 2,
         "respondent": 180,
+        "auditor": null,
         "token": "accountant",
         "finished": false
     }
@@ -7866,6 +8426,7 @@
         "survey": 6,
         "esea_account": 5,
         "respondent": 182,
+        "auditor": null,
         "token": "accountant",
         "finished": false
     }
@@ -7877,6 +8438,7 @@
         "survey": 8,
         "esea_account": 5,
         "respondent": 182,
+        "auditor": null,
         "token": "accountant",
         "finished": false
     }
@@ -7888,6 +8450,7 @@
         "survey": 6,
         "esea_account": 6,
         "respondent": 183,
+        "auditor": null,
         "token": "accountant",
         "finished": false
     }
@@ -7899,6 +8462,7 @@
         "survey": 8,
         "esea_account": 6,
         "respondent": 183,
+        "auditor": null,
         "token": "accountant",
         "finished": false
     }
@@ -7910,6 +8474,7 @@
         "survey": 5,
         "esea_account": 17,
         "respondent": 184,
+        "auditor": null,
         "token": "accountant",
         "finished": false
     }
@@ -7921,6 +8486,7 @@
         "survey": 6,
         "esea_account": 18,
         "respondent": 185,
+        "auditor": null,
         "token": "accountant",
         "finished": false
     }
@@ -7932,6 +8498,7 @@
         "survey": 8,
         "esea_account": 18,
         "respondent": 185,
+        "auditor": null,
         "token": "accountant",
         "finished": false
     }
@@ -7943,6 +8510,7 @@
         "survey": 6,
         "esea_account": 19,
         "respondent": 186,
+        "auditor": null,
         "token": "accountant",
         "finished": false
     }
@@ -7954,6 +8522,7 @@
         "survey": 8,
         "esea_account": 19,
         "respondent": 186,
+        "auditor": null,
         "token": "accountant",
         "finished": false
     }
@@ -7965,6 +8534,7 @@
         "survey": 6,
         "esea_account": 20,
         "respondent": 187,
+        "auditor": null,
         "token": "accountant",
         "finished": true
     }
@@ -7976,6 +8546,7 @@
         "survey": 8,
         "esea_account": 20,
         "respondent": 187,
+        "auditor": null,
         "token": "accountant",
         "finished": false
     }
@@ -7987,6 +8558,7 @@
         "survey": 6,
         "esea_account": 21,
         "respondent": 188,
+        "auditor": null,
         "token": "accountant",
         "finished": true
     }
@@ -7998,8 +8570,261 @@
         "survey": 8,
         "esea_account": 21,
         "respondent": 188,
+        "auditor": null,
         "token": "accountant",
+        "finished": true
+    }
+},
+{
+    "model": "core.surveyresponse",
+    "pk": 194,
+    "fields": {
+        "survey": 7,
+        "esea_account": 20,
+        "respondent": 189,
+        "auditor": null,
+        "token": "QfOkKGOsRq",
         "finished": false
+    }
+},
+{
+    "model": "core.surveyresponse",
+    "pk": 195,
+    "fields": {
+        "survey": 7,
+        "esea_account": 20,
+        "respondent": 190,
+        "auditor": null,
+        "token": "IgTSqZRNsF",
+        "finished": false
+    }
+},
+{
+    "model": "core.surveyresponse",
+    "pk": 196,
+    "fields": {
+        "survey": 7,
+        "esea_account": 20,
+        "respondent": 191,
+        "auditor": null,
+        "token": "EOjCVSPzGp",
+        "finished": false
+    }
+},
+{
+    "model": "core.surveyresponse",
+    "pk": 197,
+    "fields": {
+        "survey": 7,
+        "esea_account": 20,
+        "respondent": 192,
+        "auditor": null,
+        "token": "AspDVFIXHh",
+        "finished": false
+    }
+},
+{
+    "model": "core.surveyresponse",
+    "pk": 198,
+    "fields": {
+        "survey": 7,
+        "esea_account": 20,
+        "respondent": 193,
+        "auditor": null,
+        "token": "PjCSDyHSTh",
+        "finished": false
+    }
+},
+{
+    "model": "core.surveyresponse",
+    "pk": 199,
+    "fields": {
+        "survey": 7,
+        "esea_account": 20,
+        "respondent": 194,
+        "auditor": null,
+        "token": "YvFVSgBDEf",
+        "finished": false
+    }
+},
+{
+    "model": "core.surveyresponse",
+    "pk": 200,
+    "fields": {
+        "survey": 7,
+        "esea_account": 20,
+        "respondent": 195,
+        "auditor": null,
+        "token": "jlFThlVtUk",
+        "finished": false
+    }
+},
+{
+    "model": "core.surveyresponse",
+    "pk": 201,
+    "fields": {
+        "survey": 7,
+        "esea_account": 20,
+        "respondent": 196,
+        "auditor": null,
+        "token": "zvXvndXOaN",
+        "finished": false
+    }
+},
+{
+    "model": "core.surveyresponse",
+    "pk": 202,
+    "fields": {
+        "survey": 7,
+        "esea_account": 20,
+        "respondent": 197,
+        "auditor": null,
+        "token": "luIRNDLZIA",
+        "finished": false
+    }
+},
+{
+    "model": "core.surveyresponse",
+    "pk": 203,
+    "fields": {
+        "survey": 7,
+        "esea_account": 20,
+        "respondent": 198,
+        "auditor": null,
+        "token": "tgtXMOGtZW",
+        "finished": false
+    }
+},
+{
+    "model": "core.surveyresponse",
+    "pk": 204,
+    "fields": {
+        "survey": 7,
+        "esea_account": 20,
+        "respondent": 199,
+        "auditor": null,
+        "token": "IJZvqCjCfJ",
+        "finished": false
+    }
+},
+{
+    "model": "core.surveyresponse",
+    "pk": 205,
+    "fields": {
+        "survey": 7,
+        "esea_account": 20,
+        "respondent": 200,
+        "auditor": null,
+        "token": "LKfOOntRcx",
+        "finished": false
+    }
+},
+{
+    "model": "core.surveyresponse",
+    "pk": 206,
+    "fields": {
+        "survey": 7,
+        "esea_account": 20,
+        "respondent": 201,
+        "auditor": null,
+        "token": "tgLtAwzKkl",
+        "finished": false
+    }
+},
+{
+    "model": "core.surveyresponse",
+    "pk": 207,
+    "fields": {
+        "survey": 7,
+        "esea_account": 20,
+        "respondent": 202,
+        "auditor": null,
+        "token": "LwjxoowAvl",
+        "finished": false
+    }
+},
+{
+    "model": "core.surveyresponse",
+    "pk": 208,
+    "fields": {
+        "survey": 7,
+        "esea_account": 20,
+        "respondent": 203,
+        "auditor": null,
+        "token": "MMuqOegTXY",
+        "finished": false
+    }
+},
+{
+    "model": "core.surveyresponse",
+    "pk": 209,
+    "fields": {
+        "survey": 7,
+        "esea_account": 20,
+        "respondent": 204,
+        "auditor": null,
+        "token": "qIPSGbHAMF",
+        "finished": false
+    }
+},
+{
+    "model": "core.surveyresponse",
+    "pk": 210,
+    "fields": {
+        "survey": 7,
+        "esea_account": 20,
+        "respondent": 205,
+        "auditor": null,
+        "token": "lOYtNWqpEL",
+        "finished": false
+    }
+},
+{
+    "model": "core.surveyresponse",
+    "pk": 211,
+    "fields": {
+        "survey": 7,
+        "esea_account": 20,
+        "respondent": 206,
+        "auditor": null,
+        "token": "dBhuNatkpW",
+        "finished": false
+    }
+},
+{
+    "model": "core.surveyresponse",
+    "pk": 212,
+    "fields": {
+        "survey": 7,
+        "esea_account": 20,
+        "respondent": 207,
+        "auditor": null,
+        "token": "gYqylNJiPs",
+        "finished": false
+    }
+},
+{
+    "model": "core.surveyresponse",
+    "pk": 213,
+    "fields": {
+        "survey": 7,
+        "esea_account": 20,
+        "respondent": 208,
+        "auditor": null,
+        "token": "EuYrhNiDwH",
+        "finished": false
+    }
+},
+{
+    "model": "core.surveyresponse",
+    "pk": 276,
+    "fields": {
+        "survey": 7,
+        "esea_account": 21,
+        "respondent": 271,
+        "auditor": null,
+        "token": "xSLCuWFFFn",
+        "finished": true
     }
 },
 {

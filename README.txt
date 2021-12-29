@@ -23,6 +23,7 @@ Sietse Overbeek, Assistant Professor in Utrecht University, has supervised the d
 Niels Bik developed the first version, including features to register organisations and networks, specify basic method components such as topics and indicators, and interpret the method specifications in runtime; his code is kept in a separate github repository https://github.com/nielsrowinbik/open-sea
 Henny Kruiper developed a feature to specify and deliver stakeholder surveys; his code is kept in a separate github repository https://github.com/nielsrowinbik/open-sea
 Tijmen Derikx developed a feature to specify and automatically generate infographics that present the account results; ; his code is kept in a separate github repository https://github.com/nielsrowinbik/open-sea
+Diederik van Rijen has merged branches (i) and (ii) onto a new version of the tool, retaining most of the features from each branch and improving the usability. 
 Jelle Verschragen (user interface designer), Tjeerd Verschragen (user interface developer), Tino Trok (backend developer), Matthew Kunkeler (business manager), Michiel Auerbach (project manager), Andy Haxby (Director at Competa), all contributed to the development of the tool while working for Competa IT https://competa.com
 Sara Martín, Yulie Anneria Sinaga and Gudrun Thorsteinsdottir contributed theoretical knowledge on ESEA methods that is valuable for the tool development and valorisation.
 

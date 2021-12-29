@@ -39,6 +39,25 @@
                 <formula-form-correct :formula="lazyIndirectIndicator.formula" :keyy="lazyIndirectIndicator.key" @output="updateFormula" />
                 <div class="p-error p-text-left p-text-italic p-pt-1" v-for="error in formulaErrors" :key="error">{{error}}</div>
             </div>
+
+            <div v-if="active" class="p-grid p-col-12 p-mx-0 p-px-0 p-text-left">
+                <div class="p-col-6 p-field p-my-2">
+                    <span class="p-float-label">
+                        <InputText type="number" id="cutofflowerlimit" v-model="lazyIndirectIndicator.cut_off_lower_limit" />
+                        <!-- <InputText id="calculationkey" ref="keyinput" type="text" v-model="lazyIndirectIndicator.key"  :class="{'borderless': keyErrors.length}" :disabled="!active" /> -->
+                        <label for="cutofflowerlimit">Cut-off Lower Limit</label>
+                    </span>
+                    <div class="p-error p-text-italic" v-for="error in cutOffLowerLimitErrors" :key="error">{{error}}</div>
+                </div>
+                <div class="p-col-6 p-field p-my-2">
+                    <span class="p-float-label">
+                        <InputText type="number" id="cutoffupperlimit" v-model="lazyIndirectIndicator.cut_off_upper_limit" />
+                        <!-- <InputText id="calculationame" type="text" v-model="lazyIndirectIndicator.name" :class="{'borderless': nameErrors.length}" :disabled="!active" /> -->
+                        <label for="cutoffupperlimit">Cut-off Upper Limit</label>
+                    </span>
+                    <div class="p-error p-text-italic p-pt-1" v-for="error in cutOffUpperLimitErrors" :key="error">{{error}}</div>
+                </div>
+            </div>
         </form>
         <calculation-card v-if="!active" :keyy="indirectIndicator.key" :name="indirectIndicator.name" :formula="indirectIndicator.formula" :valid="valid" :hover="hover" @mouseover="hover=true" @mouseleave="hover=false" />
     </div>
@@ -80,7 +99,9 @@
             lazyIndirectIndicator: {
                 key: { required },
                 name: { required, maxLength: maxLength(255) },
-                formula: { required }
+                formula: { required },
+                cut_off_lower_limit: {},
+                cut_off_upper_limit: {}
             }
         },
         data () {
@@ -115,6 +136,18 @@
                     this.errors.formula
                 )
             },
+            cutOffLowerLimitErrors () {
+                return HandleValidationErrors(
+                    this.v$.lazyIndirectIndicator.cut_off_lower_limit,
+                    this.errors.cut_off_lower_limit
+                )
+            },
+            cutOffUpperLimitErrors () {
+                return HandleValidationErrors(
+                    this.v$.lazyIndirectIndicator.cut_off_upper_limit,
+                    this.errors.cut_off_upper_limit
+                )
+            },
             valid () {
                 return (!this.v$.lazyIndirectIndicator.$invalid && (this.lazyIndirectIndicator.id > 0))
             }
@@ -133,6 +166,8 @@
                     this.v$.lazyIndirectIndicator.$touch()
                     if (this.v$.lazyIndirectIndicator.$invalid) { return }
                     if (isEqual(this.indirectIndicator, val)) { return }
+                    // val.cut_off_lower_limit = parseFloat(val.cut_off_lower_limit)
+                    // val.cut_off_upper_limit = parseFloat(val.cut_off_upper_limit)
                     this.$emit('input', val)
                     }, 500)
                 },

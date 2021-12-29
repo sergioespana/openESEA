@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from ..models import Survey, SurveyResponse, QuestionResponse, DirectIndicator
+from ..models import Survey, SurveyResponse, QuestionResponse
 from .question_response import QuestionResponseSerializer
 
 import random
@@ -47,6 +47,7 @@ class SurveyResponseCalculationSerializer(serializers.Serializer):
     description = serializers.CharField(read_only=True)
     formula = serializers.CharField(read_only=True)
     calculation = serializers.CharField(read_only=True)
+    absolute_weights = serializers.ListField(required=False)
     value = serializers.CharField(read_only=True)
     responses = serializers.ListField(child=serializers.CharField(read_only=True))
 

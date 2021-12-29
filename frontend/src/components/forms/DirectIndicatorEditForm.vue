@@ -52,6 +52,26 @@
                         </span>
                     </div>
                 </div>
+
+                <div v-if="active" class="p-grid p-col-12 p-mx-0 p-px-0 p-text-left">
+                    <div class="p-col-6 p-field p-my-2">
+                        <span class="p-float-label">
+                            <InputText type="number" id="cutofflowerlimit" v-model="lazyIndicator.cut_off_lower_limit" />
+                            <!-- <InputText id="calculationkey" ref="keyinput" type="text" v-model="lazyIndirectIndicator.key"  :class="{'borderless': keyErrors.length}" :disabled="!active" /> -->
+                            <label for="cutofflowerlimit">Cut-off Lower Limit</label>
+                        </span>
+                        <div class="p-error p-text-italic" v-for="error in cutOffLowerLimitErrors" :key="error">{{error}}</div>
+                    </div>
+                    <div class="p-col-6 p-field p-my-2">
+                        <span class="p-float-label">
+                            <InputText type="number" id="cutoffupperlimit" v-model="lazyIndicator.cut_off_upper_limit" />
+                            <!-- <InputText id="calculationame" type="text" v-model="lazyIndirectIndicator.name" :class="{'borderless': nameErrors.length}" :disabled="!active" /> -->
+                            <label for="cutoffupperlimit">Cut-off Upper Limit</label>
+                        </span>
+                        <div class="p-error p-text-italic p-pt-1" v-for="error in cutOffUpperLimitErrors" :key="error">{{error}}</div>
+                    </div>
+                </div>
+
                 <div v-if="lazyIndicator.datatype && datatypeWithOptions" class="p-grid p-col-12 p-m-0 p-p-0" style="border: 1px solid lightgrey;">
                     <div class="p-col-1">Order</div>
                     <div class="p-col-10 p-text-left">Text</div>
@@ -127,6 +147,18 @@ export default {
         nameErrors () {
             return HandleValidationErrors(this.v$.lazyIndicator.name, this.errors.name)
         },
+        cutOffLowerLimitErrors () {
+                return HandleValidationErrors(
+                    this.v$.lazyIndicator.cut_off_lower_limit,
+                    this.errors.cut_off_lower_limit
+                )
+        },
+        cutOffUpperLimitErrors () {
+            return HandleValidationErrors(
+                this.v$.lazyIndicator.cut_off_upper_limit,
+                this.errors.cut_off_upper_limit
+            )
+        },
         valid () {
             return ((Object.entries(this.errors).length === 0) && !this.v$.lazyIndicator.$invalid && (this.lazyIndicator.id > 0))
         }
@@ -161,7 +193,9 @@ export default {
         lazyIndicator: {
             key: { required },
             datatype: { required },
-            name: { required, maxLength: maxLength(120) }
+            name: { required, maxLength: maxLength(120) },
+            cut_off_lower_limit: {},
+            cut_off_upper_limit: {}
         }
     },
     methods: {

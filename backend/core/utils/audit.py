@@ -82,7 +82,7 @@ def audit_data(eseaaccount_pk):
 
     # print('---->', df[indicators[0]])
     # 'recommended audit' per question that has numerical values
-    for indicator in list(indicators.values())[20:28]:
+    for indicator in list(indicators.values())[:]:
         if indicator.datatype in ['integer', 'double']:
             if indicator.datatype == 'integer':
                 indicator_array = df.loc[:, indicator.key].astype(int)

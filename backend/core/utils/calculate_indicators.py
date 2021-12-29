@@ -2,6 +2,8 @@ from typing import Dict, List
 from ..models import DirectIndicator, IndirectIndicator
 from ..classes import Indicator
 
+import re
+
 
 def calculate_indicators(direct_indicators) -> Dict[str, Indicator]:
     indicators = {}
@@ -16,7 +18,6 @@ def calculate_indicators(direct_indicators) -> Dict[str, Indicator]:
 
 def calculate_indicators(indirect_indicators: List[IndirectIndicator], direct_indicators: List[DirectIndicator],) -> Dict[str, Indicator]:
     indicators = merge_indicators(indirect_indicators, direct_indicators)
- 
     # for indicator in indicators.values():
     #     calculate_indicator(indicator, indicators)
     
@@ -28,6 +29,9 @@ def calculate_indicators(indirect_indicators: List[IndirectIndicator], direct_in
     for indicator in indicators.values():
         if indicator.value is None:
             calculate_indicator(indicator, indicators)
+
+    for indicator in indicators.values():
+        calculate_absolute_weights(indicator, indicators)
 
     # for indicator in indicators.values():
     #     if indicator.value is None:
@@ -58,6 +62,27 @@ def calculate_indicator(indicator, value_list) -> str:
         outcome = indicator.calculate()
 
         return outcome
+
+def calculate_absolute_weights(indicator, indicator_list) -> str:
+    print('--------->', indicator.key)
+    weight_dict = {}
+    if isinstance(indicator, IndirectIndicator) and len(indicator.calculation_keys):
+        weight_finder_regex = re.compile(r"[0-9].?\d*\s*\*\s*\[.*?\]")
+
+        indicatorweights = re.findall(weight_finder_regex, indicator.formula)
+
+        for indicatorweight in indicatorweights:
+            weight, indicatorkey = indicatorweight.split("*")
+            indicatorkey = indicatorkey.strip()[1:-1]
+            weight_dict[indicatorkey] = {'indicator': indicatorkey, 'weight': weight }
+            child_indicator = indicator_list[indicatorkey]
+
+            weight_dict[indicatorkey]['child'] = calculate_absolute_weights(child_indicator, indicator_list)
+
+        absolute_weights = indicator.find_weights(weight_dict)
+        
+        return absolute_weights
+
 
 
 def map_responses_by_indicator(direct_indicators, question_responses) -> None:

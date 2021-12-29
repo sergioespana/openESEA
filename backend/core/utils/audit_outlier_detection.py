@@ -22,20 +22,26 @@ def outlier_detection(organisation, indicator, data):
     data_mean = np.mean(data)
     print(data, data_mean)
     
-    if indicator.cut_off_lower_limit and indicator.cut_off_upper_limit:                 # indicator.indicator_audit object:
+    data_std = np.std(data)
+    anomaly_cut_off = data_std * 3
+    print('------', anomaly_cut_off)
+
+    if indicator.cut_off_lower_limit:
         lower_limit = indicator.cut_off_lower_limit
+    else:
+        lower_limit  = data_mean - anomaly_cut_off 
+
+    if indicator.cut_off_upper_limit:
         upper_limit = indicator.cut_off_upper_limit
     else:
-        data_std = np.std(data)
-        anomaly_cut_off = data_std * 3
-        print('------', anomaly_cut_off)
-        lower_limit  = data_mean - anomaly_cut_off 
         upper_limit = data_mean + anomaly_cut_off
 
     # Generate outliers
     #for index, value in data.iteritems():
     value = data[organisation]
+    
     print('value:', value, 'upper_limit:', upper_limit, 'lower_limit:', lower_limit)
+
     if value > upper_limit or value < lower_limit:
         return True
     return False

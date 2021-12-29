@@ -51,9 +51,10 @@ class IndirectIndicator(models.Model):
         (SCORING, "scoring")
     )
     
-    type = models.CharField(max_length=50, blank=False, choices=INDICATOR_TYPES, default="SCORING")
+    type = models.CharField(max_length=50, blank=False, choices=INDICATOR_TYPES, default="scoring")
 
     calculation = ''
+    absolute_weights = []
     value = None
     has_conditionals = False
     exception = None
@@ -82,6 +83,19 @@ class IndirectIndicator(models.Model):
         if self.key in calculation_keys_uniques:
             calculation_keys_uniques.remove(self.key)
         return calculation_keys_uniques
+
+
+    def find_weights(self, weight_dict):
+        print('---->', self.key, weight_dict)
+        self.absolute_weights = [weight_dict]
+
+        return self.absolute_weights
+
+        # # (0.3 * [gender_equity_score]) + (0.4 *[environmental_impact_score]) + (0.3 *[workplace_quality_score])
+        # # re.compile(r"\* \[(.*?)\]")
+        # weight_finder_regex = re.compile(r"[0-9].?\d*\s*\*\s*\[.*?\]")
+
+        # indicatorweights = re.findall(weight_finder_regex, self.formula)
 
     # Replaces indicator keys with corresponding value to be able to calculate the indirect indicator (used in 'utils > calculate_indicators')
     def find_values(self, key_value_list):

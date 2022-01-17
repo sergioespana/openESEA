@@ -11,10 +11,11 @@
                     <Column field="section.name" header="Section"></Column>
                     <Column field="name" header="name" sortable></Column>
                     <Column field="response" header="Responses" sortable></Column>
-                    <Column field="recommendations" header="Recommendations">
+                    <Column field="status" header="Status">
                     </Column>
                     <Column headerStyle="width: 10rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
                         <template #body="">
+                            Open
                             <Button icon="pi pi-check" disabled="true" class="p-button-sm" />
                         </template>
                     </Column>
@@ -36,20 +37,20 @@ export default {
                 {
                     name: 'What is the total number of men staff?',
                     response: 5,
-                    recommendations: 'Awaiting documentation',
+                    status: 'Awaiting documentation',
                     section: { name: 'Gender' }
                 },
                 {
                     name: 'What is the total number of women staff?',
                     response: 7,
-                    recommendations: 'Open',
+                    status: 'Open',
                     section: { name: 'Gender' }
 
                 },
                 {
                     name: 'What is the average monthly salary per employee?',
                     response: '$4000',
-                    recommendations: 'Verified',
+                    status: 'Verified',
                     section: { name: 'Salary' }
                 }
             ]

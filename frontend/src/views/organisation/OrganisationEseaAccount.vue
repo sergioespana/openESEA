@@ -79,6 +79,94 @@ http://localhost:8081/organisation/1/esea-accounts/1
             <Button label="Go to Method" @click="goToMethod" />
         </TabPanel>
          <TabPanel header="Auditing">
+             <Card v-if="true" class="p-text-left p-m-2">
+                 <template #title>
+                    Assurance
+                 </template>
+                 <template #subtitle>
+                     Provide assurance?
+                 </template>
+                 <template #content>
+                    Thank you for auditing {company name}.
+
+                    <p>Below you will find an overview of the audit status of all surveys.</p>
+
+                    <p>Do you wish to provide assurance on this ESEA account?</p>
+                 </template>
+                 <template #footer>
+                     <Button icon="pi pi-check" label="Provide Assurance" @click="GetAssurance()" />
+                     <Button icon="pi pi-times" label="No Assurance" @click="DenyAssurance()" class="p-button-secondary p-button-outlined" style="margin-left: .5em" />
+                 </template>
+             </Card>
+
+            <Card v-if="true" class="p-text-left p-m-2">
+                 <template #title>
+                    Assurance
+                 </template>
+                 <template #subtitle class="p-col-12">
+                    <div class="p-col-12 p-d-flex p-ai-center p-jc-between">
+                        Please write your assurance declaration below
+                        <Dropdown id="method"  placeholder="Assurance Level" />
+                    </div>
+                 </template>
+                 <template #content>
+                    <Textarea v-model="AssuranceDeclaration" :autoResize="true" rows="3" class="p-col-12" />
+                 </template>
+                 <template #footer>
+                     <Button icon="pi pi-check" label="Provide Assurance Declaration" @click="ConfirmAssurance()" />
+                 </template>
+             </Card>
+
+            <Card v-if="true" class="p-text-left p-m-2">
+                 <template #title>
+                    Assurance
+                 </template>
+                 <template #subtitle class="p-col-12">
+                    Why do you not wish to provide assurance?
+                 </template>
+                 <template #content>
+                    <Textarea v-model="AssuranceDeclarationPlaceholder" :autoResize="true" rows="3" class="p-col-12" />
+                 </template>
+                 <template #footer>
+                     <Button label="Submit" @click="ConfirmAssurance()" />
+                 </template>
+             </Card>
+
+            <Card v-if="true" class="p-text-left p-m-2">
+                 <template #title>
+                    Assurance
+                 </template>
+                 <template #content class="p-col-12">
+                    <div class="p-mr-5">
+                        <div class="p-grid">
+                            <div class="p-col-2 p-text-center"><i class="pi pi-check" style="font-size: 3rem; background-color: #689F38; color: white; border-radius: 50%; padding: 30px;"></i></div>
+                            <div class="p-col-10">
+                                <h3 class="p-mt-0 p-pt-0">Assurance Declaration</h3>
+                                {Assurance Declaration should be here }
+                            </div>
+                        </div>
+                        <h3 class="p-d-flex p-jc-end p-my-0 p-py-0">{ Assurance Level: Limited }</h3>
+                    </div>
+                 </template>
+             </Card>
+
+                        <Card v-if="true" class="p-text-left p-m-2">
+                 <template #title>
+                    Assurance
+                 </template>
+                 <template #content class="p-col-12">
+                    <div class="p-mr-5">
+                        <div class="p-grid">
+                            <div class="p-col-2 p-text-center"><i class="pi pi-times" style="font-size: 3rem; background-color: red; color: white; border-radius: 50%; padding: 30px;"></i></div>
+                            <div class="p-col-10">
+                                <h3 class="p-mt-0 p-pt-0">Assurance Declaration</h3>
+                                {Assurance Declination should be here }
+                            </div>
+                        </div>
+                    </div>
+                 </template>
+             </Card>
+
             <DataTable :value="eseaAccount.survey_response_by_survey" datakey="id" :rows="10" :paginator="true" :rowHover="true" v-model:filters="filters" filterDisplay="Menu" selectionMode="single" @row-select="goToSurveyFill"
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[10,25,50]"
             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
@@ -90,8 +178,9 @@ http://localhost:8081/organisation/1/esea-accounts/1
                             <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
                         </span>
                         <div>
-                            <Button label="Tool Menu" @click="toggle" :disabled="false" />
-                            <Menu id="overlay_menu" ref="menu" :model="items" :popup="true" />
+                            <Button label="Auditors" class="p-mr-2" @click="something" :disabled="false" />
+                            <Button label="Finish Account Audit" @click="finishAuditDialog = true" :disabled="false" />
+
                         </div>
                     </div>
                 </template>
@@ -101,10 +190,10 @@ http://localhost:8081/organisation/1/esea-accounts/1
                 <Column header="Status" headerStyle="width: 15rem; text-align: center" bodyStyle="text-align: center; overflow: visible" :style="permission ? '': 'display:none;'">
                     <template #body="{data}">
                         <div v-if="permission">
-                            <div v-if="data.auditobject">{{data.auditobject}}</div>
+                            <div v-if="data.auditobject">{{data.auditobject}} 'Documentation Upload'... + icon</div>
                             <Button v-else label="Start Audit" type="button" class="p-button-sm" @click="startAudit(data)"  style="width: 200px" />
                         </div>
-                        <div v-else></div>
+                        <div> Documentation Upload, FInished + icon</div>
                     </template>
                 </Column>
             </DataTable>
@@ -118,6 +207,16 @@ http://localhost:8081/organisation/1/esea-accounts/1
                 </div>
         </TabPanel>
     </TabView>
+
+        <Dialog v-model:visible="finishAuditDialog" style="width: 500px;" header="Finish Audit" :modal="true" dismissableMask="true">
+        <p>Are you sure you wish to finish the audit for this complete ESEA account?     </p>
+
+        <p>You will not be able to start new survey audits for this ESEA account after clicking 'Yes'.</p>
+        <template #footer>
+            <Button label="No" icon="pi pi-times" class="p-button-text" @click="finishAuditDialog = false" />
+            <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="finishAudit()" />
+        </template>
+    </Dialog>
 
     <Dialog v-model:visible="importEmployeesDialog" :style="{width: '900px'}" header="Import your stakeholders" :modal="true" class="p-fluid">
         <div class="p-d-flex p-jc-between p-ai-start p-p-5" style="border: 1px solid lightgrey;">
@@ -167,6 +266,7 @@ http://localhost:8081/organisation/1/esea-accounts/1
     import Listbox from 'primevue/listbox'
     import dateFixer from '../../utils/datefixer'
     import moment from 'moment'
+    import Dropdown from 'primevue/dropdown'
 
     import AuditForm from '../../components/forms/AuditForm'
 
@@ -174,7 +274,8 @@ http://localhost:8081/organisation/1/esea-accounts/1
         components: {
             ProgressBar,
             Listbox,
-            AuditForm
+            AuditForm,
+            Dropdown
         },
         data () {
             return {
@@ -190,6 +291,7 @@ http://localhost:8081/organisation/1/esea-accounts/1
                 deleteEseaAccountDialog: false,
                 importEmployeesDialog: false,
                 startAuditDialog: false,
+                finishAuditDialog: false,
                 surveyy: null,
                 selected_survey: null,
                 stakeholderupload: null,
@@ -206,7 +308,9 @@ http://localhost:8081/organisation/1/esea-accounts/1
                             this.$toast.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted', life: 3000 })
                         }
                     }
-                ]
+                ],
+                AssuranceDeclaration: 'Assurance Declaration',
+                AssuranceDeclarationPlaceholder: 'Motivation for not providing assurance'
             }
         },
         computed: {
@@ -317,6 +421,18 @@ http://localhost:8081/organisation/1/esea-accounts/1
                 this.selected_survey = data.id
                 this.startAuditDialog = true
                 console.log('start audit ---->', data.id)
+            },
+            finishAudit () {
+                console.log('finish audit')
+            },
+            GetAssurance () {
+                print()
+            },
+            DenyAssurance () {
+                print()
+            },
+            ConfirmAssurance () {
+                print()
             }
         }
     }

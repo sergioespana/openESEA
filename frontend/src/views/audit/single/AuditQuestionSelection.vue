@@ -14,7 +14,7 @@
                     <Column field="response" header="Responses" sortable></Column>
                     <Column field="recommendations" header="Recommendations">
                         <template #body="">
-                            status
+                            Recommended flag
                         </template>
                     </Column>
                     <Column headerStyle="width: 4rem; text-align: center" bodyStyle="text-align: center; overflow: visible">

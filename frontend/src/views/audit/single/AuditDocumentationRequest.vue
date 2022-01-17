@@ -14,7 +14,8 @@
                 <Column field="response" header="Responses" sortable></Column>
                 <Column field="recommendations" headerStyle="width: 5rem;">
                     <template #body="">
-                        <Tag v-if="true" severity="danger" value="Recommendation"></Tag>
+                        <!--<Tag v-if="true" severity="danger" value="Recommendation" @click="openRecommended()"></Tag>-->
+                        <Button label="Recommended" class="p-button-sm p-button-danger p-button-rounded p-py-1" @click="openRecommended()" />
                     </template>
                 </Column>
                 <Column headerStyle="width: 10rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
@@ -50,11 +51,11 @@
 </template>
 
 <script>
-    import Tag from 'primevue/tag'
+    // import Tag from 'primevue/tag'
 
 export default {
     components: {
-        Tag
+        // Tag
     },
     data () {
         return {
@@ -89,6 +90,9 @@ export default {
     methods: {
         saveMessage () {
             console.log('e')
+        },
+        openRecommended () {
+            print()
         }
     }
 }

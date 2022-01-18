@@ -62,6 +62,9 @@ class IndirectIndicator(models.Model):
     exception = None
     exception_detail = None
     responses = None
+    
+    # used to find absolute weights
+    expression = ''
 
     class Meta: 
         unique_together = ['key', 'method']
@@ -163,6 +166,7 @@ class IndirectIndicator(models.Model):
         # If a regular calculation can be performed
         else:
             try:
+                self.expression = self.calculation
                 self.value = eval(self.calculation)
                 return self.value
             except Exception as e:
@@ -251,6 +255,8 @@ class IndirectIndicator(models.Model):
                 if var != self.key:
                     raise Exception('Assignment variable does not match the key of this indirect indicator')
                 val = val.replace('"', '')
+                self.expression = val
+                print('====', self.key, val)
                 try:
                     val = eval(val)
                 except:

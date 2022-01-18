@@ -69,6 +69,7 @@ def calculate_absolute_weights(indicator, indicator_list) -> str:
     if isinstance(indicator, IndirectIndicator) and len(indicator.calculation_keys):
         weight_finder_regex = re.compile(r"[0-9].?\d*\s*\*\s*\[.*?\]")
 
+        # Should look within the formula when if/then is involved!!!!
         indicatorweights = re.findall(weight_finder_regex, indicator.formula)
 
         for indicatorweight in indicatorweights:

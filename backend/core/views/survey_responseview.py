@@ -134,8 +134,19 @@ class SurveyResponseViewSet(BaseModelViewSet):
             )
         return Response({})
 
+    @action(detail=False, methods=['get'])
+    def check_certification_triggers(self, request, organisation_pk, esea_account_pk):
+        # check if certification indicator is present in method indicators
+        # if yes --> get certification indicator
+        # get list of connected indicators
+        # get absolute weights
+        # sort descending from absolute weights
+        0.5 * 1, 0.4 * 10
+        # loop through all indicators and omit them one by one and check if certification threshold is still 
+        return Response({'Workss'})
+
     @action(detail=True, methods=["get"])
-    def calculations(self, request, organization_pk, method_pk, survey_pk, pk):
+    def calculations(self, request, organisation_pk, method_pk, survey_pk, pk):
         survey_response = get_object_or_404(self.get_queryset(), pk=pk)
         indirect_indicators = IndirectIndicator.objects.filter(topic__method=method_pk)
         direct_indicators = survey_response.survey.questions.all()

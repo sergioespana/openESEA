@@ -45,10 +45,12 @@ class IndirectIndicator(models.Model):
     
     PERFORMANCE = "performance"
     SCORING = "scoring"
+    CERTIFICATION = "certification"
 
     INDICATOR_TYPES = (
         (PERFORMANCE, "performance"),
-        (SCORING, "scoring")
+        (SCORING, "scoring"),
+        (CERTIFICATION, "certification")
     )
     
     type = models.CharField(max_length=50, blank=False, choices=INDICATOR_TYPES, default="scoring")

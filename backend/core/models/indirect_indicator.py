@@ -5,7 +5,6 @@ import statistics
 from .direct_indicator import DirectIndicator
 from .question_response import QuestionResponse
 
-
 find_square_bracket_keys = re.compile(r"\[(.*?)\]")
 
 
@@ -82,13 +81,24 @@ class IndirectIndicator(models.Model):
     # calculation_keys are all indicators that are used within the formula of this indirect indicator
     @property
     def calculation_keys(self):
-        calculation_keys =  re.findall(find_square_bracket_keys, self.calculation)
+        calculation_keys =  re.findall(find_square_bracket_keys, self.calculation) #self.formula.replace("\n", ""))
+        # print('*****************************', self.formula, self.calculation, calculation_keys)
         calculation_keys_uniques = list(set(calculation_keys))
 
         if self.key in calculation_keys_uniques:
             calculation_keys_uniques.remove(self.key)
         return calculation_keys_uniques
 
+
+    # Used for calculation of absolute weights
+    @property
+    def formula_keys(self):
+        formula_keys = re.findall(find_square_bracket_keys, self.formula)
+        calculation_keys_uniques = list(set(formula_keys)) 
+
+        if self.key in calculation_keys_uniques:
+            calculation_keys_uniques.remove(self.key)
+        return calculation_keys_uniques
 
     def find_weights(self, weight_dict):
         print('---->', self.key, weight_dict)
@@ -166,7 +176,7 @@ class IndirectIndicator(models.Model):
         # If a regular calculation can be performed
         else:
             try:
-                self.expression = self.calculation
+                self.expression = self.formula
                 self.value = eval(self.calculation)
                 return self.value
             except Exception as e:
@@ -180,13 +190,17 @@ class IndirectIndicator(models.Model):
         formula = list(filter(lambda x: x != '', formula))
         print(f'\n  {self.key}:::::::::: Start Conditional Calculations... \nformula: {formula}')
 
+        full_formula = self.formula.replace('IF', '@@IF').replace('ELSE', '##ELSE').replace('THEN', '%%THEN')
+        full_formula = [x.strip() for x in re.split('@@|##|%%', full_formula)]
+        full_formula = list(filter(lambda x: x != '', full_formula))
+
         ifs = 1
         elses = 0
         last_if = False
         search_else = False
         val = None
 
-        for cond in formula:
+        for i, cond in enumerate(formula):
             bracket_keys = list(set(re.findall(find_square_bracket_keys, cond)))
 
             if self.key in bracket_keys:
@@ -255,8 +269,11 @@ class IndirectIndicator(models.Model):
                 if var != self.key:
                     raise Exception('Assignment variable does not match the key of this indirect indicator')
                 val = val.replace('"', '')
-                self.expression = val
+                
                 print('====', self.key, val)
+                if self.key == 'workplace_quality_score':
+                    print('---->', full_formula[i])
+                self.expression = full_formula[i]
                 try:
                     val = eval(val)
                 except:

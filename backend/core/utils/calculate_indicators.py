@@ -33,6 +33,9 @@ def calculate_indicators(indirect_indicators: List[IndirectIndicator], direct_in
     for indicator in indicators.values():
         calculate_absolute_weights(indicator, indicators)
 
+        # if indicator.key == 'organisation_certification':
+        #     print('>>>>>>>>>>>>>>>>>>>>>>> expression', indicator.absolute_weights)
+
     # for indicator in indicators.values():
     #     if indicator.value is None:
     #         calculate_indicator(indicator, indicators)
@@ -64,14 +67,21 @@ def calculate_indicator(indicator, value_list) -> str:
         return outcome
 
 def calculate_absolute_weights(indicator, indicator_list) -> str:
-    print('--------->', indicator.key)
+    print('xxxxxxxxxxxxxxxxxxxxxxx')
     weight_dict = {}
-    if isinstance(indicator, IndirectIndicator) and len(indicator.calculation_keys):
+    try:
+        print('-->',indicator.calculation_keys, indicator.key, indicator.formula)
+    except:
+        pass
+    if isinstance(indicator, IndirectIndicator) and len(indicator.formula_keys):
         weight_finder_regex = re.compile(r"[0-9].?\d*\s*\*\s*\[.*?\]")
-
+        
         # Should look within the formula when if/then is involved!!!!
-        indicatorweights = re.findall(weight_finder_regex, indicator.formula)
-
+        print('>>>>>', indicator.value, indicator.expression)
+        if indicator.key == 'workplace_quality_score':
+            print('00000000000000',indicator.expression)
+        indicatorweights = re.findall(weight_finder_regex, indicator.expression)
+        print('========================================', indicatorweights, indicator.key, indicator.key, indicator.value)
         for indicatorweight in indicatorweights:
             weight, indicatorkey = indicatorweight.split("*")
             indicatorkey = indicatorkey.strip()[1:-1]
@@ -79,9 +89,9 @@ def calculate_absolute_weights(indicator, indicator_list) -> str:
             child_indicator = indicator_list[indicatorkey]
 
             weight_dict[indicatorkey]['child'] = calculate_absolute_weights(child_indicator, indicator_list)
-
-        absolute_weights = indicator.find_weights(weight_dict)
         
+        absolute_weights = indicator.find_weights(weight_dict)
+        print(absolute_weights)
         return absolute_weights
 
 

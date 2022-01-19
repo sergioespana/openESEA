@@ -1,8 +1,9 @@
 from django.shortcuts import get_object_or_404
 
-from .calculate_indicators import calculate_indicators, calculate_absolute_weights
-from ..models import EseaAccount, DirectIndicator, IndirectIndicator
+from .calculate_indicators import map_responses_by_indicator, calculate_indicators, calculate_absolute_weights
+from ..models import EseaAccount, DirectIndicator, IndirectIndicator, SurveyResponse, QuestionResponse
 import json
+
 
 def find_connected_indicators(indicator, indicators, keys = set()):
     if isinstance(indicator, IndirectIndicator) and len(indicator.calculation_keys):
@@ -21,6 +22,7 @@ def calculate_scoring_scheme(eseaaccount_pk):
     print(eseaaccount)
     try:
         certification_indicator = IndirectIndicator.objects.get(method=eseaaccount.method, type='certification')
+        print(certification_indicator)
     except IndirectIndicator.DoesNotExist:
         return('There is no Certification Indicator!')
 
@@ -50,10 +52,41 @@ def calculate_scoring_scheme(eseaaccount_pk):
             except:
                 print(key)
 
-    print(json.dumps(calculate_absolute_weights(indicators_dict['total_organisation_score'], indicators_dict), sort_keys=True, indent=4))
+    print('++', json.dumps(calculate_absolute_weights(indicators_dict['total_organisation_score'], indicators_dict), sort_keys=True, indent=4))
+
+
+    respondents = SurveyResponse.objects.filter(esea_account=eseaaccount_pk) #Respondent.objects.filter(organisation__esea_accounts=74)
+    responses = SurveyResponse.objects.filter(esea_account=eseaaccount_pk, finished=True)
+
+    question_responses = QuestionResponse.objects.filter(survey_response__esea_account=eseaaccount_pk, survey_response__finished=True)
+    map_responses_by_indicator(direct_indicators, question_responses)
+
+    indicators2 = calculate_indicators(indirect_indicators, direct_indicators)
+
+    '''
+    print(indirect_indicators)
+    indicators = 
+    for indicator in indicators.values():
+        try:
+            print('>>', indicator.expression, '-------->', indicator.value) #  indicator.calculation
+        except:
+            pass
+    print('>>>>>>>>>>>>>>>>>>', indicators)
+    '''
+    indicators_dict2 = {}
+    for indic in indicators2.values():
+        print(indic.calculation)
+        pass
+        indicators_dict2[indic.key] = indic
+    
+    # print('====', indicators_dict['total_organisation_score'].formula)
+
+    # print(calculate_absolute_weights(indicators_dict['total_organisation_score'], indicators_dict))
+    print('++', json.dumps(calculate_absolute_weights(indicators_dict2['total_organisation_score'], indicators_dict2), sort_keys=True, indent=4))
+    # print(json.dumps(calculate_absolute_weights(indicators_dict['total_organisation_score'], indicators_dict), sort_keys=True, indent=4))
 
     #for indicator in absolute_weights:
-    #    indicators = calculate_indicators(indirectindicators, directindicators)
+    #    
     return 'check'
 
     # indicators that aren't used for the certification_indicator
@@ -70,7 +103,7 @@ def calculate_scoring_scheme(eseaaccount_pk):
     # loop through all indicators and omit them one by one and check if certification threshold is still 
     '''
 
-    
+    [workplace_quality_score] = (0.3 * TUPLE_PAIR([public_salaries_score], 10)) + 0.3 * TUPLE_PAIR([public_salaries_score])
 
 
     total_organisation_score

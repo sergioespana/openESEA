@@ -19,22 +19,27 @@ def find_connected_indicators(indicator, indicators, keys = set()):
         return keys
 
 
-def recursive_weight_calculator(weight_dict, number=1, absolute_weights=[]):
+def recursive_weight_calculator(weight_dict, level=0, number=1, absolute_weights=[]):
     for i, item in enumerate(weight_dict):
+        level += 1
+        
         for indicator in weight_dict[i]:
-            weight = float(weight_dict[int(i)][indicator]['weight'])
-            
+            if level == 1:
+                number = 1
+                
+            weight = float(weight_dict[i][indicator]['weight'])
+            # print(f'level {level}: {indicator}: {number} * {weight}')
             outcome = number*weight
-            print(outcome, 'number', number, 'weight', weight)
+            
             absolute_weights.append({'indicator': indicator, 'absolute': round(outcome, 3)})
             
             # Checks if there's a sub indicator
             if len(weight_dict[i][indicator]['child'][0]) > 1:
                 number=weight
                 new_dict = weight_dict[i][indicator]['child']
-                recursive_weight_calculator(new_dict, number, absolute_weights)
-        
-            number = 1
+                
+                recursive_weight_calculator(new_dict, level, number, absolute_weights) 
+    level -= 1
             
     return absolute_weights
 
@@ -83,8 +88,16 @@ def calculate_scoring_scheme(eseaaccount_pk):
     absolute_weights = recursive_weight_calculator(weight_dict)
     sorted_absolute_weights = sorted(absolute_weights, key = lambda i: i['absolute'], reverse=True)
 
+    print(indicators_dict['total_organisation_score'].value)
+    total_score = indicators_dict['total_organisation_score'].value
     for indicator in sorted_absolute_weights:
-        print(indicator)
+        # print(indicator, type(indicators_dict[indicator['indicator']].value), indicators_dict[indicator['indicator']].value)
+        indicator_impact = indicator['absolute']*float(indicators_dict[indicator['indicator']].value)
+        corrected_total_score = total_score - indicator_impact
+        print()
+        print(f"impact = {total_score} - {indicator['absolute']} * {indicators_dict[indicator['indicator']].value}.")
+        print(f"{indicator['indicator']} has an impact of {indicator_impact} on the total score({total_score}), corrected total score: {corrected_total_score}!")
+        # indicator['indicator']}
         # loop through all indicators and omit them one by one and check if certification threshold is still 
     
     return 'check'

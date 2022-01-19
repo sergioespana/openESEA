@@ -66,22 +66,15 @@ def calculate_indicator(indicator, value_list) -> str:
 
         return outcome
 
+
 def calculate_absolute_weights(indicator, indicator_list) -> str:
-    print('xxxxxxxxxxxxxxxxxxxxxxx')
     weight_dict = {}
-    try:
-        print('-->',indicator.calculation_keys, indicator.key, indicator.formula)
-    except:
-        pass
+
     if isinstance(indicator, IndirectIndicator) and len(indicator.formula_keys):
-        weight_finder_regex = re.compile(r"[0-9].?\d*\s*\*\s*\[.*?\]")
+        weight_finder_regex = re.compile(r"0.\d*\s*\*\s*\[.*?\]") # [0-9].?\d*\s*\*\s*\[.*?\]
         
-        # Should look within the formula when if/then is involved!!!!
-        print('>>>>>', indicator.value, indicator.expression)
-        if indicator.key == 'workplace_quality_score':
-            print('00000000000000',indicator.expression)
         indicatorweights = re.findall(weight_finder_regex, indicator.expression)
-        print('========================================', indicatorweights, indicator.key, indicator.key, indicator.value)
+
         for indicatorweight in indicatorweights:
             weight, indicatorkey = indicatorweight.split("*")
             indicatorkey = indicatorkey.strip()[1:-1]
@@ -91,9 +84,8 @@ def calculate_absolute_weights(indicator, indicator_list) -> str:
             weight_dict[indicatorkey]['child'] = calculate_absolute_weights(child_indicator, indicator_list)
         
         absolute_weights = indicator.find_weights(weight_dict)
-        print(absolute_weights)
-        return absolute_weights
 
+        return absolute_weights
 
 
 def map_responses_by_indicator(direct_indicators, question_responses) -> None:

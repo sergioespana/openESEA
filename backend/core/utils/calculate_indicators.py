@@ -33,6 +33,9 @@ def calculate_indicators(indirect_indicators: List[IndirectIndicator], direct_in
     for indicator in indicators.values():
         calculate_absolute_weights(indicator, indicators)
 
+        # if indicator.key == 'organisation_certification':
+        #     print('>>>>>>>>>>>>>>>>>>>>>>> expression', indicator.absolute_weights)
+
     # for indicator in indicators.values():
     #     if indicator.value is None:
     #         calculate_indicator(indicator, indicators)
@@ -63,13 +66,14 @@ def calculate_indicator(indicator, value_list) -> str:
 
         return outcome
 
-def calculate_absolute_weights(indicator, indicator_list) -> str:
-    print('--------->', indicator.key)
-    weight_dict = {}
-    if isinstance(indicator, IndirectIndicator) and len(indicator.calculation_keys):
-        weight_finder_regex = re.compile(r"[0-9].?\d*\s*\*\s*\[.*?\]")
 
-        indicatorweights = re.findall(weight_finder_regex, indicator.formula)
+def calculate_absolute_weights(indicator, indicator_list) -> str:
+    weight_dict = {}
+
+    if isinstance(indicator, IndirectIndicator) and len(indicator.formula_keys):
+        weight_finder_regex = re.compile(r"0.\d*\s*\*\s*\[.*?\]") # [0-9].?\d*\s*\*\s*\[.*?\]
+        
+        indicatorweights = re.findall(weight_finder_regex, indicator.expression)
 
         for indicatorweight in indicatorweights:
             weight, indicatorkey = indicatorweight.split("*")
@@ -78,11 +82,10 @@ def calculate_absolute_weights(indicator, indicator_list) -> str:
             child_indicator = indicator_list[indicatorkey]
 
             weight_dict[indicatorkey]['child'] = calculate_absolute_weights(child_indicator, indicator_list)
-
-        absolute_weights = indicator.find_weights(weight_dict)
         
-        return absolute_weights
+        absolute_weights = indicator.find_weights(weight_dict)
 
+        return absolute_weights
 
 
 def map_responses_by_indicator(direct_indicators, question_responses) -> None:

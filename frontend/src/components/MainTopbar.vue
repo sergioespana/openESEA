@@ -7,7 +7,7 @@
                 <i class="pi pi-search" /><InputText v-model="search" placeholder="Search the ESEA App..." />
             </span>
         <div class="p-d-flex p-ai-center">
-            <div class="notification pi pi-bell"><span class="badge">69</span></div>
+            <div class="notification pi pi-bell"><span class="badge">42</span></div>
             <div class="profile p-d-flex p-ai-center p-pr-5" @click="goToProfile()">
             <i class="pi pi-user p-p-1 p-mx-4" style="border: 1px solid lightgrey; border-radius: 50%; font-size: 25px; color: lightgrey;"/>
             <h3 class="p-text-light" style="color: white;">{{ currentuser }}</h3>

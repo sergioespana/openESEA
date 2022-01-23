@@ -63,6 +63,7 @@ class IndirectIndicator(models.Model):
     exception_detail = None
     responses = None
     
+
     # used to find absolute weights
     expression = ''
 

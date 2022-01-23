@@ -19,7 +19,7 @@
         </SplitterPanel>
         <SplitterPanel :size="30" minSize="25" style="display: flex;">
             <div class="p-d-flex p-flex-column" style="height: 100%; width: 100%;">
-                <h2>Question name</h2>
+                <h2>{{indicator.name}}</h2>
                 <Accordion :multiple="true" class="accordion-custom">
                     <AccordionTab header="Response Information">
                         <div v-for="list in lists" :key="list.item" class="p-grid p-m-0 p-px-2 p-text-left" style="border: 1px solid #E9E9E9;">
@@ -78,6 +78,7 @@
 </template>
 
 <script>
+    import { mapState } from 'vuex'
     import Splitter from 'primevue/splitter'
     import SplitterPanel from 'primevue/splitterpanel'
     import Paginator from 'primevue/paginator'
@@ -99,14 +100,20 @@
         data () {
             return {
                 uploadDocumentationDialog: false,
-                images: [{ alt: 'Image 1' }, { alt: 'Image 2' }, { alt: 'Image 3' }],
-                lists: [{ item: 'Question', info: 'What is the total number of men staff?' }, { item: 'Response', info: '24' }, { item: 'Comment', info: 'Screenshots of db attached. See p6 for overview.' }, { item: 'Recommendation', info: true }],
+                images: [{ alt: 'Image 1' }, { alt: 'Image 2' }, { alt: 'Image 3' }], // 'What is the total number of men staff?',
                 documents: [{ name: 'employee_db_excerpt.png' }, { name: 'employee_db.xslx' }]
+            }
+        },
+        computed: {
+            ...mapState('auditIndicators', ['indicator']),
+            lists () {
+                return ([{ item: 'Question', info: this.indicator.name }, { item: 'Response', info: this.indicator.value }, { item: 'Message to Organisation', info: this.indicator.message }, { item: 'Comment', info: this.indicator.comment }, { item: 'Recommendation', info: true }])
             }
         },
         methods: {
             goToAuditAudit () {
                 console.log('go to auditaudit')
+                this.$router.push({ name: 'singleauditaudit', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } })
             },
             changeAuditStatus (status) {
                 console.log('change auditstatus to', status)

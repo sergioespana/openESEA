@@ -1,5 +1,4 @@
 <template>
-    {{selectedQuestions}}
     <div class="p-grid">
         <div class="p-col-12 p-as-start">
             <div class="p-d-flex p-ai-center p-jc-between">
@@ -17,15 +16,14 @@
                     <Column field="topic" header="Topic" sortable></Column>
                     <Column field="name" header="Name" sortable></Column>
                     <Column field="value" header="Value"></Column>
+                    <Column field="absolute" header="Absolute Weight" sortable />
                     <Column field="indicator_impact" header="Impact" sortable></Column>
-                    <Column header="Outliers" sortable>
-                        <template #body="">
-                            Y
-                        </template>
-                    </Column>
+                    <Column field="critical_impact" header="Critical Impact" sortable />
+                    <Column field="scoring_level" header="Level" sortable></Column>
+                    <Column field="outliers" header="Anomaly" sortable></Column>
                     <Column sortable>
-                        <template #body="">
-                            <Button label="Recommended" class="p-button-sm p-button-danger p-button-rounded p-py-1" @click="openRecommended()" />
+                        <template #body="row"> <!-- (row.data.critical_impact & row.data.outliers) -->
+                            <Button v-if="row.data.outliers || row.data.critical_impact" label="Recommended" class="p-button-sm p-button-rounded p-py-1" :class="(((row.data.critical_impact & row.data.outliers) == true) ? 'p-button-danger' : 'p-button-warning')" @click="openRecommended()" />
                         </template>
                     </Column>
                     <Column headerStyle="width: 4rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
@@ -51,7 +49,7 @@
             </div>
         </div>
         <div class="p-text-right p-col-12 p-as-end">
-            <Button class="p-my-5" label="Start audit for selected questions" @click="startAudit(selectedQuestions)" icon="pi pi-check" />
+            <Button class="p-my-5" label="Start audit for selected questions" @click="startAudit(selectedQuestions)" :disabled="!selectedQuestions.length" icon="pi pi-check" />
         </div>=""e
         <Dialog v-model:visible="helpDialog" style="width: 500px;" header="Help" :modal="true" dismissableMask="true">
             <p>Please select the questions that you want to audit.</p>
@@ -98,12 +96,16 @@ export default {
         }
     },
     computed: {
-        ...mapState('auditIndicators', ['indicators'])
+        ...mapState('auditIndicators', ['indicators', 'selectedIndicators'])
+    },
+    mounted () {
+        this.selectedQuestions = this.selectedIndicators
     },
     methods: {
         ...mapActions('auditIndicators', ['selectIndicators']),
         async startAudit (selectedQuestions) {
             await this.selectIndicators({ indicators: selectedQuestions })
+            this.$router.push({ name: 'documentationrequest', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } })
         },
         ShowOutlierDetectionMethods () {
             // Show outlier detection methods dialog

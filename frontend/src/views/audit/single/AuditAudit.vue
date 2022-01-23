@@ -6,14 +6,12 @@
                 <Button @click="(helpDialog = !helpDialog)" label="Help" class="p-button-sm p-button-warning" icon="pi pi-external-link" />
             </div>
             <div class="card">
-                 <DataTable :value="questions" rowGroupMode="rowspan" groupRowsBy="section.name" selectionMode="single" @row-select="goToQuestion" sortMode="single" sortField="section.name" :sortOrder="1" responsiveLayout="scroll"
+                 <DataTable :value="selectedIndicators" rowGroupMode="rowspan" groupRowsBy="section.name" selectionMode="single" @row-select="goToQuestion" sortMode="single" sortField="section.name" :sortOrder="1" responsiveLayout="scroll"
                 v-model:expandedRowGroups="expandedRowGroups" @rowgroupExpand="onRowGroupExpand" @rowgroupCollapse="onRowGroupCollapse" dataKey="name">
-                    <Column field="section.name" header="Section"></Column>
-                    <Column field="name" header="name" sortable></Column>
-                    <Column field="response" header="Responses" sortable></Column>
-                    <Column field="status" header="Status">
-                    </Column>
-                    <Column headerStyle="width: 10rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
+                    <Column field="topic" header="Topic"></Column>
+                    <Column field="name" header="Name" sortable></Column>
+                    <Column field="value" header="Value" sortable></Column>
+                    <Column header="Status" headerStyle="width: 10rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
                         <template #body="">
                             Open
                             <Button icon="pi pi-check" disabled="true" class="p-button-sm" />
@@ -29,45 +27,50 @@
 </template>
 
 <script>
-export default {
-    data () {
-        return {
-            helpDialog: false,
-            questions: [
-                {
-                    name: 'What is the total number of men staff?',
-                    response: 5,
-                    status: 'Awaiting documentation',
-                    section: { name: 'Gender' }
-                },
-                {
-                    name: 'What is the total number of women staff?',
-                    response: 7,
-                    status: 'Open',
-                    section: { name: 'Gender' }
+    import { mapState, mapActions } from 'vuex'
 
-                },
-                {
-                    name: 'What is the average monthly salary per employee?',
-                    response: '$4000',
-                    status: 'Verified',
-                    section: { name: 'Salary' }
-                }
-            ]
-        }
-    },
-    methods: {
-        finishAudit () {
-            console.log('finishing audit')
+    export default {
+        data () {
+            return {
+                helpDialog: false,
+                questions: [
+                    {
+                        name: 'What is the total number of men staff?',
+                        response: 5,
+                        status: 'Awaiting documentation',
+                        section: { name: 'Gender' }
+                    },
+                    {
+                        name: 'What is the total number of women staff?',
+                        response: 7,
+                        status: 'Open',
+                        section: { name: 'Gender' }
+
+                    },
+                    {
+                        name: 'What is the average monthly salary per employee?',
+                        response: '$4000',
+                        status: 'Verified',
+                        section: { name: 'Salary' }
+                    }
+                ]
+            }
         },
-        goToQuestion (question) {
-            console.log('go to Question')
-            question = { id: 5 }
-            if (question.id) {
-                // await this.setQuestion(question)
-                this.$router.push({ name: 'singleauditquestion', params: { QuestionId: question.id } })
+        computed: {
+            ...mapState('auditIndicators', ['selectedIndicators', 'indicator'])
+        },
+        methods: {
+            ...mapActions('auditIndicators', ['setSelectedIndicator']),
+            finishAudit () {
+                console.log('finishing audit')
+            },
+            async goToQuestion (question) {
+                await this.setSelectedIndicator({ id: question.data.id })
+                if (this.indicator.id) {
+                    // await this.setQuestion(question)
+                    this.$router.push({ name: 'singleauditquestion', params: { QuestionId: this.indicator.id } })
+                }
             }
         }
     }
-}
 </script>

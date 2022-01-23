@@ -17,8 +17,6 @@ from ..models import EseaAccount, SurveyResponse, Question, QuestionResponse, In
 
 
 def audit_data(eseaaccount_pk):
-    print('this works!', eseaaccount_pk)
-
     # hardcoded esea accounts for now
     eseaaccount = get_object_or_404(EseaAccount, pk=4) 
     eseaaccount21 = get_object_or_404(EseaAccount, pk=21)
@@ -50,7 +48,7 @@ def audit_data(eseaaccount_pk):
         df = df.append(account_dict, ignore_index=True)
 
     df = df.set_index('organisation_id')
-    print('===>', df)
+    #print('===>', df)
 
     ## Use outlier detection methods on the above created dataframe
 
@@ -95,13 +93,15 @@ def audit_data(eseaaccount_pk):
             plt.close()
             # benfordslaw = calculate_benfords_law(indicator_array)
             outliers = outlier_detection(eseaaccount.organisation, indicator, indicator_array)
-            print(indicator.key, outliers)
+            indicators[indicator.key].outliers = outliers
+            #print(indicator.key, outliers)
                 # Check if indicator/company combination is found in iso dataframe
                 # iso_forest = True if indicator.key in iso_row.index else False 
                 # scoring_scheme = calculate_scoring_scheme()
 
         # return indicators with for each (boxplot, benfordslaw, outliers, iso_forest, scoring_scheme)
 
+    return indicators
 
 
         # indicators =  [

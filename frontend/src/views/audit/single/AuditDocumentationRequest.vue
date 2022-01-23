@@ -24,15 +24,16 @@
                     </template>
                 </Column>
                 <Column headerStyle="width: 10rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
-                    <template #body="">
-                        <Button label="Message" icon="pi pi-plus" class="p-button-sm p-button-success" @click="messageToOrganisationDialog = true" />
+                    <template #body="row">
+                        <Button v-if="this.selectedQuestions.find(object => object.id === row.data.id)" label="Message" icon="pi pi-plus" class="p-button-sm p-button-success" @click="openMessage(row.data)" />
                     </template>
                 </Column>
             </DataTable>
         </div>
         </div>
         <div class="p-text-right p-col-12 p-as-end">
-            <Button class="p-my-5" label="Request documentation" icon="pi pi-check" />
+            <Button class="p-my-5" label="Request documentation" @click="requestDocumentation()" icon="pi pi-check" />
+            <Button class="p-my-5 p-ml-2" label="Audit" @click="requestDocumentation()" />
         </div>
     </div>
 
@@ -46,7 +47,7 @@
     </Dialog>
 
     <Dialog v-model:visible="messageToOrganisationDialog" style="width: 500px;" header="Message to Organisation" :modal="true" dismissableMask="true">
-        <h5>Receiver: Sjaak Chocolonely</h5>
+        <p>About: '{{MessagedIndicator.name}}'</p>
         <Textarea class="p-col-12" id="description" v-model="message" :autoResize="true" rows="3" />
         <template #footer>
             <Button label="Cancel" class="p-button-sm" icon="pi pi-times" @click="(messageToOrganisationDialog = false)" />
@@ -68,6 +69,7 @@ export default {
             helpDialog: false,
             messageToOrganisationDialog: false,
             message: '',
+            MessagedIndicator: null,
             expandedRowGroups: null,
             selectedQuestions: [],
             questions: [
@@ -97,8 +99,22 @@ export default {
         ...mapState('auditIndicators', ['indicators', 'selectedIndicators'])
     },
     methods: {
+        requestDocumentation () {
+            // Attach message to indicator
+            // this.selectedQuestions
+            this.$router.push({ name: 'singleauditaudit', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } })
+        },
+        openMessage (indicator) {
+            this.MessagedIndicator = indicator
+            this.messageToOrganisationDialog = true
+        },
         saveMessage () {
-            console.log('e')
+            this.MessagedIndicator.message = this.message
+            this.selectedIndicators = this.selectedIndicators.map((item) => {
+                if (item.id !== this.MessagedIndicator.id) { return item }
+                return Object.assign(item, this.MessagedIndicator)
+            })
+            this.messageToOrganisationDialog = false
         },
         openRecommended () {
             print()

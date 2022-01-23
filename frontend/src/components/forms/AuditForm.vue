@@ -58,7 +58,7 @@
         methods: {
             ...mapActions('auditIndicators', ['fetchIndicators']),
             async createNewAudit () {
-                await this.fetchIndicators({ oId: this.$route.params.OrganisationId, eaId: this.$route.params.EseaAccountId })
+                await this.fetchIndicators({ id: this.$route.params.EseaAccountId }) //  oId: this.$route.params.OrganisationId, eaId: this.$route.params.EseaAccountId
                 this.$router.push({ name: 'questionselection', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.survey } })
                 console.log('yess!', this.survey)
             },

@@ -19,6 +19,7 @@ import campaign from './modules/campaign'
 import eseaAccount from './modules/esea_account'
 import surveyResponse from './modules/method/survey/survey_response'
 import surveyResults from './modules/method/survey/survey_results'
+import auditIndicators from './modules/method/audit/audit_indicators'
 
 const vuexLocalStorage = new VuexPersistance({
   storage: window.localStorage
@@ -45,7 +46,8 @@ export default createStore({
     campaign,
     eseaAccount,
     surveyResponse,
-    surveyResults
+    surveyResults,
+    auditIndicators
   },
   plugins: [vuexLocalStorage.plugin]
 })

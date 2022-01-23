@@ -137,18 +137,18 @@ class SurveyResponseViewSet(BaseModelViewSet):
     @action(detail=False, methods=['get'])
     def check_certification_triggers(self, request, organisation_pk, esea_account_pk):
         print(IndirectIndicator.objects.get(type='certification'))
-        response = calculate_scoring_scheme(esea_account_pk)
-        print(type(response))# check if certification indicator is present in method indicators
+        indicators = calculate_scoring_scheme(esea_account_pk)
+        # check if certification indicator is present in method indicators
         # if yes --> get certification indicator
         # get list of connected indicators
         # get absolute weights
         # sort descending from absolute weights
         # 0.5 * 1, 0.4 * 10
-        # loop through all indicators and omit them one by one and check if certification threshold is still 
-        if isinstance(response, dict):
-            serializer = SurveyResponseCalculationSerializer(response.values(), many=True)
+        # loop through all indicators and omit them one by one and check if certification threshold is still
+        if isinstance(indicators, dict):
+            serializer = SurveyResponseCalculationSerializer(indicators.values(), many=True)
             return Response(serializer.data)
-        return Response({response})
+        return Response({'Error.'})
 
     @action(detail=True, methods=["get"])
     def calculations(self, request, organisation_pk, method_pk, survey_pk, pk):

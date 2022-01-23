@@ -1,4 +1,5 @@
 <template>
+    {{selectedQuestions}}
     <div class="p-grid">
         <div class="p-col-12 p-as-start">
             <div class="p-d-flex p-ai-center p-jc-between">
@@ -6,15 +7,25 @@
                 <Button @click="(helpDialog = !helpDialog)" label="Help" class="p-button-sm p-button-warning" icon="pi pi-external-link" />
             </div>
             <div class="card">
-                <DataTable :value="questions" rowGroupMode="rowspan" groupRowsBy="section.name" sortMode="single" sortField="section.name" :sortOrder="1" responsiveLayout="scroll"
+                <DataTable :value="indicators" rowGroupMode="rowspan" groupRowsBy="section.name" sortMode="single" sortField="section.name" :sortOrder="1" responsiveLayout="scroll"
                 v-model:expandedRowGroups="expandedRowGroups" @rowgroupExpand="onRowGroupExpand" @rowgroupCollapse="onRowGroupCollapse" v-model:selection="selectedQuestions" dataKey="name">
-                    <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
-                    <Column field="section.name" header="Section"></Column>
+                    <!-- <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
+                    <Column field="topic" header="Section"></Column>
                     <Column field="name" header="name" sortable></Column>
-                    <Column field="response" header="Responses" sortable></Column>
-                    <Column field="recommendations" header="Recommendations">
+                    <Column field="response" header="Responses" sortable></Column> -->
+                    <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
+                    <Column field="topic" header="Topic" sortable></Column>
+                    <Column field="name" header="Name" sortable></Column>
+                    <Column field="value" header="Value"></Column>
+                    <Column field="indicator_impact" header="Impact" sortable></Column>
+                    <Column header="Outliers" sortable>
                         <template #body="">
-                            Recommended flag
+                            Y
+                        </template>
+                    </Column>
+                    <Column sortable>
+                        <template #body="">
+                            <Button label="Recommended" class="p-button-sm p-button-danger p-button-rounded p-py-1" @click="openRecommended()" />
                         </template>
                     </Column>
                     <Column headerStyle="width: 4rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
@@ -40,8 +51,8 @@
             </div>
         </div>
         <div class="p-text-right p-col-12 p-as-end">
-            <Button class="p-my-5" label="Start audit for selected questions" icon="pi pi-check" />
-        </div>
+            <Button class="p-my-5" label="Start audit for selected questions" @click="startAudit(selectedQuestions)" icon="pi pi-check" />
+        </div>=""e
         <Dialog v-model:visible="helpDialog" style="width: 500px;" header="Help" :modal="true" dismissableMask="true">
             <p>Please select the questions that you want to audit.</p>
 
@@ -55,6 +66,8 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
+
 export default {
     data () {
         return {
@@ -84,7 +97,14 @@ export default {
             ]
         }
     },
+    computed: {
+        ...mapState('auditIndicators', ['indicators'])
+    },
     methods: {
+        ...mapActions('auditIndicators', ['selectIndicators']),
+        async startAudit (selectedQuestions) {
+            await this.selectIndicators({ indicators: selectedQuestions })
+        },
         ShowOutlierDetectionMethods () {
             // Show outlier detection methods dialog
             console.log('...')

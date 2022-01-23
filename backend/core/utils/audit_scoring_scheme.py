@@ -31,7 +31,7 @@ def recursive_weight_calculator(weight_dict, level=0, number=1, absolute_weights
             # print(f'level {level}: {indicator}: {number} * {weight}')
             outcome = number*weight
             
-            absolute_weights.append({'indicator': indicator, 'absolute': round(outcome, 3)})
+            absolute_weights.append({'indicator': indicator, 'absolute': round(outcome, 3), 'level': level})
             
             # Checks if there's a sub indicator
             if len(weight_dict[i][indicator]['child'][0]) > 1:
@@ -93,14 +93,25 @@ def calculate_scoring_scheme(eseaaccount_pk):
     for indicator in sorted_absolute_weights:
         # print(indicator, type(indicators_dict[indicator['indicator']].value), indicators_dict[indicator['indicator']].value)
         indicator_impact = indicator['absolute']*float(indicators_dict[indicator['indicator']].value)
+        indicators_dict[indicator['indicator']].indicator_impact = indicator_impact
+
+        # threshold = 3
+        # filterThreshold = 0.5
+        # <5 --> {1,2,3} {1,4} {3,4}
+        # 1   8 - 1.2
+        # 2   8 - 0.7
+        # 3   8 - 1.4
+        # 4   8 - 2.2
+        # 5   8 - 0.2
+
         corrected_total_score = total_score - indicator_impact
         print()
         print(f"impact = {total_score} - {indicator['absolute']} * {indicators_dict[indicator['indicator']].value}.")
-        print(f"{indicator['indicator']} has an impact of {indicator_impact} on the total score({total_score}), corrected total score: {corrected_total_score}!")
+        print(f"{indicator['indicator']} in level ({indicator['level']}) has an impact of {indicator_impact} on the total score({total_score}), corrected total score: {corrected_total_score}!")
         # indicator['indicator']}
         # loop through all indicators and omit them one by one and check if certification threshold is still 
     
-    return 'check'
+    return indicators_dict
 
     '''
     indicators that aren't used for the certification_indicator

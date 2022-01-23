@@ -6,15 +6,20 @@
             <Button @click="(helpDialog = !helpDialog)" label="Help" class="p-button-sm p-button-warning" icon="pi pi-external-link" />
         </div>
         <div class="card">
-            <DataTable :value="questions" rowGroupMode="rowspan" groupRowsBy="section.name" sortMode="single" sortField="section.name" :sortOrder="1" responsiveLayout="scroll"
+            <DataTable :value="selectedIndicators" rowGroupMode="rowspan" groupRowsBy="section.name" sortMode="single" sortField="section.name" :sortOrder="1" responsiveLayout="scroll"
             v-model:expandedRowGroups="expandedRowGroups" @rowgroupExpand="onRowGroupExpand" @rowgroupCollapse="onRowGroupCollapse" v-model:selection="selectedQuestions" dataKey="name">
                 <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
-                <Column field="section.name" header="Section"></Column>
-                <Column field="name" header="name" sortable></Column>
-                <Column field="response" header="Responses" sortable></Column>
-                <Column field="recommendations" headerStyle="width: 5rem;">
+                <Column field="topic" header="Topic" sortable></Column>
+                <Column field="name" header="Name" sortable></Column>
+                <Column field="value" header="Value"></Column>
+                <Column field="indicator_impact" header="Impact" sortable></Column>
+                <Column header="Outliers" sortable>
                     <template #body="">
-                        <!--<Tag v-if="true" severity="danger" value="Recommendation" @click="openRecommended()"></Tag>-->
+                        Y
+                    </template>
+                </Column>
+                <Column sortable>
+                    <template #body="">
                         <Button label="Recommended" class="p-button-sm p-button-danger p-button-rounded p-py-1" @click="openRecommended()" />
                     </template>
                 </Column>
@@ -51,6 +56,7 @@
 </template>
 
 <script>
+    import { mapState } from 'vuex'
     // import Tag from 'primevue/tag'
 
 export default {
@@ -86,6 +92,9 @@ export default {
                 }
             ]
         }
+    },
+    computed: {
+        ...mapState('auditIndicators', ['indicators', 'selectedIndicators'])
     },
     methods: {
         saveMessage () {

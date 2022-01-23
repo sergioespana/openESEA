@@ -56,6 +56,7 @@ class IndirectIndicator(models.Model):
 
     calculation = ''
     absolute_weights = []
+    indicator_impact = None
     value = None
     has_conditionals = False
     exception = None

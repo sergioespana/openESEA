@@ -30,7 +30,7 @@
 
 <script>
     // :disabled="v$.campaignForm.$error"
-    // import { mapActions, mapState } from 'vuex'
+    import { mapActions } from 'vuex'
     // import useVuelidate from '@vuelidate/core'
     // import { required, minLength, maxLength } from 'vuelidate/lib/validators'
     // import HandleValidationErrors from '../../utils/HandleValidationErrors'
@@ -52,8 +52,13 @@
                 auditdate: new Date()
             }
         },
+        // computed: {
+        //     ...mapState('auditIndicators', ['indicators'])
+        // },
         methods: {
-            createNewAudit () {
+            ...mapActions('auditIndicators', ['fetchIndicators']),
+            async createNewAudit () {
+                await this.fetchIndicators({ oId: this.$route.params.OrganisationId, eaId: this.$route.params.EseaAccountId })
                 this.$router.push({ name: 'questionselection', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.survey } })
                 console.log('yess!', this.survey)
             },

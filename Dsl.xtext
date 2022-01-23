@@ -7,7 +7,9 @@ ESEA_method:
 	'Name:' STRING 
 	'Version:' DOUBLE
 	'isPublic:' BOOLEAN
-	'Description:' STRING	
+	'Description:' STRING
+	'AuditingScoreThreshold:' DOUBLE
+	'AuditingIndicatorThreshold:' INT	
 	list_of_topics+=List_of_topics
 	list_of_indicators+=List_of_indicators
 	list_of_surveys+=List_of_surveys

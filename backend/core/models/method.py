@@ -8,7 +8,7 @@ class Method(models.Model):
     name = models.CharField(max_length=255, unique=False, blank=False)
     description = models.TextField(max_length=1000, blank=True)
     version = models.DecimalField(max_digits=5, decimal_places=2, default=1)
-    #certification_theshold = models.
+    certification_theshold = models.DecimalField(max_digits=15, decimal_places=2, null=True)
 
     def __str__(self):
         return self.name

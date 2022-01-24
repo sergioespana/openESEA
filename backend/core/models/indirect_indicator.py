@@ -18,8 +18,9 @@ class IndirectIndicator(models.Model):
     description = models.TextField(blank=True, null=True)
     pre_unit = models.CharField(max_length=30, blank=True, default="")      # Examples: $,€
     post_unit = models.CharField(max_length=30, blank=True, default="")     # Examples: %, points, persons
-    cut_off_lower_limit = models.DecimalField(max_digits=15, decimal_places=3, blank=True, null=True)
-    cut_off_upper_limit = models.DecimalField(max_digits=15, decimal_places=3, blank=True, null=True)
+    cut_off_lower_limit = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)
+    cut_off_upper_limit = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)
+
     
     TEXT = "text"
     INTEGER = "integer"

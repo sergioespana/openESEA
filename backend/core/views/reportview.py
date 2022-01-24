@@ -10,7 +10,6 @@ from ..models import Report
 from ..serializers import QuestionSerializer, SurveyResponseCalculationSerializer
 from ..utils import audit_data, calculate_scoring_scheme
 
-from pprint import pprint
 # class ReportViewSet(viewsets.ModelViewSet):
 #     authentication_classes = []
 #     permission_classes = []
@@ -25,18 +24,6 @@ from pprint import pprint
 @api_view(['GET', 'POST'])
 @permission_classes((AllowAny, ))
 def audit_eseaaccount(request, eseaaccount_pk):
-    indicators = audit_data(eseaaccount_pk)
-    print('>>>>', type(indicators))
-    for indicator in indicators:
-        #print(indicators[indicator].__dict__)
-        try:
-            print('>>', indicators[indicator].outliers)
-        except:
-            pass
-        #if 'outliers' in indicator.keys():
-        #    print(indicator.outliers)
-    indicators = calculate_scoring_scheme(eseaaccount_pk, indicators_dict=indicators)
-    #return Response({'check'})
+    indicators = audit_data(eseaaccount_pk, verbose=False, boxplot=False)
     serializer = SurveyResponseCalculationSerializer(indicators.values(), many=True)
-    # Return audit output to frontend
     return Response(serializer.data)

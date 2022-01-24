@@ -44,7 +44,7 @@ def recursive_weight_calculator(weight_dict, level=0, number=1, absolute_weights
     return absolute_weights
 
 
-def calculate_scoring_scheme(eseaaccount_pk, indicators_dict=[]):
+def calculate_scoring_scheme(eseaaccount_pk, indicators_dict=[], verbose=False):
     eseaaccount = get_object_or_404(EseaAccount, pk=eseaaccount_pk)
 
     try:
@@ -52,12 +52,11 @@ def calculate_scoring_scheme(eseaaccount_pk, indicators_dict=[]):
     except IndirectIndicator.DoesNotExist:
         return('There is no Certification Indicator!')
 
+    '''
     if not indicators_dict:
-        # Get Method Indicators
+        # Get Data
         indirect_indicators = IndirectIndicator.objects.filter(method=eseaaccount.method)
         direct_indicators = DirectIndicator.objects.filter(method=eseaaccount.method)
-
-        
         
         indicators_dict = {}
         for indirect_indicator in indirect_indicators:
@@ -66,63 +65,48 @@ def calculate_scoring_scheme(eseaaccount_pk, indicators_dict=[]):
         for direct_indicator in direct_indicators:
             indicators_dict[direct_indicator.key] = direct_indicator
 
-        # Get Required Indicators
-        #required_indicators = find_connected_indicators(certification_indicator, indicators_dict)
-
-        #directindicators, indirectindicators = [], []
-        #for key in required_indicators:
-        #    try:
-        #        directindicators.append(DirectIndicator.objects.get(method=eseaaccount.method, key=key))
-        #    except:
-        #        indirectindicators.append(IndirectIndicator.objects.get(method=eseaaccount.method, key=key))
-
         # Get Responses
-        respondents = SurveyResponse.objects.filter(esea_account=eseaaccount_pk)
-        responses = SurveyResponse.objects.filter(esea_account=eseaaccount_pk, finished=True)
         question_responses = QuestionResponse.objects.filter(survey_response__esea_account=eseaaccount_pk, survey_response__finished=True)
         map_responses_by_indicator(direct_indicators, question_responses)
 
         # Calculate Indicators
         calculate_indicators(indirect_indicators, direct_indicators)
+    '''
 
     # Calculate Absolute Weights
-    # json.dumps(calculate_absolute_weights(indicators_dict['total_organisation_score'], indicators_dict), sort_keys=True, indent=4)
     weight_dict = calculate_absolute_weights(indicators_dict['total_organisation_score'], indicators_dict)
     absolute_weights = recursive_weight_calculator(weight_dict)
     sorted_absolute_weights = sorted(absolute_weights, key = lambda i: i['absolute'], reverse=True)
 
-    print(indicators_dict['total_organisation_score'].value)
     total_score = indicators_dict['total_organisation_score'].value
     for indicator in sorted_absolute_weights:
-        # print(indicator, type(indicators_dict[indicator['indicator']].value), indicators_dict[indicator['indicator']].value)
         indicator_impact = indicator['absolute']*float(indicators_dict[indicator['indicator']].value)
         indicators_dict[indicator['indicator']].indicator_impact = indicator_impact
         indicators_dict[indicator['indicator']].scoring_level = indicator['level']
         indicators_dict[indicator['indicator']].absolute = indicator['absolute']
         indicators_dict
-        # threshold = 3
-        # filterThreshold = 0.5
-        # <5 --> {1,2,3} {1,4} {3,4}
-        # 1   8 - 1.2
-        # 2   8 - 0.7
-        # 3   8 - 1.4
-        # 4   8 - 2.2
-        # 5   8 - 0.2
+
 
         corrected_total_score = total_score - indicator_impact
-        if corrected_total_score < 4:
-            print('----------')
+        if corrected_total_score < certification_indicator.threshold_value:
             indicators_dict[indicator['indicator']].critical_impact = True
 
         print()
         print(f"impact = {total_score} - {indicator['absolute']} * {indicators_dict[indicator['indicator']].value}.")
         print(f"{indicator['indicator']} in level ({indicator['level']}) has an impact of {indicator_impact} on the total score({total_score}), corrected total score: {corrected_total_score}!")
-        # indicator['indicator']}
-        # loop through all indicators and omit them one by one and check if certification threshold is still 
     
     return indicators_dict
 
     '''
+    # threshold = 3
+    # filterThreshold = 0.5
+    # <5 --> {1,2,3} {1,4} {3,4}
+    # 1   8 - 1.2
+    # 2   8 - 0.7
+    # 3   8 - 1.4
+    # 4   8 - 2.2
+    # 5   8 - 0.2
+
     indicators that aren't used for the certification_indicator
     print(list(set(indicators_dict.keys()) - required_indicators))
     calculate_indicators()

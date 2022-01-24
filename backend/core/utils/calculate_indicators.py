@@ -5,6 +5,9 @@ from ..classes import Indicator
 import re
 
 
+'''
+Isn't being used??
+
 def calculate_indicators(direct_indicators) -> Dict[str, Indicator]:
     indicators = {}
 
@@ -14,31 +17,18 @@ def calculate_indicators(direct_indicators) -> Dict[str, Indicator]:
             # print(response.all())
         #indicators[direct_indicator.key] = direct_indicator.responses
     return indicators
+'''
 
 
 def calculate_indicators(indirect_indicators: List[IndirectIndicator], direct_indicators: List[DirectIndicator],) -> Dict[str, Indicator]:
     indicators = merge_indicators(indirect_indicators, direct_indicators)
-    # for indicator in indicators.values():
-    #     calculate_indicator(indicator, indicators)
-    
-    #print(type(indicators))
-    for indicator in indicators.values():
-        if indicator.value is None:
-            calculate_indicator(indicator, indicators)
-
+ 
     for indicator in indicators.values():
         if indicator.value is None:
             calculate_indicator(indicator, indicators)
 
     for indicator in indicators.values():
         calculate_absolute_weights(indicator, indicators)
-
-        # if indicator.key == 'organisation_certification':
-        #     print('>>>>>>>>>>>>>>>>>>>>>>> expression', indicator.absolute_weights)
-
-    # for indicator in indicators.values():
-    #     if indicator.value is None:
-    #         calculate_indicator(indicator, indicators)
 
     return indicators
 
@@ -47,12 +37,9 @@ def calculate_indicators(indirect_indicators: List[IndirectIndicator], direct_in
 def calculate_indicator(indicator, value_list) -> str:
     if indicator.value:
         return indicator.value
-        
-    elif isinstance(indicator, DirectIndicator):
-        print('this is a direct indicator')
     elif not len(indicator.calculation_keys):
         return indicator.calculate()
-    else:
+    elif isinstance(indicator, IndirectIndicator):
         values = {}
 
         for calculation_key in indicator.calculation_keys:
@@ -67,6 +54,7 @@ def calculate_indicator(indicator, value_list) -> str:
         return outcome
 
 
+# Recursive formula that calculates the weights of scoring indicators
 def calculate_absolute_weights(indicator, indicator_list) -> str:
     weight_dict = {}
 
@@ -94,10 +82,7 @@ def map_responses_by_indicator(direct_indicators, question_responses) -> None:
 
 
 # TODO: Remove function when direct and indirect indicators are merged.
-def merge_indicators(
-    indirect_indicators: List[IndirectIndicator],
-    direct_indicators: List[DirectIndicator],
-) -> Dict[str, Indicator]:
+def merge_indicators(indirect_indicators: List[IndirectIndicator], direct_indicators: List[DirectIndicator]) -> Dict[str, Indicator]:
     indicators = {}
 
     for indirect_indicator in indirect_indicators:

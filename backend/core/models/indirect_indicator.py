@@ -103,21 +103,12 @@ class IndirectIndicator(models.Model):
         return calculation_keys_uniques
 
     def find_weights(self, weight_dict):
-        print('---->', self.key, weight_dict)
         self.absolute_weights = [weight_dict]
-
         return self.absolute_weights
-
-        # # (0.3 * [gender_equity_score]) + (0.4 *[environmental_impact_score]) + (0.3 *[workplace_quality_score])
-        # # re.compile(r"\* \[(.*?)\]")
-        # weight_finder_regex = re.compile(r"[0-9].?\d*\s*\*\s*\[.*?\]")
-
-        # indicatorweights = re.findall(weight_finder_regex, self.formula)
 
     # Replaces indicator keys with corresponding value to be able to calculate the indirect indicator (used in 'utils > calculate_indicators')
     def find_values(self, key_value_list):
         calculation = self.calculation
-        # print('===', self.key, '--', calculation_key, key_value_list[calculation_key])
         if not None in key_value_list.values():
             for calculation_key in self.calculation_keys:
                 if calculation_key in key_value_list:
@@ -158,7 +149,6 @@ class IndirectIndicator(models.Model):
                     responses = [float(r) for r in indicator.responses]
 
                     if 'avg(' in self.calculation:
-                        print('cheeeeeck', self.calculation)
                         self.value = sum(responses)/len(responses) # int(direct_indicator.value)
                     elif 'sum(' in self.calculation:
                             self.value = sum(responses)
@@ -186,11 +176,13 @@ class IndirectIndicator(models.Model):
                 self.value = None
 
     # Calculates conditional formulas (IF..THEN..)
-    def calculate_conditionals(self):
+    def calculate_conditionals(self, verbose=False):
         formula = self.calculation.replace('IF', '@@IF').replace('ELSE', '##ELSE').replace('THEN', '%%THEN')
         formula = [x.strip() for x in re.split('@@|##|%%', formula)]
         formula = list(filter(lambda x: x != '', formula))
-        print(f'\n  {self.key}:::::::::: Start Conditional Calculations... \nformula: {formula}')
+        
+        if verbose:
+            print(f'\n  {self.key}:::::::::: Start Conditional Calculations... \nformula: {formula}')
 
         full_formula = self.formula.replace('IF', '@@IF').replace('ELSE', '##ELSE').replace('THEN', '%%THEN')
         full_formula = [x.strip() for x in re.split('@@|##|%%', full_formula)]
@@ -272,9 +264,10 @@ class IndirectIndicator(models.Model):
                     raise Exception('Assignment variable does not match the key of this indirect indicator')
                 val = val.replace('"', '')
                 
-                print('====', self.key, val)
-                if self.key == 'workplace_quality_score':
-                    print('---->', full_formula[i])
+                if verbose:
+                    print('====', self.key, val)
+                
+                # Used for extracting weights
                 self.expression = full_formula[i]
                 try:
                     val = eval(val)

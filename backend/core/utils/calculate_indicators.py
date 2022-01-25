@@ -1,7 +1,7 @@
 from typing import Dict, List
 from ..models import DirectIndicator, IndirectIndicator
 from ..classes import Indicator
-
+from pprint import pprint
 import re
 
 
@@ -57,12 +57,28 @@ def calculate_indicator(indicator, value_list) -> str:
 # Recursive formula that calculates the weights of scoring indicators
 def calculate_absolute_weights(indicator, indicator_list) -> str:
     weight_dict = {}
-
+    # pprint(absolute_weights)
     if isinstance(indicator, IndirectIndicator) and len(indicator.formula_keys):
+        
         weight_finder_regex = re.compile(r"0.\d*\s*\*\s*\[.*?\]") # [0-9].?\d*\s*\*\s*\[.*?\]
         
         indicatorweights = re.findall(weight_finder_regex, indicator.expression)
-
+        other_indicators = []
+        for key in indicator.formula_keys:
+            if key not in indicatorweights:
+                other_indicators.append(key)
+                # print('found key:', key)
+                
+        #print(indicator_list.keys())
+        
+        for key in other_indicators:
+            if isinstance(indicator_list[key], IndirectIndicator):
+                weight_dict[key] = {}
+                weight_dict[key]['child'] = calculate_absolute_weights(indicator_list[key], indicator_list)
+            else:
+                weight_dict[key] = key
+        #print(indicator.key, indicatorweights)
+        # pprint(weight_dict)
         for indicatorweight in indicatorweights:
             weight, indicatorkey = indicatorweight.split("*")
             indicatorkey = indicatorkey.strip()[1:-1]
@@ -71,9 +87,15 @@ def calculate_absolute_weights(indicator, indicator_list) -> str:
 
             weight_dict[indicatorkey]['child'] = calculate_absolute_weights(child_indicator, indicator_list)
         
-        absolute_weights = indicator.find_weights(weight_dict)
 
-        return absolute_weights
+        absolute_weigths = indicator.find_weights(weight_dict)
+        # print('-->', weight_dict)
+        return weight_dict
+
+    # elif isinstance(indicator, DirectIndicator):
+    #     print('>>>>', indicator.key)
+    #     return indicator.key
+    
 
 
 def map_responses_by_indicator(direct_indicators, question_responses) -> None:

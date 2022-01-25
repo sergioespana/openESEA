@@ -70,8 +70,6 @@ def audit_data(eseaaccount_pk, verbose=False, boxplot=False):
                 print('>>>', df.loc[:, indicator.key])
                 print(indicator.key, indicator.datatype, '\n')
             
-            
-            
             # Boxplot
             if boxplot:
                 sns.boxplot(x=indicator_array)
@@ -85,6 +83,6 @@ def audit_data(eseaaccount_pk, verbose=False, boxplot=False):
     warnings.filterwarnings('default')
 
     # Calculate Scoring Scheme
-    indicators = calculate_scoring_scheme(eseaaccount_pk, indicators_dict=indicators, verbose=verbose)
+    result = calculate_scoring_scheme(eseaaccount_pk, indicators_dict=indicators, verbose=verbose)
 
-    return indicators
+    return result

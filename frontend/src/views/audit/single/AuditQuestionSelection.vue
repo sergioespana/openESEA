@@ -16,14 +16,23 @@
                     <Column field="topic" header="Topic" sortable></Column>
                     <Column field="name" header="Name" sortable></Column>
                     <Column field="value" header="Value"></Column>
-                    <Column field="absolute" header="Absolute Weight" sortable />
+                    <!-- <Column field="absolute" header="Absolute Weight" sortable />
                     <Column field="indicator_impact" header="Impact" sortable></Column>
                     <Column field="critical_impact" header="Critical Impact" sortable />
                     <Column field="scoring_level" header="Level" sortable></Column>
-                    <Column field="outliers" header="Anomaly" sortable></Column>
-                    <Column sortable>
+                    <Column field="outliers" header="Anomaly" sortable></Column> -->
+                    <Column header="Critical Impact" sortable>
+                        <template #body=""> <!-- (row.data.critical_impact & row.data.outliers) -->
+                            <Button label="Critical" class="p-button-sm p-button-rounded p-py-1 p-button-danger" />
+                            <!--<Button v-if="row.data.outliers || row.data.critical_impact" label="Recommended" class="p-button-sm p-button-rounded p-py-1" :class="(((row.data.critical_impact & row.data.outliers) == true) ? 'p-button-danger' : 'p-button-warning')" @click="openRecommended()" />
+                            -->
+                        </template>
+                    </Column>
+                    <Column header="Anomaly" sortable>
                         <template #body="row"> <!-- (row.data.critical_impact & row.data.outliers) -->
-                            <Button v-if="row.data.outliers || row.data.critical_impact" label="Recommended" class="p-button-sm p-button-rounded p-py-1" :class="(((row.data.critical_impact & row.data.outliers) == true) ? 'p-button-danger' : 'p-button-warning')" @click="openRecommended()" />
+                            <Button v-if="row.data.outliers" label="Anomaly" class="p-button-sm p-button-rounded p-py-1 p-button-danger" />
+                            <!--<Button v-if="row.data.outliers || row.data.critical_impact" label="Recommended" class="p-button-sm p-button-rounded p-py-1" :class="(((row.data.critical_impact & row.data.outliers) == true) ? 'p-button-danger' : 'p-button-warning')" @click="openRecommended()" />
+                            -->
                         </template>
                     </Column>
                     <Column headerStyle="width: 4rem; text-align: center" bodyStyle="text-align: center; overflow: visible">

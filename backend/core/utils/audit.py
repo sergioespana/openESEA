@@ -18,12 +18,13 @@ from ..models import EseaAccount, SurveyResponse, Question, QuestionResponse, In
 
 def audit_data(eseaaccount_pk, verbose=False, boxplot=False):
     eseaaccount = get_object_or_404(EseaAccount, pk=eseaaccount_pk)
-    eseaaccount21 = get_object_or_404(EseaAccount, pk=21) # hardcoded esea accounts for now
+    #eseaaccount21 = get_object_or_404(EseaAccount, pk=21) # hardcoded esea accounts for now
 
     df = pd.DataFrame({})
 
     # Right now only there's only one other hardcoded esea account, should contain all esea accounts belonging to an esea method
-    other_organisations = [eseaaccount21] # eseaaccount21
+    
+    other_organisations = [] # eseaaccount21
     organisation_list = other_organisations + [eseaaccount] # eseaaccount21
 
     for organisation in organisation_list:

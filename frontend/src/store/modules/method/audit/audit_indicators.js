@@ -10,7 +10,8 @@ export default {
         debouncers: {},
         errors: {}
     },
-    getters: {},
+    getters: {
+    },
     mutations: {
         setIndicators (state, { data }) {
             state.indicators = data || {}

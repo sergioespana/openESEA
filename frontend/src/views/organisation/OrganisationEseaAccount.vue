@@ -36,10 +36,6 @@ http://localhost:8081/organisation/1/esea-accounts/1
                         <i class="pi pi-search" />
                         <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
                     </span>
-                    <div>
-                        <Button label="Tool Menu" @click="toggle" :disabled="false" />
-                        <Menu id="overlay_menu" ref="menu" :model="items" :popup="true" />
-                    </div>
                 </div>
             </template>
             <Column field="name" header="Name" sortable />
@@ -79,7 +75,21 @@ http://localhost:8081/organisation/1/esea-accounts/1
             <Button label="Go to Method" @click="goToMethod" />
         </TabPanel>
          <TabPanel header="Auditing">
-             <Card v-if="true" class="p-text-left p-m-2">
+             <div class="p-p-2">
+             Checkboxes created for demo Artur:
+             <Checkbox id="card1" v-model="card1" :binary="true" class="p-ml-2" />
+             <label for="card1">Card1</label>
+             <Checkbox id="card2" v-model="card2" :binary="true" class="p-ml-2" />
+             <label for="card2">Card2</label>
+             <Checkbox id="card3" v-model="card3" :binary="true" class="p-ml-2" />
+             <label for="card3">Card3</label>
+             <Checkbox id="card4" v-model="card4" :binary="true" class="p-ml-2" />
+             <label for="card4">Card4</label>
+             <Checkbox id="binary" v-model="card5" :binary="true" class="p-ml-2" />
+             <label for="card5">Card5</label>
+             </div>
+
+             <Card v-if="card1" class="p-text-left p-m-2">
                  <template #title>
                     Assurance
                  </template>
@@ -87,7 +97,7 @@ http://localhost:8081/organisation/1/esea-accounts/1
                      Provide assurance?
                  </template>
                  <template #content>
-                    Thank you for auditing {company name}.
+                    Thank you for auditing {{organisation.name}}.
 
                     <p>Below you will find an overview of the audit status of all surveys.</p>
 
@@ -99,7 +109,7 @@ http://localhost:8081/organisation/1/esea-accounts/1
                  </template>
              </Card>
 
-            <Card v-if="true" class="p-text-left p-m-2">
+            <Card v-if="card2" class="p-text-left p-m-2">
                  <template #title>
                     Assurance
                  </template>
@@ -117,7 +127,7 @@ http://localhost:8081/organisation/1/esea-accounts/1
                  </template>
              </Card>
 
-            <Card v-if="true" class="p-text-left p-m-2">
+            <Card v-if="card3" class="p-text-left p-m-2">
                  <template #title>
                     Assurance
                  </template>
@@ -132,7 +142,7 @@ http://localhost:8081/organisation/1/esea-accounts/1
                  </template>
              </Card>
 
-            <Card v-if="true" class="p-text-left p-m-2">
+            <Card v-if="card4" class="p-text-left p-m-2">
                  <template #title>
                     Assurance
                  </template>
@@ -150,7 +160,7 @@ http://localhost:8081/organisation/1/esea-accounts/1
                  </template>
              </Card>
 
-                        <Card v-if="true" class="p-text-left p-m-2">
+            <Card v-if="card5" class="p-text-left p-m-2">
                  <template #title>
                     Assurance
                  </template>
@@ -178,7 +188,8 @@ http://localhost:8081/organisation/1/esea-accounts/1
                             <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
                         </span>
                         <div>
-                            <Button label="Auditors" class="p-mr-2" @click="something" :disabled="false" />
+                            <Button label="Refresh Recommendations" class="p-mr-2" @click="something" :disabled="true" />
+                            <Button label="Auditors" class="p-mr-2" @click="something" :disabled="true" />
                             <Button label="Finish Account Audit" @click="finishAuditDialog = true" :disabled="false" />
 
                         </div>
@@ -186,14 +197,19 @@ http://localhost:8081/organisation/1/esea-accounts/1
                 </template>
                 <Column field="name" header="Name" sortable />
                 <Column field="auditor" header="Auditor" sortable />
-                <Column field="recommendations" header="Recommendations" sortable />
+                <Column field="recommendations" header="Recommendations">
+                    <template #body="{data}">
+                        <div v-if="permission">
+                           <Button v-if="data.id===6" label="2 Recommendations" class="p-button-sm p-button-rounded p-py-1 p-button-danger" :disabled="true" />
+                        </div>
+                    </template>
+                </Column>
                 <Column header="Status" headerStyle="width: 15rem; text-align: center" bodyStyle="text-align: center; overflow: visible" :style="permission ? '': 'display:none;'">
                     <template #body="{data}">
                         <div v-if="permission">
                             <div v-if="data.auditobject">{{data.auditobject}} 'Documentation Upload'... + icon</div>
                             <Button v-else label="Start Audit" type="button" class="p-button-sm" @click="startAudit(data)"  style="width: 200px" />
                         </div>
-                        <div> Documentation Upload, FInished + icon</div>
                     </template>
                 </Column>
             </DataTable>
@@ -295,6 +311,12 @@ http://localhost:8081/organisation/1/esea-accounts/1
                 surveyy: null,
                 selected_survey: null,
                 stakeholderupload: null,
+                // Only used for Artur's Demo!
+                card1: false,
+                card2: false,
+                card3: false,
+                card4: false,
+                card5: false,
                 items: [
                     {
                         label: '- Send Message',

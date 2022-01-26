@@ -2,8 +2,6 @@
 
 <template>
     <form id="auditform" @submit.prevent="createNewAudit" class="p-input-filled p-text-left">
-        <h2>{{survey}}</h2>
-
         <div class="p-field p-col-12 p-mx-0 p-px-0">
             <span class="p-float-label p-mt-3">
                 <InputText type="text" class="p-col-12 p-mx-0" id="name" v-model.trim="name" />

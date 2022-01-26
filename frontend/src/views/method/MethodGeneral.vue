@@ -1,6 +1,7 @@
 // http://localhost:8081/methods/3/method-general
 
 <template>
+    <!-- {{lazierMethod.certification_theshold}} -- {{method}} -->
     <form ref="form"  class="p-text-left p-fluid p-p-5 p-inputtext-lg"> <!-- @submit.prevent="!v$.$invalid" -->
         <div class="p-field p-m-5">
             <h3>Method Name</h3>
@@ -11,6 +12,16 @@
             <h3>Method Description</h3>
                 <Textarea id="methoddescription" v-model="lazierMethod.description" :autoResize="true" rows="3" :class="{'borderless': descriptionErrors.length}" @blur="v$.lazierMethod.description.$touch()" />
             <div class="p-error p-text-italic p-pt-1" v-for="error in descriptionErrors" :key="error">{{error}}</div>
+        </div>
+        <div class="p-grid">
+        <div class="p-col-4 p-field p-px-5">
+            <h3>Certification Threshold</h3>
+            <InputNumber v-model="lazierMethod.certification_theshold" mode="decimal" :minFractionDigits="2" :maxFractionDigits="2" />
+        </div>
+        <div class="p-col-4 p-field p-px-5">
+            <h3>Scoring Scheme Threshold Score Indicator</h3>
+            <InputNumber v-model="dummy" :disabled="true" mode="decimal" :minFractionDigits="2" :maxFractionDigits="2" />
+        </div>
         </div>
         <div class="p-field p-m-5">
             <h3>Should this network be public? </h3>
@@ -53,7 +64,8 @@
                 ],
                 unsavedChangesDialog: false,
                 discardUnsavedChanges: false,
-                to: null
+                to: null,
+                dummy: 0.45
             }
         },
         computed: {

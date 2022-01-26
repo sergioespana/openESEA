@@ -23,7 +23,7 @@
                     <Column field="outliers" header="Anomaly" sortable></Column> -->
                     <Column header="Critical Impact" sortable>
                         <template #body=""> <!-- (row.data.critical_impact & row.data.outliers) -->
-                            <Button label="Critical" class="p-button-sm p-button-rounded p-py-1 p-button-danger" />
+                            <Button label="Critical" class="p-button-sm p-button-rounded p-py-1 p-button-danger" @click="criticalDialog=!criticalDialog" />
                             <!--<Button v-if="row.data.outliers || row.data.critical_impact" label="Recommended" class="p-button-sm p-button-rounded p-py-1" :class="(((row.data.critical_impact & row.data.outliers) == true) ? 'p-button-danger' : 'p-button-warning')" @click="openRecommended()" />
                             -->
                         </template>
@@ -69,6 +69,10 @@
             </template>
         </Dialog>
 
+        <Dialog v-model:visible="criticalDialog" style="width: 500px;" header="Critical Status" :modal="true" dismissableMask="true">
+            Critical because of...
+        </Dialog>
+
     </div>
 </template>
 
@@ -79,6 +83,7 @@ export default {
     data () {
         return {
             helpDialog: false,
+            criticalDialog: false,
             expandedRowGroups: null,
             selectedQuestions: [],
             questions: [

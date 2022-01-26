@@ -10,7 +10,7 @@ class MinimalMethodSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Method
-        fields = ('id', 'created_by', 'ispublic', 'name', 'description', 'version', 'surveys', 'topics', 'networks')
+        fields = ('id', 'created_by', 'ispublic', 'name', 'description', 'version', 'certification_theshold', 'surveys', 'topics', 'networks')
 
 
 class SubTopicSerializer(serializers.Serializer):
@@ -40,7 +40,7 @@ class MethodSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Method
-        fields = ['id', 'created_by', 'ispublic', 'name', 'description', 'version', 'surveys', 'topics', 'networks']
+        fields = ['id', 'created_by', 'ispublic', 'name', 'description', 'version', 'certification_theshold', 'surveys', 'topics', 'networks']
 
     # Makes sure the version has a max of 2 decimal points
     def validate_version(self, value):
@@ -93,6 +93,7 @@ class MethodSerializer(serializers.ModelSerializer):
             'ispublic': instance.ispublic,
             'description': instance.description,
             'version': instance.version,
+            'certification_theshold': instance.certification_theshold,
             'surveys': instance.surveys,
             'networks': instance.networks,
             'topics': topic_list

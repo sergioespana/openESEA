@@ -51,6 +51,21 @@ def recursive_weight_calculator(weight_dict, level=0, number=1, absolute_weights
     return absolute_weights
 
 
+def find_indicators(indicator, indicators_dict, critical_list=[]):
+    print('++', indicator, indicator.formula_keys, critical_list)
+    for key in indicator.formula_keys:
+        new_indicator = indicators_dict[key]
+        if isinstance(new_indicator, DirectIndicator) or (new_indicator.type == 'performance'):
+            critical_list.append(key)
+            print(critical_list, '\n')
+        if isinstance(new_indicator,IndirectIndicator):
+            find_indicators(new_indicator, indicators_dict, critical_list=critical_list)
+    
+    print('indicator:', indicator, 'list:', critical_list)
+    return set(critical_list)
+    print(indicator.formula_keys)
+
+
 def calculate_scoring_scheme(eseaaccount_pk, indicators_dict=[], verbose=False):
     eseaaccount = get_object_or_404(EseaAccount, pk=eseaaccount_pk)
 
@@ -89,26 +104,34 @@ def calculate_scoring_scheme(eseaaccount_pk, indicators_dict=[], verbose=False):
 
     #sorted_absolute_weights = sorted(absolute_weights, key = lambda i: i['absolute'], reverse=True)
 
-    total_score = total_score_indicator.value
+    total_score = round(total_score_indicator.value, 2)
     for indicator in absolute_weights:
         if 'absolute' in indicator.keys():
-            indicator_impact = indicator['absolute']*float(indicators_dict[indicator['indicator']].value)
+            indicator_impact = round(indicator['absolute']*float(indicators_dict[indicator['indicator']].value), 2)
             indicators_dict[indicator['indicator']].indicator_impact = indicator_impact
             indicators_dict[indicator['indicator']].scoring_level = indicator['level']
             indicators_dict[indicator['indicator']].absolute = indicator['absolute']
-            indicators_dict
-
 
             corrected_total_score = total_score - indicator_impact
             if corrected_total_score < eseaaccount.method.certification_theshold:
                 indicators_dict[indicator['indicator']].critical_impact = True
 
-                # What indicators 
+                sub_indicators = []
+                sub_indicators = find_indicators(indicators_dict[indicator['indicator']], indicators_dict, critical_list = [])
+
+                for key in sub_indicators:
+                    newdict = {'indicator': indicators_dict[indicator['indicator']].key, 'impact': indicator_impact, 'total_score': total_score} # indicators_dict[k].critical_impact_by['ind'] =
+                    indicators_dict[key].critical_impact_by = newdict
+                    indicators_dict[key].critical_impact = True
 
             if True: 
                 print(f"impact = {total_score} - {indicator['absolute']} * {indicators_dict[indicator['indicator']].value}.")
                 print(f"{indicator['indicator']} in level ({indicator['level']}) has an impact of {indicator_impact} on the total score({total_score}), corrected total score: {corrected_total_score}!")
                 print(indicators_dict[indicator['indicator']].formula_keys)
+
+    # indicators_dict['total_staff'].critical_impact_by = {'blah': []}          
+    for key in indicators_dict:
+       print(key, indicators_dict[key].critical_impact_by)
 
     indicators_to_return = {}
     for indicator in indicators_dict:

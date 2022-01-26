@@ -21,9 +21,9 @@
                     <Column field="critical_impact" header="Critical Impact" sortable />
                     <Column field="scoring_level" header="Level" sortable></Column>
                     <Column field="outliers" header="Anomaly" sortable></Column> -->
-                    <Column header="Critical Impact" sortable>
-                        <template #body=""> <!-- (row.data.critical_impact & row.data.outliers) -->
-                            <Button label="Critical" class="p-button-sm p-button-rounded p-py-1 p-button-danger" @click="criticalDialog=!criticalDialog" />
+                    <Column field="critical_impact" header="Critical Impact" sortable>
+                        <template #body="data"> <!-- (row.data.critical_impact & row.data.outliers) -->
+                            <Button v-if="data.data.critical_impact" label="Critical" class="p-button-sm p-button-rounded p-py-1 p-button-danger" @click="openCriticalDialog(data.data)" />
                             <!--<Button v-if="row.data.outliers || row.data.critical_impact" label="Recommended" class="p-button-sm p-button-rounded p-py-1" :class="(((row.data.critical_impact & row.data.outliers) == true) ? 'p-button-danger' : 'p-button-warning')" @click="openRecommended()" />
                             -->
                         </template>
@@ -69,8 +69,10 @@
             </template>
         </Dialog>
 
-        <Dialog v-model:visible="criticalDialog" style="width: 500px;" header="Critical Status" :modal="true" dismissableMask="true">
-            Critical because of...
+        <Dialog v-model:visible="criticalDialog" style="width: 500px;" :header="`Critical Impact: ${indicator_name}`" :modal="true" dismissableMask="true">
+        <p class="p-text-justify">This Indicator was flagged as critical due to it's indirect indicator parent: <b>'{{ criticalDialogIndicator.critical_impact_by.indicator }}'</b> which has an <b>impact of '{{ criticalDialogIndicator.critical_impact_by.impact }}'</b>
+        which would lower the <b>total score of '{{ criticalDialogIndicator.critical_impact_by.total_score }}'</b> to <b>'{{ (criticalDialogIndicator.critical_impact_by.total_score - criticalDialogIndicator.critical_impact_by.impact).toFixed(2) }}'</b>, which is below the <b>threshold of '{{method.certification_theshold}}'</b>.
+        </p>
         </Dialog>
 
     </div>
@@ -86,6 +88,7 @@ export default {
             criticalDialog: false,
             expandedRowGroups: null,
             selectedQuestions: [],
+            criticalDialogIndicator: {},
             questions: [
                 {
                     name: 'What is the total number of men staff?',
@@ -110,7 +113,15 @@ export default {
         }
     },
     computed: {
-        ...mapState('auditIndicators', ['indicators', 'selectedIndicators'])
+        ...mapState('auditIndicators', ['indicators', 'selectedIndicators']),
+        ...mapState('method', ['method']),
+        indicator_name () {
+            if ('name' in this.criticalDialogIndicator) {
+                return this.criticalDialogIndicator.name
+            } else {
+                return 'indicator'
+            }
+        }
     },
     mounted () {
         this.selectedQuestions = this.selectedIndicators
@@ -120,6 +131,10 @@ export default {
         async startAudit (selectedQuestions) {
             await this.selectIndicators({ indicators: selectedQuestions })
             this.$router.push({ name: 'documentationrequest', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } })
+        },
+        openCriticalDialog (indicator) {
+            this.criticalDialogIndicator = indicator
+            this.criticalDialog = true
         },
         ShowOutlierDetectionMethods () {
             // Show outlier detection methods dialog

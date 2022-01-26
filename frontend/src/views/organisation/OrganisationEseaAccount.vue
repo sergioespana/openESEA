@@ -188,7 +188,7 @@ http://localhost:8081/organisation/1/esea-accounts/1
                             <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
                         </span>
                         <div>
-                            <Button label="Refresh Recommendations" class="p-mr-2" @click="something" :disabled="true" />
+                            <Button label="Refresh Recommendations" class="p-mr-2" @click="refreshRecommendations()" />
                             <Button label="Auditors" class="p-mr-2" @click="something" :disabled="true" />
                             <Button label="Finish Account Audit" @click="finishAuditDialog = true" :disabled="false" />
 
@@ -200,7 +200,7 @@ http://localhost:8081/organisation/1/esea-accounts/1
                 <Column field="recommendations" header="Recommendations">
                     <template #body="{data}">
                         <div v-if="permission">
-                           <Button v-if="data.id===6" label="2 Recommendations" class="p-button-sm p-button-rounded p-py-1 p-button-danger" :disabled="true" />
+                           <Button v-if="data.id===6" :label="`${nr_of_recommended} Recommendations`" class="p-button-sm p-button-rounded p-py-1 p-button-danger" :disabled="true" />
                         </div>
                     </template>
                 </Column>
@@ -340,6 +340,22 @@ http://localhost:8081/organisation/1/esea-accounts/1
             ...mapState('organisation', ['organisation']),
             ...mapState('survey', ['surveys']),
             ...mapState('campaign', ['campaign']),
+            ...mapState('auditIndicators', ['indicators']),
+            nr_of_recommended () {
+                var i = 0
+                this.indicators.forEach((dict) => {
+                    if (typeof dict === 'object') {
+                        for (const [key] of Object.entries(dict)) {
+                            console.log(key)
+                            if (key === 'critical_impact' | dict[key] === true) {
+                                i++
+                            }
+                        }
+                    }
+                })
+                console.log(i)
+                return i
+            },
             timeline () {
                 const jsondate = new Date().toJSON()
                 var currentdate = moment(jsondate, 'YYYY-MM-DD')
@@ -372,12 +388,16 @@ http://localhost:8081/organisation/1/esea-accounts/1
             ...mapActions('eseaAccount', ['deleteEseaAccount']),
             ...mapActions('survey', ['fetchSurveys']),
             ...mapActions('campaign', ['fetchCampaign']),
+            ...mapActions('method', ['fetchMethod']),
+            ...mapActions('auditIndicators', ['fetchIndicators']),
             dateFixer,
             async initialize () {
+                this.fetchMethod({ id: this.eseaAccount.method })
                 this.fetchSurveys({ mId: this.eseaAccount.method })
                 if (this.eseaAccount.campaign) {
                     this.fetchCampaign({ nId: this.eseaAccount.network, id: this.eseaAccount.campaign })
                 }
+                this.refreshRecommendations()
             },
             toggle (event) {
                 this.$refs.menu.toggle(event)
@@ -455,6 +475,9 @@ http://localhost:8081/organisation/1/esea-accounts/1
             },
             ConfirmAssurance () {
                 print()
+            },
+            async refreshRecommendations () {
+                await this.fetchIndicators({ id: this.$route.params.EseaAccountId })
             }
         }
     }

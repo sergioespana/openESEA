@@ -52,6 +52,7 @@ class SurveyResponseCalculationSerializer(serializers.Serializer):
     absolute = serializers.DecimalField(read_only=True, max_digits=None, decimal_places=5)
     scoring_level = serializers.IntegerField(read_only=True, required=False)
     indicator_impact = serializers.DecimalField(read_only=True, max_digits=None, decimal_places=5)
+    critical_impact_by = serializers.DictField(allow_empty=True, required=False)
     critical_impact = serializers.BooleanField(read_only=True, required=False)
     outliers = serializers.BooleanField(read_only=True, required=False)
     cut_off_lower_limit =  serializers.StringRelatedField(read_only=True)

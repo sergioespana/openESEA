@@ -69,6 +69,7 @@ class DirectIndicator(models.Model):
     value = None
     calculation_keys = None
     calculation = None
+    critical_impact_by = {}
 
     class Meta:
         verbose_name = _("direct_indicator")

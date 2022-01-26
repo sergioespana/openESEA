@@ -52,18 +52,14 @@ def recursive_weight_calculator(weight_dict, level=0, number=1, absolute_weights
 
 
 def find_indicators(indicator, indicators_dict, critical_list=[]):
-    print('++', indicator, indicator.formula_keys, critical_list)
     for key in indicator.formula_keys:
         new_indicator = indicators_dict[key]
         if isinstance(new_indicator, DirectIndicator) or (new_indicator.type == 'performance'):
             critical_list.append(key)
-            print(critical_list, '\n')
         if isinstance(new_indicator,IndirectIndicator):
             find_indicators(new_indicator, indicators_dict, critical_list=critical_list)
-    
-    print('indicator:', indicator, 'list:', critical_list)
+            
     return set(critical_list)
-    print(indicator.formula_keys)
 
 
 def calculate_scoring_scheme(eseaaccount_pk, indicators_dict=[], verbose=False):
@@ -128,10 +124,7 @@ def calculate_scoring_scheme(eseaaccount_pk, indicators_dict=[], verbose=False):
                 print(f"impact = {total_score} - {indicator['absolute']} * {indicators_dict[indicator['indicator']].value}.")
                 print(f"{indicator['indicator']} in level ({indicator['level']}) has an impact of {indicator_impact} on the total score({total_score}), corrected total score: {corrected_total_score}!")
                 print(indicators_dict[indicator['indicator']].formula_keys)
-
-    # indicators_dict['total_staff'].critical_impact_by = {'blah': []}          
-    for key in indicators_dict:
-       print(key, indicators_dict[key].critical_impact_by)
+          
 
     indicators_to_return = {}
     for indicator in indicators_dict:

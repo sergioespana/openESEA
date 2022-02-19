@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from ..models import EseaAccount, Organisation, Method, Network, Campaign, SurveyResponse, Respondent
+from ..models import EseaAccount, Organisation, Method, Network, Campaign, SurveyResponse, Respondent, AccountAudit
 
 
 class MethodSerializer(serializers.ModelSerializer):
@@ -21,16 +21,24 @@ class CampaignSerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
 
 
+class AccountAuditSerializer(serializers.Serializer):
+    class Meta:
+        model = AccountAudit
+        fields = '__all__'
+
+
 class EseaAccountSerializer(serializers.ModelSerializer):
     organisation_name = serializers.ReadOnlyField(source='organisation.name')
     method_name = serializers.ReadOnlyField(source='method.name')
     campaign_name = serializers.ReadOnlyField(source='campaign.name')
     report = serializers.PrimaryKeyRelatedField(read_only=True)
     all_responses = serializers.StringRelatedField(many=True, required=False)
+
+    account_audit = AccountAuditSerializer()
     
     class Meta:
         model = EseaAccount
-        fields = ['id', 'year', 'organisation', 'organisation_name', 'method', 'method_name', 'campaign', 'campaign_name', 'report', 'all_respondents', 'all_responses', 'survey_response_by_survey', 'deployed_to_respondents', 'sufficient_responses', 'response_rate', 'verified_surveys']
+        fields = ['id', 'year', 'organisation', 'organisation_name', 'method', 'method_name', 'campaign', 'campaign_name', 'report', 'account_audit', 'all_respondents', 'all_responses', 'survey_response_by_survey', 'deployed_to_respondents', 'sufficient_responses', 'response_rate', 'verified_surveys']
 
     def create(self, validated_data):
         return EseaAccount.objects.create(**validated_data)

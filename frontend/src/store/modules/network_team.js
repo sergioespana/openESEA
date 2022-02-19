@@ -8,7 +8,7 @@ export default {
         error: []
     },
     getters: {
-        networkAuditors: (state) => { return state.networkmembers.find(object => object.role_name === 'network admin') }
+        networkAuditors: (state) => { return state.networkmembers.filter(object => object.role_name === 'auditor') }
     },
     mutations: {
         setNetworkMembers (state, { data }) {

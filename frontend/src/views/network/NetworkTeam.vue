@@ -83,6 +83,7 @@
                 ],
                 roles: [
                     { role_name: 'network admin', role: 2 },
+                    { role_name: 'auditor', role: 3 },
                     { role_name: 'guest', role: 1 }
                 ]
             }

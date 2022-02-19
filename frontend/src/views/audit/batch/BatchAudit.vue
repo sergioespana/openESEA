@@ -39,17 +39,17 @@
                 batch_audit_steps: [
                     {
                         label: 'Organisation Selection',
-                        to: { name: 'questionselection', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
+                        to: { name: 'batchauditselection', params: { NetworkId: this.$route.params.NetworkId, CampaignId: this.$route.params.CampaignId } },
                         active: true
                     },
                     {
                         label: 'Audits in Progress',
-                        to: { name: 'documentationrequest', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
+                        to: { name: 'batchauditoverview', params: { NetworkId: this.$route.params.NetworkId, CampaignId: this.$route.params.CampaignId } },
                         active: false
                     },
                     {
                         label: 'All Audits Finished',
-                        to: { name: 'documentationupload', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
+                        to: { name: 'batchauditresults', params: { NetworkId: this.$route.params.NetworkId, CampaignId: this.$route.params.CampaignId } },
                         active: false
                     }
                 ]

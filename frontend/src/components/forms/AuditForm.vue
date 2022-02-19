@@ -28,7 +28,7 @@
 
 <script>
     // :disabled="v$.campaignForm.$error"
-    import { mapActions } from 'vuex'
+    import { mapActions, mapState } from 'vuex'
     // import useVuelidate from '@vuelidate/core'
     // import { required, minLength, maxLength } from 'vuelidate/lib/validators'
     // import HandleValidationErrors from '../../utils/HandleValidationErrors'
@@ -39,8 +39,11 @@
             Calendar
         },
         props: {
-            survey: {
-                type: Number
+            // survey: {
+            //     type: Number
+            // }
+            type: {
+                type: String
             }
         },
         data () {
@@ -50,15 +53,27 @@
                 auditdate: new Date()
             }
         },
+        computed: {
+        ...mapState('survey', ['surveys', 'survey'])
+        },
         // computed: {
         //     ...mapState('auditIndicators', ['indicators'])
         // },
         methods: {
             ...mapActions('auditIndicators', ['fetchIndicators']),
             async createNewAudit () {
-                await this.fetchIndicators({ id: this.$route.params.EseaAccountId }) //  oId: this.$route.params.OrganisationId, eaId: this.$route.params.EseaAccountId
-                this.$router.push({ name: 'questionselection', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.survey } })
-                console.log('yess!', this.survey)
+                console.log(this.survey)
+                if (this.type === 'batch') {
+                    this.$router.push({ name: '' })
+                } else {
+                    if (this.survey.response_type === 'single') {
+                        await this.fetchIndicators({ id: this.$route.params.EseaAccountId }) //  oId: this.$route.params.OrganisationId, eaId: this.$route.params.EseaAccountId
+                        this.$router.push({ name: 'questionselection', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.survey.id } })
+                    } else if (this.survey.response_type === 'multiple') {
+                        console.log('he')
+                        this.$router.push({ name: 'multipleauditsampling', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.survey.id } })
+                    }
+                }
             },
             closeDialog () {
                 this.$emit('closedialog')

@@ -59,7 +59,7 @@
         </div>
         <div class="p-text-right p-col-12 p-as-end">
             <Button class="p-my-5" label="Start audit for selected questions" @click="startAudit(selectedQuestions)" :disabled="!selectedQuestions.length" icon="pi pi-check" />
-        </div>=""e
+        </div>
         <Dialog v-model:visible="helpDialog" style="width: 500px;" header="Help" :modal="true" dismissableMask="true">
             <p>Please select the questions that you want to audit.</p>
 

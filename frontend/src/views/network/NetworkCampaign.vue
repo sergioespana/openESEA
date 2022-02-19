@@ -66,7 +66,22 @@
                 </Column>
             </DataTable>
         </TabPanel>
-        <TabPanel header="Validation">
+        <TabPanel header="Audit">
+            {{startAuditDialog}}
+            <DataTable :value="campaignAudits" dataKey="id" selectionMode="single" showGridlines autoLayout
+            :paginator="true" :rows="10" :filters="filters" paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+            :rowsPerPageOptions="[5,10,25]" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" class="p-datatable-striped">
+             <template #header>
+                    <div class="p-d-flex p-jc-between p-ai-center">
+                        <h3 class="p-m-0">Audit Process</h3>
+                        <div>
+                            <Button label="New audit process" @click="startAuditDialog = !startAuditDialog" />
+                        </div>
+                    </div>
+                </template>
+            <Column field="name" header="Name" />
+            <Column field="status" header="Status" sortable />
+        </Datatable>
             <!-- Validation Closing Date: {{ dateFixer(campaign.close_validation_date, 'MMMM Do YYYY') }} -->
         </TabPanel>
         <TabPanel header="Settings" :disabled="!permission">
@@ -140,6 +155,10 @@
                 <Button label="Cancel" icon="pi pi-check" class="p-button-text" @click="addOrganisationsDialog = false" />
         </template>
     </Dialog>
+
+    <Dialog v-model:visible="startAuditDialog" style="width: 500px" header="New Audit Process" :modal="true" :dismissableMask="true">
+        <audit-form @closedialog="startAuditDialog=false" type="batch" />
+    </Dialog>
 </template>
 
 <script>
@@ -151,13 +170,15 @@
     import dateFixer from '../../utils/datefixer'
     import moment from 'moment'
     import CampaignUpdateForm from '../../components/forms/CampaignUpdateForm.vue'
+    import AuditForm from '../../components/forms/AuditForm'
 
     export default {
         components: {
             ProgressBar,
             Slider,
             MultiSelect,
-            CampaignUpdateForm
+            CampaignUpdateForm,
+            AuditForm
         },
         data () {
             return {
@@ -200,10 +221,17 @@
                         command: () => { this.$toast.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted', life: 3000 }) }
                     }
                 ],
+                campaignAudits: [
+                    { name: 'External audit 2020', status: '(1/4) Finished' },
+                    { name: 'Network audit 2020', status: '(3/4) Finished' },
+                    { name: 'Internal audit 2020', status: '(4/4) Finished' }
+                ],
+
                 selectedOrganisations: [],
                 removeOrganisationsDialog: false,
                 chosenOrganisations: [],
-                addOrganisationsDialog: false
+                addOrganisationsDialog: false,
+                startAuditDialog: false
             }
         },
         computed: {
@@ -297,6 +325,9 @@
             async goToMethod () {
                 this.$router.push({ name: 'newmethoddetails', params: { id: this.campaign.method } })
                 /* this.$router.push({ name: 'methoddetails', params: { id: this.campaign.method } }) */
+            },
+            createNewCampaignAudit () {
+                print()
             }
         }
     }

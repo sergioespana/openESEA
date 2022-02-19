@@ -30,6 +30,7 @@ class SurveyResponse(models.Model):
 
     token = models.CharField(max_length=10)
     finished = models.BooleanField(default=False)
+    # verified = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = _('survey_response')

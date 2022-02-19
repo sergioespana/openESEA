@@ -394,6 +394,38 @@ const routes = [
                 meta: {
                     requiresLogin: true
                 }
+            },
+            {
+                path: 'multiple-audit-sampling',
+                name: 'multipleauditsampling',
+                component: () => import('../views/audit/multiple/AuditMultipleSample.vue'),
+                meta: {
+                    requiresLogin: true
+                }
+            },
+            {
+                path: 'multiple-sample-overview',
+                name: 'multiplesampleoverview',
+                component: () => import('../views/audit/multiple/AuditMultipleSampleOverview.vue'),
+                meta: {
+                    requiresLogin: true
+                }
+            },
+            {
+                path: 'multiple-audit',
+                name: 'multipleaudit',
+                component: () => import('../views/audit/multiple/AuditMultipleAudit.vue'),
+                meta: {
+                    requiresLogin: true
+                }
+            },
+            {
+                path: 'multiple-audit-results',
+                name: 'multipleauditresults',
+                component: () => import('../views/audit/multiple/AuditMultipleResults.vue'),
+                meta: {
+                    requiresLogin: true
+                }
             }
         ],
         meta: {

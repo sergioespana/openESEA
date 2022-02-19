@@ -204,11 +204,17 @@ http://localhost:8081/organisation/1/esea-accounts/1
                         </div>
                     </template>
                 </Column>
+                <Column field="type" header="Type" />
                 <Column header="Status" headerStyle="width: 15rem; text-align: center" bodyStyle="text-align: center; overflow: visible" :style="permission ? '': 'display:none;'">
                     <template #body="{data}">
                         <div v-if="permission">
-                            <div v-if="data.auditobject">{{data.auditobject}} 'Documentation Upload'... + icon</div>
-                            <Button v-else label="Start Audit" type="button" class="p-button-sm" @click="startAudit(data)"  style="width: 200px" />
+                            <div v-if="eseaAccount.verified_surveys.includes(data.id)" class="p-d-flex p-ai-center p-jc-between p-px-1">
+                            Verified
+                            <div class="p-col-2 p-text-right"><i class="pi pi-check" style="font-size: 1rem; background-color: #689F38; color: white; border-radius: 50%; padding: 7px;"></i></div>
+                            </div>
+                            <div v-else class="p-text-left">
+                            <Button label="Start Audit" type="button" class="p-button-sm" @click="startAudit(data)"  style="width: 100px" />
+                            </div>
                         </div>
                     </template>
                 </Column>
@@ -270,7 +276,7 @@ http://localhost:8081/organisation/1/esea-accounts/1
     </Dialog>
 
     <Dialog v-model:visible="startAuditDialog" style="width: 500px" header="New Audit Process" :modal="true" :dismissableMask="true">
-        <audit-form @closedialog="startAuditDialog=false" :survey="selected_survey"/>
+        <audit-form @closedialog="startAuditDialog=false" />
     </Dialog>
 </template>
 
@@ -338,7 +344,7 @@ http://localhost:8081/organisation/1/esea-accounts/1
         computed: {
             ...mapState('eseaAccount', ['eseaAccount']),
             ...mapState('organisation', ['organisation']),
-            ...mapState('survey', ['surveys']),
+            ...mapState('survey', ['surveys', 'survey']),
             ...mapState('campaign', ['campaign']),
             ...mapState('auditIndicators', ['indicators']),
             nr_of_recommended () {
@@ -346,7 +352,7 @@ http://localhost:8081/organisation/1/esea-accounts/1
                 this.indicators.forEach((dict) => {
                     if (typeof dict === 'object') {
                         for (const [key] of Object.entries(dict)) {
-                            console.log(key)
+                            // console.log(key)
                             if (key === 'critical_impact' | dict[key] === true) {
                                 i++
                             }
@@ -386,7 +392,7 @@ http://localhost:8081/organisation/1/esea-accounts/1
         },
         methods: {
             ...mapActions('eseaAccount', ['deleteEseaAccount']),
-            ...mapActions('survey', ['fetchSurveys']),
+            ...mapActions('survey', ['fetchSurveys', 'setSurvey']),
             ...mapActions('campaign', ['fetchCampaign']),
             ...mapActions('method', ['fetchMethod']),
             ...mapActions('auditIndicators', ['fetchIndicators']),
@@ -459,10 +465,12 @@ http://localhost:8081/organisation/1/esea-accounts/1
                 this.$router.push({ name: 'newmethoddetails', params: { id: this.eseaAccount.method } })
                 /* this.$router.push({ name: 'methoddetails', params: { id: this.campaign.method } }) */
             },
-            startAudit (data) {
+            async startAudit (data) {
+                console.log(data)
                 this.selected_survey = data.id
+                await this.setSurvey(data)
                 this.startAuditDialog = true
-                console.log('start audit ---->', data.id)
+                console.log('start audit ---->', this.survey)
             },
             finishAudit () {
                 console.log('finish audit')

@@ -27,94 +27,94 @@
 </template>
 
 <script>
-import Steps from 'primevue/steps'
-import { mapState } from 'vuex'
+    import Steps from 'primevue/steps'
+    import { mapState } from 'vuex'
 
-export default {
-    components: {
-        Steps
-    },
-    data () {
-        return {
-              styleObject: {
-                backgroundColor: 'red',
-                color: 'red',
-                fontSize: '13px'
+    export default {
+        components: {
+            Steps
+        },
+        data () {
+            return {
+                styleObject: {
+                    backgroundColor: 'red',
+                    color: 'red',
+                    fontSize: '13px'
+                },
+                single_audit_steps: [
+                    {
+                        label: 'Question Selection',
+                        to: { name: 'questionselection', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
+                        active: true
+                    },
+                    {
+                        label: 'Documentation request',
+                        to: { name: 'documentationrequest', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
+                        active: false
+                    },
+                    {
+                        label: 'Documentation upload',
+                        to: { name: 'documentationupload', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
+                        active: false
+                    },
+                    {
+                        label: 'Audit',
+                        to: { name: 'singleauditaudit', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
+                        active: false
+                    },
+                    {
+                        label: 'Results',
+                        to: { name: 'singleauditresults', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
+                        active: false
+                    }
+                ],
+                multiple_audit_steps: [
+                    {
+                        label: 'Response Sample',
+                        to: { name: 'multipleauditsampling', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
+                        active: true
+                    },
+                    {
+                        label: 'Sample Overview',
+                        to: { name: 'multiplesampleoverview', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
+                        active: false
+                    },
+                                    {
+                        label: 'Audit',
+                        to: { name: 'multipleaudit', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
+                        active: true
+                    },
+                    {
+                        label: 'Results',
+                        to: { name: 'multipleauditresults', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
+                        active: false
+                    }
+                ]
+            }
+        },
+        computed: {
+            ...mapState('eseaAccount', ['eseaAccount']),
+            ...mapState('survey', ['survey']),
+            steps () {
+                if (this.survey.response_type === 'single') {
+                    return this.single_audit_steps
+                } else {
+                    return this.multiple_audit_steps
+                }
+            }
+        },
+        methods: {
+            goToPage () {
+                this.$router.push({ name: 'questionselection', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } })
             },
-            single_audit_steps: [
-                {
-                    label: 'Question Selection',
-                    to: { name: 'questionselection', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
-                    active: true
-                },
-                {
-                    label: 'Documentation request',
-                    to: { name: 'documentationrequest', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
-                    active: false
-                },
-                {
-                    label: 'Documentation upload',
-                    to: { name: 'documentationupload', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
-                    active: false
-                },
-                {
-                    label: 'Audit',
-                    to: { name: 'singleauditaudit', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
-                    active: false
-                },
-                {
-                    label: 'Results',
-                    to: { name: 'singleauditresults', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
-                    active: false
-                }
-            ],
-            multiple_audit_steps: [
-                {
-                    label: 'Response Sample',
-                    to: { name: 'multipleauditsampling', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
-                    active: true
-                },
-                {
-                    label: 'Sample Overview',
-                    to: { name: 'multiplesampleoverview', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
-                    active: false
-                },
-                                {
-                    label: 'Audit',
-                    to: { name: 'multipleaudit', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
-                    active: true
-                },
-                {
-                    label: 'Results',
-                    to: { name: 'multipleauditresults', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
-                    active: false
-                }
-            ]
-        }
-    },
-    computed: {
-        ...mapState('eseaAccount', ['eseaAccount']),
-        ...mapState('survey', ['survey']),
-        steps () {
-            if (this.survey.response_type === 'single') {
-                return this.single_audit_steps
-            } else {
-                return this.multiple_audit_steps
+            goToEseaAccount () {
+                this.$router.push({ name: 'organisationeseaaccount', params: { OrganisationId: this.eseaAccount.organisation, EseaAccountId: this.$route.params.EseaAccountId } })
+            },
+            test ($event) {
+                console.log($event.data)
             }
         }
-    },
-    methods: {
-        goToPage () {
-            this.$router.push({ name: 'questionselection', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } })
-        },
-        goToEseaAccount () {
-            this.$router.push({ name: 'organisationeseaaccount', params: { OrganisationId: this.eseaAccount.organisation, EseaAccountId: this.$route.params.EseaAccountId } })
-        },
-        test ($event) {
-            console.log($event.data)
-        }
     }
-}
 </script>
 
 <style lang="scss">

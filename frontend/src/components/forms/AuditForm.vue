@@ -64,7 +64,7 @@
             async createNewAudit () {
                 console.log(this.survey)
                 if (this.type === 'batch') {
-                    this.$router.push({ name: '' })
+                    this.$router.push({ name: 'batchauditselection', NetworkId: this.$route.params.NetworkId, CampaignId: this.$route.params.CampaignId })
                 } else {
                     if (this.survey.response_type === 'single') {
                         await this.fetchIndicators({ id: this.$route.params.EseaAccountId }) //  oId: this.$route.params.OrganisationId, eaId: this.$route.params.EseaAccountId

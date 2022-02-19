@@ -67,7 +67,6 @@
             </DataTable>
         </TabPanel>
         <TabPanel header="Audit">
-            {{startAuditDialog}}
             <DataTable :value="campaignAudits" dataKey="id" selectionMode="single" showGridlines autoLayout
             :paginator="true" :rows="10" :filters="filters" paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
             :rowsPerPageOptions="[5,10,25]" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" class="p-datatable-striped">

@@ -18,6 +18,7 @@ class EseaAccount(models.Model):
     sufficient_responses = models.BooleanField(default=False)      # Could be replaced by status enum with 'sufficient, unsufficient, ongoing, overdue, etc.'
     response_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     verified_surveys = models.ManyToManyField('Survey', related_name="verified_surveys", blank=True)
+    # auditor = 
 
     def __str__(self):
         return f'organisation:{self.organisation} - campaign:{self.campaign}'

@@ -349,7 +349,43 @@ const routes = [
         ]
         }
     },
+
     // Audit
+    {
+        path: '/networks/:NetworkId/campaigns/:CampaignId',
+        name: 'auditCampaign',
+        component: () => import('../views/audit/batch/BatchAudit.vue'),
+
+        children: [
+            {
+                path: 'batch-audit-organisation-selection',
+                name: 'batchauditselection',
+                component: () => import('../views/audit/batch/BatchAuditSelection.vue'),
+                meta: {
+                    requiresLogin: true
+                }
+            },
+            {
+                path: 'batch-audit-overview',
+                name: 'batchauditoverview',
+                component: () => import('../views/audit/batch/BatchAuditsOverview.vue'),
+                meta: {
+                    requiresLogin: true
+                }
+            },
+            {
+                path: 'batch-audit-results',
+                name: 'batchauditresults',
+                component: () => import('../views/audit/batch/BatchAuditResults.vue'),
+                meta: {
+                    requiresLogin: true
+                }
+            }
+        ],
+        meta: {
+            requiresLogin: true
+        }
+    },
     {
         path: '/esea-accounts/:EseaAccountId/survey-audit/:SurveyId',
         name: 'auditEseaAccount',

@@ -16,12 +16,14 @@ class NetworkMember(models.Model):
     )
     invitation = models.CharField(max_length=100, blank=False, choices=STATUS_OPTIONS, default=PENDING)
 
+    AUDITOR = 3
     NETWORKADMIN = 2
     GUEST = 1 
 
     ROLES = (
         (NETWORKADMIN, "network admin"),
-        (GUEST, "guest")
+        (GUEST, "guest"),
+        (AUDITOR, "auditor")
     ) 
 
     role = models.IntegerField(blank=False, choices=ROLES, default=GUEST)

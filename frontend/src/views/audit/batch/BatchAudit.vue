@@ -10,10 +10,11 @@
             <div class="p-col-4">Campaign: {{campaign.name}}</div>
             <div class="p-col-4">Deadline: June 26th, 2021</div>
         </div>
-        <Steps :model="batch_audit_steps" :readonly="false" @click="test">
+        {{startedAudit}}
+        <Steps :model="batch_audit_steps" :readonly="false" @click="test" :key="disabledStep2" >
             <template #item="{item}">
                 {{item.label}} {{item.label}}
-                <!-- <a :href="item.to">{{item.label}}--1</a> -->
+                <!--<a :href="item.to">{{item.label}}--1</a> -->
             </template>
             <!--<router-link :to="item.to" custom v-slot="{href, navigate, activeIndex}"> :style="[activeIndex ? 'background-color: red;':'background-color: blue;']"
                 <a :href="href" @click="navigate" style="background-color: blue;">{{activeIndex}}--{{item.label}}</a>
@@ -33,9 +34,12 @@
         components: {
             Steps
         },
-        data () {
-            return {
-                batch_audit_steps: [
+        computed: {
+            ...mapState('network', ['network']),
+            ...mapState('campaign', ['campaign']),
+            ...mapState('accountAudit', ['accountAudits', 'startedAudit']),
+            batch_audit_steps () {
+                return [
                     {
                         label: 'Organisation Selection',
                         to: { name: 'batchauditselection', params: { NetworkId: this.$route.params.NetworkId, CampaignId: this.$route.params.CampaignId } },
@@ -44,19 +48,16 @@
                     {
                         label: 'Audits in Progress',
                         to: { name: 'batchauditoverview', params: { NetworkId: this.$route.params.NetworkId, CampaignId: this.$route.params.CampaignId } },
-                        active: false
+                        active: false,
+                        disabled: !this.startedAudit
                     },
                     {
                         label: 'All Audits Finished',
                         to: { name: 'batchauditresults', params: { NetworkId: this.$route.params.NetworkId, CampaignId: this.$route.params.CampaignId } },
-                        active: false
+                        disabled: this.accountAudits.some(accountAudit => accountAudit.status !== 'finished')
                     }
                 ]
             }
-        },
-        computed: {
-            ...mapState('network', ['network']),
-            ...mapState('campaign', ['campaign'])
         },
         methods: {
         //     goToPage () {
@@ -68,3 +69,13 @@
         }
     }
 </script>
+
+<style>
+    /* .p-steps .p-steps-item .p-menuitem-link .p-steps-number {
+        background-color: green;
+    } */
+    .p-steps-item.p-steps-current .p-menuitem-link {
+        cursor: default;
+        background-color: green;
+    }
+</style>

@@ -8,7 +8,7 @@
                 <Button @click="(helpDialog = !helpDialog)" label="Help" class="p-button-sm p-button-warning" icon="pi pi-external-link" />
             </div> -->
         </div>{{eseaAccounts.length}}
-        <!-- {{networkmembers}} {{ selectedAuditor }} {{selectedOrganisations}} -->
+        <!-- {{networkmembers}} {{ selectedAuditor }}  {{selectedOrganisations}} -->
         <DataTable :value="eseaAccounts" dataKey="id" v-model:selection="selectedOrganisations" showGridlines autoLayout
             :paginator="true" :rows="10" :filters="filters" paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
             :rowsPerPageOptions="[5,10,25]" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" class="p-datatable-striped">
@@ -66,29 +66,32 @@
         },
         async created () {
             await this.fetchEseaAccounts({ query: `?campaign=${this.$route.params.CampaignId}` })
-            this.selectedOrganisations = this.eseaAccounts.filter(eseaAccount => eseaAccount.account_audit.status === 'in progress')
+            this.selectedOrganisations = this.eseaAccounts.filter(eseaAccount => (eseaAccount.account_audit.status === 'in progress' || eseaAccount.account_audit.status === 'finished'))
     },
         methods: {
             ...mapActions('eseaAccount', ['fetchEseaAccounts']),
             ...mapActions('networkTeam', ['fetchNetworkMembers']),
-            ...mapActions('accountAudit', ['updateAccountAudit', 'fetchAccountAudits']),
+            ...mapActions('accountAudit', ['updateAccountAudit', 'fetchAccountAudits', 'changeStartedAudit']),
             async goToAudit () {
-                if (this.selectedOrganisations.some(item => item.account_audit.auditor === undefined)) {
+                if (this.selectedOrganisations.some(item => item.account_audit.auditor === null)) {
                     this.AddAuditorDialog = true
                 } else {
                     await this.updateDatabase()
                     // await this.fetchEseaAccounts({ query: `?campaign=${this.$route.params.CampaignId}&audit-selection=true` })
                     await this.fetchAccountAudits({ query: `?campaign=${this.$route.params.CampaignId}&audit-selection=true` })
+                    this.changeStartedAudit(true)
                     this.$router.push({ name: 'batchauditoverview', params: { NetworkId: this.$route.params.NetworkId, CampaignId: this.$route.params.CampaignId } })
                 }
             },
             updateDatabase () {
                 this.selectedOrganisations.forEach((eseaAccount) => {
                     const data = eseaAccount.account_audit
-                    data.status = 'in progress'
-                    console.log('-->', data)
-                    eseaAccount.account_audit = data
-                    this.updateAccountAudit({ oId: eseaAccount.organisation, eaId: eseaAccount.id, data: eseaAccount.account_audit })
+                    if (data.status === 'not started') {
+                        data.status = 'in progress'
+                        console.log('-->', data)
+                        eseaAccount.account_audit = data
+                        this.updateAccountAudit({ oId: eseaAccount.organisation, eaId: eseaAccount.id, data: eseaAccount.account_audit })
+                    }
                     // ListOfIds.push({ id: organisation.id, organisation: organisation.organisation
                     // })
                 })

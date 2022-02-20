@@ -2,7 +2,6 @@
     <div class="p-mx-3">
         <div class="p-d-flex p-ai-center p-jc-between">
             <h2 class="p-text-left">Organisation Selection</h2>
-            <Button @click="addOrganisation()" label="Add Organisation" class="p-button-sm" />
             <!-- <div>
                 <Button @click="exportData()" label="Export Data" class="p-button-sm p-mr-2" />
                 <Button @click="(helpDialog = !helpDialog)" label="Help" class="p-button-sm p-button-warning" icon="pi pi-external-link" />
@@ -32,17 +31,17 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+    import { mapState } from 'vuex'
 
-export default {
-    computed: {
-        ...mapState('eseaAccount', ['eseaAccounts', 'eseaAccount']),
-        ...mapState('accountAudit', ['accountAudits'])
-    },
-    methods: {
-        addOrganisation () {
-            print()
+    export default {
+        computed: {
+            ...mapState('eseaAccount', ['eseaAccounts', 'eseaAccount']),
+            ...mapState('accountAudit', ['accountAudits'])
+        },
+        methods: {
+            addOrganisation () {
+                print()
+            }
         }
     }
-}
 </script>

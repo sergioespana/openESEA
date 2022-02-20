@@ -22,7 +22,7 @@
             </template>
         </Card>
 
-    <Card v-if="card2" class="p-text-left p-m-2">
+        <Card v-if="card2" class="p-text-left p-m-2">
             <template #title>
             Audit Result
             </template>

@@ -5,6 +5,7 @@ export default {
     state: {
         accountAudits: [],
         accountAudit: {},
+        startedAudit: false,
         error: []
     },
     mutations: {
@@ -19,6 +20,9 @@ export default {
                 if (item.id !== id) { return item }
                 return { ...item, ...data }
             })
+        },
+        changeStartedAudit (state, data) {
+            state.startedAudit = data
         },
         // deleteEseaAccount (state, { id }) {
         //     state.eseaAccounts = state.eseaAccounts.filter(e => e.id !== id)
@@ -80,6 +84,9 @@ export default {
             } else {
                 commit('setAccountAudit', {})
             }
+        },
+        changeStartedAudit ({ commit }, data) {
+            commit('changeStartedAudit', data)
         }
     }
 }

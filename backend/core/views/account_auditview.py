@@ -12,7 +12,7 @@ class AccountAuditViewSet(viewsets.ModelViewSet):
         campaign = self.request.GET.get('campaign', None)
         audit_selection = self.request.GET.get('audit-selection', None)
         if campaign is not None and audit_selection is not None:
-            return AccountAudit.objects.filter(esea_account__campaign=campaign, status__in=['in progress'])
+            return AccountAudit.objects.filter(esea_account__campaign=campaign, status__in=['in progress', 'finished'])
         return AccountAudit.objects.filter(esea_account=self.kwargs['esea_account_pk'])
     
     def update(self, request, *args, **kwargs):

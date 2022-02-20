@@ -1,11 +1,13 @@
 from django.db import models
 
 class SurveyAudit(models.Model):
-    account_audit = models.ForeignKey('Method', related_name="survey_audits", on_delete=models.CASCADE)
+    account_audit = models.ForeignKey('AccountAudit', related_name="survey_audits", on_delete=models.CASCADE)
     survey = models.ForeignKey('Survey', related_name="survey_audits", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     finish_date = models.DateTimeField(blank=True, null=True)
-    sample_size = models.IntegerField()
+    deadline = models.DateTimeField(blank=True, null=True)
+    sample_size = models.IntegerField(blank=True, null=True)
+    
 
     NOT_STARTED = "not started"
 

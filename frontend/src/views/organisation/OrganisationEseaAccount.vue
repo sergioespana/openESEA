@@ -76,7 +76,7 @@ http://localhost:8081/organisation/1/esea-accounts/1
         </TabPanel>
          <TabPanel header="Auditing">
              <div class="p-p-2">
-             Checkboxes created for demo Artur:
+             Checkboxes created for demo Ties:
              <Checkbox id="card1" v-model="card1" :binary="true" class="p-ml-2" />
              <label for="card1">Card1</label>
              <Checkbox id="card2" v-model="card2" :binary="true" class="p-ml-2" />
@@ -89,7 +89,7 @@ http://localhost:8081/organisation/1/esea-accounts/1
              <label for="card5">Card5</label>
              </div>
 
-             <Card v-if="card1" class="p-text-left p-m-2">
+             <Card v-if="accountAudit.status === 'finished' ||card1" class="p-text-left p-m-2">
                  <template #title>
                     Assurance
                  </template>
@@ -176,7 +176,9 @@ http://localhost:8081/organisation/1/esea-accounts/1
                     </div>
                  </template>
              </Card>
-
+             <!-- {{accountAudit}} -->
+            <!-- <Button label="start Account Audit" @click="goToMethod" /> -->
+            <!-- <div class="p-shadow-4" style="display: flex; justify-content: center; align-items: center; width: 80%; height: 400px; margin: auto; background-color: lightblue; border-radius: 10px"><h2>Start Account Audit</h2></div> -->
             <DataTable :value="eseaAccount.survey_response_by_survey" datakey="id" :rows="10" :paginator="true" v-model:filters="filters" filterDisplay="Menu"
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[10,25,50]"
             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
@@ -190,7 +192,7 @@ http://localhost:8081/organisation/1/esea-accounts/1
                         <div>
                             <Button label="Refresh Recommendations" class="p-mr-2" @click="refreshRecommendations()" />
                             <Button label="Auditors" class="p-mr-2" @click="something" :disabled="true" />
-                            <Button label="Finish Account Audit" @click="finishAuditDialog = true" :disabled="false" />
+                            <Button label="Finish Account Audit" @click="finishAuditDialog = true" :disabled="accountAudit.status === 'finished'" />
 
                         </div>
                     </div>
@@ -209,11 +211,10 @@ http://localhost:8081/organisation/1/esea-accounts/1
                     <template #body="{data}">
                         <div v-if="permission">
                             <div v-if="eseaAccount.verified_surveys.includes(data.id)" class="p-d-flex p-ai-center p-jc-between p-px-1">
-                            Verified
-                            <div class="p-col-2 p-text-right"><i class="pi pi-check" style="font-size: 1rem; background-color: #689F38; color: white; border-radius: 50%; padding: 7px;"></i></div>
+                                <div class="p-col-2 p-text-right"><i class="pi pi-check" style="font-size: 1rem; background-color: #689F38; color: white; border-radius: 50%; padding: 7px;"></i></div>
                             </div>
                             <div v-else class="p-text-left">
-                            <Button label="Start Audit" type="button" class="p-button-sm" @click="startAudit(data)"  style="width: 100px" />
+                                <Button :label="data.survey_audit? 'Continue Audit' : 'Start Audit'" type="button" class="p-button-sm" @click="startAudit(data)"  style="width: 150px" />
                             </div>
                         </div>
                     </template>
@@ -231,12 +232,12 @@ http://localhost:8081/organisation/1/esea-accounts/1
     </TabView>
 
         <Dialog v-model:visible="finishAuditDialog" style="width: 500px;" header="Finish Audit" :modal="true" dismissableMask="true">
-        <p>Are you sure you wish to finish the audit for this complete ESEA account?     </p>
+        <p>Are you sure you wish to finish the audit for this complete ESEA account? </p>
 
         <p>You will not be able to start new survey audits for this ESEA account after clicking 'Yes'.</p>
         <template #footer>
-            <Button label="No" icon="pi pi-times" class="p-button-text" @click="finishAuditDialog = false" />
             <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="finishAudit()" />
+            <Button label="No" icon="pi pi-times" class="p-button-text" @click="finishAuditDialog = false" />
         </template>
     </Dialog>
 
@@ -347,6 +348,8 @@ http://localhost:8081/organisation/1/esea-accounts/1
             ...mapState('survey', ['surveys', 'survey']),
             ...mapState('campaign', ['campaign']),
             ...mapState('auditIndicators', ['indicators']),
+            ...mapState('accountAudit', ['accountAudit']),
+            ...mapState('surveyAudit', ['surveyAudits']),
             nr_of_recommended () {
                 var i = 0
                 this.indicators.forEach((dict) => {
@@ -396,6 +399,8 @@ http://localhost:8081/organisation/1/esea-accounts/1
             ...mapActions('campaign', ['fetchCampaign']),
             ...mapActions('method', ['fetchMethod']),
             ...mapActions('auditIndicators', ['fetchIndicators']),
+            ...mapActions('surveyAudit', ['fetchSurveyAudits', 'fetchSurveyAudit']),
+            ...mapActions('accountAudit', ['updateAccountAudit']),
             dateFixer,
             async initialize () {
                 this.fetchMethod({ id: this.eseaAccount.method })
@@ -403,7 +408,8 @@ http://localhost:8081/organisation/1/esea-accounts/1
                 if (this.eseaAccount.campaign) {
                     this.fetchCampaign({ nId: this.eseaAccount.network, id: this.eseaAccount.campaign })
                 }
-                this.refreshRecommendations()
+                // this.refreshRecommendations()
+                // this.fetchSurveyAudits({ oId: this.$route.params.OrganisationId, eaId: this.$route.params.EseaAccountId })
             },
             toggle (event) {
                 this.$refs.menu.toggle(event)
@@ -469,10 +475,22 @@ http://localhost:8081/organisation/1/esea-accounts/1
                 console.log(data)
                 this.selected_survey = data.id
                 await this.setSurvey(data)
-                this.startAuditDialog = true
-                console.log('start audit ---->', this.survey)
+                if (!data.survey_audit) {
+                    this.startAuditDialog = true
+                } else {
+                    await this.fetchSurveyAudit({ oId: this.$route.params.OrganisationId, eaId: this.$route.params.EseaAccountId, id: data.survey_audit })
+                    if (data.type === 'single') {
+                        await this.fetchIndicators({ id: this.$route.params.EseaAccountId }) //  oId: this.$route.params.OrganisationId, eaId: this.$route.params.EseaAccountId
+                        this.$router.push({ name: 'questionselection', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.survey.id } })
+                    } else if (data.type === 'multiple') {
+                        this.$router.push({ name: 'multipleauditsampling', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.survey.id } })
+                    }
+                }
             },
-            finishAudit () {
+            async finishAudit () {
+                this.accountAudit.status = 'finished'
+                await this.updateAccountAudit({ oId: this.$route.params.OrganisationId, eaId: this.$route.params.EseaAccountId, data: this.accountAudit })
+                this.finishAuditDialog = false
                 console.log('finish audit')
             },
             GetAssurance () {

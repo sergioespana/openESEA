@@ -54,18 +54,21 @@
             }
         },
         computed: {
-        ...mapState('survey', ['surveys', 'survey'])
+            ...mapState('survey', ['surveys', 'survey']),
+            ...mapState('eseaAccount', ['eseaAccount'])
         },
         // computed: {
         //     ...mapState('auditIndicators', ['indicators'])
         // },
         methods: {
             ...mapActions('auditIndicators', ['fetchIndicators']),
+            ...mapActions('surveyAudit', ['createSurveyAudit']),
             async createNewAudit () {
                 console.log(this.survey)
                 if (this.type === 'batch') {
                     this.$router.push({ name: 'batchauditselection', NetworkId: this.$route.params.NetworkId, CampaignId: this.$route.params.CampaignId })
                 } else {
+                    await this.createSurveyAudit({ oId: this.$route.params.OrganisationId, eaId: this.$route.params.EseaAccountId, data: { account_audit: this.eseaAccount.account_audit.id, survey: this.survey.id, deadline: this.auditdate } })
                     if (this.survey.response_type === 'single') {
                         await this.fetchIndicators({ id: this.$route.params.EseaAccountId }) //  oId: this.$route.params.OrganisationId, eaId: this.$route.params.EseaAccountId
                         this.$router.push({ name: 'questionselection', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.survey.id } })

@@ -10,7 +10,7 @@
                     <p><span class="p-text-bold">Respondent:</span> {{surveyResponse.respondent}} <br> <span class="p-text-bold">Organisation:</span> {{surveyResponse.organisation}} </p>
                 </div>
             </div>
-            {{surveyResponse}}
+            <!-- {{surveyResponse}} -->
             <div v-if="this.survey.sections.length" class="p-grid p-col-6 p-m-5" style="border-radius: 10px">
                 <div v-if="sectionNumber === 0" class="p-col-12 p-text-left p-p-5" style="border-radius: 10px; background-color: #F1F1F1;"><h3>{{survey.welcome_text}}</h3></div>
                 <Divider />
@@ -18,7 +18,7 @@
                 <div class="p-col-6 p-text-right">
                     <ProgressBar :value="progress + 0.1">{{progress}}% completed</ProgressBar></div>
                 <div class="p-col-12 p-text-left"><h3>Section: '{{currentSection.title}}'</h3></div>
-                {{answers}}
+                <!-- {{answers}} -->
                 <section-component class="p-col-12 p-my-2"
                     v-for="item, index in currentSection.mergedQuestionsAndTextFragments"
                     tabindex="0"
@@ -163,6 +163,12 @@
                 this.loading = false
                 console.log('eee', this.surveyResponse.question_responses)
                 if (this.surveyResponse.finished) {
+                    console.log(this.surveyResponse.survey_audit)
+                    if (this.surveyResponse.survey_audit) {
+                        print()
+                        console.log('Go to read only version of survey-fill for multiple respondent auditing purposes.')
+                        // this.$router.push({ name: 'survey-audit' })
+                    }
                     this.$router.push({ name: 'survey-thank-you' })
                 }
                 this.questionresponses = this.surveyResponse.question_responses

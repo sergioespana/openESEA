@@ -5,7 +5,8 @@ class AccountAudit(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     finish_date = models.DateTimeField(blank=True, null=True)
     auditor = models.ForeignKey('CustomUser', on_delete=models.SET_NULL, null=True)
-    
+    assurance_declaration = models.TextField(max_length=1000, blank=True)
+
     LIMITED = "limited"
     REASONABLE = "reasonable"
     ASSURANCE_REJECTED = "assurance rejected"

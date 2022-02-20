@@ -2,6 +2,8 @@ from django.db import models
 from django.shortcuts import get_object_or_404
 from datetime import date
 
+from core.models.survey_audit import SurveyAudit
+
 from .respondent import Respondent
 from .survey_response import SurveyResponse
 from .question import Question
@@ -38,6 +40,12 @@ class EseaAccount(models.Model):
                 tempdict['auditor'] = self.responses.filter(survey=survey).first().auditor
             else:
                 tempdict['auditor'] = None
+            try:
+                survey_audit = SurveyAudit.objects.get(survey=survey, account_audit__esea_account=self)
+                print(survey_audit)
+                tempdict['survey_audit'] = survey_audit.pk
+            except SurveyAudit.DoesNotExist:
+                tempdict['survey_audit'] = None
             tempdict['respondees'] = [{'name':str(respondee)} for respondee in Respondent.objects.filter(response__esea_account=self, response__survey=survey).distinct()]
             tempdict['responses'] = len(self.responses.filter(survey=survey, finished=True))
             tempdict['required_response_rate'] = survey.min_threshold

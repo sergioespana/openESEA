@@ -5,7 +5,7 @@
 
     -->
     <div class="p-p-0 p-my-3 p-text-left p-d-flex p-ai-center p-fluid p-input-filled">
-        <!-- {{lazyValue}} -- {{value}} ++ {{ checkboxvals }} {{ indicator.id }} --> {{answer}} - {{lazyValue}} --> {{value}}
+        <!-- {{lazyValue}} -- {{value}} ++ {{ checkboxvals }} {{ indicator.id }} {{answer}} - {{lazyValue}} {{value}} -->
         <span class="p-mr-2"> {{indicator?.pre_unit}} </span>
         <div v-if="uiComponent === 'field'">
             <div v-if="indicator.datatype === 'text'">

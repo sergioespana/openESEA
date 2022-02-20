@@ -25,6 +25,17 @@ export default {
             console.log('-->', data)
             state.indicator = data || {}
         },
+        updateIndicator (state, data) {
+            state.indicators = state.indicators.map((item) => {
+                if (item.id !== data.id) { return item }
+                return { ...item, ...data }
+            })
+            state.selectedIndicators = state.selectedIndicators.map((item) => {
+                if (item.id !== data.id) { return item }
+                return { ...item, ...data }
+            })
+            console.log(state.indicators)
+        },
         setError (state, { error, id }) {
             console.log(id, '--', error?.response?.data)
             if (id && error?.response?.data) {
@@ -45,6 +56,10 @@ export default {
                 return
             }
             commit('setIndicators', response)
+        },
+        // only works in frontend
+        async updateIndicators ({ commit }, payload) {
+            commit('updateIndicator', payload)
         },
         async selectIndicators ({ commit }, { indicators }) {
             await commit('setSelectedIndicators', indicators)

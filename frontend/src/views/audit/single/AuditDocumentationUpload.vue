@@ -4,7 +4,7 @@
             <h2 class="p-text-left">Documentation Upload</h2>
             <Button @click="(helpDialog = !helpDialog)" label="Help" class="p-button-sm p-button-warning" icon="pi pi-external-link" />
         </div>
-        <DataTable class="p-col-12 p-m-0 p-p-0" :value="selectedIndicators" rowGroupMode="rowspan" groupRowsBy="section.name" sortMode="single" sortField="section.name" :sortOrder="1" responsiveLayout="scroll"
+        <DataTable class="p-col-12" :value="selectedIndicators" rowGroupMode="rowspan" groupRowsBy="section.name" sortMode="single" sortField="section.name" :sortOrder="1" responsiveLayout="scroll"
         v-model:expandedRowGroups="expandedRowGroups" @rowgroupExpand="onRowGroupExpand" @rowgroupCollapse="onRowGroupCollapse" dataKey="name">
             <Column field="topic" header="Topic"></Column>
             <Column field="name" header="Name" sortable></Column>

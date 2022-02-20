@@ -22,16 +22,15 @@
                 </template>
             </Column>
         </Datatable>
-
         <div class="p-d-flex p-jc-end">
-                <div class="p-py-3" style="width: 300px;">
-                    <Button @click="verifyAudit('verified')" label="Verify" icon="pi pi-check" class="p-button-success p-button-sm p-mb-3" style="width: 100%;" />
-                    <Button @click="verifyAudit('reject')" label="Reject" icon="pi pi-times" class="p-button-danger p-button-sm" style="width: 100%;" />
-                </div>
+            <div class="p-py-3" style="width: 300px;">
+                <Button @click="verifyAudit('verified')" label="Verify" icon="pi pi-check" class="p-button-success p-button-sm p-mb-3" style="width: 100%;" />
+                <Button @click="verifyAudit('rejected')" label="Reject" icon="pi pi-times" class="p-button-danger p-button-sm" style="width: 100%;" />
+            </div>
         </div>
     </div>
 
-        <Dialog v-model:visible="verificationDialog" style="width: 500px;" header="Help" :modal="true" dismissableMask="true">
+    <Dialog v-model:visible="verificationDialog" style="width: 500px;" header="Help" :modal="true" dismissableMask="true">
         <p>Are you sure you wish to {{verified ? 'verify': 'reject'}} the survey responses?</p>
         <template #footer>
             <Button label="Yes" class="p-button-sm" icon="pi pi-check" @click="verifySurveyAudit()" />
@@ -41,7 +40,7 @@
 </template>
 
 <script>
-    import { mapState } from 'vuex'
+    import { mapState, mapActions } from 'vuex'
     import { AxiosInstance } from '@/plugins/axios'
 
     export default {
@@ -57,15 +56,18 @@
             }
         },
         computed: {
-            ...mapState('respondent', ['respondents'])
+            ...mapState('respondent', ['respondents']),
+            ...mapState('surveyAudit', ['surveyAudit'])
         },
         methods: {
-            verifySurveyAudit () {
+            ...mapActions('surveyAudit', ['updateSurveyAudit']),
+            async verifySurveyAudit () {
                 // save survey_audit_object.verified = this.verified
                 // async/await
+                this.surveyAudit.status = this.verified
+                await this.updateSurveyAudit({ oId: this.$route.params.OrganisationId, eaId: this.$route.params.EseaAccountId, id: this.surveyAudit.id, data: this.surveyAudit })
                 this.$router.push({ name: 'multipleauditresults', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } })
                 // if this.verified === true, save survey to esea_account.verified_surveys
-                print()
             },
             async resendMail (data) {
                 var respondentIds = null

@@ -21,6 +21,7 @@ import surveyResponse from './modules/method/survey/survey_response'
 import surveyResults from './modules/method/survey/survey_results'
 import auditIndicators from './modules/method/audit/audit_indicators'
 import accountAudit from './modules/method/audit/account_audit'
+import surveyAudit from './modules/method/audit/survey_audit'
 import respondent from './modules/respondent'
 
 const vuexLocalStorage = new VuexPersistance({
@@ -51,6 +52,7 @@ export default createStore({
     surveyResults,
     auditIndicators,
     accountAudit,
+    surveyAudit,
     respondent
   },
   plugins: [vuexLocalStorage.plugin]

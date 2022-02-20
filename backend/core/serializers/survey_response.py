@@ -13,11 +13,13 @@ class SurveyResponseSerializer(serializers.ModelSerializer):
     organisation = serializers.StringRelatedField(source='respondent.organisation')
     method = serializers.ReadOnlyField(source='survey.method.id')
     survey = serializers.PrimaryKeyRelatedField(queryset=Survey.objects.all(), required=True)
+    auditor = serializers.StringRelatedField(required=False)
 
     class Meta:
         model = SurveyResponse
         fields = '__all__'
         read_only_fields = ['respondent', 'survey', 'organisation', 'method', 'token']
+        extra_kwargs = {'auditor': {'required': False}}
 
     # When a Survey Response gets updated
     def update(self, survey_response, validated_data):

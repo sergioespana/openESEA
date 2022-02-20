@@ -1,36 +1,35 @@
 <template>
-    <div class="p-grid p-mx-5">
-        <div class="p-col-12 p-as-start">
+    <div class="p-grid p-m-5">
         <div class="p-col-12 p-d-flex p-ai-center p-jc-between">
             <h2 class="p-text-left">Documentation Request</h2>
             <Button @click="(helpDialog = !helpDialog)" label="Help" class="p-button-sm p-button-warning" icon="pi pi-external-link" />
         </div>
-        <div class="card">
-            <DataTable :value="selectedIndicators" rowGroupMode="rowspan" groupRowsBy="section.name" sortMode="single" sortField="section.name" :sortOrder="1" responsiveLayout="scroll"
+        <DataTable class="p-col-12" :value="selectedIndicators" rowGroupMode="rowspan" groupRowsBy="name" sortMode="single" sortField="name" :sortOrder="1" responsiveLayout="scroll"
             v-model:expandedRowGroups="expandedRowGroups" @rowgroupExpand="onRowGroupExpand" @rowgroupCollapse="onRowGroupCollapse" v-model:selection="selectedQuestions" dataKey="name">
-                <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
-                <Column field="topic" header="Topic" sortable></Column>
-                <Column field="name" header="Name" sortable></Column>
-                <Column field="value" header="Value"></Column>
-                <Column field="indicator_impact" header="Impact" sortable></Column>
-                <Column header="Outliers" sortable>
-                    <template #body="">
-                        Y
-                    </template>
-                </Column>
-                <Column sortable>
-                    <template #body="">
-                        <Button label="Recommended" class="p-button-sm p-button-danger p-button-rounded p-py-1" @click="openRecommended()" />
-                    </template>
-                </Column>
-                <Column headerStyle="width: 10rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
-                    <template #body="row">
-                        <Button v-if="this.selectedQuestions.find(object => object.id === row.data.id)" label="Message" icon="pi pi-plus" class="p-button-sm p-button-success" @click="openMessage(row.data)" />
-                    </template>
-                </Column>
-            </DataTable>
-        </div>
-        </div>
+            <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
+            <Column field="topic" header="Topic" sortable></Column>
+            <Column field="name" header="Name" sortable></Column>
+            <Column field="value" header="Value"></Column>
+            <Column field="critical_impact" header="Critical Impact" sortable>
+                <template #body="data"> <!-- (row.data.critical_impact & row.data.outliers) -->
+                    <Button v-if="data.data.critical_impact" label="Critical" class="p-button-sm p-button-rounded p-py-1 p-button-danger" @click="openCriticalDialog(data.data)" />
+                    <!--<Button v-if="row.data.outliers || row.data.critical_impact" label="Recommended" class="p-button-sm p-button-rounded p-py-1" :class="(((row.data.critical_impact & row.data.outliers) == true) ? 'p-button-danger' : 'p-button-warning')" @click="openRecommended()" />
+                    -->
+                </template>
+            </Column>
+            <Column header="Anomaly" sortable>
+                <template #body="row"> <!-- (row.data.critical_impact & row.data.outliers) -->
+                    <Button v-if="row.data.outliers" label="Anomaly" class="p-button-sm p-button-rounded p-py-1 p-button-danger" />
+                    <!--<Button v-if="row.data.outliers || row.data.critical_impact" label="Recommended" class="p-button-sm p-button-rounded p-py-1" :class="(((row.data.critical_impact & row.data.outliers) == true) ? 'p-button-danger' : 'p-button-warning')" @click="openRecommended()" />
+                    -->
+                </template>
+            </Column>
+            <Column headerStyle="width: 10rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
+                <template #body="row">
+                    <Button v-if="this.selectedQuestions.find(object => object.name === row.data.name)" label="Message" icon="pi pi-plus" class="p-button-sm p-button-success" @click="openMessage(row.data)" />
+                </template>
+            </Column>
+        </DataTable>
         <div class="p-text-right p-col-12 p-as-end">
             <Button class="p-my-5" label="Request documentation" @click="requestDocumentation()" icon="pi pi-check" />
             <Button class="p-my-5 p-ml-2" label="Audit" @click="requestDocumentation()" />
@@ -54,6 +53,12 @@
             <Button label="Save" class="p-button-sm p-button-success" icon="pi pi-check" @click="saveMessage()" />
         </template>
     </Dialog>
+
+    <Dialog v-model:visible="criticalDialog" style="width: 500px;" :header="`Critical Impact: ${indicator_name}`" :modal="true" dismissableMask="true">
+        <p class="p-text-justify">This Indicator was flagged as critical due to it's indirect indicator parent: <b>'{{ criticalDialogIndicator.critical_impact_by.indicator }}'</b> which has an <b>impact of '{{ criticalDialogIndicator.critical_impact_by.impact }}'</b>
+        which would lower the <b>total score of '{{ criticalDialogIndicator.critical_impact_by.total_score }}'</b> to <b>'{{ (criticalDialogIndicator.critical_impact_by.total_score - criticalDialogIndicator.critical_impact_by.impact).toFixed(2) }}'</b>, which is below the <b>threshold of '{{method.certification_theshold}}'</b>.
+        </p>
+    </Dialog>
 </template>
 
 <script>
@@ -67,6 +72,8 @@ export default {
     data () {
         return {
             helpDialog: false,
+            criticalDialog: false,
+            criticalDialogIndicator: {},
             messageToOrganisationDialog: false,
             message: '',
             MessagedIndicator: null,
@@ -96,7 +103,15 @@ export default {
         }
     },
     computed: {
-        ...mapState('auditIndicators', ['indicators', 'selectedIndicators'])
+        ...mapState('auditIndicators', ['indicators', 'selectedIndicators']),
+        ...mapState('method', ['method']),
+        indicator_name () {
+            if ('name' in this.criticalDialogIndicator) {
+                return this.criticalDialogIndicator.name
+            } else {
+                return 'indicator'
+            }
+        }
     },
     methods: {
         requestDocumentation () {
@@ -115,6 +130,10 @@ export default {
                 return Object.assign(item, this.MessagedIndicator)
             })
             this.messageToOrganisationDialog = false
+        },
+        openCriticalDialog (indicator) {
+            this.criticalDialogIndicator = indicator
+            this.criticalDialog = true
         },
         openRecommended () {
             print()

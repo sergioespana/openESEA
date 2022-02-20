@@ -6,10 +6,10 @@
         </div>
         <h1>Workforce Survey audit</h1>
         <div class="p-grid p-m-5">
-            <div class="p-col-6">Organisation:</div>
-            <div class="p-col-6">Auditor:</div>
-            <div class="p-col-6">Type:</div>
-            <div class="p-col-6">Deadline:</div>
+            <div class="p-col-6">Organisation: {{this.eseaAccount.organisation_name}} </div>
+            <div class="p-col-6">Auditor: {{this.surveyAudit.auditor}} </div>
+            <div class="p-col-6">Type: {{this.survey.response_type}} </div>
+            <div class="p-col-6">Deadline: {{ dateFixer(this.surveyAudit.deadline, 'MMMM Do YYYY') }} </div>
         </div>
         <Steps :model="steps" :readonly="false" @click="test">
             <template #item="{item}">
@@ -29,6 +29,7 @@
 <script>
     import Steps from 'primevue/steps'
     import { mapState } from 'vuex'
+    import dateFixer from '../../utils/datefixer'
 
     export default {
         components: {
@@ -67,8 +68,45 @@
                         to: { name: 'singleauditresults', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
                         active: false
                     }
-                ],
-                multiple_audit_steps: [
+                ]
+            }
+        },
+        computed: {
+            ...mapState('eseaAccount', ['eseaAccount']),
+            ...mapState('survey', ['survey']),
+            ...mapState('surveyAudit', ['surveyAudit']),
+            steps () {
+                if (this.survey.response_type === 'single') {
+                    return [
+                    {
+                        label: 'Question Selection',
+                        to: { name: 'questionselection', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
+                        active: true
+                    },
+                    {
+                        label: 'Documentation request',
+                        to: { name: 'documentationrequest', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
+                        active: false
+                    },
+                    {
+                        label: 'Documentation upload',
+                        to: { name: 'documentationupload', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
+                        active: false
+                    },
+                    {
+                        label: 'Audit',
+                        to: { name: 'singleauditaudit', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
+                        active: false
+                    },
+                    {
+                        label: 'Results',
+                        to: { name: 'singleauditresults', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
+                        active: false,
+                        disabled: (this.surveyAudit.status !== 'verified' && this.surveyAudit.status !== 'rejected')
+                    }
+                ]
+                } else {
+                    return [
                     {
                         label: 'Response Sample',
                         to: { name: 'multipleauditsampling', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
@@ -88,23 +126,15 @@
                     {
                         label: 'Results',
                         to: { name: 'multipleauditresults', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
-                        active: false
+                        active: false,
+                        disabled: (this.surveyAudit.status !== 'verified' && this.surveyAudit.status !== 'rejected')
                     }
                 ]
-            }
-        },
-        computed: {
-            ...mapState('eseaAccount', ['eseaAccount']),
-            ...mapState('survey', ['survey']),
-            steps () {
-                if (this.survey.response_type === 'single') {
-                    return this.single_audit_steps
-                } else {
-                    return this.multiple_audit_steps
                 }
             }
         },
         methods: {
+            dateFixer,
             goToPage () {
                 this.$router.push({ name: 'questionselection', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } })
             },

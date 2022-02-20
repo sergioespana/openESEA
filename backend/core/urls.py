@@ -28,13 +28,14 @@ esea_account_router = routers.NestedSimpleRouter(organisation_router, r'esea-acc
 # esea_account_survey_router = routers.NestedSimpleRouter(esea_account_router, r'surveys', lookup="survey")
 esea_account_router.register(r'responses', survey_responseview.SurveyResponseViewSet, basename='responses')
 esea_account_router.register(r'audit', account_auditview.AccountAuditViewSet, basename='audits')
+esea_account_router.register(r'survey-audit', audit_surveyview.SurveyAuditViewSet, basename='survey-audits')
 
 method_router = routers.NestedSimpleRouter(router, r'methods', lookup="method")
 method_router.register(r'surveys', surveyview.SurveyViewSet, basename="method-surveys")
 
 method_router.register(r'topics', topicview.TopicViewSet, basename="method-topics") 
 method_router.register(r'direct-indicators', direct_indicatorview2.DirectIndicatorViewSet, basename="method-direct-indicators")
-method_router.register(r'indirect-indicators', indirect_indicatorview.IndirectIndicatorViewSet, basename="method-indirect-indicators")
+# method_router.register(r'indirect-indicators', indirect_indicatorview.IndirectIndicatorViewSet, basename="method-indirect-indicators")
 # 
 
 survey_router = routers.NestedSimpleRouter(method_router, r'surveys', lookup="survey")
@@ -52,7 +53,7 @@ urlpatterns = [
     path('api-refresh/', TokenRefreshView.as_view()),
     path('import-method/', methodview.upload_method),
     path('import-employees/<int:eseaaccount_pk>/<int:survey_pk>/', esea_accountview.import_employees, name="import_employees_of_organisation"),
-    path('audit-account/<int:eseaaccount_pk>/', reportview.audit_eseaaccount, name="audit_esea_account"),
+    path('audit-account/<int:eseaaccount_pk>/', reportview.audit_eseaaccount, name="audit_esea_account"), 
     path('esea-account/<int:eseaaccount_pk>/survey-audit/<int:survey_pk>/sample-survey-responses/', audit_surveyview.sample_survey_responses, name='sample_survey_responses'),
     path('esea-account/<int:eseaaccount_pk>/survey-audit/<int:survey_pk>/send-audit-emails/', audit_surveyview.send_audit_emails, name='send_audit_emails'),
     path('', include(router.urls)),

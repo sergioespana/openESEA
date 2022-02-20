@@ -28,7 +28,7 @@ class SurveyResponse(models.Model):
     survey_audit = models.ForeignKey('SurveyAudit', related_name="sample", on_delete=models.SET_NULL, null=True)
     esea_account = models.ForeignKey('EseaAccount', related_name="responses", on_delete=models.CASCADE)
     respondent = models.ForeignKey('Respondent', related_name="response", on_delete=models.CASCADE, null=True)
-    auditor = models.ForeignKey('CustomUser', on_delete=models.SET_NULL, null=True)
+    auditor = models.ForeignKey('CustomUser', on_delete=models.SET_NULL, blank=True, null=True)
 
     token = models.CharField(max_length=10)
     finished = models.BooleanField(default=False)

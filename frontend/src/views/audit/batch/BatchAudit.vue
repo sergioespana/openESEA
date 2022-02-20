@@ -1,8 +1,8 @@
 <template>
     <div style="background-color: white; height: 100%;">
-        <div class="p-d-flex p-ai-center" style="background-color: #f7f7f7;" @click="goT()">
+        <div class="p-d-flex p-ai-center" style="background-color: #f7f7f7;" @click="goToCampaign()">
             <i class="pi pi-angle-left p-mx-3" style="fontSize: 2rem"></i>
-            <h4>ESEA account</h4>
+            <h4>Campaign: {{campaign.name}}</h4>
         </div>
         <h1>Batch Audit</h1>
         <div class="p-grid p-m-5 p-p-2 p-text-bold">
@@ -10,7 +10,6 @@
             <div class="p-col-4">Campaign: {{campaign.name}}</div>
             <div class="p-col-4">Deadline: June 26th, 2021</div>
         </div>
-        {{startedAudit}}
         <Steps :model="batch_audit_steps" :readonly="false" @click="test" :key="disabledStep2" >
             <template #item="{item}">
                 {{item.label}} {{item.label}}

@@ -3,11 +3,7 @@
         <div class="p-d-flex p-ai-center p-jc-between">
             <h2 class="p-text-left">Organisation Selection</h2>
             <Button @click="(helpDialog = !helpDialog)" label="Help" class="p-button-sm p-button-warning" icon="pi pi-external-link" />
-            <!-- <div>
-                <Button @click="exportData()" label="Export Data" class="p-button-sm p-mr-2" />
-                <Button @click="(helpDialog = !helpDialog)" label="Help" class="p-button-sm p-button-warning" icon="pi pi-external-link" />
-            </div> -->
-        </div>{{eseaAccounts.length}}
+        </div>
         <!-- {{networkmembers}} {{ selectedAuditor }}  {{selectedOrganisations}} -->
         <DataTable :value="eseaAccounts" dataKey="id" v-model:selection="selectedOrganisations" showGridlines autoLayout
             :paginator="true" :rows="10" :filters="filters" paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"

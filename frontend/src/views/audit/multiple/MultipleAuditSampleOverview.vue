@@ -4,15 +4,19 @@
         <div class="p-d-flex p-ai-center p-jc-between">
             <h2 class="p-text-left">Sample Overview</h2>
             <div>
-            <Button @click="exportData()" label="Export Data" class="p-button-sm p-mr-2" />
+            <Button @click="exportData()" label="Export Data" disabled="true" class="p-button-sm p-mr-2" />
             <Button @click="(helpDialog = !helpDialog)" label="Help" class="p-button-sm p-button-warning" icon="pi pi-external-link" />
             </div>
         </div>
-        <DataTable :value="tablevals" dataKey="id" selectionMode="single" showGridlines autoLayout
+        <DataTable :value="respondents" dataKey="id" selectionMode="single" showGridlines autoLayout
             :paginator="true" :rows="10" :filters="filters" paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
             :rowsPerPageOptions="[5,10,25]" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" class="p-datatable-striped">
 
-            <Column field="respondent" header="Respondent" />
+            <Column header="Respondent" headerStyle="min-width: 250px;">
+                <template #body="{data}">
+                    {{ data.first_name}} {{ data.last_name_prefix }} {{ data.last_name}}
+                </template>
+            </Column>
             <Column field="email" header="Email adress" sortable />
         </Datatable>
 
@@ -31,6 +35,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
     data () {
         return {
@@ -41,9 +47,14 @@ export default {
                 ]
         }
     },
+    computed: {
+        ...mapState('respondent', ['respondents'])
+    },
     methods: {
         goToAudit () {
-            this.$router.push({ name: 'multipleaudit', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } })
+            if (this.respondents.length) {
+                this.$router.push({ name: 'multipleaudit', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } })
+            }
         },
         exportData () {
             // Export data to csv file

@@ -5,7 +5,7 @@
             <h4>ESEA account</h4>
         </div>
         <h1>Workforce Survey audit</h1>
-        <div class="p-grid p-mt-5">
+        <div class="p-grid p-m-5">
             <div class="p-col-6">Organisation:</div>
             <div class="p-col-6">Auditor:</div>
             <div class="p-col-6">Type:</div>
@@ -78,6 +78,7 @@
                         label: 'Sample Overview',
                         to: { name: 'multiplesampleoverview', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } },
                         active: false
+                        // disabled: !survey_audit.sample_size
                     },
                                     {
                         label: 'Audit',

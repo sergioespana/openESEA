@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from django.shortcuts import get_object_or_404
 
 from .survey import Survey
+from .survey_audit import SurveyAudit
 from .direct_indicator import DirectIndicator
 from .question_response import QuestionResponse
 import random
@@ -24,6 +25,7 @@ class SurveyResponseManager(models.Manager):
 class SurveyResponse(models.Model):
     objects = SurveyResponseManager()
     survey = models.ForeignKey('Survey', related_name="responses", on_delete=models.CASCADE)
+    survey_audit = models.ForeignKey('SurveyAudit', related_name="sample", on_delete=models.SET_NULL, null=True)
     esea_account = models.ForeignKey('EseaAccount', related_name="responses", on_delete=models.CASCADE)
     respondent = models.ForeignKey('Respondent', related_name="response", on_delete=models.CASCADE, null=True)
     auditor = models.ForeignKey('CustomUser', on_delete=models.SET_NULL, null=True)

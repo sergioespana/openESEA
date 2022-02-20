@@ -9,28 +9,17 @@
             </div> -->
         </div>
         <!-- {{networkmembers}} {{ selectedAuditor }} -->
-        <DataTable :value="campaign.organisation_accounts" dataKey="id" v-model:selection="selectedOrganisations" showGridlines autoLayout
+        <DataTable :value="accountAudits" dataKey="id" v-model:selection="selectedOrganisations" showGridlines autoLayout
             :paginator="true" :rows="10" :filters="filters" paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
             :rowsPerPageOptions="[5,10,25]" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" class="p-datatable-striped">
-
-            <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
-            <Column field="organisation_name" header="Organisation" />
-            <Column header="Auditor" headerStyle="min-width: 250px;">
-                <template #body="{data}">
-                    {{data.auditor}}
-                    <Dropdown v-if="selectedOrganisations.includes(data)" v-model="data.auditor" :options="networkAuditors"  optionLabel="user_name" optionValue="user_name" placeholder="Select an Auditor" class="p-m-0 p-p-0" style="width: 100%;" />
-                </template>
-            </Column>
-            <Column field="recommendations" header="Status" headerStyle="width: 200px;">
-                <template #body="{data}">
-                    <Button :label="`${data.id} Recommendations`" class="p-button-sm p-button-rounded p-py-1 p-button-danger" style="width: 180px" :disabled="true" />
-                </template>
-            </Column>
+            <Column field="organisation" header="Organisation" sortable />
+            <Column field="auditor" header="Auditor" headerStyle="min-width: 250px;" sortable />
+            <Column field="status" header="Status" headerStyle="width: 400px;" sortable />
         </Datatable>
 
-        <div class="p-text-right p-col-12 p-as-end">
+        <!-- <div class="p-text-right p-col-12 p-as-end">
             <Button class="p-my-5" label="Start audit" @click="goToAudit" icon="pi pi-check" :disabled="!selectedOrganisations.length" />
-        </div>
+        </div> -->
     </div>
 
     <Dialog v-model:visible="AddAuditorDialog" style="width: 500px;" header="Help" :modal="true" dismissableMask="true">
@@ -43,7 +32,13 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
+    computed: {
+        ...mapState('eseaAccount', ['eseaAccounts', 'eseaAccount']),
+        ...mapState('accountAudit', ['accountAudits'])
+    },
     methods: {
         addOrganisation () {
             print()

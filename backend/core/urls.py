@@ -3,7 +3,7 @@ from rest_framework_nested import routers
 from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView)
 
 from .views import (membershipview, respondentview, userview, networkview, network_memberview, organisationview, organisation_memberview, methodview, surveyview, sectionview, questionview, text_fragmentview, 
-                    topicview, direct_indicatorview2, indirect_indicatorview, survey_responseview, campaignview, esea_accountview, reportview)
+                    topicview, direct_indicatorview2, indirect_indicatorview, survey_responseview, campaignview, esea_accountview, account_auditview, reportview)
  
 
 router = routers.DefaultRouter()
@@ -27,6 +27,7 @@ esea_account_router = routers.NestedSimpleRouter(organisation_router, r'esea-acc
 
 # esea_account_survey_router = routers.NestedSimpleRouter(esea_account_router, r'surveys', lookup="survey")
 esea_account_router.register(r'responses', survey_responseview.SurveyResponseViewSet, basename='responses')
+esea_account_router.register(r'audit', account_auditview.AccountAuditViewSet, basename='audits')
 
 method_router = routers.NestedSimpleRouter(router, r'methods', lookup="method")
 method_router.register(r'surveys', surveyview.SurveyViewSet, basename="method-surveys")

@@ -2,7 +2,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.exceptions import ObjectDoesNotExist
 
-from .models import EseaAccount, Respondent, Survey, SurveyResponse, Campaign, Membership, NetworkMember
+from .models import EseaAccount, Respondent, Survey, SurveyResponse, Campaign, Membership, NetworkMember, AccountAudit
 
 @receiver(post_save, sender=EseaAccount)
 def create_accountant_objects(sender, instance, created, **kwargs):
@@ -43,3 +43,10 @@ def accept_request(sender, instance, created, **kwargs):
             network.organisations.add(organisation)
         instance.delete()
 
+# Creates an ESEA ACCOUNT AUDIT object
+@receiver(post_save, sender=EseaAccount)
+def create_esea_accounts(sender, instance, created, **kwargs):
+    if 'raw' in kwargs and kwargs['raw']:
+        return
+
+    AccountAudit.objects.create(esea_account=instance)

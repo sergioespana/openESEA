@@ -18,8 +18,12 @@ class EseaAccountViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         campaign = self.request.GET.get('campaign', None)
+        audit_selection = self.request.GET.get('audit-selection', None)
         if campaign is not None:
+            if audit_selection is not None:
+                return EseaAccount.objects.filter(campaign=campaign, account_audit__status='in progress')
             return EseaAccount.objects.filter(campaign=campaign)
+        
         return EseaAccount.objects.filter(organisation = self.kwargs['organisation_pk'])
 
     def create(self, request, organisation_pk, *args, **kwargs):

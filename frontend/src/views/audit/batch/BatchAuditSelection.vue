@@ -7,9 +7,9 @@
                 <Button @click="exportData()" label="Export Data" class="p-button-sm p-mr-2" />
                 <Button @click="(helpDialog = !helpDialog)" label="Help" class="p-button-sm p-button-warning" icon="pi pi-external-link" />
             </div> -->
-        </div>
-        <!-- {{networkmembers}} {{ selectedAuditor }} -->
-        <DataTable :value="campaign.organisation_accounts" dataKey="id" v-model:selection="selectedOrganisations" showGridlines autoLayout
+        </div>{{eseaAccounts.length}}
+        <!-- {{networkmembers}} {{ selectedAuditor }} {{selectedOrganisations}} -->
+        <DataTable :value="eseaAccounts" dataKey="id" v-model:selection="selectedOrganisations" showGridlines autoLayout
             :paginator="true" :rows="10" :filters="filters" paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
             :rowsPerPageOptions="[5,10,25]" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" class="p-datatable-striped">
 
@@ -17,10 +17,11 @@
             <Column field="organisation_name" header="Organisation" />
             <Column header="Auditor" headerStyle="min-width: 250px;">
                 <template #body="{data}">
-                    {{data.auditor}}
-                    <Dropdown v-if="selectedOrganisations.includes(data)" v-model="data.auditor" :options="networkAuditors"  optionLabel="user_name" optionValue="user_name" placeholder="Select an Auditor" class="p-m-0 p-p-0" style="width: 100%;" />
+                    <Dropdown v-if="selectedOrganisations.includes(data)" v-model="data.account_audit.auditor" :options="networkAuditors"  optionLabel="user_name" optionValue="user_name" placeholder="Select an Auditor" class="p-m-0 p-p-0" style="width: 100%;" />
+                    <span v-else>{{data.account_audit.auditor}}</span>
                 </template>
             </Column>
+            <Column field="account_audit.status" header="status" />
             <Column field="recommendations" header="Recommendations" headerStyle="width: 200px;">
                 <template #body="{data}">
                     <Button :label="`${data.id} Recommendations`" class="p-button-sm p-button-rounded p-py-1 p-button-danger" style="width: 180px" :disabled="true" />
@@ -58,18 +59,39 @@
             }
         },
         computed: {
+            ...mapState('eseaAccount', ['eseaAccounts', 'eseaAccount']),
             ...mapState('campaign', ['campaign']),
             ...mapState('networkTeam', ['networkmembers']),
             ...mapGetters('networkTeam', ['networkAuditors'])
         },
+        async created () {
+            await this.fetchEseaAccounts({ query: `?campaign=${this.$route.params.CampaignId}` })
+            this.selectedOrganisations = this.eseaAccounts.filter(eseaAccount => eseaAccount.account_audit.status === 'in progress')
+    },
         methods: {
+            ...mapActions('eseaAccount', ['fetchEseaAccounts']),
             ...mapActions('networkTeam', ['fetchNetworkMembers']),
-            goToAudit () {
-                if (this.selectedOrganisations.some(item => item.auditor === undefined)) {
+            ...mapActions('accountAudit', ['updateAccountAudit', 'fetchAccountAudits']),
+            async goToAudit () {
+                if (this.selectedOrganisations.some(item => item.account_audit.auditor === undefined)) {
                     this.AddAuditorDialog = true
                 } else {
+                    await this.updateDatabase()
+                    // await this.fetchEseaAccounts({ query: `?campaign=${this.$route.params.CampaignId}&audit-selection=true` })
+                    await this.fetchAccountAudits({ query: `?campaign=${this.$route.params.CampaignId}&audit-selection=true` })
                     this.$router.push({ name: 'batchauditoverview', params: { NetworkId: this.$route.params.NetworkId, CampaignId: this.$route.params.CampaignId } })
                 }
+            },
+            updateDatabase () {
+                this.selectedOrganisations.forEach((eseaAccount) => {
+                    const data = eseaAccount.account_audit
+                    data.status = 'in progress'
+                    console.log('-->', data)
+                    eseaAccount.account_audit = data
+                    this.updateAccountAudit({ oId: eseaAccount.organisation, eaId: eseaAccount.id, data: eseaAccount.account_audit })
+                    // ListOfIds.push({ id: organisation.id, organisation: organisation.organisation
+                    // })
+                })
             }
         }
     }

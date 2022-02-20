@@ -4,12 +4,11 @@
             <i class="pi pi-angle-left p-mx-3" style="fontSize: 2rem"></i>
             <h4>ESEA account</h4>
         </div>
-        <h1>Workforce Survey audit</h1>
-        <div class="p-grid p-mt-5">
-            <div class="p-col-6">Organisation:</div>
-            <div class="p-col-6">Auditor:</div>
-            <div class="p-col-6">Type:</div>
-            <div class="p-col-6">Deadline:</div>
+        <h1>Batch Audit</h1>
+        <div class="p-grid p-m-5 p-p-2 p-text-bold">
+            <div class="p-col-4">Network: {{network.name}}</div>
+            <div class="p-col-4">Campaign: {{campaign.name}}</div>
+            <div class="p-col-4">Deadline: June 26th, 2021</div>
         </div>
         <Steps :model="batch_audit_steps" :readonly="false" @click="test">
             <template #item="{item}">
@@ -56,6 +55,7 @@
             }
         },
         computed: {
+            ...mapState('network', ['network']),
             ...mapState('campaign', ['campaign'])
         },
         methods: {

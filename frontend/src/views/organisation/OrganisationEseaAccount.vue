@@ -74,22 +74,11 @@ http://localhost:8081/organisation/1/esea-accounts/1
             <h4>Description: <span class="p-text-light p-text-italic">''</span></h4>
             <Button label="Go to Method" @click="goToMethod" />
         </TabPanel>
-         <TabPanel header="Auditing">
-             <div class="p-p-2">
-             Checkboxes created for demo Ties:
-             <Checkbox id="card1" v-model="card1" :binary="true" class="p-ml-2" />
-             <label for="card1">Card1</label>
-             <Checkbox id="card2" v-model="card2" :binary="true" class="p-ml-2" />
-             <label for="card2">Card2</label>
-             <Checkbox id="card3" v-model="card3" :binary="true" class="p-ml-2" />
-             <label for="card3">Card3</label>
-             <Checkbox id="card4" v-model="card4" :binary="true" class="p-ml-2" />
-             <label for="card4">Card4</label>
-             <Checkbox id="binary" v-model="card5" :binary="true" class="p-ml-2" />
-             <label for="card5">Card5</label>
-             </div>
-
-             <Card v-if="accountAudit.status === 'finished' ||card1" class="p-text-left p-m-2">
+        <TabPanel header="Auditing">
+            <div class="p-col-12 p-d-flex p-jc-end">
+                <Button label="Reset for Demo" class="p-button-primary p-button-sm" @click="demoReset()" :disabled="false"/>
+            </div>
+             <Card v-if="(accountAudit.status === 'finished' && !accountAudit.assurance && !provideAssuranceCard && !declineAssuranceCard) || card1" class="p-text-left p-m-2">
                  <template #title>
                     Assurance
                  </template>
@@ -104,30 +93,30 @@ http://localhost:8081/organisation/1/esea-accounts/1
                     <p>Do you wish to provide assurance on this ESEA account?</p>
                  </template>
                  <template #footer>
-                     <Button icon="pi pi-check" label="Provide Assurance" @click="GetAssurance()" />
-                     <Button icon="pi pi-times" label="No Assurance" @click="DenyAssurance()" class="p-button-secondary p-button-outlined" style="margin-left: .5em" />
+                     <Button icon="pi pi-check" label="Provide Assurance" @click="provideAssuranceCard = true" />
+                     <Button icon="pi pi-times" label="No Assurance" @click="declineAssuranceCard = true" class="p-button-secondary p-button-outlined" style="margin-left: .5em" />
                  </template>
              </Card>
 
-            <Card v-if="card2" class="p-text-left p-m-2">
+            <Card v-if="(provideAssuranceCard && !accountAudit.assurance) || card2" class="p-text-left p-m-2">
                  <template #title>
                     Assurance
                  </template>
                  <template #subtitle class="p-col-12">
                     <div class="p-col-12 p-d-flex p-ai-center p-jc-between">
                         Please write your assurance declaration below
-                        <Dropdown id="method"  placeholder="Assurance Level" />
+                        <Dropdown id="method"  v-model="chosenAssuranceLevel" placeholder="Assurance Level" :options="assuranceLevels" />
                     </div>
                  </template>
                  <template #content>
-                    <Textarea v-model="AssuranceDeclaration" :autoResize="true" rows="3" class="p-col-12" />
+                    <Textarea v-model="assuranceDeclaration" :autoResize="true" rows="3" class="p-col-12" />
                  </template>
                  <template #footer>
-                     <Button icon="pi pi-check" label="Provide Assurance Declaration" @click="ConfirmAssurance()" />
+                     <Button icon="pi pi-check" label="Provide Assurance Declaration" @click="confirmAssurance(chosenAssuranceLevel)" :disabled="!chosenAssuranceLevel" />
                  </template>
              </Card>
 
-            <Card v-if="card3" class="p-text-left p-m-2">
+            <Card v-if="(declineAssuranceCard && !accountAudit.assurance) || card3" class="p-text-left p-m-2">
                  <template #title>
                     Assurance
                  </template>
@@ -135,14 +124,14 @@ http://localhost:8081/organisation/1/esea-accounts/1
                     Why do you not wish to provide assurance?
                  </template>
                  <template #content>
-                    <Textarea v-model="AssuranceDeclarationPlaceholder" :autoResize="true" rows="3" class="p-col-12" />
+                    <Textarea v-model="assuranceDeclaration" :autoResize="true" rows="3" class="p-col-12" />
                  </template>
                  <template #footer>
-                     <Button label="Submit" @click="ConfirmAssurance()" />
+                     <Button label="Decline Assurance" @click="confirmAssurance('assurance rejected')" />
                  </template>
              </Card>
 
-            <Card v-if="card4" class="p-text-left p-m-2">
+            <Card v-if="accountAudit.assurance === 'limited' || accountAudit.assurance === 'reasonable' || card4" class="p-text-left p-m-2">
                  <template #title>
                     Assurance
                  </template>
@@ -152,15 +141,15 @@ http://localhost:8081/organisation/1/esea-accounts/1
                             <div class="p-col-2 p-text-center"><i class="pi pi-check" style="font-size: 3rem; background-color: #689F38; color: white; border-radius: 50%; padding: 30px;"></i></div>
                             <div class="p-col-10">
                                 <h3 class="p-mt-0 p-pt-0">Assurance Declaration</h3>
-                                {Assurance Declaration should be here }
+                                {{accountAudit.assurance_declaration}}
                             </div>
                         </div>
-                        <h3 class="p-d-flex p-jc-end p-my-0 p-py-0">{ Assurance Level: Limited }</h3>
+                        <h3 class="p-d-flex p-jc-end p-my-0 p-py-0">Assurance Level: {{accountAudit.assurance}}</h3>
                     </div>
                  </template>
              </Card>
 
-            <Card v-if="card5" class="p-text-left p-m-2">
+            <Card v-if="accountAudit.assurance === 'assurance rejected' || card5" class="p-text-left p-m-2">
                  <template #title>
                     Assurance
                  </template>
@@ -170,13 +159,13 @@ http://localhost:8081/organisation/1/esea-accounts/1
                             <div class="p-col-2 p-text-center"><i class="pi pi-times" style="font-size: 3rem; background-color: red; color: white; border-radius: 50%; padding: 30px;"></i></div>
                             <div class="p-col-10">
                                 <h3 class="p-mt-0 p-pt-0">Assurance Declaration</h3>
-                                {Assurance Declination should be here }
+                                {{accountAudit.assurance_declaration}}
                             </div>
                         </div>
                     </div>
                  </template>
              </Card>
-             <!-- {{accountAudit}} -->
+            <!-- {{accountAudit}} -->
             <!-- <Button label="start Account Audit" @click="goToMethod" /> -->
             <!-- <div class="p-shadow-4" style="display: flex; justify-content: center; align-items: center; width: 80%; height: 400px; margin: auto; background-color: lightblue; border-radius: 10px"><h2>Start Account Audit</h2></div> -->
             <DataTable :value="eseaAccount.survey_response_by_survey" datakey="id" :rows="10" :paginator="true" v-model:filters="filters" filterDisplay="Menu"
@@ -324,6 +313,14 @@ http://localhost:8081/organisation/1/esea-accounts/1
                 card3: false,
                 card4: false,
                 card5: false,
+                provideAssuranceCard: false,
+                declineAssuranceCard: false,
+                assuranceLevels: [
+                    'limited',
+                    'reasonable'
+                ],
+                chosenAssuranceLevel: null,
+                assuranceDeclaration: '',
                 items: [
                     {
                         label: '- Send Message',
@@ -400,7 +397,7 @@ http://localhost:8081/organisation/1/esea-accounts/1
             ...mapActions('method', ['fetchMethod']),
             ...mapActions('auditIndicators', ['fetchIndicators']),
             ...mapActions('surveyAudit', ['fetchSurveyAudits', 'fetchSurveyAudit']),
-            ...mapActions('accountAudit', ['updateAccountAudit']),
+            ...mapActions('accountAudit', ['fetchAccountAudit', 'updateAccountAudit']),
             dateFixer,
             async initialize () {
                 this.fetchMethod({ id: this.eseaAccount.method })
@@ -493,17 +490,22 @@ http://localhost:8081/organisation/1/esea-accounts/1
                 this.finishAuditDialog = false
                 console.log('finish audit')
             },
-            GetAssurance () {
-                print()
-            },
-            DenyAssurance () {
-                print()
-            },
-            ConfirmAssurance () {
-                print()
+            async confirmAssurance (choice) {
+                console.log(choice)
+                this.accountAudit.assurance = choice
+                this.accountAudit.assurance_declaration = this.assuranceDeclaration
+                await this.updateAccountAudit({ oId: this.$route.params.OrganisationId, eaId: this.$route.params.EseaAccountId, data: this.accountAudit })
             },
             async refreshRecommendations () {
                 await this.fetchIndicators({ id: this.$route.params.EseaAccountId })
+            },
+            async demoReset () {
+                this.accountAudit.status = 'in progress'
+                this.accountAudit.assurance = ''
+                this.accountAudit.assurance_declaration = ''
+                this.provideAssuranceCard = false
+                this.declineAssuranceCard = false
+                await this.updateAccountAudit({ oId: this.$route.params.OrganisationId, eaId: this.$route.params.EseaAccountId, data: this.accountAudit })
             }
         }
     }

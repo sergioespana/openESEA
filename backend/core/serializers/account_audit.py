@@ -7,12 +7,12 @@ class AccountAuditSerializer(serializers.ModelSerializer):
     auditor = serializers.SlugRelatedField(queryset=CustomUser.objects.all(), slug_field='username')
     # auditor = serializers.StringRelatedField(read_only=True)
     # auditor = serializers.SlugRelatedField(queryset=CustomUser.objects.all(), querywrite_only=True)
-    survey_audits = SurveyAuditSerializer(many=True, required=False)
+    survey_audits = SurveyAuditSerializer(many=True, required=False, read_only=True)
 
 
     class Meta:
         model = AccountAudit
-        fields = ['id', 'auditor', 'created_at', 'finish_date', 'assurance', 'status', 'esea_account', 'survey_audits']
+        fields = ['id', 'auditor', 'created_at', 'finish_date', 'assurance', 'assurance_declaration', 'status', 'esea_account', 'survey_audits']
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)

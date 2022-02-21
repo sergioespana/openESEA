@@ -8,12 +8,12 @@
             </div> -->
         </div>
         <!-- {{networkmembers}} {{ selectedAuditor }} -->
-        <DataTable :value="accountAudits" dataKey="id" v-model:selection="selectedOrganisations" showGridlines autoLayout
+        <DataTable :value="eseaAccounts" dataKey="id" v-model:selection="selectedOrganisations" showGridlines autoLayout
             :paginator="true" :rows="10" :filters="filters" paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
             :rowsPerPageOptions="[5,10,25]" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" class="p-datatable-striped">
-            <Column field="organisation" header="Organisation" sortable />
-            <Column field="auditor" header="Auditor" headerStyle="min-width: 250px;" sortable />
-            <Column field="status" header="Status" headerStyle="width: 400px;" sortable />
+            <Column field="organisation_name" header="Organisation" sortable />
+            <Column field="account_audit.auditor" header="Auditor" headerStyle="min-width: 250px;" sortable />
+            <Column field="account_audit.status" header="Status" headerStyle="width: 400px;" sortable />
         </Datatable>
 
         <!-- <div class="p-text-right p-col-12 p-as-end">

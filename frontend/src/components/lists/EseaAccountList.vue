@@ -73,6 +73,7 @@ export default {
     },
     methods: {
         ...mapActions('eseaAccount', ['fetchEseaAccounts', 'setEseaAccount']),
+        ...mapActions('accountAudit', ['fetchAccountAudit']),
         async getEseaAccounts () {
             await this.fetchEseaAccounts({ oId: this.$route.params.OrganisationId })
             this.loading = false
@@ -83,6 +84,7 @@ export default {
             }
             await this.setEseaAccount(eseaAccount)
             if (this.eseaAccount.id) {
+                await this.fetchAccountAudit({ oId: this.$route.params.OrganisationId, eaId: this.eseaAccount.id, id: eseaAccount.account_audit.id })
                 this.$router.push({ name: 'organisationeseaaccount', params: { EseaAccountId: eseaAccount.id } })
             }
         }

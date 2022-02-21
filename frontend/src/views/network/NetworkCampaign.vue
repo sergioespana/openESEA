@@ -221,9 +221,8 @@
                     }
                 ],
                 campaignAudits: [
-                    { name: 'External audit 2020', status: '(1/4) Finished' },
-                    { name: 'Network audit 2020', status: '(3/4) Finished' },
-                    { name: 'Internal audit 2020', status: '(4/4) Finished' }
+                    { name: 'Network audit 2020', status: 'in progress' }
+
                 ],
 
                 selectedOrganisations: [],

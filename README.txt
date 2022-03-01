@@ -26,5 +26,6 @@ Tijmen Derikx developed a feature to specify and automatically generate infograp
 Diederik van Rijen has merged branches (i) and (ii) onto a new version of the tool, retaining most of the features from each branch and improving the usability. 
 Jelle Verschragen (user interface designer), Tjeerd Verschragen (user interface developer), Tino Trok (backend developer), Matthew Kunkeler (business manager), Michiel Auerbach (project manager), Andy Haxby (Director at Competa), all contributed to the development of the tool while working for Competa IT https://competa.com
 Sara Martín, Yulie Anneria Sinaga and Gudrun Thorsteinsdottir contributed theoretical knowledge on ESEA methods that is valuable for the tool development and valorisation.
+Ties van Dijk and Artur Moeijes have extended openESEA with features to audit accounts.
 
 If we are forgetting you, please contact us and we will update this list ;-)

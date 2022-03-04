@@ -405,7 +405,7 @@ http://localhost:8081/organisation/1/esea-accounts/1
                 if (this.eseaAccount.campaign) {
                     this.fetchCampaign({ nId: this.eseaAccount.network, id: this.eseaAccount.campaign })
                 }
-                // this.refreshRecommendations()
+                this.refreshRecommendations()
                 // this.fetchSurveyAudits({ oId: this.$route.params.OrganisationId, eaId: this.$route.params.EseaAccountId })
             },
             toggle (event) {

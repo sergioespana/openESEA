@@ -110,21 +110,21 @@ export default {
         },
         updateIndirectIndicator ({ state, commit }, { mId, indirectIndicator }) {
             indirectIndicator.formula = indirectIndicator.formula.replace('\n', '')
-        if (indirectIndicator.topic === null) {
-            delete indirectIndicator.topic
-        }
+            if (indirectIndicator.topic === null) {
+                delete indirectIndicator.topic
+            }
             commit('clearError')
             delete state.errors[indirectIndicator.id]
-          if (!indirectIndicator || !mId) { return }
-          if (!state.debouncers[indirectIndicator.id]) {
-              commit('setDebouncer', { id: indirectIndicator.id, commit })
-          }
-          if (indirectIndicator.id < 0) {
-              commit('updateList', { id: indirectIndicator.id, data: indirectIndicator })
-          }
-          commit('setIsSaved', { id: indirectIndicator.id })
-          if (!indirectIndicator.name) { return }
-          state.debouncers[indirectIndicator.id]({ mId, indirectIndicator })
+            if (!indirectIndicator || !mId) { return }
+            if (!state.debouncers[indirectIndicator.id]) {
+                commit('setDebouncer', { id: indirectIndicator.id, commit })
+            }
+            if (indirectIndicator.id < 0) {
+                commit('updateList', { id: indirectIndicator.id, data: indirectIndicator })
+            }
+            commit('setIsSaved', { id: indirectIndicator.id })
+            if (!indirectIndicator.name) { return }
+            state.debouncers[indirectIndicator.id]({ mId, indirectIndicator })
         },
         async patchIndirectIndicator ({ commit }, { mId, id, data }) {
             console.log('LLL', data)

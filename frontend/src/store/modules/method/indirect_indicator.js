@@ -78,6 +78,7 @@ export default {
                 commit('setError', { error: {}, id: indirectIndicator.id })
                 commit('setIsSaved', { id: indirectIndicator.id, isSaved: true })
 				commit('updateList', { id: indirectIndicator.id, data: response.data })
+                commit('setIndirectIndicator', response)
             }, 1000
             )
         },

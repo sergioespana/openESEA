@@ -143,6 +143,7 @@
                 if (choice === 'calculation') { this.addIndirectIndicator() }
             },
             addDirectIndicator () {
+                // call addNewDirectIndicator action in direct_indicator.js file. Payload is method id.
                 this.addNewDirectIndicator({ mId: this.method.id })
                 this.setIndirectIndicator()
             },
@@ -161,6 +162,7 @@
                     this.setDirectIndicator()
                 }
             },
+            // Updates indicator with new information (ctrl f @input="saveActive)
             saveActive (type, object) {
                 if (object.target) { return } // Checks whether the $event contains an object or only an inputEvent
                 if (type === 'direct-indicator') { this.updateDirectIndicator({ mId: this.method.id, directIndicator: object }) }

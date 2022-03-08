@@ -47,6 +47,7 @@ export default {
                 state.directIndicator = {}
             }
         },
+        // update list instead of pushing complete object
         updateList (state, { id, data }) {
             if (id !== data.id) {
                 delete state.debouncers[id]
@@ -59,22 +60,34 @@ export default {
             })
         },
         addNewDirectIndicator (state, { topic, question }) {
+            // set information of direct indicator. Temporary id is created (negative number), which is used untill direct indicator is pushed to backend and gets permanend id.
             const directIndicator = { ...baseDirectIndicator, id: random(-1000000, -1), topic, question }
+            // new direct indicator is pushed to local storage
             state.directIndicators.push(directIndicator)
+            // new direct indicator is set as active direct indicator
             state.directIndicator = directIndicator
         },
         setDebouncer (state, { id, commit }) {
             state.debouncers[id] = debounce(
                 async ({ mId, directIndicator }) => {
+                    // check if indicator exists in database (positive id) or not (negative, temporary id). Uses put or post dependent on this. Put/post can be found in BaseApiService.
                     const method = directIndicator.id > 0 ? 'put' : 'post'
+                    // call to backend. DirectIndicatorService. Payload in curly braces.
                     const { response, error } = await DirectIndicatorService[method]({ mId, id, data: directIndicator })
+                    // check if error, if yes, save error and return.
                     if (error) {
                         commit('setError', { error, id: directIndicator.id })
                         return
                     }
+                    // make changes to state by calling other mutations
+                    // empty error list
                     commit('setError', { error: {}, id: directIndicator.id })
-					commit('setIsSaved', { id: directIndicator.id, isSaved: true })
+					// set saved to true, indicating that indicator has been saved to database
+                    commit('setIsSaved', { id: directIndicator.id, isSaved: true })
+                    // update local storage list (eg with new non-temporary id)
 					commit('updateList', { id: directIndicator.id, data: response.data })
+                    // update local storage current object
+                    commit('setDirectIndicator', response)
                 },
                 1000
             )
@@ -122,18 +135,26 @@ export default {
             if (directIndicator.topic === null) {
                 delete directIndicator.topic
             }
+            // clear previous errors
             commit('clearError')
             delete state.errors[directIndicator.id]
 
-            if (!directIndicator || !mId) { return }
+            // check if payload is complete
+            if (!directIndicator || !mId || !directIndicator.name || !directIndicator.key) { return }
+
+            // reset unsaved status: indicate that indicator has not yet been saved to database
+            commit('setIsSaved', { id: directIndicator.id })
+
+            // check if call has already been recently made for this indicator. Debouncer object avoid database call overload.
             if (!state.debouncers[directIndicator.id]) {
+                // where the magic happens: call to database
                 commit('setDebouncer', { id: directIndicator.id, commit })
             }
+            // check if id is negative (ie if id is temporary from local storage), and call updatelist to update localstorage
             if (directIndicator.id < 0) {
                 commit('updateList', { id: directIndicator.id, data: directIndicator })
             }
-            commit('setIsSaved', { id: directIndicator.id })
-            if (!directIndicator.name || !directIndicator.key) { return }
+            // add debouncer for this indicator to local storage (?)
             state.debouncers[directIndicator.id]({ mId, directIndicator })
         },
         async deleteDirectIndicator ({ commit }, payload) {
@@ -159,6 +180,7 @@ export default {
             commit('setError', { error: undefined })
         },
         addNewDirectIndicator ({ commit }, payload) {
+            // call mutation addNewDirectIndicator
             commit('addNewDirectIndicator', payload)
         }
     }

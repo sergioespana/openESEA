@@ -7,7 +7,7 @@ from .answer_option import AnswerOption
 
 class directIndicatorManager(models.Manager):
 
-    def create(self, method,  key, name, datatype="Text", topic=None, description="", pre_unit="", post_unit="", question=None, answer_options=None, survey=None, wizard=False,
+    def create(self, method, key, name, datatype="Text", topic=None, description="", pre_unit="", post_unit="", question=None, answer_options=None, survey=None, wizard=False,
         answertype="TEXT", isMandatory=True, instruction="", default="", min_number=None, max_number=None, options=None):
 
         # If method creation wizard is used
@@ -15,6 +15,7 @@ class directIndicatorManager(models.Manager):
             question = Question.objects.create(name=name, isMandatory=isMandatory, answertype=answertype, topic=topic, description=description, instruction=instruction, default=default, min_number=min_number, max_number=max_number, options=options)
 
         direct_indicator = DirectIndicator(method=method, key=key, name=name, description=description, question=question, topic=topic, pre_unit=pre_unit, post_unit=post_unit, datatype=datatype)
+        # magic save function that saves the indicator to the database
         direct_indicator.save()
 
         # if question is single/multiple choice
@@ -22,7 +23,7 @@ class directIndicatorManager(models.Manager):
             for option in answer_options:
                 answer_option, _ = AnswerOption.objects.get_or_create(order=option['Order'], text=option['Text'].lower())
                 direct_indicator.options.add(answer_option.id)
-    
+                
         direct_indicator.save()
 
         if survey:

@@ -32,6 +32,7 @@ class DirectIndicatorSerializer2(serializers.ModelSerializer):
             ]
 
     def create(self, validated_data):
+        # DirectIndicator refers to direct_indicator model (see __init__.py). DirectIndicator.object.create refers to create function in the model.
         D = DirectIndicator.objects.create(**validated_data)
 
         # If the Direct Indicator has any options these will be saved

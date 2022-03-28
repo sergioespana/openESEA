@@ -6,31 +6,18 @@
         </div>
         <DataTable class="p-col-12" :value="indicators" rowGroupMode="rowspan" groupRowsBy="section.name" sortMode="single" sortField="section.name" :sortOrder="1" responsiveLayout="scroll"
         v-model:expandedRowGroups="expandedRowGroups" @rowgroupExpand="onRowGroupExpand" @rowgroupCollapse="onRowGroupCollapse" v-model:selection="selectedQuestions" dataKey="name">
-            <!-- <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
-            <Column field="topic" header="Section"></Column>
-            <Column field="name" header="name" sortable></Column>
-            <Column field="response" header="Responses" sortable></Column> -->
             <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
             <Column field="topic" header="Topic" sortable></Column>
             <Column field="name" header="Name" sortable></Column>
             <Column field="value" header="Value"></Column>
-            <!-- <Column field="absolute" header="Absolute Weight" sortable />
-            <Column field="indicator_impact" header="Impact" sortable></Column>
-            <Column field="critical_impact" header="Critical Impact" sortable />
-            <Column field="scoring_level" header="Level" sortable></Column>
-            <Column field="outliers" header="Anomaly" sortable></Column> -->
             <Column field="critical_impact" header="Critical Impact" sortable>
                 <template #body="data"> <!-- (row.data.critical_impact & row.data.outliers) -->
                     <Button v-if="data.data.critical_impact" label="Critical" class="p-button-sm p-button-rounded p-py-1 p-button-danger" @click="openCriticalDialog(data.data)" />
-                    <!--<Button v-if="row.data.outliers || row.data.critical_impact" label="Recommended" class="p-button-sm p-button-rounded p-py-1" :class="(((row.data.critical_impact & row.data.outliers) == true) ? 'p-button-danger' : 'p-button-warning')" @click="openRecommended()" />
-                    -->
                 </template>
             </Column>
             <Column header="Anomaly" sortable>
                 <template #body="row"> <!-- (row.data.critical_impact & row.data.outliers) -->
                     <Button v-if="row.data.outliers" label="Anomaly" class="p-button-sm p-button-rounded p-py-1 p-button-danger" />
-                    <!--<Button v-if="row.data.outliers || row.data.critical_impact" label="Recommended" class="p-button-sm p-button-rounded p-py-1" :class="(((row.data.critical_impact & row.data.outliers) == true) ? 'p-button-danger' : 'p-button-warning')" @click="openRecommended()" />
-                    -->
                 </template>
             </Column>
             <Column headerStyle="width: 4rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
@@ -38,20 +25,6 @@
                     <Button @click="ShowOutlierDetectionMethods(data)" icon="pi pi-chart-bar" class="p-buttom-sm" style="width: 30px; height: 30px;"></Button>
                 </template>
             </Column>
-            <!-- <Column header="Status" headerStyle="width: 15rem; text-align: center" bodyStyle="text-align: center; overflow: visible" :style="permission ? '': 'display:none;'">
-                <template #body="{data}">
-                    <div v-if="permission">
-                        <div v-if="data.auditobject">{{data.auditobject}}</div>
-                        <Button v-else label="Start Audit" type="button" class="p-button-sm" @click="startAudit(data)"  style="width: 200px" />
-                    </div>
-                    <div v-else></div>
-                </template>
-rowGroupMode="subheader" groupRowsBy="section"
-            sortMode="single" sortField="section" :sortOrder="1" responsiveLayout="scroll"
-            :expandableRowGroups="true" v-model:expandedRowGroups="expandedRowGroups"
-            @rowgroupExpand="onRowGroupExpand" @rowgroupCollapse="onRowGroupCollapse"
-
-            </Column> -->
         </DataTable>
         <div class="p-text-right p-col-12 p-as-end">
             <Button class="p-my-5" label="Start audit for selected questions" @click="startAudit(selectedQuestions)" :disabled="!selectedQuestions.length" icon="pi pi-check" />
@@ -84,28 +57,28 @@ export default {
             criticalDialog: false,
             expandedRowGroups: null,
             selectedQuestions: [],
-            criticalDialogIndicator: {},
-            questions: [
-                {
-                    name: 'What is the total number of men staff?',
-                    response: 5,
-                    recommendations: '',
-                    section: { name: 'Gender' }
-                },
-                {
-                    name: 'What is the total number of women staff?',
-                    response: 7,
-                    recommendations: '',
-                    section: { name: 'Gender' }
+            criticalDialogIndicator: {}
+            // questions: [
+            //     {
+            //         name: 'What is the total number of men staff?',
+            //         response: 5,
+            //         recommendations: '',
+            //         section: { name: 'Gender' }
+            //     },
+            //     {
+            //         name: 'What is the total number of women staff?',
+            //         response: 7,
+            //         recommendations: '',
+            //         section: { name: 'Gender' }
 
-                },
-                {
-                    name: 'What is the average monthly salary per employee?',
-                    response: '$4000',
-                    recommendations: '',
-                    section: { name: 'Salary' }
-                }
-            ]
+            //     },
+            //     {
+            //         name: 'What is the average monthly salary per employee?',
+            //         response: '$4000',
+            //         recommendations: '',
+            //         section: { name: 'Salary' }
+            //     }
+            // ]
         }
     },
     computed: {
@@ -134,7 +107,7 @@ export default {
         },
         ShowOutlierDetectionMethods () {
             // Show outlier detection methods dialog
-            console.log('...')
+            // console.log('...')
         },
         onRowGroupExpand () {
         },

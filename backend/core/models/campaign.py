@@ -20,6 +20,24 @@ class Campaign(models.Model):
     close_survey_date = models.DateTimeField(default=defaultrespondingwindow)
     close_validation_date = models.DateTimeField(blank=True, null=True)
 
+    audit_start_date = models.DateTimeField(default=now, blank=True, null=True)
+    audit_finish_date = models.DateTimeField(blank=True, null=True)
+    deadline = models.DateTimeField(blank=True, null=True)
+
+    NOT_STARTED = "Not Started"
+    ORGANISATION_SELECTION = "Organisation Selection"
+    AUDITS_IN_PROGRESS = "Audits in Progress"
+    ALL_AUDITS_FINISHED = "All Audits Finished"
+
+    AUDIT_STATUSES = (
+        (NOT_STARTED, "Not Started"),
+        (ORGANISATION_SELECTION, "Organisation Selection"),
+        (AUDITS_IN_PROGRESS, "Audits in Progress"),
+        (ALL_AUDITS_FINISHED, "All Audits Finished")
+    )
+
+    auditstatus = models.CharField(max_length=100, blank=True, choices=AUDIT_STATUSES, default="Not Started")
+
     def __str__(self):
         return f'{self.name} (method: {self.method})'
 

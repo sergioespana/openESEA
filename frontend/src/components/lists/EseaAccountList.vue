@@ -79,12 +79,16 @@ export default {
             this.loading = false
         },
         async goToEseaAccount (eseaAccount) {
+            console.log('----->', eseaAccount.data)
             if (eseaAccount?.data) {
                 eseaAccount = eseaAccount.data
             }
             await this.setEseaAccount(eseaAccount)
+            console.log('===>', this.eseaAccount.account_audit)
+            if (this.eseaAccount?.account_audit) {
+                await this.fetchAccountAudit({ oId: this.$route.params.OrganisationId, eaId: this.eseaAccount.id, id: this.eseaAccount.account_audit.id })
+            }
             if (this.eseaAccount.id) {
-                await this.fetchAccountAudit({ oId: this.$route.params.OrganisationId, eaId: this.eseaAccount.id, id: eseaAccount.account_audit.id })
                 this.$router.push({ name: 'organisationeseaaccount', params: { EseaAccountId: eseaAccount.id } })
             }
         }

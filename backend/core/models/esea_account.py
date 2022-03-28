@@ -41,9 +41,10 @@ class EseaAccount(models.Model):
             else:
                 tempdict['auditor'] = None
             try:
-                survey_audit = SurveyAudit.objects.get(survey=survey, account_audit__esea_account=self)
+                survey_audit = SurveyAudit.objects.filter(survey=survey, account_audit__esea_account=self).first()
                 print(survey_audit)
-                tempdict['survey_audit'] = survey_audit.pk
+                if survey_audit:
+                    tempdict['survey_audit'] = survey_audit.id
             except SurveyAudit.DoesNotExist:
                 tempdict['survey_audit'] = None
             tempdict['respondees'] = [{'name':str(respondee)} for respondee in Respondent.objects.filter(response__esea_account=self, response__survey=survey).distinct()]

@@ -1,7 +1,7 @@
 <template>
     <div class="p-mx-3">
         <div class="p-d-flex p-ai-center p-jc-between">
-            <h2 class="p-text-left">Organisation Selection</h2>
+            <h2 class="p-text-left">Audits in Progress</h2>
             <!-- <div>
                 <Button @click="exportData()" label="Export Data" class="p-button-sm p-mr-2" />
                 <Button @click="(helpDialog = !helpDialog)" label="Help" class="p-button-sm p-button-warning" icon="pi pi-external-link" />
@@ -16,9 +16,9 @@
             <Column field="account_audit.status" header="Status" headerStyle="width: 400px;" sortable />
         </Datatable>
 
-        <!-- <div class="p-text-right p-col-12 p-as-end">
-            <Button class="p-my-5" label="Start audit" @click="goToAudit" icon="pi pi-check" :disabled="!selectedOrganisations.length" />
-        </div> -->
+        <div class="p-text-right p-col-12 p-as-end">
+            <Button class="p-my-5" label="Finish audit" @click="goToResult" icon="pi pi-check" />
+        </div>
     </div>
 
     <Dialog v-model:visible="AddAuditorDialog" style="width: 500px;" header="Help" :modal="true" dismissableMask="true">
@@ -31,16 +31,21 @@
 </template>
 
 <script>
-    import { mapState } from 'vuex'
+    import { mapState, mapActions } from 'vuex'
 
     export default {
         computed: {
             ...mapState('eseaAccount', ['eseaAccounts', 'eseaAccount']),
-            ...mapState('accountAudit', ['accountAudits'])
+            ...mapState('accountAudit', ['accountAudits']),
+            ...mapState('campaign', ['campaign'])
         },
         methods: {
-            addOrganisation () {
-                print()
+            ...mapActions('campaign', ['updateCampaign']),
+            async goToResult () {
+                this.campaign.auditstatus = 'All Audits Finished'
+                delete this.campaign.image
+                await this.updateCampaign({ nId: this.$route.params.NetworkId, data: this.campaign })
+                this.$router.push({ name: 'batchauditresults', params: { NetworkId: this.$route.params.NetworkId, CampaignId: this.$route.params.CampaignId } })
             }
         }
     }

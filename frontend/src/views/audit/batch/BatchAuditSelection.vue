@@ -4,7 +4,7 @@
             <h2 class="p-text-left">Organisation Selection</h2>
             <Button @click="(helpDialog = !helpDialog)" label="Help" class="p-button-sm p-button-warning" icon="pi pi-external-link" />
         </div>
-        <!-- {{networkmembers}} {{ selectedAuditor }}  {{selectedOrganisations}} -->
+        {{campaign}}
         <DataTable :value="eseaAccounts" dataKey="id" v-model:selection="selectedOrganisations" showGridlines autoLayout
             :paginator="true" :rows="10" :filters="filters" paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
             :rowsPerPageOptions="[5,10,25]" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" class="p-datatable-striped">
@@ -68,12 +68,15 @@
             ...mapActions('eseaAccount', ['fetchEseaAccounts']),
             ...mapActions('networkTeam', ['fetchNetworkMembers']),
             ...mapActions('accountAudit', ['updateAccountAudit', 'fetchAccountAudits', 'changeStartedAudit']),
+            ...mapActions('campaign', ['updateCampaign']),
             async goToAudit () {
                 if (this.selectedOrganisations.some(item => item.account_audit.auditor === null)) {
                     this.AddAuditorDialog = true
                 } else {
                     await this.updateDatabase()
-                    // await this.fetchEseaAccounts({ query: `?campaign=${this.$route.params.CampaignId}&audit-selection=true` })
+                    this.campaign.auditstatus = 'Audits in Progress'
+                    delete this.campaign.image
+                    await this.updateCampaign({ nId: this.$route.params.NetworkId, data: this.campaign })
                     await this.fetchAccountAudits({ query: `?campaign=${this.$route.params.CampaignId}&audit-selection=true` })
                     this.changeStartedAudit(true)
                     this.$router.push({ name: 'batchauditoverview', params: { NetworkId: this.$route.params.NetworkId, CampaignId: this.$route.params.CampaignId } })

@@ -11,6 +11,30 @@ class QuestionResponse(models.Model):
     # Timestamp
     # When the Survey Response.finished == True, create a new QuestionResponse while keeping the old QuestionResponse
 
+    # under_audit = models.BooleanField(default=False)
+    
+    NOT_UNDER_AUDIT = "Not Under Audit"
+    OPEN = "Open"
+    AWAITING_DOCUMENTATION = "Awaiting Documentation"
+    AWAITING_CORRECTION = "Awaiting Correction"
+    VERIFIED = "Verified"
+    REJECTED = "Rejected"
+
+    AUDIT_STATUSES = (
+        (NOT_UNDER_AUDIT, "Not Under Audit"),
+        (OPEN, "Open"),
+        (AWAITING_DOCUMENTATION, "Awaiting Documentation"),
+        (AWAITING_CORRECTION, "Awaiting Correction"),
+        (VERIFIED, "Verified"),
+        (REJECTED, "Rejected"),
+    )
+
+    auditstatus = models.CharField(max_length=100, blank=True, choices=AUDIT_STATUSES, default="Not Under Audit")
+
+    doc_request_note = models.TextField(max_length=1000, blank=True)
+    doc_upload_note = models.TextField(max_length=1000, blank=True)
+    note = models.TextField(max_length=1000, blank=True)
+
     class Meta:
         verbose_name = _('question_response')
         verbose_name_plural = _('question_responses')

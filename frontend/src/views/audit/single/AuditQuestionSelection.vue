@@ -117,7 +117,8 @@ export default {
 
             for (const directIndicator of this.chosenDirectIndicators) {
                 console.log(directIndicator)
-                console.log(this.indicators.find(indicator => indicator.key === directIndicator)?.id)
+                const id = this.indicators.find(indicator => indicator.key === directIndicator)?.id
+                // await this.updateQuestionResponse({})
             }
 
             // await this.selectIndicators({ indicators: selectedQuestions })

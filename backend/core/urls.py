@@ -21,18 +21,23 @@ network_router.register(r'members', network_memberview.NetworkMemberViewSet, bas
 organisation_router = routers.NestedSimpleRouter(router, r'organisations', lookup="organisation")
 organisation_router.register(r'esea-accounts', esea_accountview.EseaAccountViewSet, basename="organisation-esea-accounts")
 organisation_router.register(r'members', organisation_memberview.OrganisationMemberViewSet, basename="organisation-members")
+organisation_router.register(r'responses', survey_responseview.SurveyResponseViewSet, basename='responses')
 
 esea_account_router = routers.NestedSimpleRouter(organisation_router, r'esea-accounts', lookup="esea_account")
 # esea_account_router.register(r'surveys', surveyview.SurveyViewSet, basename="esea-account-surveys")
 
 # esea_account_survey_router = routers.NestedSimpleRouter(esea_account_router, r'surveys', lookup="survey")
 esea_account_router.register(r'responses', survey_responseview.SurveyResponseViewSet, basename='responses')
+esea_account_router.register(r'question-responses', question_responseview.QuestionResponseViewSet, basename='question-responses')
 esea_account_router.register(r'audit', account_auditview.AccountAuditViewSet, basename='audits')
 esea_account_router.register(r'survey-audit', audit_surveyview.SurveyAuditViewSet, basename='survey-audits')
 
-survey_response_router = routers.NestedSimpleRouter(organisation_router, r'responses', lookup="survey_response")
-survey_response_router.register(r'responses', survey_responseview.SurveyResponseViewSet, basename='responses')
-survey_response_router.register(r'question-responses', question_responseview.QuestionResponseViewSet, basename='question-responses')
+# esea_account_router.register(r'responses', survey_responseview.SurveyResponseViewSet, basename='responses')
+#survey_response_router = routers.NestedSimpleRouter(esea_account_router, r'responses', lookup="survey_response")
+#survey_response_router.register(r'question-responses', question_responseview.QuestionResponseViewSet, basename='question-responses2')
+# survey_response_router.register(r'audit', account_auditview.AccountAuditViewSet, basename='audits2')
+# survey_response_router.register(r'responses', survey_responseview.SurveyResponseViewSet, basename='responses')
+#survey_response_router.register(r'question-responses', question_responseview.QuestionResponseViewSet, basename='question-responses')
 
 method_router = routers.NestedSimpleRouter(router, r'methods', lookup="method")
 method_router.register(r'surveys', surveyview.SurveyViewSet, basename="method-surveys")

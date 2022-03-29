@@ -20,8 +20,12 @@ class QuestionResponseViewSet(viewsets.ModelViewSet):
         serializer = QuestionResponseSerializer2(surveyresponse)
         return Response(serializer.data)
     
-    def create(self, request, organisation_pk, esea_account_pk, pk):
-        serializer = QuestionResponseSerializer2(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+    def create(self, request, organisation_pk, esea_account_pk):
+        surveyresponse = self.request.GET.get('surveyresponse', None)
+        print('check')
+        if surveyresponse is not None:
+            serializer = QuestionResponseSerializer2(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
+        return Response({'use ?surveyresponse=[the surveyresponse pk] to create new question responses.'})

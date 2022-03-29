@@ -8,7 +8,7 @@ class QuestionResponseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = QuestionResponse
-        fields = ['id', 'question', 'direct_indicator_id', 'values', 'value']
+        fields = ['id', 'question', 'direct_indicator_id', 'values', 'value', 'auditstatus', 'doc_request_note', 'doc_upload_note', 'note']
 
     # Validates whether the question response is of the correct datatype (unfinished)
     def validate(self, data):

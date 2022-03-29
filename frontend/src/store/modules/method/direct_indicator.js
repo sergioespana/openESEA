@@ -61,7 +61,7 @@ export default {
         },
         addNewDirectIndicator (state, { topic, question }) {
             // set information of direct indicator. Temporary id is created (negative number), which is used untill direct indicator is pushed to backend and gets permanend id.
-            const directIndicator = { ...baseDirectIndicator, id: random(-1000000, -1)}//, topic, question }
+            const directIndicator = { ...baseDirectIndicator, id: random(-1000000, -1) }//, topic, question }
             console.log('topic' + topic, 'question' + question)
             // new direct indicator is pushed to local storage
             state.directIndicators.push(directIndicator)

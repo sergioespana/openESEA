@@ -2,6 +2,11 @@
     <div class="p-grid p-m-5">
         <div class="p-col-12 p-d-flex p-ai-center p-jc-between">
             <h2 class="p-text-left">Audit Selection</h2>
+            {{indicators}}
+            <hr>
+            <!-- {{selectedQuestions}} -->
+            -->
+            {{chosenDirectIndicators}}
             <Button @click="(helpDialog = !helpDialog)" label="Help" class="p-button-sm p-button-warning" icon="pi pi-external-link" />
         </div>
         <DataTable class="p-col-12" :value="indicators" rowGroupMode="rowspan" groupRowsBy="section.name" sortMode="single" sortField="section.name" :sortOrder="1" responsiveLayout="scroll"
@@ -57,7 +62,8 @@ export default {
             criticalDialog: false,
             expandedRowGroups: null,
             selectedQuestions: [],
-            criticalDialogIndicator: {}
+            criticalDialogIndicator: {},
+            chosenDirectIndicators: []
             // questions: [
             //     {
             //         name: 'What is the total number of men staff?',
@@ -91,6 +97,11 @@ export default {
                 return 'indicator'
             }
         }
+        // directIndicators () {
+        //     return this.selectedQuestions.map((question) => {
+        //         if (question.absolute_weights.length) { return item }
+        //         return Object.assign(item, data)
+        // }
     },
     mounted () {
         this.selectedQuestions = this.selectedIndicators
@@ -98,8 +109,19 @@ export default {
     methods: {
         ...mapActions('auditIndicators', ['selectIndicators']),
         async startAudit (selectedQuestions) {
-            await this.selectIndicators({ indicators: selectedQuestions })
-            this.$router.push({ name: 'documentationrequest', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } })
+            // Gets Direct Indicators belonging to an indirect indicator
+            var self = this
+            var chosenDirectIndicators = []
+            selectedQuestions.forEach(function (question) { chosenDirectIndicators.push(self.getAllChildren(question.absolute_weights)) })
+            this.chosenDirectIndicators = [...new Set(chosenDirectIndicators.flat())]
+
+            for (const directIndicator of this.chosenDirectIndicators) {
+                console.log(directIndicator)
+                console.log(this.indicators.find(indicator => indicator.key === directIndicator)?.id)
+            }
+
+            // await this.selectIndicators({ indicators: selectedQuestions })
+            // this.$router.push({ name: 'documentationrequest', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } })
         },
         openCriticalDialog (indicator) {
             this.criticalDialogIndicator = indicator
@@ -112,6 +134,20 @@ export default {
         onRowGroupExpand () {
         },
         onRowGroupCollapse () {
+        },
+        getAllChildren (group, children) {
+            children = children || []
+            // console.log(typeof group, group, children)
+            if (group) {
+                for (const value of Object.values(group)) {
+                    if (Object.prototype.toString.call(value) === '[object Object]') {
+                        this.getAllChildren(value, children)
+                    } else {
+                        children.push(value)
+                    }
+                }
+                return children
+            }
         }
     }
 }

@@ -118,6 +118,8 @@ export default {
             for (const directIndicator of this.chosenDirectIndicators) {
                 console.log(directIndicator)
                 const id = this.indicators.find(indicator => indicator.key === directIndicator)?.id
+                console.log(id)
+                // should use these direct indicator id's to update the question responses
                 // await this.updateQuestionResponse({})
             }
 

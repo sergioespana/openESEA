@@ -29,3 +29,10 @@ class QuestionResponseViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data)
         return Response({'use ?surveyresponse=[the surveyresponse pk] to create new question responses.'})
+    
+    def update(self, request, organisation_pk, esea_account_pk, pk):
+        questionresponse = get_object_or_404(QuestionResponse, pk=pk)
+        serializer = QuestionResponseSerializer2(questionresponse, data = request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)

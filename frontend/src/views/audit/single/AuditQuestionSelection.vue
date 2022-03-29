@@ -2,14 +2,12 @@
     <div class="p-grid p-m-5">
         <div class="p-col-12 p-d-flex p-ai-center p-jc-between">
             <h2 class="p-text-left">Audit Selection</h2>
-            {{surveyResponse.question_responses}}
             ---
             ---
-            {{indicators}}
             <hr>
             <!-- {{selectedQuestions}} -->
             -->
-            {{chosenDirectIndicators}}
+            <!-- {{chosenDirectIndicators}} -->
             <Button @click="(helpDialog = !helpDialog)" label="Help" class="p-button-sm p-button-warning" icon="pi pi-external-link" />
         </div>
         <DataTable class="p-col-12" :value="indicators" rowGroupMode="rowspan" groupRowsBy="section.name" sortMode="single" sortField="section.name" :sortOrder="1" responsiveLayout="scroll"
@@ -120,20 +118,32 @@ export default {
             await this.fetchSurveyResponse({ oId: this.eseaAccount?.organisation, eaId: this.eseaAccount?.id, id: `survey=${this.surveyAudit.survey}` })
             var self = this
             var chosenDirectIndicators = []
-            selectedQuestions.forEach(function (question) { chosenDirectIndicators.push(self.getAllChildren(question.absolute_weights)) })
+            selectedQuestions.forEach(function (question) {
+                if (question?.formula) {
+                chosenDirectIndicators.push(self.getAllChildren(question.absolute_weights))
+                } else {
+                    chosenDirectIndicators.push(question.key)
+                }
+            })
             this.chosenDirectIndicators = [...new Set(chosenDirectIndicators.flat())]
 
+            var selectedIndicators = []
             for (const directIndicator of this.chosenDirectIndicators) {
+                // console.log(directIndicator)
                 console.log(directIndicator)
                 const indicator = this.indicators.find(indicator => indicator.key === directIndicator)
-                indicator.question_response = this.surveyResponse.question_responses.find(questionResponse => questionResponse.direct_indicator_key === indicator.key)
-                console.log(indicator)
+                if (indicator) {
+                    // change surveyResponse.question_responses to questionResponses to be able to see the updated database on updated question response changes!
+                    indicator.question_response = this.surveyResponse.question_responses.find(questionResponse => questionResponse.direct_indicator_key === indicator.key)
+                    selectedIndicators.push(indicator)
+                }
                 // should use these direct indicator id's to update the question responses
                 // await this.updateQuestionResponse({})
             }
-
-            // await this.selectIndicators({ indicators: selectedQuestions })
-            // this.$router.push({ name: 'documentationrequest', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } })
+            console.log(selectedIndicators)
+            await this.selectIndicators({ indicators: selectedIndicators })
+            // ToDo: Change audit status of question responses (also in backend)!
+            this.$router.push({ name: 'documentationrequest', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } })
         },
         openCriticalDialog (indicator) {
             this.criticalDialogIndicator = indicator

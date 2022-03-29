@@ -18,6 +18,7 @@ import indirectIndicator from './modules/method/indirect_indicator'
 import campaign from './modules/campaign'
 import eseaAccount from './modules/esea_account'
 import surveyResponse from './modules/method/survey/survey_response'
+import questionResponse from './modules/method/survey/question_response'
 import surveyResults from './modules/method/survey/survey_results'
 import auditIndicators from './modules/method/audit/audit_indicators'
 import accountAudit from './modules/method/audit/account_audit'
@@ -49,6 +50,7 @@ export default createStore({
     campaign,
     eseaAccount,
     surveyResponse,
+    questionResponse,
     surveyResults,
     auditIndicators,
     accountAudit,

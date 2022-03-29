@@ -4,6 +4,7 @@
             <h2 class="p-text-left">Documentation Request</h2>
             <Button @click="(helpDialog = !helpDialog)" label="Help" class="p-button-sm p-button-warning" icon="pi pi-external-link" />
         </div>
+        {{selectedIndicators}}
         <DataTable class="p-col-12" :value="selectedIndicators" rowGroupMode="rowspan" groupRowsBy="name" sortMode="single" sortField="name" :sortOrder="1" responsiveLayout="scroll"
             v-model:expandedRowGroups="expandedRowGroups" @rowgroupExpand="onRowGroupExpand" @rowgroupCollapse="onRowGroupCollapse" v-model:selection="selectedQuestions" dataKey="name">
             <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
@@ -62,7 +63,7 @@
 </template>
 
 <script>
-    import { mapState } from 'vuex'
+    import { mapState, mapActions } from 'vuex'
     // import Tag from 'primevue/tag'
 
 export default {
@@ -105,6 +106,7 @@ export default {
     computed: {
         ...mapState('auditIndicators', ['indicators', 'selectedIndicators']),
         ...mapState('method', ['method']),
+        ...mapState('eseaAccount', ['eseaAccount']),
         indicator_name () {
             if ('name' in this.criticalDialogIndicator) {
                 return this.criticalDialogIndicator.name
@@ -114,6 +116,7 @@ export default {
         }
     },
     methods: {
+        ...mapActions('questionResponse', ['updateQuestionResponse']),
         requestDocumentation () {
             // Attach message to indicator
             // this.selectedQuestions
@@ -123,7 +126,7 @@ export default {
             this.MessagedIndicator = indicator
             this.messageToOrganisationDialog = true
         },
-        saveMessage () {
+        async saveMessage () {
             this.MessagedIndicator.question_response.doc_request_note = this.message
             this.selectedIndicators = this.selectedIndicators.map((item) => {
                 if (item.id !== this.MessagedIndicator.id) { return item }
@@ -133,6 +136,7 @@ export default {
 
             // Save Question Response to Database
 
+            await this.updateQuestionResponse({ oId: 0, eaId: 0, id: this.MessagedIndicator.question_response.id, data: this.MessagedIndicator.question_response })
             // await this.UpdateQuestionResponse({ data: this.MessagedIndicator.question_response })
         },
         openCriticalDialog (indicator) {
@@ -145,3 +149,12 @@ export default {
     }
 }
 </script>
+
+ await this.updateSurveyResponse({
+                    oId: this.eseaAccount?.organisation,
+                    eaId: this.eseaAccount?.id,
+                    token: this.surveyResponse.id, // this.$route.params.uniquetoken,
+                    surveyResponse: {
+                        ...this.surveyResponse
+                    }
+                })

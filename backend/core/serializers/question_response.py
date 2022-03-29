@@ -5,7 +5,8 @@ from ..models import QuestionResponse, AnswerOption, DirectIndicator
 
 class QuestionResponseSerializer(serializers.ModelSerializer):
     values = serializers.SlugRelatedField(queryset=AnswerOption.objects.all(), many=True, slug_field='text')
-
+    # direct_indicator_key = serializers.StringRelatedField(source='question.direct_indicator')
+    
     class Meta:
         model = QuestionResponse
         fields = ['id', 'question', 'direct_indicator_id', 'values', 'value', 'auditstatus', 'doc_request_note', 'doc_upload_note', 'note']
@@ -48,3 +49,9 @@ class QuestionResponseSerializer(serializers.ModelSerializer):
                     # except:
 
         return data
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        # Required because direct indicator-question is not a one to one relationship!
+        representation['direct_indicator_key'] = instance.question.direct_indicator.first().key
+        return representation

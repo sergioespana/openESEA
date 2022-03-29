@@ -124,12 +124,16 @@ export default {
             this.messageToOrganisationDialog = true
         },
         saveMessage () {
-            this.MessagedIndicator.message = this.message
+            this.MessagedIndicator.question_response.doc_request_note = this.message
             this.selectedIndicators = this.selectedIndicators.map((item) => {
                 if (item.id !== this.MessagedIndicator.id) { return item }
                 return Object.assign(item, this.MessagedIndicator)
             })
             this.messageToOrganisationDialog = false
+
+            // Save Question Response to Database
+
+            // await this.UpdateQuestionResponse({ data: this.MessagedIndicator.question_response })
         },
         openCriticalDialog (indicator) {
             this.criticalDialogIndicator = indicator

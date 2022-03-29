@@ -60,6 +60,8 @@ class SurveyResponseCalculationSerializer(serializers.Serializer):
     cut_off_lower_limit =  serializers.StringRelatedField(read_only=True)
     cut_off_upper_limit = serializers.StringRelatedField(read_only=True)
     value = serializers.CharField(read_only=True)
+    # question_response = # QuestionResponseSerializer(required=False)  
+    # question = serializers.ReadOnlyField(source='question.name') # question.question_responses
     responses = serializers.ListField(child=serializers.CharField(read_only=True))
 
 # question_responses_dict = dict((i.id, i) for i in survey_response.question_responses.all())

@@ -1,4 +1,6 @@
 from typing import Dict, List
+
+from core.models.question_response import QuestionResponse
 from ..models import DirectIndicator, IndirectIndicator
 from ..classes import Indicator
 from pprint import pprint

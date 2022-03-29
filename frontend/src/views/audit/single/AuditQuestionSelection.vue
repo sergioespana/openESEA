@@ -2,6 +2,9 @@
     <div class="p-grid p-m-5">
         <div class="p-col-12 p-d-flex p-ai-center p-jc-between">
             <h2 class="p-text-left">Audit Selection</h2>
+            {{surveyResponse.question_responses}}
+            ---
+            ---
             {{indicators}}
             <hr>
             <!-- {{selectedQuestions}} -->
@@ -90,6 +93,9 @@ export default {
     computed: {
         ...mapState('auditIndicators', ['indicators', 'selectedIndicators']),
         ...mapState('method', ['method']),
+        ...mapState('surveyResponse', ['surveyResponse']),
+        ...mapState('surveyAudit', ['surveyAudit']),
+        ...mapState('eseaAccount', ['eseaAccount']),
         indicator_name () {
             if ('name' in this.criticalDialogIndicator) {
                 return this.criticalDialogIndicator.name
@@ -108,8 +114,10 @@ export default {
     },
     methods: {
         ...mapActions('auditIndicators', ['selectIndicators']),
+        ...mapActions('surveyResponse', ['fetchSurveyResponse']),
         async startAudit (selectedQuestions) {
             // Gets Direct Indicators belonging to an indirect indicator
+            await this.fetchSurveyResponse({ oId: this.eseaAccount?.organisation, eaId: this.eseaAccount?.id, id: `survey=${this.surveyAudit.survey}` })
             var self = this
             var chosenDirectIndicators = []
             selectedQuestions.forEach(function (question) { chosenDirectIndicators.push(self.getAllChildren(question.absolute_weights)) })
@@ -117,8 +125,9 @@ export default {
 
             for (const directIndicator of this.chosenDirectIndicators) {
                 console.log(directIndicator)
-                const id = this.indicators.find(indicator => indicator.key === directIndicator)?.id
-                console.log(id)
+                const indicator = this.indicators.find(indicator => indicator.key === directIndicator)
+                indicator.question_response = this.surveyResponse.question_responses.find(questionResponse => questionResponse.direct_indicator_key === indicator.key)
+                console.log(indicator)
                 // should use these direct indicator id's to update the question responses
                 // await this.updateQuestionResponse({})
             }

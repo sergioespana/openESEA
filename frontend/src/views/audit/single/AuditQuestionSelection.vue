@@ -29,9 +29,9 @@
                 </template>
             </Column>
             <Column headerStyle="width: 4rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
-                <template #body="data">
+                <!-- <template #body="data">
                     <Button @click="ShowOutlierDetectionMethods(data)" icon="pi pi-chart-bar" class="p-buttom-sm" style="width: 30px; height: 30px;"></Button>
-                </template>
+                </template> -->
             </Column>
         </DataTable>
         <div class="p-text-right p-col-12 p-as-end">

@@ -180,7 +180,7 @@ http://localhost:8081/organisation/1/esea-accounts/1
                         </span>
                         <div>
                             <Button label="Refresh Recommendations" class="p-mr-2" @click="refreshRecommendations()" />
-                            <Button label="Auditors" class="p-mr-2" @click="something" :disabled="true" />
+                            <!-- <Button label="Auditors" class="p-mr-2" @click="something" :disabled="true" /> -->
                             <Button label="Finish Account Audit" @click="finishAuditDialog = true" :disabled="accountAudit.status === 'finished'" />
 
                         </div>

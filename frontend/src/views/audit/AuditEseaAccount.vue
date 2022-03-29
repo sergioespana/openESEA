@@ -4,7 +4,7 @@
             <i class="pi pi-angle-left p-mx-3" style="fontSize: 2rem"></i>
             <h4>ESEA account</h4>
         </div>
-        <h1>Workforce Survey audit</h1>
+        <h1>Survey audit</h1>
         <div class="p-grid p-m-5">
             <div class="p-col-6">Organisation: {{this.eseaAccount.organisation_name}} </div>
             <div class="p-col-6">Auditor: {{this.surveyAudit.auditor}} </div>

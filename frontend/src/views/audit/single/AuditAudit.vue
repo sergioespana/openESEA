@@ -17,6 +17,7 @@
                         <div v-else>open</div>
                         <Button v-if="data.data.status === 'verified'" icon="pi pi-check"  style="border-radius: 50%; background-color: green; border: none;" />
                         <Button v-else-if="data.data.status === 'rejected'" icon="pi pi-times" style="border-radius: 50%; background-color: red; border: none;" />
+                        <Button v-else-if="data.data.status === 'awaiting correction'" style="border-radius: 50%; p-col-12; background-color: #FBC02D; border: none;" />
                         <Button v-else style="border-radius: 50%; background-color: #2196F3; border: none;" />
                     </div>
                 </template>

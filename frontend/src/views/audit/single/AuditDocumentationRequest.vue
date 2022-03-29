@@ -32,7 +32,7 @@
         </DataTable>
         <div class="p-text-right p-col-12 p-as-end">
             <Button class="p-my-5" label="Request documentation" @click="requestDocumentation()" icon="pi pi-check" />
-            <Button class="p-my-5 p-ml-2" label="Audit" @click="requestDocumentation()" />
+            <!-- <Button class="p-my-5 p-ml-2" label="Audit" @click="requestDocumentation()" /> -->
         </div>
     </div>
 

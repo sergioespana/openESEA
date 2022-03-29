@@ -31,8 +31,8 @@
                                 {{list.item}}
                             </div>
                             <div class="p-col">
-                                <div v-if="list.item === 'critical_impact' || list.item === 'anomaly'">
-                                    <Button v-if="list.item === 'critical_impact' && list.info === true" label="Critical" class="p-button-sm p-button-rounded p-py-1 p-button-danger" @click="openCriticalDialog()" />
+                                <div v-if="list.item === 'Critical Impact' || list.item === 'anomaly'">
+                                    <Button v-if="list.item === 'Critical Impact' && list.info === true" label="Critical" class="p-button-sm p-button-rounded p-py-1 p-button-danger" @click="openCriticalDialog()" />
                                      <Button v-if="list.item === 'anomaly' && list.info === true" label="Anomaly" class="p-button-sm p-button-rounded p-py-1 p-button-danger" @click="openCriticalDialog()" />
 
                                     <!-- <Tag v-if="list.info" severity="danger" value="Recommendation"></Tag> -->
@@ -121,7 +121,7 @@
             ...mapState('auditIndicators', ['indicator']),
             ...mapState('method', ['method']),
             lists () {
-                return ([{ item: 'Question', info: this.indicator.name }, { item: 'Status', info: this.indicator.status || 'open' }, { item: 'Response', info: this.indicator.value }, { item: 'Message to Organisation', info: this.indicator.message }, { item: 'Comment', info: this.indicator.comment }, { item: 'critical_impact', info: this.indicator.critical_impact }, { item: 'anomaly', info: this.indicator.outliers }])
+                return ([{ item: 'Question', info: this.indicator.name }, { item: 'Status', info: this.indicator.status || 'open' }, { item: 'Response', info: this.indicator.value }, { item: 'Message to Organisation', info: this.indicator.question_response.doc_request_note }, { item: 'Comment', info: this.indicator.comment }, { item: 'Critical Impact', info: this.indicator.critical_impact }, { item: 'anomaly', info: this.indicator.outliers }])
             },
             images () {
                 return [{ itemImageSrc: '@/assets/tasklist.png', thumbnailImageSrc: '@/assets/tasklist.png', alt: 'Image 1' }, { alt: 'Image 2' }, { alt: 'Image 3' }]

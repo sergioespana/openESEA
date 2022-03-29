@@ -7,7 +7,7 @@ import { API_URL } from '../utils/constants'
 export default [
     (config) => {
         if (
-        config.url.startsWith(API_URL) && !(config.url.includes('register') || config.url.includes('token') || config.url.includes('responses')) // || config.url.includes('surveys')
+        config.url.startsWith(API_URL) && !(config.url.includes('register') || config.url.includes('token') || config.url.includes('/responses/')) // || config.url.includes('surveys')
         ) {
             config.headers.Authorization = 'Bearer ' + store.getters['authentication/AuthenticationToken']
             // config.headers['Content-Type'] = 'multipart/form-data'

@@ -7,7 +7,7 @@ export default {
         selectedQuestionResponses: [],
         questionResponse: {},
         error: undefined,
-        debouncers: {}, //QUESTION: Do we need these?
+        debouncers: {}, // QUESTION: Do we need these?
         errors: {}
     },
     getters: {
@@ -24,7 +24,7 @@ export default {
         setQuestionResponse (state, { data }) {
             state.questionResponse = data || {}
         },
-        updateQuestionResponse (state, data) {
+        updateQuestionResponses (state, { data }) {
             state.questionResponses = state.questionResponses.map((item) => {
                 if (item.id !== data.id) { return item }
                 return { ...item, ...data }
@@ -48,7 +48,7 @@ export default {
     },
     actions: {
         async fetchQuestionResponses ({ commit }, payload) {
-            const { response, error } = await QuestionResponseService.get(payload) //QUESTION: New service?
+            const { response, error } = await QuestionResponseService.get(payload) // QUESTION: New service?
             if (error) {
                 commit('setError', { error })
                 return
@@ -56,8 +56,14 @@ export default {
             commit('setQuestionResponses', response)
         },
         // only works in frontend
-        async updateQuestionResponses ({ commit }, payload) {
-            commit('updateQuestionResponse', payload)
+        async updateQuestionResponse ({ commit }, { oId, eaId, data }) {
+            const { response, error } = await QuestionResponseService.put({ oId, eaId, id: data.id, data, headers: { 'Content-Type': 'multipart/form-data' } })
+            if (error) {
+                commit('setError', { error })
+                return
+            }
+            // commit('setEseaAccount', response)
+            commit('updateQuestionResponses', response)
         },
         async selectQuestionResponses ({ commit }, { indicators }) {
             await commit('setSelectedQuestionResponses', indicators)

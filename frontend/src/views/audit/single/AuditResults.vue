@@ -37,18 +37,19 @@
             </template>
         </Card>
             <div class="card">
-                 <DataTable :value="questions" rowGroupMode="rowspan" groupRowsBy="section.name" selectionMode="single" @row-select="goToQuestion" sortMode="single" sortField="section.name" :sortOrder="1" responsiveLayout="scroll"
+                 <DataTable :value="selectedIndicators" rowGroupMode="rowspan" groupRowsBy="section.name" selectionMode="single" @row-select="goToQuestion" sortMode="single" sortField="section.name" :sortOrder="1" responsiveLayout="scroll"
                 v-model:expandedRowGroups="expandedRowGroups" @rowgroupExpand="onRowGroupExpand" @rowgroupCollapse="onRowGroupCollapse" dataKey="name">
-                    <Column field="section.name" header="Section"></Column>
+                    <Column field="topic" header="Section"></Column>
                     <Column field="name" header="name" sortable></Column>
-                    <Column field="response" header="Responses" sortable></Column>
-                    <Column header="Status" headerStyle="width: 10rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
+                    <Column field="value" header="Responses" sortable></Column>
+                    <Column header="Status" headerStyle="width: 15rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
                         <template #body="data">
                             <div class="p-d-flex p-ai-center p-jc-between">
-                                {{data.data.status}}
-                                <Button v-if="data.data.status === 'verified'" icon="pi pi-check"  style="border-radius: 50%; background-color: green; border: none;" />
-                                <Button v-if="data.data.status === 'open'" style="border-radius: 50%; background-color: #2196F3; border: none;" />
-                                <Button v-if="data.data.status === 'rejected'" icon="pi pi-times" style="border-radius: 50%; background-color: red; border: none;" />
+                                {{data.data.question_response.auditstatus}}
+                                <Button v-if="data.data.question_response.auditstatus === 'Verified'" icon="pi pi-check"  style="border-radius: 50%; background-color: green; border: none;" />
+                        <Button v-else-if="data.data.question_response.auditstatus === 'Rejected'" icon="pi pi-times" style="border-radius: 50%; background-color: red; border: none;" />
+                        <Button v-else-if="data.data.question_response.auditstatus === 'Awaiting Correction'" style="border-radius: 50%; p-col-12; background-color: #FBC02D; border: none;" />
+                        <Button v-else style="border-radius: 50%; background-color: #2196F3; border: none;" />
                             </div>
                         </template>
                     </Column>
@@ -88,7 +89,8 @@
             }
         },
         computed: {
-            ...mapState('surveyAudit', ['surveyAudit'])
+            ...mapState('surveyAudit', ['surveyAudit']),
+            ...mapState('auditIndicators', ['selectedIndicators'])
         },
         methods: {
             goToQuestion (question) {

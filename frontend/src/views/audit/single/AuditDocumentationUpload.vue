@@ -9,7 +9,7 @@
             <Column field="topic" header="Topic"></Column>
             <Column field="name" header="Name" sortable></Column>
             <Column field="value" header="Value" sortable></Column>
-            <Column field="message" header="Message" />
+            <Column field="question_response.doc_request_note" header="Message" />
             <Column headerStyle="width: 10rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
                 <template #body="row">
                     <Button label="Comment" icon="pi pi-plus" class="p-button-sm p-button-success" @click="openComment(row.data)" />
@@ -55,7 +55,7 @@
 </template>
 
 <script>
-    import { mapState } from 'vuex'
+    import { mapState, mapActions } from 'vuex'
 
     export default {
         data () {
@@ -89,21 +89,24 @@
             }
         },
         computed: {
-        ...mapState('auditIndicators', ['selectedIndicators'])
+            ...mapState('auditIndicators', ['selectedIndicators'])
         },
         methods: {
+            ...mapActions('questionResponse', ['updateQuestionResponse']),
             openComment (indicator) {
                 this.CommentedIndicator = indicator
                 this.messageToAuditorDialog = true
             },
-            saveMessage () {
+            async saveMessage () {
                 console.log('saving message')
-                this.CommentedIndicator.comment = this.comment
+                this.CommentedIndicator.question_response.doc_upload_note = this.comment
                 this.selectedIndicators = this.selectedIndicators.map((item) => {
-                if (item.id !== this.CommentedIndicator.id) { return item }
-                return Object.assign(item, this.CommentedIndicator)
-            })
-            this.messageToAuditorDialog = false
+                    if (item.id !== this.CommentedIndicator.id) { return item }
+                    return Object.assign(item, this.CommentedIndicator)
+                })
+                this.messageToAuditorDialog = false
+
+                await this.updateQuestionResponse({ oId: 0, eaId: 0, id: this.CommentedIndicator.question_response.id, data: this.CommentedIndicator.question_response })
             },
             // Needs to be rewritten to the appropriate backend endpoint/location!
             async onUpload (event) {

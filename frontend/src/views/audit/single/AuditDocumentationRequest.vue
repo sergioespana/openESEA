@@ -4,7 +4,6 @@
             <h2 class="p-text-left">Documentation Request</h2>
             <Button @click="(helpDialog = !helpDialog)" label="Help" class="p-button-sm p-button-warning" icon="pi pi-external-link" />
         </div>
-        {{selectedIndicators}}
         <DataTable class="p-col-12" :value="selectedIndicators" rowGroupMode="rowspan" groupRowsBy="name" sortMode="single" sortField="name" :sortOrder="1" responsiveLayout="scroll"
             v-model:expandedRowGroups="expandedRowGroups" @rowgroupExpand="onRowGroupExpand" @rowgroupCollapse="onRowGroupCollapse" v-model:selection="selectedQuestions" dataKey="name">
             <Column selectionMode="multiple" headerStyle="width: 3em"></Column>

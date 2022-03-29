@@ -2,11 +2,7 @@
     <div class="p-grid p-m-5">
         <div class="p-col-12 p-d-flex p-ai-center p-jc-between">
             <h2 class="p-text-left">Audit Selection</h2>
-            ---
-            ---
-            <hr>
             <!-- {{selectedQuestions}} -->
-            -->
             <!-- {{chosenDirectIndicators}} -->
             <Button @click="(helpDialog = !helpDialog)" label="Help" class="p-button-sm p-button-warning" icon="pi pi-external-link" />
         </div>
@@ -113,6 +109,7 @@ export default {
     methods: {
         ...mapActions('auditIndicators', ['selectIndicators']),
         ...mapActions('surveyResponse', ['fetchSurveyResponse']),
+        ...mapActions('questionResponse', ['updateQuestionResponse']),
         async startAudit (selectedQuestions) {
             // Gets Direct Indicators belonging to an indirect indicator
             await this.fetchSurveyResponse({ oId: this.eseaAccount?.organisation, eaId: this.eseaAccount?.id, id: `survey=${this.surveyAudit.survey}` })
@@ -143,6 +140,12 @@ export default {
             console.log(selectedIndicators)
             await this.selectIndicators({ indicators: selectedIndicators })
             // ToDo: Change audit status of question responses (also in backend)!
+            for (var indicator of selectedIndicators) {
+                if (indicator.question_response.auditstatus === 'Not Under Audit') {
+                    indicator.question_response.auditstatus = 'Open'
+                }
+                this.updateQuestionResponse({ oId: 0, eaId: 0, id: indicator.question_response.id, data: indicator.question_response })
+            }
             this.$router.push({ name: 'documentationrequest', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } })
         },
         openCriticalDialog (indicator) {

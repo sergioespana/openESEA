@@ -10,14 +10,13 @@
             <Column field="topic" header="Topic"></Column>
             <Column field="name" header="Name" sortable></Column>
             <Column field="value" header="Value" sortable></Column>
-            <Column header="Status" headerStyle="width: 10rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
+            <Column header="Status" headerStyle="width: 15rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
                 <template #body="data">
                     <div class="p-d-flex p-ai-center p-jc-between">
-                        <div v-if="data.data.status">{{data.data.status}}</div>
-                        <div v-else>open</div>
-                        <Button v-if="data.data.status === 'verified'" icon="pi pi-check"  style="border-radius: 50%; background-color: green; border: none;" />
-                        <Button v-else-if="data.data.status === 'rejected'" icon="pi pi-times" style="border-radius: 50%; background-color: red; border: none;" />
-                        <Button v-else-if="data.data.status === 'awaiting correction'" style="border-radius: 50%; p-col-12; background-color: #FBC02D; border: none;" />
+                        {{data.data.question_response.auditstatus}}
+                        <Button v-if="data.data.question_response.auditstatus === 'Verified'" icon="pi pi-check"  style="border-radius: 50%; background-color: green; border: none;" />
+                        <Button v-else-if="data.data.question_response.auditstatus === 'Rejected'" icon="pi pi-times" style="border-radius: 50%; background-color: red; border: none;" />
+                        <Button v-else-if="data.data.question_response.auditstatus === 'Awaiting Correction'" style="border-radius: 50%; p-col-12; background-color: #FBC02D; border: none;" />
                         <Button v-else style="border-radius: 50%; background-color: #2196F3; border: none;" />
                     </div>
                 </template>

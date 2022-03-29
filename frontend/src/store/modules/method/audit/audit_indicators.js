@@ -67,7 +67,7 @@ export default {
         setSelectedIndicator ({ state, commit }, { id } = {}) {
             console.log(id)
             const data = state.selectedIndicators.find(indicator => indicator.id === id)
-            if (data && data.id === state.indicator.id) return
+            // if (data) return // && data.id === state.indicator.id
             commit('setIndicator', { data })
         }
     }

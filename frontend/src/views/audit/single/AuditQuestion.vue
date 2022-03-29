@@ -63,9 +63,9 @@
                 </Accordion>
 
                 <div class="p-p-3 p-mt-auto" style="width: 300px; margin: 60px auto;">
-                    <Button @click="changeAuditStatus('verified')" label="Verify" icon="pi pi-check" class="p-button-success" style="width: 100%;" />
-                    <Button @click="changeAuditStatus('awaiting correction')" label="Request response correction" icon="pi pi-pencil" class="p-button-warning" style="width: 100%; margin: 10px 0px;" />
-                    <Button @click="changeAuditStatus('rejected')" label="Reject" icon="pi pi-times" class="p-button-danger" style="width: 100%;" />
+                    <Button @click="changeAuditStatus('Verified')" label="Verify" icon="pi pi-check" class="p-button-success" style="width: 100%;" />
+                    <Button @click="changeAuditStatus('Awaiting Correction')" label="Request response correction" icon="pi pi-pencil" class="p-button-warning" style="width: 100%; margin: 10px 0px;" />
+                    <Button @click="changeAuditStatus('Rejected')" label="Reject" icon="pi pi-times" class="p-button-danger" style="width: 100%;" />
                 </div>
             </div>
         </SplitterPanel>
@@ -121,7 +121,7 @@
             ...mapState('auditIndicators', ['indicator']),
             ...mapState('method', ['method']),
             lists () {
-                return ([{ item: 'Question', info: this.indicator.name }, { item: 'Status', info: this.indicator.status || 'open' }, { item: 'Response', info: this.indicator.value }, { item: 'Message to Organisation', info: this.indicator.question_response.doc_request_note }, { item: 'Comment', info: this.indicator.comment }, { item: 'Critical Impact', info: this.indicator.critical_impact }, { item: 'anomaly', info: this.indicator.outliers }])
+                return ([{ item: 'Question', info: this.indicator.name }, { item: 'Status', info: this.indicator.question_response.auditstatus }, { item: 'Response', info: this.indicator.value }, { item: 'Message to Organisation', info: this.indicator.question_response.doc_request_note }, { item: 'Comment', info: this.indicator.question_response.doc_upload_note }, { item: 'Critical Impact', info: this.indicator.critical_impact }, { item: 'anomaly', info: this.indicator.outliers }])
             },
             images () {
                 return [{ itemImageSrc: '@/assets/tasklist.png', thumbnailImageSrc: '@/assets/tasklist.png', alt: 'Image 1' }, { alt: 'Image 2' }, { alt: 'Image 3' }]
@@ -136,14 +136,16 @@
         },
         methods: {
             ...mapActions('auditIndicators', ['updateIndicators']),
+            ...mapActions('questionResponse', ['updateQuestionResponse']),
             goToAuditAudit () {
                 console.log('go to auditaudit')
                 this.$router.push({ name: 'singleauditaudit', params: { EseaAccountId: this.$route.params.EseaAccountId, SurveyId: this.$route.params.SurveyId } })
             },
-            changeAuditStatus (status) {
-                this.indicator.status = status
+            async changeAuditStatus (status) {
+                this.indicator.question_response.auditstatus = status
                 this.updateIndicators(this.indicator)
                 console.log('change auditstatus to', status)
+                await this.updateQuestionResponse({ oId: 0, eaId: 0, id: this.indicator.question_response.id, data: this.indicator.question_response })
             },
             openCriticalDialog () {
                 this.criticalDialogIndicator = this.indicator

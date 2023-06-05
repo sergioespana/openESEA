@@ -5,7 +5,7 @@
         <div style="height: 100%;">
             <div v-for="(item, index) in navElements" :key="item" > <!-- a href="#" -->
                 <div class="sidebar-element p-d-flex p-ai-center" :style="(($route.name?.startsWith(item.path.slice(0, -1))) ? 'background-color: #00453D;':'')">
-                    <a class="sidebar-icon" :class="(item.icon)" style="width: 50px" @click="goToPage(item.path)" v-tooltip.right="item.name" />
+                    <a class="sidebar-icon" :class="(item.icon)" style="width: 55px" @click="goToPage(item.path)" v-tooltip.right="item.name" />
                     <div v-if="sidebar" class="p-d-flex p-ai-center p-jc-between p-px-3" style="width: 100%"  @click="goToPage(index)">
                         <div> {{item.name}}</div>
                     </div>
@@ -61,6 +61,11 @@
                         name: 'Users',
                         icon: 'pi pi-users',
                         path: 'users'
+                    },
+                    {
+                        name: 'Dashboards',
+                        icon: 'pi pi-chart-bar',
+                        path: 'dashboards'
                     },
                     {
                         name: 'Log out',

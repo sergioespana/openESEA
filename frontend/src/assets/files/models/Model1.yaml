@@ -1,0 +1,44 @@
+Name: My Dashboard
+Overviews:
+  - Name: Overview!!!!!
+    HeadSection:
+      Title: Head Section 1
+      OverviewSelection:
+        - Option 1
+        - Option 2
+      Data Filters:
+        - Field: Filter 1
+          Values:
+            - Value 1
+            - Value 2
+        - Field: Filter 2
+          Values:
+            - Value 3
+            - Value 4
+    BodySection:
+      Visualisations:
+        - Type: Pie
+          Query: [{"x": 1,"y": 2},{"x": 2,"y": 7},{"x": 3,"y": 6}]
+        - Type: Bar
+          Query: [{"x": 1,"y": 2},{"x": 2,"y": 4},{"x": 3,"y": 6}]
+  - Name: Overview 2
+    HeadSection:
+      Title: Head Section 2
+      OverviewSelection:
+        - Option 3
+        - Option 4
+      Data Filters:
+        - Field: Filter 3
+          Values:
+            - Value 5
+            - Value 6
+        - Field: Filter 4
+          Values:
+            - Value 7
+            - Value 8
+    BodySection:
+      Visualisations:
+        - Type: Pie
+          Query: [{"x": 1,"y": 2},{"x": 2,"y": 7},{"x": 3,"y": 6}]
+        - Type: Bar
+          Query: [{"x": 1,"y": 2},{"x": 2,"y": 4},{"x": 3,"y": 6}]

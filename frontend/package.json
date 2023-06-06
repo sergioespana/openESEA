@@ -8,8 +8,7 @@
   },
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "npm run clean && vue-cli-service build",
-    "only_build": "vue-cli-service build",
+    "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "clean": "npm cache clear --force && npm install",
     "start": "node server.js"
@@ -20,6 +19,7 @@
     "axios": "^0.21.1",
     "chart.js": "^3.0.1",
     "core-js": "^3.6.5",
+    "d3": "^7.8.5",
     "express": "^4.17.1",
     "idle-vue": "^2.0.5",
     "lodash": "^4.17.21",

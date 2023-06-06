@@ -8,9 +8,9 @@
   },
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "npm run clean && vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "clean": "npm cache clear --force && npm install",
+    "clean": "npm cache clear --force",
     "start": "node server.js"
   },
   "dependencies": {

@@ -15,6 +15,7 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "@babel/plugin-proposal-optional-chaining": "^7.21.0",
     "@vuelidate/core": "^2.0.0-alpha.15",
     "@vuelidate/validators": "^2.0.0-alpha.13",
     "axios": "^0.21.1",
@@ -33,7 +34,7 @@
     "vega-lite-api": "^5.6.0",
     "verbose": "^0.2.3",
     "vue": "^3.0.0",
-    "vue-chartjs": "^4.0.1",
+    "vue-chartjs": "^4.1.2",
     "vue-loader": "^16.8.0",
     "vue-router": "^4.0.0-0",
     "vue-template-compiler": "^2.7.14",

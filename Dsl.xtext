@@ -238,6 +238,105 @@ ValidationRule:
 ;
 //So far, the validation rules should only be triggered when the user validates the data or submits the survey response. It should only be possible to submit when there are no errors. And when there are warnings someone should confirm that they want to submit the data with the warnings
 
+Dashboard:
+	'Name': STRING
+	list_of_overviews+=List_of_overviews
+;
+
+List_of_overviews:
+	'Overviews:'
+	(overview+=Overview)+
+;
+
+Overview:
+	'Name': STRING
+	'HeadSection': headsection=HeadSection
+	'BodySection': bodysection=BodySection
+	'SidePanel': sidepanel=SidePanel?
+;
+
+HeadSection:
+	'Title': STRING
+	'Text': STRING?
+	'OverviewSelection': STRING+
+	list_of_data_filters+=List_of_data_filters
+	//Download Button
+;
+
+SidePanel:
+	'OverviewSelection': STRING+
+	list_of_data_filters+=List_of_data_filters
+;
+
+List_of_data_filters:
+	'Data Filters':
+	(datafilter+=DataFilter)+
+;
+
+DataFilter:
+	'Field': STRING
+	'Values': STRING+
+;
+
+BodySection:
+	list_of_containers+=List_of_containers
+;
+
+List_of_containers:
+	'Containers':
+	(container+=Container)+
+;
+
+Container:
+	'Visualisation': visualisation=Visualisation?
+	'Text': STRING+
+	'Images': 
+	(image+=Image)+
+	'Video': video=Video?
+	// 'VisualisationConfigurationElements'
+	// 'Buttons'
+	'xpos': INT
+	'ypos': INT
+	'width': INT
+	'height': INT
+;
+
+Image:
+	'Path': String
+;
+
+Video:
+	'Url': STRING
+;
+
+Visualisation:
+	'Title': STRING
+	'DataDisplay': datadisplay=DataDisplay
+	//'DownloadButton'
+	//'DataEntryNavigation'
+;
+
+DataDisplay:
+	'Type': visualisationType=VisualisationType
+	'Query': STRING
+;
+
+Pie:
+	'Field': STRING
+;
+
+Bar:
+	'X Field': STRING
+	'Y Field': STRING
+	'Group': STRING?
+	'Stack': STRING?
+;
+
+Line:
+	'X Field': STRING
+;
+
+enum VISUALISATIONTYPE: pie='Pie Chart' | bar='Bar Chart'l
 
 
 enum INDICATORCLASSIFICATION: performance='performance' | score='scoring' | certification='certification';

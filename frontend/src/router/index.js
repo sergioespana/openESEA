@@ -1,7 +1,6 @@
 // Used to Connect files to a specific
 
 import { createRouter, createWebHistory } from 'vue-router'
-import * as Vue from 'vue'
 
 const routes = [
     {
@@ -641,16 +640,6 @@ const router = createRouter({
 history: createWebHistory(), // createWebHashHistory(),
 // base: process.env.BASE_url, (?) -------------------------
 routes
-})
-
-// Page Titles displayed in Tab
-const DEFAULT_TITLE = 'openESEA'
-router.afterEach((to, from) => {
-    // Use next tick to handle router history correctly
-    // see: https://github.com/vuejs/vue-router/issues/914#issuecomment-384477609
-    Vue.nextTick(() => {
-        document.title = to.meta.title || DEFAULT_TITLE
-    })
 })
 
 export default router

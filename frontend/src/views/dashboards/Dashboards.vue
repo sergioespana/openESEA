@@ -23,6 +23,8 @@
 
     import { createApp, h } from 'vue'
     import { parse as yamlParse } from 'yaml'
+    import * as vl from 'vega-lite-api'
+    import * as d3 from 'd3'
 
     export default {
         name: 'Dashboard',
@@ -73,9 +75,11 @@
                 }
             },
             saveData (data) {
+                // data = '{"Hello":"Goodbye"}'
                 var jsonData = JSON.parse(data)
                 console.log(jsonData)
-                this.data = jsonData
+                this.data = vl.jsonFormat(jsonData)
+                console.log(d3.autoType(jsonData))
             },
             handleFileUploaded (type, file) {
                 // Access the file data here

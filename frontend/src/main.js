@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+// import * as Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
@@ -77,6 +78,16 @@ router.beforeEach((to, from, next) => {
       next()
     }
   })
+
+// Page Titles displayed in Tab
+// const DEFAULT_TITLE = 'openESEA'
+// router.afterEach((to, from) => {
+//     // Use next tick to handle router history correctly
+//     // see: https://github.com/vuejs/vue-router/issues/914#issuecomment-384477609
+//     Vue.nextTick(() => {
+//         document.title = to.meta.title || DEFAULT_TITLE
+//     })
+// })
 
 // const eventsHub = createApp()
 // const options = {

@@ -49,7 +49,7 @@ import { RESPONSE_TYPE } from '../../utils/constants'
 import { required, maxLength, between } from '../../utils/validators'
 import HandleValidationErrors from '../../utils/HandleValidationErrors'
 import SectionForm from '../../components/forms/sectionForm'
-import getMethodItems from '../../utils/getMethodItems'
+// import getMethodItems from '../../utils/getMethodItems'
 import { isEqual } from 'lodash'
 import Dropdown from 'primevue/dropdown'
 

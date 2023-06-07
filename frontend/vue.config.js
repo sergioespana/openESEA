@@ -10,5 +10,6 @@ module.exports = {
           'yaml': path.resolve(__dirname, 'node_modules/js-yaml/dist/js-yaml.js')
         }
       }
-    }
+    },
+    transpileDependencies: ['primevue']
 }

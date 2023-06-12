@@ -1,20 +1,20 @@
 Name: My Dashboard
 Overviews:
-  - Name: Overview!!!!!
+  - Name: ESG Indicators
     HeadSection:
-      Title: Head Section 1
+      Title: Environmental Indicators
+      Text: null
       OverviewSelection:
-        - Option 1
-        - Option 2
+        Enabled: true
+        # Overviews:
+        #   - Environmental Indicators
+        #   - Social Indicators
+        #   - Ethical Indicators
       Data Filters:
-        - Field: Filter 1
+        - Field: Country
           Values:
-            - Value 1
-            - Value 2
-        - Field: Filter 2
-          Values:
-            - Value 3
-            - Value 4
+            - The Netherlands
+            - Belgium
     BodySection:
       Visualisations:
         - Type: Pie

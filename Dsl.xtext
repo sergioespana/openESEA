@@ -238,105 +238,156 @@ ValidationRule:
 ;
 //So far, the validation rules should only be triggered when the user validates the data or submits the survey response. It should only be possible to submit when there are no errors. And when there are warnings someone should confirm that they want to submit the data with the warnings
 
+
+
+// Dashboards
 Dashboard:
-	'Name': STRING
-	list_of_overviews+=List_of_overviews
+	'Name:' name=STRING
+	overviews=Overviews
 ;
 
-List_of_overviews:
+Overviews:
 	'Overviews:'
 	(overview+=Overview)+
 ;
 
 Overview:
-	'Name': STRING
-	'HeadSection': headsection=HeadSection
-	'BodySection': bodysection=BodySection
-	'SidePanel': sidepanel=SidePanel?
+	'Name:' name=STRING
+	'HeadSection:' headsection=HeadSection
+	'BodySection:' bodysection=BodySection
+	('SidePanel:' sidepanel=SidePanel)?
 ;
 
 HeadSection:
-	'Title': STRING
-	'Text': STRING?
-	'OverviewSelection': STRING+
-	list_of_data_filters+=List_of_data_filters
-	//Download Button
+	'Title:' title=STRING?
+	'Text:' text=STRING?
+	(overviewselection=OverViewSelection)?
+	(datafiltersegment=DataFilterSegment)?
+	('Visualisation:' visualisation=Visualisation)?
+	('Download Button:' downloadbuttonconfiguration=DownloadButtonConfiguration)?
+	// Buttons (Other than download button)
 ;
 
 SidePanel:
-	'OverviewSelection': STRING+
-	list_of_data_filters+=List_of_data_filters
+	(overviewselection=OverViewSelection)?
+	(datafiltersegment=DataFilterSegment)?
 ;
 
-List_of_data_filters:
-	'Data Filters':
+OverviewSelection:
+	'OverviewSelection:'
+	overviewselectionconfiguration=OverviewSelectionConfiguration
+;
+
+OverviewSelectionConfiguration:
+	'Enabled:' enabled=BOOLEAN
+	// Possibly a list or hierarchy of overview names
+;
+
+DataFilterSegment:
+	'Data Filters:'
 	(datafilter+=DataFilter)+
 ;
 
 DataFilter:
-	'Field': STRING
-	'Values': STRING+
+	'Field:' STRING
+	'Values:' STRING+
+	// Possibly extend with filter conditions, instead of a list of values?
+;
+
+DownloadButtonConfiguration:
+	'Enabled:' enabled=BOOLEAN
 ;
 
 BodySection:
-	list_of_containers+=List_of_containers
-;
-
-List_of_containers:
-	'Containers':
 	(container+=Container)+
 ;
 
 Container:
-	'Visualisation': visualisation=Visualisation?
-	'Text': STRING+
-	'Images': 
+	'Position:' position=POSITION
+	'Title:' STRING?
+	visualisations=Visualisations
+	(textparagraphs=TextParagraphs)?
+	(images=Images)?
+	('Video:' video=Video)?
+	// Buttons
+	// VisualisationConfigurationElements
+;
+
+TextParagraphs:
+	'Text Paragraphs:'
+	(textparagraph+=TextParagraph)+
+;
+
+TextParagraph:
+	'Position:' position=POSITION
+	'Text:' STRING
+;
+
+Images:
+	'Images:' 
 	(image+=Image)+
-	'Video': video=Video?
-	// 'VisualisationConfigurationElements'
-	// 'Buttons'
-	'xpos': INT
-	'ypos': INT
-	'width': INT
-	'height': INT
 ;
 
 Image:
-	'Path': String
+	'Position:' position=POSITION
+	'Path:' String
 ;
 
 Video:
-	'Url': STRING
+	'Position:' position=POSITION
+	'Url:' STRING
+;
+
+Visualisations:
+	'Visualisations:'
+	(visualisation+=Visualisation)+
 ;
 
 Visualisation:
-	'Title': STRING
-	'DataDisplay': datadisplay=DataDisplay
-	//'DownloadButton'
-	//'DataEntryNavigation'
+	'Position:' position=POSITION
+	'Title:' STRING?
+	'DataDisplay:' datadisplay=DataDisplay
+	(datafiltersegment=DataFilterSegment)?
+	('Download Button:' downloadbuttonconfiguration=DownloadButtonConfiguration)?
+	// Data Entry Navigation
 ;
 
 DataDisplay:
-	'Type': visualisationType=VisualisationType
-	'Query': STRING
+	'Type:' visualisationType=VisualisationType
+	'Data:' STRING
+	('Axis System:' axissystem:AxisSystem)?
+;
+
+AxisSystem:
+	'Visible:' BOOLEAN
+	'X Label:' STRING
+	'Y Label:' STRING
 ;
 
 Pie:
-	'Field': STRING
+	'Field:' STRING
 ;
 
 Bar:
-	'X Field': STRING
-	'Y Field': STRING
-	'Group': STRING?
-	'Stack': STRING?
+	'X Field:' STRING
+	'Y Field:' STRING
+	'Group:' STRING?
+	'Stack:' STRING?
 ;
 
 Line:
-	'X Field': STRING
+	'X Field:' STRING
 ;
 
-enum VISUALISATIONTYPE: pie='Pie Chart' | bar='Bar Chart'l
+Position:
+	'X Pos:' POSITIONING
+	'Y Pos:' POSITIONING
+	'Width:' POSITIONING
+	'Height:' POSITIONING
+;
+
+enum VISUALISATIONTYPE: pie='Pie Chart' | bar='Bar Chart';
+terminal POSITIONING: '0.' INT '%';
 
 
 enum INDICATORCLASSIFICATION: performance='performance' | score='scoring' | certification='certification';

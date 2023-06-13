@@ -10,35 +10,38 @@ Overviews:
         #   - Environmental Indicators
         #   - Social Indicators
         #   - Ethical Indicators
-      Data Filters:
-        - Field: Country
-          Values:
-            - The Netherlands
-            - Belgium
+      DataFilterSegment:
+        - DataFilter:
+            Field: Country
+            Values:
+              - The Netherlands
+              - Belgium
     BodySection:
-      Visualisations:
-        - Type: Pie
-          Query: [{"x": 1,"y": 2},{"x": 2,"y": 7},{"x": 3,"y": 6}]
-        - Type: Bar
-          Query: [{"x": 1,"y": 2},{"x": 2,"y": 4},{"x": 3,"y": 6}]
-  - Name: Overview 2
-    HeadSection:
-      Title: Head Section 2
-      OverviewSelection:
-        - Option 3
-        - Option 4
-      Data Filters:
-        - Field: Filter 3
-          Values:
-            - Value 5
-            - Value 6
-        - Field: Filter 4
-          Values:
-            - Value 7
-            - Value 8
-    BodySection:
-      Visualisations:
-        - Type: Pie
-          Query: [{"x": 1,"y": 2},{"x": 2,"y": 7},{"x": 3,"y": 6}]
-        - Type: Bar
-          Query: [{"x": 1,"y": 2},{"x": 2,"y": 4},{"x": 3,"y": 6}]
+      - Container:
+          Position:
+            X Pos: 0.10%
+            Y Pos: 0.20%
+            Width: 0.80%
+            Height: 0.60%
+          Title: Container 1
+          Visualisations:
+            - Visualisation:
+                Position:
+                  X Pos: 0.05%
+                  Y Pos: 0.30%
+                  Width: 0.40%
+                  Height: 0.40%
+                Title: Visualization 1
+                DataDisplay:
+                  Type: Pie Chart
+                  Data: [{"x": 1,"y": 2},{"x": 2,"y": 7},{"x": 3,"y": 6}]
+            - Visualisation:
+                Position:
+                  X Pos: 0.55%
+                  Y Pos: 0.30%
+                  Width: 0.40%
+                  Height: 0.40%
+                Title: Visualization 2
+                DataDisplay:
+                  Type: Bar Chart
+                  Data: [{"x": 1,"y": 2},{"x": 2,"y": 4},{"x": 3,"y": 6}]

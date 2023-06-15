@@ -1,4 +1,22 @@
+### Node ###
+
+# Build files
 frontend/dist/**
+# Modules 
 frontend/node_modules/**
+
+
+
+### Python ###
+
+# Environment
 backend/venv_esea/**
+# Cache
+**/__pycache__/**
+
+
+
+### Other ###
+
+# Mac folder info
 **/.DS_Store

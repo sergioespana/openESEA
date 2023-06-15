@@ -354,29 +354,47 @@ Visualisation:
 
 DataDisplay:
 	'Type:' visualisationType=VisualisationType
+	'Configuration:' visualisationConfiguration=VisualisationConfiguration
 	'Data:' STRING
-	('Axis System:' axissystem:AxisSystem)?
+	('Axis System:' axissystem=AxisSystem)?
 ;
 
 AxisSystem:
 	'Visible:' BOOLEAN
-	'X Label:' STRING
-	'Y Label:' STRING
 ;
 
-Pie:
-	'Field:' STRING
+VisualisationConfiguration:
+	CardConfiguration | PieChartConfiguration | BarChartConfiguration | LineChartConfiguration | MultiSeriesLineChartConfiguration
 ;
 
-Bar:
-	'X Field:' STRING
-	'Y Field:' STRING
-	'Group:' STRING?
-	'Stack:' STRING?
+CardConfiguration:
+	'Value Field:' STRING
 ;
 
-Line:
-	'X Field:' STRING
+PieChartConfiguration:
+	'Value Field:' STRING
+	'Category Field::' STRING
+	('Category Limit:' INT)?
+;
+
+BarChartConfiguration:
+	'Value Field:' STRING
+	'Category Field:' STRING
+	('Grouping Category Field:' STRING)?
+	('Stacking Category Field:' STRING)?
+	('Category Limit:' INT)?
+;
+
+LineChartConfiguration:
+	'Value Field:' STRING
+	'Category Field:' STRING
+	('Category Limit:' INT)?
+;
+
+MultiSeriesLineChartConfiguration:
+	'Value Field:' STRING+
+	'Category Field:' STRING
+	('Category Limit:' INT)?
 ;
 
 Position:
@@ -386,7 +404,8 @@ Position:
 	'Height:' POSITIONING
 ;
 
-enum VISUALISATIONTYPE: pie='Pie Chart' | bar='Bar Chart';
+enum VISUALISATIONTYPE: card='Card' | piechart='Pie Chart' | barchart='Bar Chart' | linechart='Line Chart' | multiserieslinechart='Multi-Series Line Chart';
+terminal FIELD: STRING;
 terminal POSITIONING: '0.' INT '%';
 
 

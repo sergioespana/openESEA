@@ -20,6 +20,9 @@
                 type: Object,
                 default: () => {}
             }
+        },
+        mounted () {
+            console.log('Bar Chart mounted!')
         }
     }
 </script>

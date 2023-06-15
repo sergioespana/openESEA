@@ -18,50 +18,38 @@ Overviews:
               - Belgium
     BodySection:
       - Position:
-          X Pos: 45
-          Y Pos: 20
-          Width: 10
-          Height: 60
-        Style:
-          Background Color: red
-        Title: New Title
-      - Position:
           X Pos: 5
           Y Pos: 20
           Width: 40
           Height: 60
         Style:
           Background Color: lightblue
-        Title: Container 0
+        Title: Container 0 Version 2
       - Position:
           X Pos: 55
           Y Pos: 20
           Width: 40
           Height: 60
         Style:
-          Background Color: none
-        Title: Container 1
+          Background Color: lightblue
+        Title: Container 1 Version 2
         Visualisations:
           - Position:
-              X Pos: 5
-              Y Pos: 30
-              Width: 40
-              Height: 40
+              X Pos: 0.05%
+              Y Pos: 0.30%
+              Width: 0.40%
+              Height: 0.40%
             Title: Visualisation 1
             DataDisplay:
-              Type: Bar Chart
-              Data:
-                Labels: ['x', 'y', 'z']
-                Data: [10, 2, 5]
+              Type: Pie Chart
+              Data: [{"x": 1,"y": 2},{"x": 2,"y": 7},{"x": 3,"y": 6}]
           - Position:
-              X Pos: 55
-              Y Pos: 30
-              Width: 40
-              Height: 40
+              X Pos: 0.55%
+              Y Pos: 0.30%
+              Width: 0.40%
+              Height: 0.40%
             Title: Visualisation 2
             DataDisplay:
               Type: Bar Chart
-              Data: 
-                Labels: ['x', 'y', 'z']
-                Data: [10, 2, 80]
+              Data: [{"x": 1,"y": 2},{"x": 2,"y": 4},{"x": 3,"y": 6}]
   - Name: ESG Indicators 2

@@ -1,7 +1,7 @@
 // Used by MainSidebar.vue
 
 <template>
-    <div :style="(sidebar ? 'width: 350px':'width: 55px')" class="sidebar">
+    <div :style="(sidebar ? 'width: 350px':'width: 55px')" class="sidebar" id="sidebar">
         <div style="height: 100%;">
             <div v-for="(item, index) in navElements" :key="item" > <!-- a href="#" -->
                 <div class="sidebar-element p-d-flex p-ai-center" :style="(($route.name?.startsWith(item.path.slice(0, -1))) ? 'background-color: #00453D;':'')">
@@ -108,6 +108,7 @@
         //     linear-gradient(
         //     #00695C, #00695C
         //     );
+        z-index: 99;
         box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.3);
 
     .sidebar-element {

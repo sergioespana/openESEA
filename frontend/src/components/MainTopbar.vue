@@ -1,7 +1,7 @@
 // Used by App.vue
 
 <template>
-    <div class="menubar p-shadow-2">
+    <div class="menubar p-shadow-2" id="menubar">
         <i class="bars pi pi-bars p-p-5" @click="expandedSidebar = !expandedSidebar" />
         <span class="p-input-icon-left">
                 <i class="pi pi-search" /><InputText v-model="search" placeholder="Search the ESEA App..." />

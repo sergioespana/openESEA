@@ -1,135 +1,105 @@
 <template>
-    <div id="dashboard-overview">
-        <div class="dashboard-header-section">
-            <div class="upload-model-wrapper">
-                <UploadFileButton :fileInputId="'modelInput'" @fileUploaded="$event=>handleFileUploaded('model',$event)" iconClass="pi pi-chart-bar"/>
-            </div>
-            <div class="title-wrapper">
-                <h1 class="overview-title">Dashboards Overview</h1>
-            </div>
-            <div class="upload-data-wrapper">
-                <UploadFileButton :fileInputId="'dataInput'" @fileUploaded="$event=>handleFileUploaded('data',$event)" iconClass="pi pi-upload"/>
-            </div>
+    <div class="wrapper-dropdown">
+        <div class="dropdown-trigger" v-on:click="$event => toggleDropdown()">
+            <i class="pi pi-ellipsis-v"></i>
         </div>
-        <div id="dashboard-contents-wrapper">
+        <div class="dropdown-content" v-show="showDropdown">
+            <div class="wrapper-upload-model">
+                <UploadFileButton :fileInputId="'modelInput'" @fileUploaded="$event => handleModelUploaded($event)" iconClass="pi pi-chart-bar" />
+            </div>
+            <div class="wrapper-upload-data">
+                <UploadFileButton :fileInputId="'dataInput'" @fileUploaded="$event => handleDataUploaded($event)" iconClass="pi pi-upload" />
+            </div>
         </div>
     </div>
+    <div :id="topLevelId()" class="wrapper-dashboard">
+    </div>
+    <BarChart hidden :chartData="{
+                            labels: ['x','y', 'z'],
+                            datasets: [ { data: [10, 2, 5] }]
+                        }"></BarChart>
 </template>
 
 <script>
-    import BarChart from '../../components/charts/BarChart.vue'
-    // import LineChart from '../../components/charts/LineChart.vue'
-    import UploadFileButton from '../../components/buttons/UploadFileButton.vue'
+import UploadFileButton from '../../components/buttons/UploadFileButton.vue'
+import Dashboard from './Dashboard.vue'
+import BarChart from '../../components/charts/BarChart.vue'
 
-    import { createApp, h } from 'vue'
-    import { parse as yamlParse } from 'yaml'
-    import * as vl from 'vega-lite-api'
-    import * as d3 from 'd3'
+import createDivWrapper from '../../utils/createDivWrapper.js'
+import { load as yamlLoad } from 'yaml'
+// import * as vl from 'vega-lite-api'
+// import * as d3 from 'd3'
 
-    export default {
-        name: 'Dashboard',
-        components: {
-            UploadFileButton
-        },
-        methods: {
-            loadDashboard (result) {
-                var dashboardWrapperElement = document.getElementById('dashboard-contents-wrapper')
+export default {
+    name: 'Dashboards',
+    components: {
+        UploadFileButton,
+        BarChart
+    },
+    methods: {
+        toggleDropdown () { this.showDropdown = !this.showDropdown },
+        topLevelId () { return 'wrapper-dashboard' },
+        loadDashboard (fileContents) {
+            this.model = yamlLoad(fileContents)
+            var model = this.model
+            console.log('Dashboard model:', model)
 
-                // Remove previous dashboard
-                while (dashboardWrapperElement.firstChild) {
-                    dashboardWrapperElement.removeChild(dashboardWrapperElement.firstChild)
-                }
+            // Get current dashboard
+            var parent = document.getElementById(this.topLevelId())
 
-                // Create new dashboard elements
-                const fileContents = result
-                var yamlData = yamlParse(fileContents)
-                var title = yamlData.Overviews[0].Name
-                var visualisations = yamlData.Overviews[0].BodySection.Visualisations
-                var titleElement = document.createElement('h1')
-                titleElement.innerHTML = title
-                dashboardWrapperElement.appendChild(titleElement)
-
-                for (var vis of visualisations) {
-                    var data = {
-                        labels: vis.Query.map(el => el.x), // ['January', 'February', 'August'],
-                        datasets: [{ data: vis.Query.map(el => el.y) }] // [{ data: [40, 20, 12] }]
-                    }
-                    if (this.data) {
-                        data = {
-                            labels: this.data.map(el => el.Label),
-                            datasets: [{ data: this.data.map(el => el.Quantity) }]
-                        }
-                    }
-                    // Display charts
-                    var ComponentApp = createApp({
-                      setup () {
-                        return () => h(BarChart, {
-                          chartData: data
-                        })
-                      }
-                    })
-                    // Insert new dashboard element
-                    var wrapper = document.createElement('div')
-                    ComponentApp.mount(wrapper)
-                    dashboardWrapperElement.appendChild(wrapper)
-                }
-            },
-            saveData (data) {
-                // data = '{"Hello":"Goodbye"}'
-                var jsonData = JSON.parse(data)
-                console.log(jsonData)
-                this.data = vl.jsonFormat(jsonData)
-                console.log(d3.autoType(jsonData))
-            },
-            handleFileUploaded (type, file) {
-                // Access the file data here
-                const fr = new FileReader()
-
-                console.log(type, file)
-
-                // If file is loaded, load dashboard or save data
-                fr.onload = () => {
-                    if (type === 'model') {
-                        this.loadDashboard(fr.result)
-                    } else if (type === 'data') {
-                        this.saveData(fr.result)
-                    }
-                }
-
-                // Read file
-                fr.readAsText(file)
+            // Remove previous dashboard elements
+            while (parent.firstChild) {
+                parent.removeChild(parent.firstChild)
             }
+
+            // Load new dashboard
+            if (model) createDivWrapper(parent, Dashboard, { yamlData: model })
         },
-        data () {
-            return {
-                model: null,
-                data: null
-            }
+        saveData (data) {
+            // data = '{"Hello":"Goodbye"}'
+            var jsonData = JSON.parse(data)
+            console.log(jsonData)
+            // this.data = vl.jsonFormat(jsonData)
+            // console.log(d3.autoType(jsonData))
+        },
+        handleDataUploaded (file) {
+            const fr = new FileReader()
+            fr.onload = () => { this.saveData(fr.result) }
+            fr.readAsText(file)
+        },
+        handleModelUploaded (file) {
+            const fr = new FileReader()
+            fr.onload = () => { this.loadDashboard(fr.result) }
+            fr.readAsText(file)
+        }
+    },
+    data () {
+        return {
+            showDropdown: false,
+            model: null,
+            data: null
         }
     }
+}
 </script>
 
 <style>
-
-.dashboard-header-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
+.wrapper-dropdown {
+  position: absolute;
+  right: 0;
+  /* z-index: 1; */
 }
 
-.title-wrapper {
-  margin-left: 10px;
-  margin-right: 10px;
-  align-items: center;
+.dropdown-trigger {
+  cursor: pointer;
 }
 
-.upload-model-wrapper {
-  align-items: left;
+.dropdown-content {
+  border: 1px solid #ddd;
 }
 
-.upload-data-wrapper {
-  align-items: right;
+.wrapper-upload-model .wrapper-upload-data {
+    padding: 2vh;
 }
 
 </style>

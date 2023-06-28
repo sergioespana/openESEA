@@ -9,6 +9,7 @@ import store from './store'
 // import VuelidatePlugin from '@vuelidate/core'
 import Primevue from 'primevue/config'
 import ToastService from 'primevue/toastservice'
+import VueVega from 'vue-vega'
 
 import 'primevue/resources/themes/saga-blue/theme.css' // theme
 import 'primevue/resources/primevue.min.css' // core css
@@ -103,6 +104,9 @@ const app = createApp(App).use(store).use(router).use(Primevue).use(ToastService
 //   store,
 //   startAtIdle: false
 // })
+
+app.use(VueVega)
+app.use(Primevue)
 
 app.component('Menubar', Menubar)
 app.component('Menu', Menu)

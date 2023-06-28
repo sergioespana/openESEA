@@ -1,63 +1,64 @@
 <template>
-    <div :id="topLevelId()">
+    <div :id="'overview_' + this.overviewId + '_container_' + this.containerId" class="container"
+        :style="styleObject">
+        <p :hidden="containerTitle === null">{{ containerTitle }}</p>
+        <Visualisation
+            v-for="(item, index) in visualisations"
+            :key="index"
+            :overviewId="this.overviewId"
+            :containerId="this.containerId"
+            :visualisationId="index">
+        </Visualisation>
     </div>
 </template>
 
 <script>
-    import createElement from '../../utils/createElement.js'
-    import createDivWrapper from '../../utils/createDivWrapper.js'
-    import Visualisation from './Visualisation.vue'
+import { mapGetters } from 'vuex'
 
-    export default {
-        name: 'Container',
-        props: {
-            yamlData: {
-                type: Object,
-                required: true
-            },
-            overviewId: {
-                type: Number,
-                required: true
-            },
-            containerId: {
-                type: Number,
-                required: true
-            }
-        },
-        mounted () {
-            this.updateElements()
-        },
-        methods: {
-            topLevelId () {
-                return 'overview_' + this.overviewId + '_container_' + this.containerId
-            },
-            updateElements () {
-                const title = this.yamlData.Title
-                const position = this.yamlData.Position || null
-                const visualisations = this.yamlData.Visualisations || []
-                const overviewId = this.overviewId
-                const containerId = this.containerId
-                this.$nextTick(() => {
-                    var overviewElement = document.getElementById(this.topLevelId())
-                    if (title) createElement(overviewElement, 'p', { textContent: title })
-                    overviewElement.style.cssText = 'position:absolute;'
-                    overviewElement.style.cssText += `left:${position['X Pos']}%`
-                    overviewElement.style.cssText += `bottom:${position['Y Pos']}%`
-                    overviewElement.style.cssText += `width:${position.Width}%`
-                    overviewElement.style.cssText += `height:${position.Height}%`
-                    if (this.yamlData.Style['Background Color']) overviewElement.style.backgroundColor = this.yamlData.Style['Background Color']
+import Visualisation from './Visualisation.vue'
 
-                    const length = visualisations.length
-                    for (var index = 0; index < length; index++) {
-                        var visualisationId = index
-                        var visualisation = visualisations[visualisationId]
-                        console.log(visualisation)
-                        createDivWrapper(overviewElement, Visualisation, { yamlData: visualisation, overviewId: overviewId, containerId: containerId, visualisationId: visualisationId }, { id: 'wrapper_overview_' + overviewId + '_container_' + containerId + '_visualisation_' + visualisationId })
-                    }
-                })
+export default {
+    name: 'Container',
+    components: {
+        Visualisation
+    },
+    props: {
+        overviewId: { type: Number, required: true },
+        containerId: { type: Number, required: true }
+    },
+    computed: {
+        styleObject () {
+            var styleObject = {}
+            if (this.backgroundColor) styleObject['background-color'] = this.backgroundColor
+            if (this.position) {
+                styleObject.position = 'absolute'
+                styleObject.left = this.position[0] + '%'
+                styleObject.right = (100 - this.position[1]) + '%'
+                styleObject.top = this.position[2] + '%'
+                styleObject.bottom = (100 - this.position[3]) + '%'
             }
+            return styleObject
+        },
+        backgroundColor () {
+            return this.getContainerBackgroundColor()(this.overviewId, this.containerId)
+        },
+        position () {
+            const rawPosition = this.getContainerPosition()(this.overviewId, this.containerId)
+            if (!rawPosition) return null
+            return rawPosition.split(' ')
+        },
+        containerTitle () {
+            return this.getContainerTitle()(this.overviewId, this.containerId)
+        },
+        visualisations () {
+            const getVisualisationsFunction = this.getVisualisations()
+            return getVisualisationsFunction(this.overviewId, this.containerId) ?? []
         }
+    },
+    methods: {
+        ...mapGetters('dashboard', { getDashboard: 'getDashboard', getVisualisations: 'getVisualisations', getContainerTitle: 'getContainerTitle', getContainerPosition: 'getContainerPosition', getContainerBackgroundColor: 'getContainerBackgroundColor' })
     }
+}
 </script>
 
 <style>

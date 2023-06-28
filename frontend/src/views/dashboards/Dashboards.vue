@@ -4,61 +4,44 @@
             <i class="pi pi-ellipsis-v"></i>
         </div>
         <div class="dropdown-content" v-show="showDropdown">
-            <div class="wrapper-upload-model">
-                <UploadFileButton :fileInputId="'modelInput'" @fileUploaded="$event => handleModelUploaded($event)" iconClass="pi pi-chart-bar" />
-            </div>
-            <div class="wrapper-upload-data">
-                <UploadFileButton :fileInputId="'dataInput'" @fileUploaded="$event => handleDataUploaded($event)" iconClass="pi pi-upload" />
-            </div>
+            <UploadFileButton :fileInputId="'modelInput'" @fileUploaded="$event => handleModelUploaded($event)" iconClass="pi pi-chart-bar" />
+            <UploadFileButton :fileInputId="'dataInput'" @fileUploaded="$event => handleDataUploaded($event)" iconClass="pi pi-upload" />
         </div>
     </div>
-    <div :id="topLevelId()" class="wrapper-dashboard">
-    </div>
-    <BarChart hidden :chartData="{
-                            labels: ['x','y', 'z'],
-                            datasets: [ { data: [10, 2, 5] }]
-                        }"></BarChart>
+    <Dashboard v-if="modelUploaded"></Dashboard>
 </template>
 
 <script>
+import { mapGetters, mapMutations } from 'vuex'
+
 import UploadFileButton from '../../components/buttons/UploadFileButton.vue'
 import Dashboard from './Dashboard.vue'
-import BarChart from '../../components/charts/BarChart.vue'
 
-import createDivWrapper from '../../utils/createDivWrapper.js'
 import { load as yamlLoad } from 'yaml'
-// import * as vl from 'vega-lite-api'
-// import * as d3 from 'd3'
 
 export default {
     name: 'Dashboards',
     components: {
         UploadFileButton,
-        BarChart
+        Dashboard
     },
     methods: {
+        ...mapGetters('dashboard', { getDashboard: 'getDashboard' }),
+        ...mapMutations('dashboard', { setDashboard: 'setDashboard', setCurrentOverview: 'setCurrentOverview' }),
         toggleDropdown () { this.showDropdown = !this.showDropdown },
-        topLevelId () { return 'wrapper-dashboard' },
-        loadDashboard (fileContents) {
-            this.model = yamlLoad(fileContents)
-            var model = this.model
-            console.log('Dashboard model:', model)
-
-            // Get current dashboard
-            var parent = document.getElementById(this.topLevelId())
-
-            // Remove previous dashboard elements
-            while (parent.firstChild) {
-                parent.removeChild(parent.firstChild)
-            }
-
-            // Load new dashboard
-            if (model) createDivWrapper(parent, Dashboard, { yamlData: model })
+        async saveDashboard (model) {
+            await this.setDashboard(model)
+            await this.setCurrentOverview(0)
+        },
+        async loadDashboard (fileContents) {
+            const model = yamlLoad(fileContents)
+            await this.saveDashboard(model)
+            this.modelUploaded = true
         },
         saveData (data) {
             // data = '{"Hello":"Goodbye"}'
-            var jsonData = JSON.parse(data)
-            console.log(jsonData)
+            // var jsonData = JSON.parse(data)
+            // console.log(jsonData)
             // this.data = vl.jsonFormat(jsonData)
             // console.log(d3.autoType(jsonData))
         },
@@ -75,8 +58,8 @@ export default {
     },
     data () {
         return {
-            showDropdown: false,
-            model: null,
+            showDropdown: true,
+            modelUploaded: false,
             data: null
         }
     }
@@ -86,8 +69,9 @@ export default {
 <style>
 .wrapper-dropdown {
   position: absolute;
+  top: 50%;
   right: 0;
-  /* z-index: 1; */
+  z-index: 5;
 }
 
 .dropdown-trigger {
@@ -96,10 +80,6 @@ export default {
 
 .dropdown-content {
   border: 1px solid #ddd;
-}
-
-.wrapper-upload-model .wrapper-upload-data {
     padding: 2vh;
 }
-
 </style>

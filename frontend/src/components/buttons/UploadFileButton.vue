@@ -49,6 +49,8 @@ export default {
                 // Else not successful
                 this.success = false
             }
+            // Reset file such that you can upload it again
+            e.target.value = ''
             // Reset success
             setTimeout(() => {
                 this.success = null

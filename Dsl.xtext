@@ -299,6 +299,7 @@ DownloadButtonConfiguration:
 ;
 
 BodySection:
+	'Containers:'
 	(container+=Container)+
 ;
 
@@ -368,45 +369,42 @@ VisualisationConfiguration:
 ;
 
 CardConfiguration:
-	'Value Field:' STRING
+	'Value Field:' FIELD
 ;
 
 PieChartConfiguration:
-	'Value Field:' STRING
-	'Category Field::' STRING
+	'Value Field:' FIELD
+	'Category Field::' FIELD
 	('Category Limit:' INT)?
 ;
 
 BarChartConfiguration:
-	'Value Field:' STRING
-	'Category Field:' STRING
-	('Grouping Category Field:' STRING)?
-	('Stacking Category Field:' STRING)?
+	'Value Field:' FIELD
+	'Category Field:' FIELD
+	('Grouping Category Field:' FIELD)?
+	('Stacking Category Field:' FIELD)?
 	('Category Limit:' INT)?
 ;
 
 LineChartConfiguration:
-	'Value Field:' STRING
-	'Category Field:' STRING
+	'Value Field:' FIELD
+	'Category Field:' FIELD
 	('Category Limit:' INT)?
 ;
 
 MultiSeriesLineChartConfiguration:
-	'Value Field:' STRING+
-	'Category Field:' STRING
+	'Value Field:' FIELD+
+	'Category Field:' FIELD
 	('Category Limit:' INT)?
 ;
 
 Position:
-	'X Pos:' POSITIONING
-	'Y Pos:' POSITIONING
-	'Width:' POSITIONING
-	'Height:' POSITIONING
+	x1pos=POSITIONING ' ' x2pos=POSITIONING '' y1pos=POSITIONING '' y2pos=POSITIONING
 ;
 
 enum VISUALISATIONTYPE: card='Card' | piechart='Pie Chart' | barchart='Bar Chart' | linechart='Line Chart' | multiserieslinechart='Multi-Series Line Chart';
 terminal FIELD: STRING;
-terminal POSITIONING: '0.' INT '%';
+terminal POSITIONING: INT;
 
 
 enum INDICATORCLASSIFICATION: performance='performance' | score='scoring' | certification='certification';

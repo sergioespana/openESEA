@@ -1,0 +1,17 @@
+Name: My Dashboard
+Overviews:
+  - Name: ESG Indicators
+    BodySection:
+      - Title: Container 1
+        Visualisations:
+          - DataDisplay:
+              Type: Bar Chart
+              Data:
+                Fields: ['x', 'y', 'z']
+                Data: [10, 2, 5]
+          - Title: Visualisation 2
+            DataDisplay:
+              Type: Bar Chart
+              Data: 
+                Labels: ['x', 'y', 'z']
+                Data: [10, 2, 80]

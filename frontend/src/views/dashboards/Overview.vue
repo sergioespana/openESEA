@@ -1,61 +1,61 @@
 <template>
-    <div :id="topLevelId()" :hidden="this.overviewId != this.currentOverviewId">
-        <!-- <h1 :id="topLevelId() + '_name'"></h1>
-        Temporary for showing name -->
+    <div :id="'overview_' + this.overviewId" class="overview">
+        <HeadSection
+            v-if="headsection"
+            :overviewId="this.overviewId">
+        </HeadSection>
+        <BodySection
+            v-if="bodysection"
+            :overviewId="this.overviewId">
+        </BodySection>
+        <SidePanel
+            v-if="sidepanel"
+            :overviewId="this.overviewId">
+        </SidePanel>
     </div>
 </template>
 
 <script>
-    import createDivWrapper from '../../utils/createDivWrapper.js'
+    import { mapGetters } from 'vuex'
+
     import HeadSection from './HeadSection.vue'
     import BodySection from './BodySection.vue'
     import SidePanel from './SidePanel.vue'
 
     export default {
         name: 'Overview',
+        components: {
+            HeadSection,
+            BodySection,
+            SidePanel
+        },
         props: {
-            yamlData: {
-                type: Object,
-                required: true
-            },
-            overviewId: {
-                type: Number,
-                required: true
-            },
-            currentOverviewId: {
-                type: Number,
-                required: true
-            }
+            overviewId: { type: Number, required: true }
         },
-        data () {
-            return {
-                // name: null,
-                // headsection: null,
-                // bodysection: null,
-                // sidepanel: null
+        computed: {
+            headsection () {
+                const headsection = this.getHeadSection()(this.overviewId)
+                return headsection !== null
+            },
+            bodysection () {
+                const bodysection = this.getBodySection()(this.overviewId)
+                return bodysection !== null
+            },
+            sidepanel () {
+                const sidepanel = this.getSidePanel()(this.overviewId)
+                return sidepanel !== null
             }
-        },
-        mounted () {
-            this.updateElements()
         },
         methods: {
-            topLevelId () { return 'overview_' + this.overviewId },
-            updateElements () {
-                // const name = this.yamlData.Name || null
-                const headsection = this.yamlData.HeadSection || null
-                const bodysection = this.yamlData.BodySection || null
-                const sidepanel = this.yamlData.SidePanel || null
-                const overviewId = this.overviewId
-                this.$nextTick(() => {
-                    // var nameElement = document.getElementById(this.topLevelId() + '_name')
-                    // nameElement.innerHTML = name
-
-                    var parent = document.getElementById(this.topLevelId())
-                    if (headsection) createDivWrapper(parent, HeadSection, { yamlData: headsection, overviewId: overviewId }, { id: 'headsection_' + overviewId })
-                    if (headsection) createDivWrapper(parent, BodySection, { yamlData: bodysection, overviewId: overviewId }, { id: 'bodysection_' + overviewId })
-                    if (sidepanel) createDivWrapper(parent, SidePanel, { yamlData: sidepanel }, { id: 'sidepanel' })
-                })
-            }
+            ...mapGetters('dashboard', { getHeadSection: 'getHeadSection', getBodySection: 'getBodySection', getSidePanel: 'getSidePanel' })
         }
     }
 </script>
+
+<style>
+.overview {
+    width: 100%;
+    height: 100%;
+    /* min-height: 1000px; */
+}
+</style>

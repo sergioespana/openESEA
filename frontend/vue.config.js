@@ -11,5 +11,5 @@ module.exports = {
         }
       }
     },
-    transpileDependencies: ['primevue']
+    transpileDependencies: ['primevue', 'vega', 'vega-lite', 'vega-label', 'vega-tooltip']
 }

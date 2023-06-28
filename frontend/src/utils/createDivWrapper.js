@@ -11,5 +11,14 @@ function createDivWrapper (parent, type, data = {}, div_options = {}) {
     parent.appendChild(wrapper)
     return wrapper
 }
+// mountVueComponent
+// function createDivWrapper (parent, component) {
+//     const app = createApp({
+//       setup () {
+//         return () => h(component)
+//       }
+//     })
+//     app.mount(parent)
+//   }
 
 export default createDivWrapper

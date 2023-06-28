@@ -1,45 +1,50 @@
 <template>
-    <div :id="'overview_' + this.overviewId + '_headsection'" class="head_section">
-        <h1 :id="'overview_' + this.overviewId + '_headsection_title'"></h1>
-        <h1 :id="'overview_' + this.overviewId + '_headsection_text'"></h1>
+    <div :id="'overview_' + this.overviewId + '_headsection'" class="head-section">
+        <OverviewSelection
+            :overviewId="this.overviewId">
+        </OverviewSelection>
+        <h1 :id="'overview_' + this.overviewId + '_headsection_title'"
+            :hidden="headsectionTitle === null">
+            {{ headsectionTitle }}
+        </h1>
+        <p :id="'overview_' + this.overviewId + '_headsection_text'"
+            :hidden="headsectionText === null">
+            {{ headsectionText }}
+        </p>
     </div>
 </template>
 
 <script>
-    export default {
-        name: 'HeadSection',
-        props: {
-            yamlData: {
-                type: Object,
-                required: true
-            },
-            overviewId: {
-                type: Number,
-                required: true
-            }
-        },
-        mounted () {
-            this.updateElements()
-        },
-        methods: {
-            updateElements () {
-                const overviewId = this.overviewId
-                const title = this.yamlData.Title || null
-                const text = this.yamlData.Text || null
-                this.$nextTick(() => {
-                    document.getElementById(`overview_${overviewId}_headsection_title`).innerHTML = title
+import { mapGetters } from 'vuex'
 
-                    if (text) document.getElementById(`overview_${overviewId}_headsection_text`).innerHTML = text
-                    else document.getElementById(`overview_${overviewId}_headsection_text`).hidden = true
-                })
-            }
+import OverviewSelection from './OverviewSelection.vue'
+
+export default {
+    name: 'HeadSection',
+    components: {
+        OverviewSelection
+    },
+    props: {
+        overviewId: { type: Number, required: true }
+    },
+    computed: {
+        headsectionTitle () {
+            return this.getHeadSectionTitle()(this.overviewId)
+        },
+        headsectionText () {
+            return this.getHeadSectionText()(this.overviewId)
         }
+    },
+    methods: {
+        ...mapGetters('dashboard', { getHeadSectionTitle: 'getHeadSectionTitle', getHeadSectionText: 'getHeadSectionText' })
     }
+}
 </script>
 
 <style>
 .head-section {
     position: absolute;
-    height: 20%; /*calc(100vh - 14px);*/
+    height: 25%;
+    width: 100%;
 }
 </style>

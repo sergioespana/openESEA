@@ -1,58 +1,47 @@
 <template>
-    <div :id="topLevelId()" class="dashboard"> </div>
+    <div id="dashboard" class="dashboard">
+        <Overview
+            v-for="(_, index) in overviewRange"
+            :key="index"
+            :hidden="index !== selectedIndex"
+            :overviewId="index">
+        </Overview>
+    </div>
 </template>
 
 <script>
-    import createDivWrapper from '../../utils/createDivWrapper.js'
-    import Overview from './Overview.vue'
+import { mapGetters } from 'vuex'
 
-    export default {
-        name: 'Dashboard',
-        props: {
-            yamlData: {
-                type: Object,
-                required: true
-            }
+import Overview from './Overview.vue'
+
+import range from '../../utils/range.js'
+
+export default {
+    name: 'Dashboard',
+    components: {
+        Overview
+    },
+    computed: {
+        selectedIndex () {
+            return this.getSelectedOverviewIndex()()
         },
-        data () {
-            return {
-                name: null,
-                overviews: null
-            }
-        },
-        mounted () {
-            this.updateElements()
-        },
-        methods: {
-            topLevelId () {
-                return 'wrapper-overviews'
-            },
-            updateElements () {
-                this.name = this.yamlData.Name
-                this.overviews = this.yamlData.Overviews
-
-                const overviews = this.overviews
-
-                this.$nextTick(() => {
-                    var parent = document.getElementById(this.topLevelId())
-                    for (let index = 0; index < overviews.length; index++) {
-                        const overview = overviews[index]
-
-                        if (overview) createDivWrapper(parent, Overview, { yamlData: overview, currentOverviewId: 0, overviewId: index }, { id: 'overview_wrapper_' + index })
-                    }
-                })
-            },
-            getSideBarWidth () {
-                const sidebarwidth = document.getElementById('sidebar').offsetWidth
-                console.log(sidebarwidth)
-            }
+        overviewRange () {
+            return range(this.getOverviewsAmount()())
         }
+    },
+    methods: {
+        ...mapGetters('dashboard', { getSelectedOverviewIndex: 'getSelectedOverviewIndex', getOverviewsAmount: 'getOverviewsAmount' })
     }
+}
 </script>
 
 <style>
 .dashboard {
-    width: calc(100vw - var(--sidebar-width));
-    height: calc(100vh - var(--menubar-height));
+    /* min-width: 1000px; */
+    /* min-height: 1000px; */
+    position: absolute;
+    height: calc(100% - 70px);
+    width: calc(100% - 55px);
+    left: 55px;
 }
 </style>

@@ -1,15 +1,11 @@
 Name: My Dashboard
 Overviews:
-  - Name: ESG Indicators
+  - Name: Overview for ESEA Indicators
     HeadSection:
-      Title: Environmental Indicators
-      Text: null
+      Title: ESEA Indicators
+      Text: This is an example custom dashboard
       OverviewSelection:
         Enabled: true
-        # Overviews:
-        #   - Environmental Indicators
-        #   - Social Indicators
-        #   - Ethical Indicators
       DataFilterSegment:
         - DataFilter:
             Field: Country
@@ -17,51 +13,107 @@ Overviews:
               - The Netherlands
               - Belgium
     BodySection:
-      - Position:
-          X Pos: 45
-          Y Pos: 20
-          Width: 10
-          Height: 60
-        Style:
-          Background Color: red
-        Title: New Title
-      - Position:
-          X Pos: 5
-          Y Pos: 20
-          Width: 40
-          Height: 60
-        Style:
-          Background Color: lightblue
-        Title: Container 0
-      - Position:
-          X Pos: 55
-          Y Pos: 20
-          Width: 40
-          Height: 60
-        Style:
-          Background Color: none
-        Title: Container 1
-        Visualisations:
-          - Position:
-              X Pos: 5
-              Y Pos: 30
-              Width: 40
-              Height: 40
-            Title: Visualisation 1
-            DataDisplay:
-              Type: Bar Chart
-              Data:
-                Labels: ['x', 'y', 'z']
-                Data: [10, 2, 5]
-          - Position:
-              X Pos: 55
-              Y Pos: 30
-              Width: 40
-              Height: 40
-            Title: Visualisation 2
-            DataDisplay:
-              Type: Bar Chart
-              Data: 
-                Labels: ['x', 'y', 'z']
-                Data: [10, 2, 80]
-  - Name: ESG Indicators 2
+      Containers:
+        - Position: 45 55 0 100
+          Title: Orange Container
+          Style:
+            Background Color: orange
+        - Title: Yellow Container
+          Position: 5 45 0 50
+          Style:
+            Background Color: yellow
+          Visualisations:
+            - Position: 5 95 25 75
+              Title: Company Size
+              DataDisplay:
+                Type: Card
+                Field: Test_Indicator
+        - Position: 5 45 50 100
+          Style:
+            Background Color: lightblue
+          Title: Container 0
+          Visualisations:
+            - Position: 5 95 25 75
+              Title: Data Display 2
+              DataDisplay:
+                Type: Card
+                Field: Test_Indicator
+          # Visualisations:
+          #   - Position:
+          #       X Pos: 5
+          #       Y Pos: 30
+          #       Width: 40
+          #       Height: 40
+          #     Title: Visualisation 1
+          #     DataDisplay:
+          #       Type: Table
+          #       Data: [{ 'Name': 'Clint', 'Age': 23 }, { 'Message': 'Frank', 'Age': 30 }]
+          #   - Position:
+          #       X Pos: 55
+          #       Y Pos: 30
+          #       Width: 40
+          #       Height: 40
+          #     Title: Visualisation 2
+          #     DataDisplay:
+          #       Type: Table
+          #       Data: [{ 'Message': 'Goodbye', 'Count': 3 }, { 'Message': 'Hello', 'Count': 5 }]
+        - Position: 55 95 5 95
+          Style:
+            Background Color: lightgray
+          Title: Container with Visualisations
+          Visualisations:
+            - Position: 5 45 30 70
+              Title: Visualisation 1
+              DataDisplay:
+                Type: Bar Chart
+                Data:
+                  Labels: ['u', 'v', 'w', 'x', 'y', 'z']
+                  Data: [10, 2, 5, 7, 4, 11]
+            - Position: 55 95 30 70
+              Title: Visualisation 2
+              DataDisplay:
+                Type: Line Chart
+                Data: 
+                  Labels: ['x', 'y', 'z', 'q']
+                  Data: [12, 25, 20, 4]
+  - Name: ESG Indicators
+  - Name: ESEA Indicators
+  - Name: CSR Indicators
+    HeadSection:
+      Title: CSR Indicators
+      Text: This is a different overview
+      OverviewSelection:
+        Enabled: true
+    BodySection:
+      Containers:
+        - Position: 45 55 0 100
+          Title: Red Container
+          Style:
+            Background Color: red
+        - Title: Yellow Container
+          Position: 5 45 0 50
+          Style:
+            Background Color: yellow
+        - Position: 5 45 50 100
+          Style:
+            Background Color: lightblue
+          Title: Container 0
+        - Position: 55 95 5 95
+          Style:
+            Background Color: lightgray
+          Title: Container with Visualisations
+          Visualisations:
+            - Position: 5 45 30 70
+              Title: Visualisation 1
+              DataDisplay:
+                Type: Bar Chart
+                Data:
+                  Labels: ['x', 'y', 'z']
+                  Data: [10, 2, 5]
+            - Position: 55 95 30 70
+              Title: Visualisation 2
+              DataDisplay:
+                Type: Line Chart
+                Data: 
+                  Labels: ['x', 'y', 'z', 'q']
+                  Data: [10, 2, 80, 43]

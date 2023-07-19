@@ -11,6 +11,7 @@ export default {
         errors: {}
     },
     getters: {
+        getQuestionResponses: state => state.questionResponses
     },
     mutations: {
         setQuestionResponses (state, { data }) {

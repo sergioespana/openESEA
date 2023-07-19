@@ -2,15 +2,15 @@
     <div class="file-upload">
         <div class="file-upload-wrapper">
             <div class="file-upload-area">
-                <input type="file" :id="fileInputId" @change="$event=>this.handleFileChange($event)" style="display: none" />
+                <input type="file" accept="application/JSON, .yaml, .yml" :id="fileInputId" @change="$event=>this.handleFileChange($event)" :hidden="true"/>
                 <label :for="fileInputId" class="upload-button">
                     <i :class="iconClass"></i>
                 </label>
             </div>
-            <div v-if="success == false" class="error-message">
+            <div v-if="success === false" class="error-message">
                 <i class="pi pi-times"></i>
             </div>
-            <div v-else-if="success == true" class="success-message">
+            <div v-else-if="success === true" class="success-message">
                 <i class="pi pi-check"></i> File uploaded successfully!
             </div>
         </div>

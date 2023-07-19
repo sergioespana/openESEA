@@ -7,9 +7,10 @@ module.exports = {
     configureWebpack: {
       resolve: {
         alias: {
-          'yaml': path.resolve(__dirname, 'node_modules/js-yaml/dist/js-yaml.js')
+          'yaml': path.resolve(__dirname, 'node_modules/js-yaml/dist/js-yaml.js'),
+          'vue$': 'vue/dist/vue.esm-bundler.js'
         }
       }
     },
-    transpileDependencies: ['primevue', 'vega', 'vega-lite', 'vega-label', 'vega-tooltip']
+    transpileDependencies: ['primevue', 'vega', 'vega-lite', 'vega-label', 'vega-tooltip', 'vega-embed']
 }

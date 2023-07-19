@@ -7,10 +7,10 @@
 import 'echarts'
 import ECharts from 'vue-echarts'
 import { use } from 'echarts/core'
-import { BarChart } from 'echarts/charts'
+import { PieChart } from 'echarts/charts'
 import { CanvasRenderer } from 'echarts/renderers'
 
-use([BarChart, CanvasRenderer])
+use([PieChart, CanvasRenderer])
 
 export default {
     components: {
@@ -38,17 +38,14 @@ export default {
     methods: {
         createOptions (chartData) {
             if (!chartData) return {}
-            console.log('Bar Chart Data on Entry', chartData)
             const categoryKey = chartData.mapping['Category Field']?.key
             const valueKey = chartData.mapping['Value Field']?.key
             const title = chartData.title
-            const categories = [...new Set(chartData.data.map(el => el[categoryKey]))]
-            var values = []
-            for (const category of categories) {
-                const filteredData = chartData.data.filter(el => el[categoryKey] === category)
-                const value = filteredData.map(el => parseInt(el[valueKey])).reduce((partialSum, a) => partialSum + a, 0)
-                console.log('Value', value)
-                values.push(value)
+            var data = []
+            if (chartData.data) {
+                for (var row of chartData.data) {
+                    data.push({ value: row[valueKey], name: row[categoryKey] })
+                }
             }
             return {
                 title: {
@@ -56,34 +53,26 @@ export default {
                     left: 'center',
                     textStyle: {
                         overflow: 'break',
-                        fontSize: 12,
-                        width: this.$parent.$el.clientWidth
+                        fontSize: 12
                     }
-                },
-                xAxis: {
-                    type: 'category',
-                    data: categories,
-                    axisLabel: {
-                        interval: 0
-                    }
-                },
-                yAxis: {
-                    type: 'value'
-                },
-                grid: {
-                    top: '15%',
-                    bottom: '5%',
-                    left: '5%',
-                    right: '5%',
-                    containLabel: true
                 },
                 tooltip: {
                     trigger: 'item'
                 },
+                legend: {
+                    orient: 'horizontal',
+                    bottom: 'left'
+                },
                 series: [
                     {
-                        type: 'bar',
-                        data: values
+                        type: 'pie',
+                        data: data,
+                        radius: '30%',
+                        label: {
+                            show: true,
+                            overflow: 'none',
+                            distance: 5
+                        }
                     }
                 ]
             }

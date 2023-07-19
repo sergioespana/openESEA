@@ -9,7 +9,6 @@ import store from './store'
 // import VuelidatePlugin from '@vuelidate/core'
 import Primevue from 'primevue/config'
 import ToastService from 'primevue/toastservice'
-import VueVega from 'vue-vega'
 
 import 'primevue/resources/themes/saga-blue/theme.css' // theme
 import 'primevue/resources/primevue.min.css' // core css
@@ -46,6 +45,8 @@ import Sidebar from 'primevue/sidebar'
 import BadgeDirective from 'primevue/badgedirective'
 import Tooltip from 'primevue/tooltip'
 
+import HighchartsVue from 'highcharts-vue'
+import VueApexCharts from 'vue3-apexcharts'
 // const eventsHub = createApp
 
 router.beforeEach((to, from, next) => {
@@ -105,8 +106,7 @@ const app = createApp(App).use(store).use(router).use(Primevue).use(ToastService
 //   startAtIdle: false
 // })
 
-app.use(VueVega)
-app.use(Primevue)
+app.use(HighchartsVue).use(VueApexCharts)
 
 app.component('Menubar', Menubar)
 app.component('Menu', Menu)

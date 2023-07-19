@@ -14,7 +14,8 @@ export default {
 		isSaved: {}
     },
 	getters: {
-		getById: state => id => state.surveys.find(object => object.id === id)
+		getById: state => id => state.surveys.find(object => object.id === id),
+		getSurveys: state => state.surveys
 	},
     mutations: {
         setSurveys (state, { data }) {

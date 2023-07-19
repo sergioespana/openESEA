@@ -1,5 +1,5 @@
 <template>
-    <div :id="'overview_' + this.overviewId" class="overview">
+    <div class="overview" v-if="thisIsCurrentOverview">
         <HeadSection
             v-if="headsection"
             :overviewId="this.overviewId">
@@ -44,10 +44,13 @@
             sidepanel () {
                 const sidepanel = this.getSidePanel()(this.overviewId)
                 return sidepanel !== null
+            },
+            thisIsCurrentOverview () {
+                return this.overviewId === this.getSelectedOverviewId()()
             }
         },
         methods: {
-            ...mapGetters('dashboard', { getHeadSection: 'getHeadSection', getBodySection: 'getBodySection', getSidePanel: 'getSidePanel' })
+            ...mapGetters('dashboardModel', { getHeadSection: 'getHeadSection', getBodySection: 'getBodySection', getSidePanel: 'getSidePanel', getSelectedOverviewId: 'getSelectedOverviewId' })
         }
     }
 </script>
@@ -56,6 +59,5 @@
 .overview {
     width: 100%;
     height: 100%;
-    /* min-height: 1000px; */
 }
 </style>

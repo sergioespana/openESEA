@@ -2,14 +2,49 @@ export default {
     namespaced: true,
     state: {
         dashboard: null,
-        currentOverviewIndex: null
+        currentOverviewId: 0
     },
     mutations: {
         setDashboard (state, dashboard) {
-            state.dashboard = { ...dashboard }
+            state.dashboard = dashboard
         },
         setCurrentOverview (state, index) {
-            state.currentOverviewIndex = index
+            state.currentOverviewId = index
+        },
+
+        setHeadSectionTitle (state, payload) {
+            state.dashboard.Overviews[payload.overviewId].HeadSection.Title = payload.title
+        },
+        setHeadSectionText (state, payload) {
+            state.dashboard.Overviews[payload.overviewId].HeadSection.Text = payload.text
+        },
+
+        setVisualisationTitle (state, payload) {
+            state.dashboard.Overviews[payload.overviewId].BodySection.Containers[payload.containerId].Visualisations[payload.visualisationId].Title = payload.title
+        },
+        setVisualisationValueField (state, payload) {
+            const ding = {}
+            ding[payload.fieldType] = payload.field
+            state.dashboard.Overviews[payload.overviewId].BodySection.Containers[payload.containerId].Visualisations[payload.visualisationId].DataDisplay.Configuration['Value Field'] = ding
+        },
+        setVisualisationCategoryField (state, payload) {
+            const ding = {}
+            ding[payload.fieldType] = payload.field
+            state.dashboard.Overviews[payload.overviewId].BodySection.Containers[payload.containerId].Visualisations[payload.visualisationId].DataDisplay.Configuration['Category Field'] = ding
+        },
+        setVisualisationGroupingCategoryField (state, payload) {
+            const ding = {}
+            ding[payload.fieldType] = payload.field
+            state.dashboard.Overviews[payload.overviewId].BodySection.Containers[payload.containerId].Visualisations[payload.visualisationId].DataDisplay.Configuration['Grouping Category Field'] = ding
+        },
+        setVisualisationStackingCategoryField (state, payload) {
+            const ding = {}
+            ding[payload.fieldType] = payload.field
+            state.dashboard.Overviews[payload.overviewId].BodySection.Containers[payload.containerId].Visualisations[payload.visualisationId].DataDisplay.Configuration['Stacking Category Field'] = ding
+        },
+
+        setContainerTitle (state, payload) {
+            state.dashboard.Overviews[payload.overviewId].BodySection.Containers[payload.containerId].Title = payload.title
         }
     },
     getters: {
@@ -18,186 +53,154 @@ export default {
         },
         getDashboardName: (state, getters) => () => {
             const dashboard = getters.getDashboard()
-            if (!dashboard) return null
-            return dashboard.Name
+            return dashboard?.Name
         },
 
-        getSelectedOverviewIndex: (state, getters) => () => {
-            return state.currentOverviewIndex
+        getMethods: (state, getters) => () => {
+            const dashboard = getters.getDashboard()
+            return dashboard?.Methods
+        },
+
+        getSelectedOverviewId: (state, getters) => () => {
+            return state.currentOverviewId
         },
 
         getOverviews: (state, getters) => () => {
             const dashboard = getters.getDashboard()
-            if (!dashboard) return []
-            return dashboard.Overviews ?? []
-        },
-        getOverviewsAmount: (state, getters) => () => {
-            const overviews = getters.getOverviews()
-            return overviews.length
+            return dashboard?.Overviews ?? []
         },
         getOverviewNames: (state, getters) => () => {
             const overviews = getters.getOverviews()
-            return overviews.map(overview => overview.Name)
+            return overviews?.map(overview => overview.Name)
         },
 
         getOverview: (state, getters) => (overviewId) => {
             const overviews = getters.getOverviews()
-            if (!overviews.length) return null
-            return overviews[overviewId]
+            return overviews?.[overviewId]
         },
         getOverviewName: (state, getters) => (overviewId) => {
             const overview = getters.getOverview(overviewId)
-            if (!overview) return null
-            return overview.Name
+            return overview?.Name
         },
         getHeadSection: (state, getters) => (overviewId) => {
             const overview = getters.getOverview(overviewId)
-            if (!overview) return null
-            return overview.HeadSection
+            return overview?.HeadSection
         },
         getBodySection: (state, getters) => (overviewId) => {
             const overview = getters.getOverview(overviewId)
-            if (!overview) return null
-            return overview.BodySection
+            return overview?.BodySection
         },
         getSidePanel: (state, getters) => (overviewId) => {
             const overview = getters.getOverview(overviewId)
-            if (!overview) return null
-            return overview.SidePanel
+            return overview?.SidePanel
         },
 
         getHeadSectionTitle: (state, getters) => (overviewId) => {
             const headsection = getters.getHeadSection(overviewId)
-            if (!headsection) return null
-            return headsection.Title
+            return headsection?.Title
         },
         getHeadSectionText: (state, getters) => (overviewId) => {
             const headsection = getters.getHeadSection(overviewId)
-            if (!headsection) return null
-            return headsection.Text
+            return headsection?.Text
         },
         getHeadSectionOverviewSelection: (state, getters) => (overviewId) => {
             const headsection = getters.getHeadSection(overviewId)
-            if (!headsection) return null
-            return headsection.OverviewSelection
+            return headsection?.OverviewSelection
         },
         getHeadSectionDataFilters: (state, getters) => (overviewId) => {
             const headsection = getters.getHeadSection(overviewId)
-            if (!headsection) return null
-            return headsection['Data Filters']
+            return headsection?.['Data Filters']
         },
         getHeadSectionVisualisation: (state, getters) => (overviewId) => {
             const headsection = getters.getHeadSection(overviewId)
-            if (!headsection) return null
-            return headsection.Visualisation
+            return headsection?.Visualisation
         },
         getHeadSectionDownloadButton: (state, getters) => (overviewId) => {
             const headsection = getters.getHeadSection(overviewId)
-            if (!headsection) return null
-            return headsection['Download Button']
+            return headsection?.['Download Button']
         },
 
         getSidePanelOverviewSelection: (state, getters) => (overviewId) => {
             const sidepanel = getters.getSidePanel(overviewId)
-            if (!sidepanel) return null
-            return sidepanel.OverviewSelection
+            return sidepanel?.OverviewSelection
         },
         getSidePanelDataFilters: (state, getters) => (overviewId) => {
             const sidepanel = getters.getSidePanel(overviewId)
-            if (!sidepanel) return null
-            return sidepanel['Data Filters']
+            return sidepanel?.['Data Filters']
         },
 
         getContainers: (state, getters) => (overviewId) => {
             const bodysection = getters.getBodySection(overviewId)
-            if (!bodysection) return []
-            return bodysection.Containers
+            return bodysection?.Containers
         },
         getContainer: (state, getters) => (overviewId, containerId) => {
             const containers = getters.getContainers(overviewId)
-            if (!containers.length) return null
-            return containers[containerId]
+            return containers?.[containerId]
         },
         getContainerTitle: (state, getters) => (overviewId, containerId) => {
             const container = getters.getContainer(overviewId, containerId)
-            if (!container) return null
-            return container.Title
+            return container?.Title
         },
         getContainerBackgroundColor: (state, getters) => (overviewId, containerId) => {
             const container = getters.getContainer(overviewId, containerId)
-            if (!container) return null
-            return container.Style['Background Color']
+            return container?.Style?.['Background Color']
         },
         getContainerPosition: (state, getters) => (overviewId, containerId) => {
             const container = getters.getContainer(overviewId, containerId)
-            if (!container) return null
-            return container.Position
+            return container?.Position
         },
         getVideo: (state, getters) => (overviewId, containerId) => {
             const container = getters.getContainer(overviewId, containerId)
-            if (!container) return null
-            return container.Video
+            return container?.Video
         },
         getImages: (state, getters) => (overviewId, containerId) => {
             const container = getters.getContainer(overviewId, containerId)
-            if (!container) return []
-            return container.Images
+            return container?.Images
         },
         getTextParagraphs: (state, getters) => (overviewId, containerId) => {
             const container = getters.getContainer(overviewId, containerId)
-            if (!container) return []
-            return container['Text Paragraphs']
+            return container?.['Text Paragraphs']
         },
 
         getVisualisations: (state, getters) => (overviewId, containerId) => {
             const container = getters.getContainer(overviewId, containerId)
-            if (!container) return []
-            return container.Visualisations
+            return container?.Visualisations
         },
         getVisualisation: (state, getters) => (overviewId, containerId, visualisationId) => {
             const visualisations = getters.getVisualisations(overviewId, containerId)
-            if (!visualisations) return null
-            return visualisations[visualisationId]
+            return visualisations?.[visualisationId]
         },
         getVisualisationPosition: (state, getters) => (overviewId, containerId, visualisationId) => {
             const visualisation = getters.getVisualisation(overviewId, containerId, visualisationId)
-            if (!visualisation) return null
-            return visualisation.Position
+            return visualisation?.Position
         },
         getVisualisationTitle: (state, getters) => (overviewId, containerId, visualisationId) => {
             const visualisation = getters.getVisualisation(overviewId, containerId, visualisationId)
-            if (!visualisation) return null
-            return visualisation.Title
+            return visualisation?.Title
         },
         getVisualisationDataDisplay: (state, getters) => (overviewId, containerId, visualisationId) => {
             const visualisation = getters.getVisualisation(overviewId, containerId, visualisationId)
-            if (!visualisation) return null
-            return visualisation.DataDisplay
+            return visualisation?.DataDisplay
         },
         getVisualisationType: (state, getters) => (overviewId, containerId, visualisationId) => {
             const visualisationDisplay = getters.getVisualisationDataDisplay(overviewId, containerId, visualisationId)
-            if (!visualisationDisplay) return null
-            return visualisationDisplay.Type
+            return visualisationDisplay?.Type
         },
-        getVisualisationData: (state, getters) => (overviewId, containerId, visualisationId) => {
+        getVisualisationIndicators: (state, getters) => (overviewId, containerId, visualisationId) => {
             const visualisationDisplay = getters.getVisualisationDataDisplay(overviewId, containerId, visualisationId)
-            if (!visualisationDisplay) return null
-            return visualisationDisplay.Data
+            return visualisationDisplay?.DataConfiguration?.Indicators
         },
-        getVisualisationField: (state, getters) => (overviewId, containerId, visualisationId) => {
+        getVisualisationCategories: (state, getters) => (overviewId, containerId, visualisationId) => {
             const visualisationDisplay = getters.getVisualisationDataDisplay(overviewId, containerId, visualisationId)
-            if (!visualisationDisplay) return null
-            return visualisationDisplay.Field
+            return visualisationDisplay?.DataConfiguration?.Categories
         },
-        getVisualisationDataLabels: (state, getters) => (overviewId, containerId, visualisationId) => {
-            const visualisationData = getters.getVisualisationData(overviewId, containerId, visualisationId)
-            if (!visualisationData) return null
-            return visualisationData.Labels
+        getVisualisationGroupingField: (state, getters) => (overviewId, containerId, visualisationId) => {
+            const visualisationDisplay = getters.getVisualisationDataDisplay(overviewId, containerId, visualisationId)
+            return visualisationDisplay?.DataConfiguration?.['Grouping Field']
         },
-        getVisualisationDataValues: (state, getters) => (overviewId, containerId, visualisationId) => {
-            const visualisationData = getters.getVisualisationData(overviewId, containerId, visualisationId)
-            if (!visualisationData) return null
-            return visualisationData.Data
+        getVisualisationStackingField: (state, getters) => (overviewId, containerId, visualisationId) => {
+            const visualisationDisplay = getters.getVisualisationDataDisplay(overviewId, containerId, visualisationId)
+            return visualisationDisplay?.DataConfiguration?.['Stacking Field']
         }
     }
 }

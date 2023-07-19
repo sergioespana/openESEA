@@ -1,7 +1,11 @@
 <template>
     <div :id="'overview_' + this.overviewId + '_container_' + this.containerId" class="container"
         :style="styleObject">
-        <p :hidden="containerTitle === null">{{ containerTitle }}</p>
+        <b><EditableText
+            :hidden="containerTitle === null"
+            :initialValue="containerTitle"
+            @enteredValue="(value) => updateTitle(value)">
+        </EditableText></b>
         <Visualisation
             v-for="(item, index) in visualisations"
             :key="index"
@@ -13,14 +17,16 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 import Visualisation from './Visualisation.vue'
+import EditableText from './EditableText.vue'
 
 export default {
     name: 'Container',
     components: {
-        Visualisation
+        Visualisation,
+        EditableText
     },
     props: {
         overviewId: { type: Number, required: true },
@@ -34,8 +40,8 @@ export default {
                 styleObject.position = 'absolute'
                 styleObject.left = this.position[0] + '%'
                 styleObject.right = (100 - this.position[1]) + '%'
-                styleObject.top = this.position[2] + '%'
-                styleObject.bottom = (100 - this.position[3]) + '%'
+                styleObject.bottom = this.position[2] + '%'
+                styleObject.top = (100 - this.position[3]) + '%'
             }
             return styleObject
         },
@@ -56,7 +62,12 @@ export default {
         }
     },
     methods: {
-        ...mapGetters('dashboard', { getDashboard: 'getDashboard', getVisualisations: 'getVisualisations', getContainerTitle: 'getContainerTitle', getContainerPosition: 'getContainerPosition', getContainerBackgroundColor: 'getContainerBackgroundColor' })
+        ...mapGetters('dashboardModel', { getDashboard: 'getDashboard', getVisualisations: 'getVisualisations', getContainerTitle: 'getContainerTitle', getContainerPosition: 'getContainerPosition', getContainerBackgroundColor: 'getContainerBackgroundColor' }),
+        ...mapMutations('dashboardModel', { setContainerTitle: 'setContainerTitle' }),
+        updateTitle (title) {
+            const payload = { overviewId: this.overviewId, containerId: this.containerId, visualisationId: this.visualisationId, title: title }
+            this.setContainerTitle(payload)
+        }
     }
 }
 </script>

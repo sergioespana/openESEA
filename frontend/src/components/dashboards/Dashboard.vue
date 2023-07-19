@@ -1,9 +1,8 @@
 <template>
-    <div id="dashboard" class="dashboard">
+    <div class="dashboard" id="dashboard_id">
         <Overview
             v-for="(_, index) in overviewRange"
             :key="index"
-            :hidden="index !== selectedIndex"
             :overviewId="index">
         </Overview>
     </div>
@@ -22,26 +21,22 @@ export default {
         Overview
     },
     computed: {
-        selectedIndex () {
-            return this.getSelectedOverviewIndex()()
-        },
         overviewRange () {
-            return range(this.getOverviewsAmount()())
+            return range(this.getOverviews()().length)
         }
     },
     methods: {
-        ...mapGetters('dashboard', { getSelectedOverviewIndex: 'getSelectedOverviewIndex', getOverviewsAmount: 'getOverviewsAmount' })
+        ...mapGetters('dashboardModel', { getOverviews: 'getOverviews' })
     }
 }
 </script>
 
 <style>
 .dashboard {
-    /* min-width: 1000px; */
-    /* min-height: 1000px; */
     position: absolute;
-    height: calc(100% - 70px);
-    width: calc(100% - 55px);
-    left: 55px;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: calc(100% - var(--edit-element-width));
 }
 </style>

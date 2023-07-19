@@ -20,21 +20,18 @@ import { mapGetters, mapMutations } from 'vuex'
         },
         computed: {
             selectedIndex () {
-                return this.getSelectedOverviewIndex()()
+                return this.getSelectedOverviewId()()
             },
             overviewNames () {
-                return this.getOverviewNames()(this.overviewId)
+                return this.getOverviewNames()()
             }
         },
         methods: {
-            ...mapGetters('dashboard', { getSelectedOverviewIndex: 'getSelectedOverviewIndex', getOverviewNames: 'getOverviewNames' }),
-            ...mapMutations('dashboard', { setCurrentOverview: 'setCurrentOverview' }),
+            ...mapGetters('dashboardModel', { getSelectedOverviewId: 'getSelectedOverviewId', getOverviewNames: 'getOverviewNames' }),
+            ...mapMutations('dashboardModel', { setCurrentOverview: 'setCurrentOverview' }),
             onChange (event) {
                 const optionIndex = event.target.options.selectedIndex
-                this.saveOverviewIndex(optionIndex)
-            },
-            async saveOverviewIndex (index) {
-                await this.setCurrentOverview(index)
+                this.setCurrentOverview(optionIndex)
             }
         }
     }
@@ -42,7 +39,7 @@ import { mapGetters, mapMutations } from 'vuex'
 
 <style>
 .overview-selection {
-    right: 50px;
+    right: 0%;
     position: absolute;
 }
 </style>

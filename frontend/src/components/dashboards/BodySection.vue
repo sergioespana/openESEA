@@ -28,7 +28,7 @@ export default {
         }
     },
     methods: {
-        ...mapGetters('dashboard', { getContainers: 'getContainers' })
+        ...mapGetters('dashboardModel', { getContainers: 'getContainers' })
     }
 }
 </script>

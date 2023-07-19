@@ -7,7 +7,7 @@
             <sub-sidebar :links="links" />
         </div>
         <div class="p-col">
-            <div class="p-col-12 p-text-left p-text-italic p-m-0 p-px-5">
+            <div class="p-col-12 p-text-left p-text-italic p-m-0 p-px-5" v-if="!this.$route.path.endsWith('dashboards')">
                 <p>{{organisation.name}}</p>
                 <h3>{{pagename || this.$route.meta.breadcrumb[this.$route.meta.breadcrumb.length-1].label}}</h3>
             </div>
@@ -46,6 +46,11 @@
                         name: 'Reports',
                         icon: 'pi pi-chart-bar',
                         path: 'organisationreports'
+                    },
+                    {
+                        name: 'Dashboards',
+                        icon: 'pi pi-chart-line',
+                        path: 'organisationdashboards'
                     },
                     {
                         name: 'Team',

@@ -1,25 +1,129 @@
 <template>
-    <Line :chartData="data" :options="options"/>
+    <vue-echarts :option="this.options" autoresize>
+    </vue-echarts>
 </template>
 
 <script>
-    import { Line } from 'vue-chartjs'
-    import { Chart, Title, Tooltip, Legend, LineElement, CategoryScale, LinearScale, PointElement } from 'chart.js'
+import 'echarts'
+import ECharts from 'vue-echarts'
+import { use } from 'echarts/core'
+import { LineChart } from 'echarts/charts'
+import { CanvasRenderer } from 'echarts/renderers'
 
-    Chart.register(Title, Tooltip, Legend, LineElement, CategoryScale, LinearScale, PointElement)
+use([LineChart, CanvasRenderer])
 
-    export default {
-        name: 'LineChart',
-        components: { Line },
-        props: {
-            data: {
-                type: Object,
-                required: true
-            },
-            options: {
-                type: Object,
-                default: () => { return { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false, labels: { display: false } } } } }
+export default {
+    components: {
+        'vue-echarts': ECharts
+    },
+    props: {
+        chartData: {
+            type: Object,
+            default: () => null
+        }
+    },
+    watch: {
+        chartData: {
+            immediate: true,
+            handler (value) {
+                this.options = this.createOptions(value)
+            }
+        }
+    },
+    data () {
+        return {
+            options: {}
+        }
+    },
+    methods: {
+        createOptions (chartData) {
+            if (!chartData) return {}
+            console.log('Line Chart Data on Entry', chartData)
+            const categoryKey = chartData.mapping['Category Field']?.key
+            const valueKey = chartData.mapping['Value Field']?.key
+            const title = chartData.title
+            const categories = [...new Set(chartData.data.map(el => el[categoryKey]))]
+            var values = []
+            for (const category of categories) {
+                const filteredData = chartData.data.filter(el => el[categoryKey] === category)
+                const value = filteredData.map(el => parseInt(el[valueKey])).reduce((partialSum, a) => partialSum + a, 0)
+                values.push(value)
+            }
+            /* return {
+                title: {
+                    text: title,
+                    left: 'center',
+                    textStyle: {
+                        overflow: 'break',
+                        fontSize: 12,
+                        width: this.$parent.$el.clientWidth
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    data: categories,
+                    axisLabel: {
+                        interval: 0
+                    }
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                grid: {
+                    top: '15%',
+                    bottom: '5%',
+                    left: '5%',
+                    right: '5%',
+                    containLabel: true
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                series: [
+                    {
+                        type: 'bar',
+                        data: values
+                    }
+                ]
+            } */
+            return {
+                title: {
+                    text: title,
+                    left: 'center',
+                    textStyle: {
+                        fontSize: 12,
+                        overflow: 'break'
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    data: categories,
+                    axisLabel: {
+                        interval: 0,
+                        rotate: 37.5
+                    }
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                grid: {
+                    top: '15%',
+                    bottom: '5%',
+                    left: '5%',
+                    right: '5%',
+                    containLabel: true
+                },
+                tooltip: {
+                    show: 'item'
+                },
+                series: [
+                    {
+                        type: 'line',
+                        data: values
+                    }
+                ]
             }
         }
     }
+}
 </script>

@@ -14,6 +14,7 @@ export default {
         isSaved: {}
     },
     getters: {
+        getDirectIndicators: state => state.directIndicators,
         getById: state => id => state.directIndicators.find(object => object.id === id),
         topicDirectIndicators: (state) => {
             const filtered = {}
@@ -121,6 +122,7 @@ export default {
                 commit('setError', { error })
                 return
             }
+            console.log('Response', response) // TEMP
             commit('setDirectIndicators', response)
         },
         async patchDirectIndicator ({ commit }, { mId, id, data }) {

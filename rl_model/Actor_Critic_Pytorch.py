@@ -530,15 +530,13 @@ def main():
 
             # take the action
             state, reward, done, _ = env.step(action)
-            # https://ai.stackexchange.com/questions/38336/pytorchs-actor-critic-implementation-seems-to-be-implemented-in-a-monte-carlo-f
+            
             model.rewards.append(reward)
             ep_reward += reward
             
-            if render:
-                env.render()
+            if render: env.render()
 
-            if done:
-                break
+            if done: break
 
         # update cumulative reward
         running_reward = 0.05 * ep_reward + (1 - 0.05) * running_reward
@@ -558,8 +556,9 @@ def main():
             print('Episode {}\tLast reward: {:.2f}\tAverage reward: {:.2f}'.format(
                   i_episode, ep_reward, running_reward))
 
+        REWARD_LIMIT_SOLVED = 100_000 # Basically go forever
         # check if we have "solved" the cart pole problem
-        if running_reward > 300 and False:
+        if running_reward > REWARD_LIMIT_SOLVED:
             print("Solved! Running reward is now {} and "
                   "the last episode runs to {} time steps!".format(running_reward, t))
             break

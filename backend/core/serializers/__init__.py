@@ -27,3 +27,5 @@ from .question_response2 import QuestionResponseSerializer2
 
 from .account_audit import AccountAuditSerializer
 from .survey_audit import SurveyAuditSerializer
+
+from .dashboard import DashboardSerializer

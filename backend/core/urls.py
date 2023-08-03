@@ -3,7 +3,7 @@ from rest_framework_nested import routers
 from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView)
 
 from .views import (membershipview, respondentview, userview, networkview, network_memberview, organisationview, organisation_memberview, methodview, surveyview, sectionview, questionview, text_fragmentview, 
-                    topicview, direct_indicatorview2, indirect_indicatorview, survey_responseview, question_responseview, campaignview, esea_accountview, account_auditview, audit_surveyview, reportview)
+                    topicview, direct_indicatorview2, indirect_indicatorview, survey_responseview, question_responseview, campaignview, esea_accountview, account_auditview, audit_surveyview, reportview, dashboardview)
  
 
 router = routers.DefaultRouter()
@@ -13,6 +13,7 @@ router.register(r'users', userview.UsersViewSet, basename="Users")
 router.register(r'networks', networkview.NetworkViewSet, basename="Networks")
 router.register(r'organisations', organisationview.OrganisationViewSet, basename="Organisations")
 router.register(r'methods', methodview.MethodViewSet, basename='methods')   ## /methods/ & /methods/{pk}/
+router.register(r'dashboards', dashboardview.DashboardViewSet, basename='dashboards')
 
 network_router = routers.NestedSimpleRouter(router, r'networks', lookup="network")
 network_router.register(r'campaigns', campaignview.CampaignViewSet, basename="network-campaigns" )

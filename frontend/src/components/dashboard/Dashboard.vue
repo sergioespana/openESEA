@@ -37,6 +37,6 @@ export default {
     left: 0;
     top: 0;
     height: 100%;
-    width: calc(100% - var(--edit-element-width));
+    width: calc(100% - (var(--edit-area-current-width) + var(--edit-panel-width)));
 }
 </style>

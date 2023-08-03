@@ -24,6 +24,7 @@ import auditIndicators from './modules/method/audit/audit_indicators'
 import accountAudit from './modules/method/audit/account_audit'
 import surveyAudit from './modules/method/audit/survey_audit'
 import respondent from './modules/respondent'
+import dashboard from './modules/dashboard/dashboard'
 import dashboardModel from './modules/dashboard/dashboardModel'
 import dashboardData from './modules/dashboard/dashboardData'
 import dashboardEditing from './modules/dashboard/dashboardEditing'
@@ -59,6 +60,7 @@ export default createStore({
     accountAudit,
     surveyAudit,
     respondent,
+    dashboard,
     dashboardModel,
     dashboardData,
     dashboardEditing

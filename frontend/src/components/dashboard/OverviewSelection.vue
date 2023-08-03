@@ -41,5 +41,6 @@ import { mapGetters, mapMutations } from 'vuex'
 .overview-selection {
     right: 0%;
     position: absolute;
+    width: 20%;
 }
 </style>

@@ -291,9 +291,21 @@ const routes = [
                 }
             },
             {
-                path: 'dashboards',
+                path: 'dashboard',
                 name: 'organisationdashboards',
                 component: () => import('../views/organisation/OrganisationDashboards'),
+                meta: {
+                    breadcrumb: [
+                    { label: 'Organisations', to: '/organisations' },
+                    { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
+                    { label: 'Dashboards', to: { name: 'organisationdashboards' } }
+                    ]
+                }
+            },
+            {
+                path: 'dashboard/:DashboardId',
+                name: 'organisationdashboard',
+                component: () => import('../views/organisation/OrganisationDashboard'),
                 meta: {
                     breadcrumb: [
                     { label: 'Organisations', to: '/organisations' },

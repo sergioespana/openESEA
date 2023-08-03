@@ -1,17 +1,17 @@
 <template>
-    <div class="dashboards" id="dashboards">
-        <DashboardFileOperations @modelIsUploaded="loadDashboardFromFile"></DashboardFileOperations>
-        <EditDashboardElement v-if="false"></EditDashboardElement>
+    <div class="organisationdashboard" id="dashboards">
+        <!-- <DashboardFileOperations @modelIsUploaded="loadDashboardFromFile"></DashboardFileOperations> -->
+        <EditDashboardElement></EditDashboardElement>
         <Dashboard v-if="modelUploaded"></Dashboard>
     </div>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 
-import Dashboard from './Dashboard.vue'
-import DashboardFileOperations from './DashboardFileOperations.vue'
-import EditDashboardElement from './EditDashboardElement.vue'
+import Dashboard from '../../components/dashboard/Dashboard.vue'
+// import DashboardFileOperations from './DashboardFileOperations.vue'
+import EditDashboardElement from '../../components/dashboard/EditDashboardElement.vue'
 
 import EseaAccountService from '../../services/EseaAccountService.js'
 import SurveyResponseService from '../../services/SurveyResponseService.js'
@@ -23,27 +23,45 @@ import { load as yamlLoad } from 'yaml'
 export default {
     name: 'Dashboards',
     components: {
-        DashboardFileOperations,
+        // DashboardFileOperations,
         EditDashboardElement,
         Dashboard
     },
     data () {
         return {
             modelUploaded: false,
-            organisationId: this.$route.params.OrganisationId
+            organisationId: this.$route.params.OrganisationId,
+            dashboardId: parseInt(this.$route.params.DashboardId)
         }
     },
-    mounted () {
-        console.log('Organisation Id', this.organisationId)
-    },
     methods: {
+        ...mapActions('dashboard', { setDashboard: 'setDashboard' }),
+        ...mapGetters('dashboard', { getDashboardById: 'getDashboardById', getDashboards: 'getDashboards' }),
         ...mapGetters('dashboardData', { getIndicators: 'getIndicators', getIndicatorData: 'getIndicatorData', getIndicatorFields: 'getIndicatorFields' }),
         ...mapGetters('dashboardModel', { getMethods: 'getMethods' }),
         ...mapMutations('dashboardData', { setIndicators: 'setIndicators', setIndicatorData: 'setIndicatorData', setIndicatorFields: 'setIndicatorFields' }), //, setSupplementaryData: 'setSupplementaryData', setSupplementaryFields: 'setSupplementaryFields' }),
         ...mapMutations('dashboardModel', { setDashboard: 'setDashboard', setCurrentOverview: 'setCurrentOverview' }),
+        async loadDashboard () {
+            console.log('All Dashboards:', (await this.getDashboards()).filter((x) => x.id === this.dashboardId))
+            const dashboard = await this.getDashboardById()(this.dashboardId)
+            await this.setDashboard(dashboard)
+            const model = dashboard.specification
+            console.log('Loaded model:', model)
+            this.loadDashboardModel(model)
+        },
         async loadDashboardFromFile (fileContents, fileInfo) {
             // Parse dashboard model from file contents and file extension information
             const model = this.parseDashboardFromFileContents(fileContents, fileInfo)
+            await this.loadDashboardModel(model)
+        },
+        parseDashboardFromFileContents (fileContents, fileInfo) {
+            const fileExtension = fileInfo.name.split('.').pop()?.toLowerCase()
+            var model = null
+            if (fileExtension === 'yaml') model = yamlLoad(fileContents)
+            if (fileExtension === 'json') model = JSON.parse(fileContents)
+            return model
+        },
+        async loadDashboardModel (model) {
             // Save dashboard model
             await this.saveDashboard(model)
             // Load dashboard contents by setting uploaded to true
@@ -61,13 +79,6 @@ export default {
             var indicatorMetaDataFields = []
             if (indicatorData.length) indicatorMetaDataFields = Object.keys(indicatorData[0])
             await this.setIndicatorFields(indicatorMetaDataFields)
-        },
-        parseDashboardFromFileContents (fileContents, fileInfo) {
-            const fileExtension = fileInfo.name.split('.').pop()?.toLowerCase()
-            var model = null
-            if (fileExtension === 'yaml') model = yamlLoad(fileContents)
-            if (fileExtension === 'json') model = JSON.parse(fileContents)
-            return model
         },
         async saveDashboard (model) {
             // Force reload by first setting model to null
@@ -154,21 +165,29 @@ export default {
             // Return the data for all indicators
             return eseaData
         }
+    },
+    async created () {
+        console.log('Organisation Id', this.organisationId)
+        console.log('Dashboard Id', this.dashboardId)
+        console.log('This:', this.$route)
+        await this.loadDashboard()
     }
 }
 </script>
 
 <style>
-.dashboards {
+.organisationdashboard {
     min-height: 600px;
     position: relative;
 
     font-family: Arial, Helvetica, sans-serif;
 
     /* Offset from top bar */
-    height: calc(100% - 70px);
+    height: 100%;
 
-    /* Handle eventual edit element? */
-    --edit-element-width: 0px;
+    /* Handle edit element */
+    --edit-area-width: 200px;
+    --edit-area-current-width: 0px;
+    --edit-panel-width: 10px;
 }
 </style>

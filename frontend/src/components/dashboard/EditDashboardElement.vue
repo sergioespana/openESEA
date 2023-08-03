@@ -66,11 +66,11 @@ export default {
         ...mapMutations('dashboardModel', { setVisualisationValueField: 'setVisualisationValueField', setVisualisationCategoryField: 'setVisualisationCategoryField' }),
         onClick () {
             this.editing = !this.editing
-            var pixels = 10
-            pixels += this.editing * 200
 
-            const element = document.querySelector('.dashboards')
-            element.style.setProperty('--edit-element-width', pixels + 'px')
+            const element = document.querySelector('.organisationdashboard')
+            const pixels = this.editing * 200
+
+            element.style.setProperty('--edit-area-current-width', pixels + 'px')
         },
         async onValueChange (event) {
             const selectedValue = event.target.value
@@ -105,7 +105,7 @@ export default {
 
 <style>
 .edit-panel {
-    width: 10px;
+    width: calc(var(--edit-panel-width));
     height: 100%;
     right: 0;
     position: absolute;
@@ -116,8 +116,8 @@ export default {
     z-index: 10;
 }
 .edit-area {
-    right: 10px;
-    width: 200px;
+    right: calc(var(--edit-panel-width));
+    width: calc(var(--edit-area-current-width));
     height: 100%;
     position: absolute;
     border-color: lightgray;

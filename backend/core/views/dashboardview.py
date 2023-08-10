@@ -13,17 +13,15 @@ class DashboardViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         data = { 'specification': request.data }
-        serializer = DashboardSerializer(data=data)
-        try:
-            serializer.is_valid(raise_exception=True)
-        except Exception as e:
-            raise e
-        finally:
-            print('Hello')
-            print(request.data)
-            print(serializer.errors)
+        serializer = DashboardSerializer(data = data)
+        serializer.is_valid(raise_exception = True)
         serializer.save()
         return Response(serializer.data)
 
-    def update(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs)
+    def update(self, request, pk):
+        dashboard = get_object_or_404(Dashboard, pk = pk)
+        data = { 'specification': request.data }
+        serializer = DashboardSerializer(instance = dashboard, data = data)
+        serializer.is_valid(raise_exception = True)
+        serializer.save()
+        return Response(serializer.data)

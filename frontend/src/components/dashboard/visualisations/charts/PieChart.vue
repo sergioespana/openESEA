@@ -19,7 +19,7 @@ export default {
     props: {
         chartData: {
             type: Object,
-            default: () => null
+            required: true
         }
     },
     watch: {
@@ -37,7 +37,6 @@ export default {
     },
     methods: {
         createOptions (chartData) {
-            if (!chartData) return {}
             const categoryKey = chartData.mapping['Category Field']?.key
             const valueKey = chartData.mapping['Value Field']?.key
             const title = chartData.title
@@ -47,7 +46,8 @@ export default {
                     data.push({ value: row[valueKey], name: row[categoryKey] })
                 }
             }
-            return {
+
+            const options = {
                 title: {
                     text: title,
                     left: 'center',
@@ -76,6 +76,7 @@ export default {
                     }
                 ]
             }
+            return options
         }
     }
 }

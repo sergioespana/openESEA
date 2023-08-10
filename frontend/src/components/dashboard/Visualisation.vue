@@ -1,122 +1,140 @@
 <template>
-    <div
-        class="visualisation"
-        v-on:click="onClick"
-        :style="styleObject">
-        <!-- <EditableText
-            ref="title"
-            :hidden="visualisationTitle === null"
-            :initialValue="visualisationTitle"
-            @enteredValue="(value) => updateTitle(value)">
-        </EditableText> -->
-        <component
-            :is="visualisationComponent"
-            :chartData="this.dataSet">
+    <div class="visualisation" v-on:click="isClicked" :style="styleObject">
+        <component v-if="dataSet" :is="visualisationComponent"
+            :chartData="dataSet">
         </component>
+        <div v-else class="loading-container">
+            <ProgressSpinner class="progress-spinner">
+            </ProgressSpinner>
+        </div>
     </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 
-import { mapGetters, mapMutations } from 'vuex'
+import SingleValueDisplay from './visualisations/charts/SingleValueDisplay.vue'
+import FractionalValueDisplay from './visualisations/charts/FractionalValueDisplay.vue'
+import ProgressBar from './visualisations/charts/ProgressBar.vue'
+import PieChart from './visualisations/charts/PieChart.vue'
+import BarChart from './visualisations/charts/BarChart.vue'
+import LineChart from './visualisations/charts/LineChart.vue'
 
-import EditableText from './EditableText.vue'
-import SingleValueDisplay from '../../components/visualisations/charts/SingleValueDisplay.vue'
-import FractionalValueDisplay from '../../components/visualisations/charts/FractionalValueDisplay.vue'
-import ProgressBar from '../../components/visualisations/charts/ProgressBar.vue'
-import PieChart from '../../components/visualisations/charts/PieChart.vue'
-import BarChart from '../../components/visualisations/charts/BarChart.vue'
-import LineChart from '../../components/visualisations/charts/LineChart.vue'
+import ProgressSpinner from 'primevue/progressspinner'
 
 export default {
-    name: 'Visualisation',
     components: {
-        EditableText,
         SingleValueDisplay,
         FractionalValueDisplay,
         ProgressBar,
         PieChart,
         BarChart,
-        LineChart
+        LineChart,
+
+        ProgressSpinner
     },
     props: {
-        overviewId: { type: Number, required: true },
-        containerId: { type: Number, required: true },
-        visualisationId: { type: Number, required: true }
+        config: { type: Object, required: true }
     },
     data () {
         return {
-            dataSet: null,
-            visualisationType: null
+            dataSet: null
         }
     },
     computed: {
-        visualisationComponent () {
-            switch (this.visualisationType) {
-                case 'Single Value Display':
-                    return 'SingleValueDisplay'
-                case 'Fractional Value Display':
-                    return 'FractionalValueDisplay'
-                case 'Progress Bar':
-                    return 'ProgressBar'
-                case 'Pie Chart':
-                    return 'PieChart'
-                case 'Bar Chart':
-                    return 'BarChart'
-                case 'Line Chart':
-                    return 'LineChart'
-                default:
-                    return 'p'
+        visualisation: {
+            get () { return this.getVisualisation()(this.config) }
+        },
+        visualisationTitle: {
+            get () { return this.getVisualisationTitle()(this.config) }
+        },
+        visualisationType: {
+            get () { return this.getVisualisationType()(this.config) }
+        },
+        visualisationComponent: {
+            get () {
+                switch (this.visualisationType) {
+                    case 'Single Value Display':
+                        return 'SingleValueDisplay'
+                    case 'Fractional Value Display':
+                        return 'FractionalValueDisplay'
+                    case 'Progress Bar':
+                        return 'ProgressBar'
+                    case 'Pie Chart':
+                        return 'PieChart'
+                    case 'Bar Chart':
+                        return 'BarChart'
+                    case 'Line Chart':
+                        return 'LineChart'
+                    default:
+                        return 'p'
+                }
             }
+        },
+        position: {
+            get () { return this.getVisualisationPosition()(this.config) }
         },
         styleObject () {
             var styleObject = {}
-            if (this.position) {
+            const position = this.position
+            if (position) {
                 styleObject.position = 'absolute'
-                styleObject.left = this.position[0] + '%'
-                styleObject.right = (100 - this.position[1]) + '%'
-                styleObject.bottom = this.position[2] + '%'
-                styleObject.top = (100 - this.position[3]) + '%'
+                styleObject.left = position['X Start'].toString() + '%'
+                styleObject.right = (100 - position['X End'].toString()) + '%'
+                styleObject.bottom = position['Y Start'].toString() + '%'
+                styleObject.top = (100 - position['Y End'].toString()) + '%'
             }
             return styleObject
-        },
-        position () {
-            const rawPosition = this.getVisualisationPosition()(this.overviewId, this.containerId, this.visualisationId)
-            if (!rawPosition) return null
-            return rawPosition.split(' ')
-        },
-        visualisationTitle () {
-            return this.getVisualisationTitle()(this.overviewId, this.containerId, this.visualisationId)
         }
     },
-    async mounted () {
-        // Get visualisation type
-        this.visualisationType = await this.getVisualisationType()(this.overviewId, this.containerId, this.visualisationId)
-
-        // Create data set
-        const dataSet = await this.createDataSet()
-
-        // Add title to data set
-        const visualisationTitle = await this.getVisualisationTitle()(this.overviewId, this.containerId, this.visualisationId)
-        dataSet.title = visualisationTitle
-
-        // Save and log dataset
-        this.dataSet = dataSet
-        console.log('Dataset:', dataSet)
+    watch: {
+        visualisation: {
+            handler: 'createVisualisationDataSet',
+            deep: true
+        }
+    },
+    async created () {
+        await this.createVisualisationDataSet()
     },
     methods: {
-        ...mapGetters('dashboardEditing', { getSelectedVisualisation: 'getSelectedVisualisation' }),
-        ...mapGetters('dashboardData', { getIndicatorData: 'getIndicatorData' }), // getSupplementaryData: 'getSupplementaryData' }),
-        ...mapGetters('dashboardModel', { getVisualisationDataDisplay: 'getVisualisationDataDisplay', getVisualisationGroupingField: 'getVisualisationGroupingField', getVisualisationStackingField: 'getVisualisationStackingField', getVisualisationIndicators: 'getVisualisationIndicators', getVisualisationCategories: 'getVisualisationCategories', getVisualisationType: 'getVisualisationType', getVisualisationPosition: 'getVisualisationPosition', getVisualisationTitle: 'getVisualisationTitle' }),
-        ...mapMutations('dashboardEditing', { setSelectedVisualisation: 'setSelectedVisualisation' }),
-        ...mapMutations('dashboardModel', { setDashboard: 'setDashboard', setCurrentOverview: 'setCurrentOverview', setVisualisationTitle: 'setVisualisationTitle' }),
+        ...mapGetters('dashboardData', ['getIndicatorData']),
+        ...mapGetters('dashboardModel', ['getVisualisation', 'getVisualisationDataDisplay', 'getVisualisationGroupingField', 'getVisualisationStackingField', 'getVisualisationIndicators', 'getVisualisationCategories', 'getVisualisationType', 'getVisualisationPosition', 'getVisualisationTitle']),
+        ...mapActions('dashboardModel', ['updateSelectionConfig']),
+        async isClicked (event) {
+            event.stopPropagation()
+            await this.updateSelectionConfig(this.config)
+        },
+        async createVisualisationDataSet () {
+            // Create data set
+            this.dataSet = await this.createDataSet()
+            // Add title to data set
+            this.dataSet.title = this.visualisationTitle
+        },
+        async createDataSet () {
+            // Create dataset based for this visualisation type
+            switch (this.visualisationType) {
+                case 'Single Value Display':
+                    return await this.createSingleValueDisplayDataSet()
+                case 'Fractional Value Display':
+                    return await this.createFractionalValueDisplayDataSet()
+                case 'Progress Bar':
+                    return await this.createProgressBarDataSet()
+                case 'Pie Chart':
+                    return await this.createPieChartDataSet()
+                case 'Bar Chart':
+                    return await this.createBarChartDataSet()
+                case 'Line Chart':
+                    return await this.createLineChartDataSet()
+                default:
+                    return {}
+            }
+        },
         async createSingleValueDisplayDataSet () {
-            console.log('Creating Dataset\n\n\n')
             // Get data for all indicators
             const methodIndicatorsData = await this.getIndicatorData()()
 
             // Get indicator field for this visualisation
-            const dataDisplay = await this.getVisualisationDataDisplay()(this.overviewId, this.containerId, this.visualisationId)
+            const dataDisplay = await this.getVisualisationDataDisplay()(this.config)
             const dataConfiguration = dataDisplay?.DataConfiguration
             const indicatorField = dataConfiguration['Value Field']?.Indicator
             const indicatorName = dataConfiguration['Value Field']?.Name
@@ -149,7 +167,7 @@ export default {
             const methodIndicatorsData = await this.getIndicatorData()()
 
             // Get indicator field for this visualisation
-            const dataDisplay = await this.getVisualisationDataDisplay()(this.overviewId, this.containerId, this.visualisationId)
+            const dataDisplay = await this.getVisualisationDataDisplay()(this.config)
             const dataConfiguration = dataDisplay?.DataConfiguration
             const fractionalValueField = dataConfiguration['Fractional Value Field']?.Indicator
             const fractionalValueName = dataConfiguration['Fractional Value Field']?.Name
@@ -185,7 +203,7 @@ export default {
             const methodIndicatorsData = await this.getIndicatorData()()
 
             // Get indicator field for this visualisation
-            const dataDisplay = await this.getVisualisationDataDisplay()(this.overviewId, this.containerId, this.visualisationId)
+            const dataDisplay = await this.getVisualisationDataDisplay()(this.config)
             const dataConfiguration = dataDisplay?.DataConfiguration
             const currentValueField = dataConfiguration['Current Value Field']?.Indicator
             const currentValueName = dataConfiguration['Current Value Field']?.Name
@@ -193,8 +211,6 @@ export default {
             const targetValueName = dataConfiguration['Target Value Field']?.Name
             const isPercentage = dataConfiguration.isPercentage || false
             const indicatorFields = [currentValueField].concat(targetValueField ? [targetValueField] : [])
-
-            console.log(indicatorFields)
 
             // Get data for this visualisation
             var indicatorsData = methodIndicatorsData?.filter(el => indicatorFields.includes(el['Indicator Key']))
@@ -224,7 +240,7 @@ export default {
             const methodIndicatorsData = await this.getIndicatorData()()
 
             // Get data/fields configuration for this visualisation
-            const dataDisplay = await this.getVisualisationDataDisplay()(this.overviewId, this.containerId, this.visualisationId)
+            const dataDisplay = await this.getVisualisationDataDisplay()(this.config)
             const dataConfiguration = dataDisplay?.DataConfiguration
             const valueFieldIndicators = dataConfiguration['Value Field']?.Indicators
             const valueFieldName = dataConfiguration['Value Field']?.Name
@@ -283,7 +299,7 @@ export default {
             const methodIndicatorsData = await this.getIndicatorData()()
 
             // Get data/fields configuration for this visualisation
-            const dataDisplay = await this.getVisualisationDataDisplay()(this.overviewId, this.containerId, this.visualisationId)
+            const dataDisplay = await this.getVisualisationDataDisplay()(this.config)
             const dataConfiguration = dataDisplay?.DataConfiguration
             const valueFieldIndicators = dataConfiguration['Value Field']?.Indicators
             const valueFieldName = dataConfiguration['Value Field']?.Name
@@ -347,7 +363,7 @@ export default {
             const methodIndicatorsData = await this.getIndicatorData()()
 
             // Get data/fields configuration for this visualisation
-            const dataDisplay = await this.getVisualisationDataDisplay()(this.overviewId, this.containerId, this.visualisationId)
+            const dataDisplay = await this.getVisualisationDataDisplay()(this.config)
             const dataConfiguration = dataDisplay?.DataConfiguration
             const valueFieldIndicators = dataConfiguration['Value Field']?.Indicators
             const valueFieldName = dataConfiguration['Value Field']?.Name
@@ -400,74 +416,31 @@ export default {
                 for (const filter of filters) {
                     const filterField = filter.Field
                     const filterValues = filter.Values
-                    console.log('Filtering start', indicatorsData)
+                    // console.log('Filtering start', indicatorsData)
                     indicatorsData = indicatorsData.filter(el => filterValues.includes(el[filterField]))
-                    console.log('Filtering end', indicatorsData)
+                    // console.log('Filtering end', indicatorsData)
                 }
             }
 
             // Return data info
             const dataSet = { data: indicatorsData, mapping: mapping }
             return dataSet
-        },
-        async createDataSet () {
-            switch (this.visualisationType) {
-                case 'Single Value Display':
-                    return await this.createSingleValueDisplayDataSet()
-                case 'Fractional Value Display':
-                    return await this.createFractionalValueDisplayDataSet()
-                case 'Progress Bar':
-                    return await this.createProgressBarDataSet()
-                case 'Pie Chart':
-                    return await this.createPieChartDataSet()
-                case 'Bar Chart':
-                    return await this.createBarChartDataSet()
-                case 'Line Chart':
-                    return await this.createLineChartDataSet()
-                default:
-                    return {}
-            }
-            /*
-            if (this.visualisationType === 'Progress Bar') return await this.createDataSetProgressBar()
-            const allIndicatorData = await this.getIndicatorData()()
-
-            // Get indicators of current visualisation
-            const indicators = await this.getVisualisationIndicators()(this.overviewId, this.containerId, this.visualisationId)
-            console.log('Indicators:', indicators)
-            // Retrieve indicator values from indicator data
-            var values = []
-            if (indicators) {
-                for (var indicator of indicators) {
-                    var indicatorData_ = allIndicatorData?.filter(el => el['Indicator Key'] === indicator)
-                    const maxYear = max(indicatorData_.map(el => el.Year))
-                    const GETLASTYEAR = true
-                    if (GETLASTYEAR) {
-                        indicatorData_ = indicatorData_?.filter(el => el.Year === maxYear)
-                    }
-                    const indicatorValues = indicatorData_.map(el => el.Value)
-                    const value = indicatorValues[0]
-                    values.push(value)
-                }
-            }
-
-            // Get labels of current visualisation
-            const categories = await this.getVisualisationCategories()(this.overviewId, this.containerId, this.visualisationId)
-
-            var data = { values: values }
-            if (categories) data.categories = categories
-            if (this.visualisationType === 'Pie Chart') console.log('Pie data:', data)
-            return data
-            */
-        },
-        async updateTitle (title) {
-            const payload = { overviewId: this.overviewId, containerId: this.containerId, visualisationId: this.visualisationId, title: title }
-            await this.setVisualisationTitle(payload)
-        },
-        async onClick () {
-            const payload = { overviewId: this.overviewId, containerId: this.containerId, visualisationId: this.visualisationId }
-            await this.setSelectedVisualisation(payload)
-            console.log(await this.getSelectedVisualisation()())
         }
     }
 }
 </script>
+
+<style>
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Set the desired dimensions for the container */
+  width: 100%;
+  height: 100%;
+}
+.progress-spinner {
+    max-height: 100%;
+    max-width: 100%;
+}
+</style>

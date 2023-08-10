@@ -1,58 +1,43 @@
 <template>
     <div class="head-section">
-        <OverviewSelection
-            :overviewId="this.overviewId">
-        </OverviewSelection>
-        <EditableText
-            class="headsectiontitle"
-            :hidden="headsectionTitle === null"
-            :initialValue="headsectionTitle"
-            :componentType="'h1'"
-            @enteredValue="(value) => updateTitle(value)">
-        </EditableText>
-        <EditableText
-            class="headsectiontext"
-            :hidden="headsectionText === null"
-            :initialValue="headsectionText"
-            @enteredValue="(value) => updateText(value)">
-        </EditableText>
+        <div class="head-section-overview-selection">
+            <OverviewSelection
+                :config="config">
+            </OverviewSelection>
+        </div>
+        <h1 class="head-section-title"
+            :hidden="headsectionTitle === null">
+            {{ headsectionTitle }}
+        </h1>
+        <span class="head-section-text"
+            :hidden="headsectionText === null">
+            {{ headsectionText }}
+        </span>
     </div>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters } from 'vuex'
 
 import OverviewSelection from './OverviewSelection.vue'
-import EditableText from './EditableText.vue'
 
 export default {
-    name: 'HeadSection',
     components: {
-        OverviewSelection,
-        EditableText
+        OverviewSelection
     },
     props: {
-        overviewId: { type: Number, required: true }
+        config: { type: Object, required: true }
     },
     computed: {
-        headsectionTitle () {
-            return this.getHeadSectionTitle()(this.overviewId)
+        headsectionTitle: {
+            get () { return this.getHeadSectionTitle()(this.config) }
         },
-        headsectionText () {
-            return this.getHeadSectionText()(this.overviewId)
+        headsectionText: {
+            get () { return this.getHeadSectionText()(this.config) }
         }
     },
     methods: {
-        ...mapGetters('dashboardModel', { getHeadSectionTitle: 'getHeadSectionTitle', getHeadSectionText: 'getHeadSectionText' }),
-        ...mapMutations('dashboardModel', { setHeadSectionTitle: 'setHeadSectionTitle', setHeadSectionText: 'setHeadSectionText' }),
-        updateText (text) {
-            const payload = { overviewId: this.overviewId, containerId: this.containerId, visualisationId: this.visualisationId, text: text }
-            this.setHeadSectionText(payload)
-        },
-        updateTitle (title) {
-            const payload = { overviewId: this.overviewId, containerId: this.containerId, visualisationId: this.visualisationId, title: title }
-            this.setHeadSectionTitle(payload)
-        }
+        ...mapGetters('dashboardModel', ['getHeadSectionTitle', 'getHeadSectionText'])
     }
 }
 </script>
@@ -63,13 +48,18 @@ export default {
     height: 25%;
     width: 100%;
 }
-.headsectiontitle {
+.head-section-title {
     height: 50%;
     width: 100%;
 }
-.headsectiontext {
+.head-section-text {
     top: 50%;
     height: 50%;
     width: 100%;
+}
+.head-section-overview-selection {
+    position: absolute;
+    width: 20%;
+    right: 0;
 }
 </style>

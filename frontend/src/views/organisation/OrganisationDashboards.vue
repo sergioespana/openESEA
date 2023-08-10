@@ -2,26 +2,34 @@
 
 <template>
     <div style="min-width: 1000px;">
-    <DashboardList @goToDashboard="navigateToDashboard">
-    <Button v-if="permission" label="Create Dashboard" icon="pi pi-plus" class="p-button-success p-button-sm" @click="createNewDashboard" />
+    <DashboardList @goToSelectedDashboard="goToDashboard">
+    <Button v-if="permission" label="Create Dashboard" icon="pi pi-plus" class="p-button-success p-button-sm" @click="createDashboardDialog = true" />
     </DashboardList>
     </div>
+
+    <Dialog v-model:visible="createDashboardDialog" style="width: 700px" header="Dashboard Details" :modal="true" :dismissableMask="true">
+        <DashboardForm @dashboardCreated="loadDashboard" @closedialog="createDashboardDialog = false" />
+    </Dialog>
 </template>
 
 <script>
     import { mapState, mapActions, mapGetters } from 'vuex'
+
     import DashboardList from '../../components/lists/DashboardList.vue'
+    import DashboardForm from '../../components/forms/DashboardForm.vue'
+
     export default {
         components: {
-            DashboardList
+            DashboardList,
+            DashboardForm
         },
         data () {
             return {
-                styleObject: { backgroundColor: '#EFEEEE' }
+                createDashboardDialog: false
             }
         },
         computed: {
-            ...mapState('dashboard', ['dashboards']),
+            ...mapState('dashboard', ['dashboard', 'dashboards']),
             ...mapState('organisation', ['organisation']),
             permission () {
                 if (this.organisation.accesLevel) {
@@ -33,9 +41,12 @@
                 return false
             }
         },
+        async created () {
+            await this.fetchDashboards()
+        },
         methods: {
             ...mapGetters('dashboard', ['getDashboard']),
-            ...mapActions('dashboard', ['setDashboard', 'createDashboard']),
+            ...mapActions('dashboard', ['setDashboard', 'fetchDashboards', 'createDashboard']),
             async createNewDashboard () {
                 // create dashboard and retrieve id
                 const data = { Name: 'New Dashboard' }
@@ -45,11 +56,18 @@
                 console.log('Created the following Dashboard:', dashboard)
                 await this.navigateToDashboard(dashboard)
             },
-            async navigateToDashboard (dashboard) {
-                console.log('Dashboard:', dashboard)
+            async goToDashboard (dashboard) {
                 await this.setDashboard(dashboard)
-                this.$router.push({ name: 'organisationdashboard', params: { DashboardId: dashboard.id } })
+                await this.loadDashboard()
+            },
+            async loadDashboard () {
+                this.$router.push({ name: 'organisationdashboard', params: { DashboardId: this.dashboard.id } })
             }
+            // ,
+            // async dialogClosed () {
+            //     this.createDashboardDialog = false
+            //     await this.createNewDashboard()
+            // }
         }
     }
 </script>

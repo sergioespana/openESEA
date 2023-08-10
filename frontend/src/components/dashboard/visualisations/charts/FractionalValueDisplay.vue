@@ -12,7 +12,6 @@ import { CanvasRenderer } from 'echarts/renderers'
 use([CanvasRenderer])
 
 export default {
-    name: 'FractionalValueDisplay',
     components: {
         'vue-echarts': ECharts
     },
@@ -20,7 +19,7 @@ export default {
         chartData: {
             chartData: {
                 type: Object,
-                default: () => null
+                required: true
             }
         }
     },
@@ -39,7 +38,6 @@ export default {
     },
     methods: {
         createOptions (chartData) {
-            if (!chartData) return {}
             const fractionalValueField = chartData.mapping?.['Fractional Value Field']?.key
             const totalValueField = chartData.mapping?.['Total Value Field']?.key
             const name = chartData.mapping?.['Fractional Value Field']?.name

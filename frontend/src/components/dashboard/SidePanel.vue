@@ -1,12 +1,11 @@
 <template>
-    <div :id="'overview_' + this.overviewId + '_sidepanel'"></div>
+    <div></div>
 </template>
 
 <script>
     export default {
-        name: 'SidePanel',
         props: {
-            overviewId: { type: Number, required: true }
+            config: { type: Object, required: true }
         }
     }
 </script>

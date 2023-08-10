@@ -1,10 +1,8 @@
 <template>
-    <div :id="'overview_' + this.overviewId + '_bodysection'" class="body-section">
-        <Container
-            v-for="(item, index) in containers"
+    <div class="body-section">
+        <Container v-for="(item, index) in containers"
             :key="index"
-            :overviewId="this.overviewId"
-            :containerId="index">
+            :config="{ ...config, containerId: index }">
         </Container>
     </div>
 </template>
@@ -15,20 +13,19 @@ import { mapGetters } from 'vuex'
 import Container from './Container.vue'
 
 export default {
-    name: 'BodySection',
     components: {
         Container
     },
     props: {
-        overviewId: { type: Number, required: true }
+        config: { type: Object, required: true }
     },
     computed: {
-        containers () {
-            return this.getContainers()(this.overviewId) ?? []
+        containers: {
+            get () { return this.getContainers()(this.config) }
         }
     },
     methods: {
-        ...mapGetters('dashboardModel', { getContainers: 'getContainers' })
+        ...mapGetters('dashboardModel', ['getContainers'])
     }
 }
 </script>

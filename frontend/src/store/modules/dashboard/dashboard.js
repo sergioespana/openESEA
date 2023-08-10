@@ -1,4 +1,4 @@
-import DashboardService from '../../../services/DashboardService'
+import DashboardService from '../../../services/DashboardService.js'
 
 export default {
     namespaced: true,
@@ -10,7 +10,7 @@ export default {
     getters: {
         getDashboards: state => state.dashboards,
         getDashboard: state => state.dashboard,
-        getDashboardById: (state) => (id) => state.dashboards.filter((dashboard) => dashboard.id === id)[0]
+        getDashboardById: (state) => (id) => state.dashboards.find((dashboard) => dashboard.id === id)
     },
     mutations: {
         setDashboards (state, { data }) {
@@ -35,27 +35,23 @@ export default {
     },
     actions: {
         async fetchDashboards ({ commit }, payload) {
-            console.log('Payload', payload)
             const { response, error } = await DashboardService.get(payload)
-            console.log('Response:', response)
             if (error) {
-                commit('setError', { error })
+                await commit('setError', { error })
                 return
             }
-            commit('setDashboards', response)
+            await commit('setDashboards', response)
         },
         async fetchDashboard ({ commit }, payload) {
             const { response, error } = await DashboardService.get(payload)
             if (error) {
-                commit('setError', { error })
+                await commit('setError', { error })
                 return
             }
-            commit('setDashboard', response)
+            await commit('setDashboard', response)
         },
         async createDashboard ({ commit, dispatch }, { data }) {
-            console.log('Creating dashboard with: ', data)
             const { response, error } = await DashboardService.post({ data: data })
-            console.log('Created dashboard: ', response)
             if (error) {
                 commit('setError', { error })
                 return
@@ -63,30 +59,30 @@ export default {
             await dispatch('fetchDashboards', { })
             await commit('setDashboard', response)
         },
-        async updateDashboard ({ commit }, { data }) {
-            const { response, error } = await DashboardService.put({ id: data.id, data, headers: { 'Content-Type': 'multipart/form-data' } })
+        async updateDashboard ({ commit }, { id, data }) {
+            const { response, error } = await DashboardService.put({ id: id, data, headers: { 'Content-Type': 'multipart/form-data' } })
             if (error) {
                 commit('setError', { error })
                 return
             }
-            commit('updateDashboard', response)
-            commit('setDashboard', response)
+            await commit('updateDashboard', response)
+            await commit('setDashboard', response)
         },
         async deleteDashboard ({ commit, dispatch }, payload) {
             const { error } = await DashboardService.delete(payload)
             if (error) {
-                commit('setError', { error })
+                await commit('setError', { error })
                 return
             }
-            commit('deleteDashboard', payload)
-            commit('setDashboard', {})
+            await commit('deleteDashboard', payload)
+            await commit('setDashboard', {})
         },
-        setDashboard ({ state, commit }, { id }) {
+        async setDashboard ({ state, commit }, { id }) {
             if (id) {
                 const data = state.dashboards.find(e => e.id === id)
-                commit('setDashboard', { data: data })
+                await commit('setDashboard', { id: id, data: data })
             } else {
-                commit('setDashboard', {})
+                await commit('setDashboard', {})
             }
         }
     }

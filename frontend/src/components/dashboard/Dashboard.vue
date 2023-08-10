@@ -1,32 +1,30 @@
 <template>
-    <div class="dashboard" id="dashboard_id">
-        <Overview
-            v-for="(_, index) in overviewRange"
-            :key="index"
-            :overviewId="index">
-        </Overview>
+    <div class="dashboard">
+        <div v-for="(item, index) in overviews" :key="index">
+            <Overview v-if="selectionConfig.overviewId === index"
+                :config="{ overviewId: index }">
+            </Overview>
+        </div>
     </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 import Overview from './Overview.vue'
 
-import range from '../../utils/range.js'
-
 export default {
-    name: 'Dashboard',
     components: {
         Overview
     },
     computed: {
-        overviewRange () {
-            return range(this.getOverviews()().length)
+        ...mapState('dashboardModel', ['selectionConfig']),
+        overviews: {
+            get () { return this.getOverviews()() }
         }
     },
     methods: {
-        ...mapGetters('dashboardModel', { getOverviews: 'getOverviews' })
+        ...mapGetters('dashboardModel', ['getOverviews'])
     }
 }
 </script>
@@ -37,6 +35,6 @@ export default {
     left: 0;
     top: 0;
     height: 100%;
-    width: calc(100% - (var(--edit-area-current-width) + var(--edit-panel-width)));
+    width: calc(100% - (var(--edit-area-current-width) + var(--edit-sidebar-width)));
 }
 </style>

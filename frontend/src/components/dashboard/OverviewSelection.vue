@@ -1,46 +1,45 @@
 <template>
-    <select class="overview-selection" @change="onChange($event)">
-        <option
-            v-for="(item, index) in overviewNames"
-            :key="index"
-            :selected="index === selectedIndex">
-            {{item}}
-        </option>
-    </select>
+    <Dropdown class="full-width"
+        :options="overviewInfo"
+        :optionLabel="'description'"
+        :optionValue="'index'"
+        :placeholder="overviewInfo[configData?.overviewId]?.description"
+        @change="goToOverview">
+    </Dropdown>
 </template>
 
 <script>
+import { mapState, mapGetters, mapActions } from 'vuex'
 
-import { mapGetters, mapMutations } from 'vuex'
+import Dropdown from 'primevue/dropdown'
 
-    export default {
-        name: 'OverviewSelection',
-        props: {
-            overviewId: { type: Number, required: true }
+export default {
+    components: {
+        Dropdown
+    },
+    props: {
+        config: { type: Object, default: () => { return null } }
+    },
+    computed: {
+        ...mapState('dashboardModel', ['selectionConfig']),
+        configData: {
+            get () { return this.config ?? this.selectionConfig }
         },
-        computed: {
-            selectedIndex () {
-                return this.getSelectedOverviewId()()
-            },
-            overviewNames () {
-                return this.getOverviewNames()()
-            }
-        },
-        methods: {
-            ...mapGetters('dashboardModel', { getSelectedOverviewId: 'getSelectedOverviewId', getOverviewNames: 'getOverviewNames' }),
-            ...mapMutations('dashboardModel', { setCurrentOverview: 'setCurrentOverview' }),
-            onChange (event) {
-                const optionIndex = event.target.options.selectedIndex
-                this.setCurrentOverview(optionIndex)
+        overviewInfo: {
+            get () {
+                const overviews = this.getOverviews()()
+                const overviewNames = overviews.map(overview => overview?.Name)
+                return overviewNames.map((value, index) => ({ description: value, index: index }))
             }
         }
+    },
+    methods: {
+        ...mapGetters('dashboardModel', ['getOverviews']),
+        ...mapActions('dashboardModel', ['updateSelectionConfig']),
+        goToOverview (event) {
+            const selectedOverviewId = event.value
+            this.updateSelectionConfig({ overviewId: selectedOverviewId })
+        }
     }
-</script>
-
-<style>
-.overview-selection {
-    right: 0%;
-    position: absolute;
-    width: 20%;
 }
-</style>
+</script>

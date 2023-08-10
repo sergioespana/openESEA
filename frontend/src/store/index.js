@@ -27,7 +27,6 @@ import respondent from './modules/respondent'
 import dashboard from './modules/dashboard/dashboard'
 import dashboardModel from './modules/dashboard/dashboardModel'
 import dashboardData from './modules/dashboard/dashboardData'
-import dashboardEditing from './modules/dashboard/dashboardEditing'
 
 const vuexLocalStorage = new VuexPersistance({
   storage: window.localStorage
@@ -62,8 +61,7 @@ export default createStore({
     respondent,
     dashboard,
     dashboardModel,
-    dashboardData,
-    dashboardEditing
+    dashboardData
   },
   plugins: [vuexLocalStorage.plugin]
 })

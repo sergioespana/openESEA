@@ -28,7 +28,7 @@ export default {
         }
     },
     methods: {
-        ...mapGetters('dashboardModel', { getDashboard: 'getDashboard' }),
+        ...mapGetters('dashboardModel', ['getDashboardModel']),
         toggleDropdown () { this.showDropdown = !this.showDropdown },
         // Handle file uploads or downloads
         handleDataUpload (file) {
@@ -42,11 +42,7 @@ export default {
             fr.readAsText(file)
         },
         handleModelDownload () {
-            const dashboardModel = this.getDashboard()()
-            if (!dashboardModel) {
-                console.log('Could not find a dashboard model!')
-                return
-            }
+            const dashboardModel = this.getDashboardModel()()
             const jsonDataStr = JSON.stringify(dashboardModel, null, '\t')
             const blob = new Blob([jsonDataStr], { type: 'application/json' })
             const url = URL.createObjectURL(blob)

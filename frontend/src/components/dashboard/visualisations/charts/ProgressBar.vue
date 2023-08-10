@@ -36,8 +36,6 @@ export default {
     },
     methods: {
         createOptions (chartData) {
-            console.log('Chart Data!!', chartData)
-            if (!chartData) return {}
             const currentValueField = chartData.mapping?.['Current Value Field']?.key
             const currentValueName = chartData.mapping?.['Current Value Field']?.name
             const targetValueField = chartData.mapping?.['Target Value Field']?.key
@@ -56,7 +54,8 @@ export default {
                 }
             }
             if (isPercentage && !targetValue) targetValue = 100
-            return {
+
+            const options = {
                 title: {
                     text: chartData?.title,
                     left: 'center',
@@ -96,9 +95,10 @@ export default {
                     }
                 ],
                 grid: {
-                    height: this.$parent.$el.clientWidth / 20
+                    height: this.$parent.$el.clientHeight / 10
                 }
             }
+            return options
         }
     }
 }

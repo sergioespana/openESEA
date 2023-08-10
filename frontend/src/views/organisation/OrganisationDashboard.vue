@@ -1,72 +1,165 @@
 <template>
-    <div class="organisationdashboard" id="dashboards">
-        <!-- <DashboardFileOperations @modelIsUploaded="loadDashboardFromFile"></DashboardFileOperations> -->
-        <EditDashboardElement></EditDashboardElement>
-        <Dashboard v-if="modelUploaded"></Dashboard>
+    <div class="organisation-dashboard">
+        <div v-if="!dashboardLoaded" class="spinner-div">
+            <ProgressSpinner class="center-spinner"></ProgressSpinner>
+        </div>
+        <div v-else>
+            <DashboardFileOperations v-if="false" @modelIsUploaded="loadDashboardFromFile"></DashboardFileOperations>
+            <DashboardEditingSection @saveButtonClicked="saveDashboardToDatabase" @discardButtonClicked="discardChanges"></DashboardEditingSection>
+            <Dashboard></Dashboard>
+        </div>
     </div>
+    <Dialog ref="dialog" v-model:visible="showDialog" modal :header="'There are unsaved changes to the dashboard. Do you want to save these changes?'">
+        <!-- Footer for cancel or save buttons -->
+        <template #footer>
+            <Button label="Cancel" icon="pi pi-times"
+                @click="closeDialog" text>
+            </Button>
+            <Button label="Discard Changes" icon="pi pi-trash" class="p-button-danger p-button-sm"
+                @click="discardChanges" text>
+            </Button>
+            <Button label="Save Changes" icon="pi pi-check" class="p-button-success p-button-sm"
+                @click="saveChanges" autofocus>
+            </Button>
+        </template>
+    </Dialog>
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 
 import Dashboard from '../../components/dashboard/Dashboard.vue'
-// import DashboardFileOperations from './DashboardFileOperations.vue'
-import EditDashboardElement from '../../components/dashboard/EditDashboardElement.vue'
+import DashboardFileOperations from '../../components/dashboard/DashboardFileOperations.vue'
+import DashboardEditingSection from '../../components/dashboard/DashboardEditingSection.vue'
 
 import EseaAccountService from '../../services/EseaAccountService.js'
 import SurveyResponseService from '../../services/SurveyResponseService.js'
 import DirectIndicatorService from '../../services/DirectIndicatorService.js'
 import IndirectIndicatorService from '../../services/IndirectIndicatorService.js'
 
-import { load as yamlLoad } from 'yaml'
+import ProgressSpinner from 'primevue/progressspinner'
+import Dialog from 'primevue/dialog'
+
+import { isEqual, cloneDeep } from 'lodash'
 
 export default {
-    name: 'Dashboards',
     components: {
-        // DashboardFileOperations,
-        EditDashboardElement,
-        Dashboard
+        DashboardFileOperations,
+        DashboardEditingSection,
+        Dashboard,
+
+        ProgressSpinner,
+        Dialog
     },
     data () {
         return {
-            modelUploaded: false,
             organisationId: this.$route.params.OrganisationId,
-            dashboardId: parseInt(this.$route.params.DashboardId)
+            dashboardId: this.$route.params.DashboardId,
+
+            dashboardLoaded: false,
+
+            initialDashboard: null,
+
+            showDialog: false,
+            unloader: null
+        }
+    },
+    computed: {
+        ...mapState('dashboardModel', ['dashboard'])
+    },
+    mounted () {
+        // For showing unsaved changes message before unloading
+        this.unloader = window.addEventListener('beforeunload', this.unload)
+    },
+    unmounted () {
+        window.removeEventListener(this.unloader)
+    },
+    async created () {
+        // Fetch latest version of dashboard
+        await this.fetchDashboard({ id: parseInt(this.dashboardId) })
+        // Load dashboard from fetched dashboard
+        await this.loadDashboardFromDatabase()
+        await this.setInitialDashboard()
+    },
+    async beforeRouteLeave (to, from, next) {
+        if (!this.dashboardSaved()) {
+            this.showDialog = true
+            next(false)
+        } else {
+            next(true)
         }
     },
     methods: {
-        ...mapActions('dashboard', { setDashboard: 'setDashboard' }),
-        ...mapGetters('dashboard', { getDashboardById: 'getDashboardById', getDashboards: 'getDashboards' }),
-        ...mapGetters('dashboardData', { getIndicators: 'getIndicators', getIndicatorData: 'getIndicatorData', getIndicatorFields: 'getIndicatorFields' }),
-        ...mapGetters('dashboardModel', { getMethods: 'getMethods' }),
-        ...mapMutations('dashboardData', { setIndicators: 'setIndicators', setIndicatorData: 'setIndicatorData', setIndicatorFields: 'setIndicatorFields' }), //, setSupplementaryData: 'setSupplementaryData', setSupplementaryFields: 'setSupplementaryFields' }),
-        ...mapMutations('dashboardModel', { setDashboard: 'setDashboard', setCurrentOverview: 'setCurrentOverview' }),
-        async loadDashboard () {
-            console.log('All Dashboards:', (await this.getDashboards()).filter((x) => x.id === this.dashboardId))
-            const dashboard = await this.getDashboardById()(this.dashboardId)
+        ...mapGetters('dashboard', ['getDashboard', 'getDashboards']),
+        ...mapActions('dashboard', ['setDashboard', 'updateDashboard', 'fetchDashboard']),
+
+        ...mapGetters('dashboardData', ['getIndicators', 'getIndicatorData', 'getIndicatorFields']),
+        ...mapMutations('dashboardData', ['setIndicators', 'setIndicatorData', 'setIndicatorFields']),
+
+        ...mapGetters('dashboardModel', ['getDashboardModel', 'getMethods']),
+        ...mapActions('dashboardModel', ['createDashboardModel']),
+
+        setInitialDashboard () {
+            this.initialDashboard = cloneDeep(this.dashboard)
+        },
+        dashboardSaved () {
+            return isEqual(this.dashboard, this.initialDashboard)
+        },
+
+        unload (event) {
+            if (!this.dashboardSaved()) {
+                event.preventDefault()
+                event.returnValue = '' // Required for older browsers
+            }
+        },
+        async saveChanges () {
+            await this.saveDashboardToDatabase()
+            this.closeDialog()
+        },
+        async discardChanges () {
+            console.log(this.initialDashboard)
+            const oldDashboard = cloneDeep(this.initialDashboard)
+            await this.loadDashboardModel(oldDashboard)
+            console.log(this.dashboard)
+            this.closeDialog()
+        },
+        closeDialog () {
+            this.showDialog = false
+        },
+
+        async loadDashboardFromDatabase () {
+            // Load dashboard from database
+            const dashboard = await this.getDashboard()
+            // Set as current dashboard
             await this.setDashboard(dashboard)
+
+            // Get dashboard model specification
             const model = dashboard.specification
-            console.log('Loaded model:', model)
-            this.loadDashboardModel(model)
-        },
-        async loadDashboardFromFile (fileContents, fileInfo) {
-            // Parse dashboard model from file contents and file extension information
-            const model = this.parseDashboardFromFileContents(fileContents, fileInfo)
+            // Load dashboard model
             await this.loadDashboardModel(model)
+            // Load dashboard data
+            await this.loadDashboardData(model)
+            // When everything is ready show dashboard
+            this.dashboardLoaded = true
         },
-        parseDashboardFromFileContents (fileContents, fileInfo) {
-            const fileExtension = fileInfo.name.split('.').pop()?.toLowerCase()
-            var model = null
-            if (fileExtension === 'yaml') model = yamlLoad(fileContents)
-            if (fileExtension === 'json') model = JSON.parse(fileContents)
-            return model
+        async saveDashboardToDatabase () {
+            // Get current dashboard model
+            const dashboardModel = await this.getDashboardModel()()
+            // Combine dashboard id with dashboard model specification
+            const dashboardId = parseInt(this.dashboardId)
+            const data = { id: dashboardId, data: dashboardModel }
+            // Send this data to update the dashboard in the database
+            await this.updateDashboard(data)
+            // Signal that changes are saved
+            await this.setInitialDashboard()
         },
         async loadDashboardModel (model) {
-            // Save dashboard model
-            await this.saveDashboard(model)
-            // Load dashboard contents by setting uploaded to true
-            this.modelUploaded = true
-
+            // Force reload by first setting model to null
+            await this.createDashboardModel(null)
+            // Then set dashboard model
+            await this.createDashboardModel(model)
+        },
+        async loadDashboardData () {
             // Retrieve and save all indicators of the given methods
             const indicators = await this.retrieveIndicators()
             await this.setIndicators(indicators)
@@ -79,12 +172,6 @@ export default {
             var indicatorMetaDataFields = []
             if (indicatorData.length) indicatorMetaDataFields = Object.keys(indicatorData[0])
             await this.setIndicatorFields(indicatorMetaDataFields)
-        },
-        async saveDashboard (model) {
-            // Force reload by first setting model to null
-            await this.setDashboard(null)
-            await this.setDashboard(model)
-            await this.setCurrentOverview(0)
         },
         async retrieveIndicators () {
             const methodIds = await this.getMethods()()
@@ -107,7 +194,6 @@ export default {
             }
             // console.log(indicators)
             const indicatorNames = indicators?.map(el => el.name)
-            console.log('Names', indicatorNames)
             return indicatorNames
         },
         async retrieveIndicatorData () {
@@ -165,29 +251,27 @@ export default {
             // Return the data for all indicators
             return eseaData
         }
-    },
-    async created () {
-        console.log('Organisation Id', this.organisationId)
-        console.log('Dashboard Id', this.dashboardId)
-        console.log('This:', this.$route)
-        await this.loadDashboard()
     }
 }
 </script>
 
 <style>
-.organisationdashboard {
+.organisation-dashboard {
     min-height: 600px;
     position: relative;
 
     font-family: Arial, Helvetica, sans-serif;
 
-    /* Offset from top bar */
     height: 100%;
 
-    /* Handle edit element */
+    /* Handle edit area element */
     --edit-area-width: 200px;
     --edit-area-current-width: 0px;
-    --edit-panel-width: 10px;
+    --edit-sidebar-width: 20px;
+}
+.spinner-div {
+    position: absolute;
+    width: 100%;
+    height: 100%;
 }
 </style>

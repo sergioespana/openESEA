@@ -421,7 +421,10 @@ LineChartConfiguration:
 // ;
 
 Position:
-	xstartpos=INT ' ' xendpos=INT ' ' ystartpos=INT ' ' yendpos=INT
+	'X Start:' xstart=INT
+	'X End:' xendpos=INT
+	'Y Start:' ystart=INT
+	'Y End:' yend=INT
 ;
 
 SingleValueField:

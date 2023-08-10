@@ -1,63 +1,51 @@
 <template>
-    <div class="overview" v-if="thisIsCurrentOverview">
-        <HeadSection
-            v-if="headsection"
-            :overviewId="this.overviewId">
+    <div class="overview" v-on:click="isClicked">
+        <HeadSection v-if="headsection !== null"
+            :config="config">
         </HeadSection>
-        <BodySection
-            v-if="bodysection"
-            :overviewId="this.overviewId">
+        <BodySection v-if="bodysection !== null"
+            :config="config">
         </BodySection>
-        <SidePanel
-            v-if="sidepanel"
-            :overviewId="this.overviewId">
+        <SidePanel v-if="sidepanel !== null"
+            :config="config">
         </SidePanel>
     </div>
 </template>
 
 <script>
-    import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
-    import HeadSection from './HeadSection.vue'
-    import BodySection from './BodySection.vue'
-    import SidePanel from './SidePanel.vue'
+import HeadSection from './HeadSection.vue'
+import BodySection from './BodySection.vue'
+import SidePanel from './SidePanel.vue'
 
-    export default {
-        name: 'Overview',
-        components: {
-            HeadSection,
-            BodySection,
-            SidePanel
+export default {
+    components: {
+        HeadSection,
+        BodySection,
+        SidePanel
+    },
+    props: {
+        config: { type: Object, required: true }
+    },
+    computed: {
+        headsection: {
+            get () { return this.getHeadSection()(this.config) }
         },
-        props: {
-            overviewId: { type: Number, required: true }
+        bodysection: {
+            get () { return this.getBodySection()(this.config) }
         },
-        computed: {
-            headsection () {
-                const headsection = this.getHeadSection()(this.overviewId)
-                return headsection !== null
-            },
-            bodysection () {
-                const bodysection = this.getBodySection()(this.overviewId)
-                return bodysection !== null
-            },
-            sidepanel () {
-                const sidepanel = this.getSidePanel()(this.overviewId)
-                return sidepanel !== null
-            },
-            thisIsCurrentOverview () {
-                return this.overviewId === this.getSelectedOverviewId()()
-            }
-        },
-        methods: {
-            ...mapGetters('dashboardModel', { getHeadSection: 'getHeadSection', getBodySection: 'getBodySection', getSidePanel: 'getSidePanel', getSelectedOverviewId: 'getSelectedOverviewId' })
+        sidepanel: {
+            get () { return this.getSidePanel()(this.config) }
+        }
+    },
+    methods: {
+        ...mapGetters('dashboardModel', ['getHeadSection', 'getBodySection', 'getSidePanel']),
+        ...mapActions('dashboardModel', ['updateSelectionConfig']),
+        async isClicked (event) {
+            event.stopPropagation()
+            await this.updateSelectionConfig(this.config)
         }
     }
-</script>
-
-<style>
-.overview {
-    width: 100%;
-    height: 100%;
 }
-</style>
+</script>

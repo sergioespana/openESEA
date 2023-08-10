@@ -1,76 +1,64 @@
 <template>
-    <div :id="'overview_' + this.overviewId + '_container_' + this.containerId" class="container"
-        :style="styleObject">
-        <b><EditableText
-            :hidden="containerTitle === null"
-            :initialValue="containerTitle"
-            @enteredValue="(value) => updateTitle(value)">
-        </EditableText></b>
+    <div class="container" v-on:click="isClicked" :style="styleObject">
+        <span :hidden="!containerTitle">
+            <b>{{ containerTitle }}</b>
+        </span>
         <Visualisation
             v-for="(item, index) in visualisations"
             :key="index"
-            :overviewId="this.overviewId"
-            :containerId="this.containerId"
-            :visualisationId="index">
+            :config="{ ...config, visualisationId: index }">
         </Visualisation>
     </div>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 import Visualisation from './Visualisation.vue'
-import EditableText from './EditableText.vue'
 
 export default {
-    name: 'Container',
     components: {
-        Visualisation,
-        EditableText
+        Visualisation
     },
     props: {
-        overviewId: { type: Number, required: true },
-        containerId: { type: Number, required: true }
+        config: { type: Object, required: true }
     },
     computed: {
+        containerTitle: {
+            get () { return this.getContainerTitle()(this.config) }
+        },
+        backgroundColor: {
+            get () { return this.getContainerBackgroundColor()(this.config) }
+        },
+        visualisations: {
+            get () { return this.getVisualisations()(this.config) }
+        },
+        position: {
+            get () { return this.getContainerPosition()(this.config) }
+        },
         styleObject () {
             var styleObject = {}
-            if (this.backgroundColor) styleObject['background-color'] = this.backgroundColor
-            if (this.position) {
+            if (this.backgroundColor) {
+                styleObject['background-color'] = this.backgroundColor
+            }
+            const position = this.position
+            if (position) {
                 styleObject.position = 'absolute'
-                styleObject.left = this.position[0] + '%'
-                styleObject.right = (100 - this.position[1]) + '%'
-                styleObject.bottom = this.position[2] + '%'
-                styleObject.top = (100 - this.position[3]) + '%'
+                styleObject.left = position['X Start'] + '%'
+                styleObject.right = (100 - position['X End']) + '%'
+                styleObject.bottom = position['Y Start'] + '%'
+                styleObject.top = (100 - position['Y End']) + '%'
             }
             return styleObject
-        },
-        backgroundColor () {
-            return this.getContainerBackgroundColor()(this.overviewId, this.containerId)
-        },
-        position () {
-            const rawPosition = this.getContainerPosition()(this.overviewId, this.containerId)
-            if (!rawPosition) return null
-            return rawPosition.split(' ')
-        },
-        containerTitle () {
-            return this.getContainerTitle()(this.overviewId, this.containerId)
-        },
-        visualisations () {
-            const getVisualisationsFunction = this.getVisualisations()
-            return getVisualisationsFunction(this.overviewId, this.containerId) ?? []
         }
     },
     methods: {
-        ...mapGetters('dashboardModel', { getDashboard: 'getDashboard', getVisualisations: 'getVisualisations', getContainerTitle: 'getContainerTitle', getContainerPosition: 'getContainerPosition', getContainerBackgroundColor: 'getContainerBackgroundColor' }),
-        ...mapMutations('dashboardModel', { setContainerTitle: 'setContainerTitle' }),
-        updateTitle (title) {
-            const payload = { overviewId: this.overviewId, containerId: this.containerId, visualisationId: this.visualisationId, title: title }
-            this.setContainerTitle(payload)
+        ...mapGetters('dashboardModel', ['getDashboardModel', 'getContainerTitle', 'getContainerPosition', 'getContainerBackgroundColor', 'getVisualisations']),
+        ...mapActions('dashboardModel', ['updateSelectionConfig']),
+        async isClicked (event) {
+            event.stopPropagation()
+            await this.updateSelectionConfig(this.config)
         }
     }
 }
 </script>
-
-<style>
-</style>

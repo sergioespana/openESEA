@@ -7,10 +7,10 @@
 import 'echarts'
 import ECharts from 'vue-echarts'
 import { use } from 'echarts/core'
-import { BarChart } from 'echarts/charts'
+import { LineChart } from 'echarts/charts'
 import { CanvasRenderer } from 'echarts/renderers'
 
-use([BarChart, CanvasRenderer])
+use([LineChart, CanvasRenderer])
 
 export default {
     components: {
@@ -19,7 +19,7 @@ export default {
     props: {
         chartData: {
             type: Object,
-            default: () => null
+            required: true
         }
     },
     watch: {
@@ -37,8 +37,6 @@ export default {
     },
     methods: {
         createOptions (chartData) {
-            if (!chartData) return {}
-            console.log('Bar Chart Data on Entry', chartData)
             const categoryKey = chartData.mapping['Category Field']?.key
             const valueKey = chartData.mapping['Value Field']?.key
             const title = chartData.title
@@ -47,24 +45,24 @@ export default {
             for (const category of categories) {
                 const filteredData = chartData.data.filter(el => el[categoryKey] === category)
                 const value = filteredData.map(el => parseInt(el[valueKey])).reduce((partialSum, a) => partialSum + a, 0)
-                console.log('Value', value)
                 values.push(value)
             }
-            return {
+
+            const options = {
                 title: {
                     text: title,
                     left: 'center',
                     textStyle: {
-                        overflow: 'break',
                         fontSize: 12,
-                        width: this.$parent.$el.clientWidth
+                        overflow: 'break'
                     }
                 },
                 xAxis: {
                     type: 'category',
                     data: categories,
                     axisLabel: {
-                        interval: 0
+                        interval: 0,
+                        rotate: 37.5
                     }
                 },
                 yAxis: {
@@ -78,15 +76,16 @@ export default {
                     containLabel: true
                 },
                 tooltip: {
-                    trigger: 'item'
+                    show: 'item'
                 },
                 series: [
                     {
-                        type: 'bar',
+                        type: 'line',
                         data: values
                     }
                 ]
             }
+            return options
         }
     }
 }

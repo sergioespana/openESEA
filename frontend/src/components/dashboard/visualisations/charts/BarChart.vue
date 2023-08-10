@@ -7,10 +7,10 @@
 import 'echarts'
 import ECharts from 'vue-echarts'
 import { use } from 'echarts/core'
-import { LineChart } from 'echarts/charts'
+import { BarChart } from 'echarts/charts'
 import { CanvasRenderer } from 'echarts/renderers'
 
-use([LineChart, CanvasRenderer])
+use([BarChart, CanvasRenderer])
 
 export default {
     components: {
@@ -19,7 +19,7 @@ export default {
     props: {
         chartData: {
             type: Object,
-            default: () => null
+            required: true
         }
     },
     watch: {
@@ -37,8 +37,6 @@ export default {
     },
     methods: {
         createOptions (chartData) {
-            if (!chartData) return {}
-            console.log('Line Chart Data on Entry', chartData)
             const categoryKey = chartData.mapping['Category Field']?.key
             const valueKey = chartData.mapping['Value Field']?.key
             const title = chartData.title
@@ -49,7 +47,8 @@ export default {
                 const value = filteredData.map(el => parseInt(el[valueKey])).reduce((partialSum, a) => partialSum + a, 0)
                 values.push(value)
             }
-            /* return {
+
+            const options = {
                 title: {
                     text: title,
                     left: 'center',
@@ -85,44 +84,8 @@ export default {
                         data: values
                     }
                 ]
-            } */
-            return {
-                title: {
-                    text: title,
-                    left: 'center',
-                    textStyle: {
-                        fontSize: 12,
-                        overflow: 'break'
-                    }
-                },
-                xAxis: {
-                    type: 'category',
-                    data: categories,
-                    axisLabel: {
-                        interval: 0,
-                        rotate: 37.5
-                    }
-                },
-                yAxis: {
-                    type: 'value'
-                },
-                grid: {
-                    top: '15%',
-                    bottom: '5%',
-                    left: '5%',
-                    right: '5%',
-                    containLabel: true
-                },
-                tooltip: {
-                    show: 'item'
-                },
-                series: [
-                    {
-                        type: 'line',
-                        data: values
-                    }
-                ]
             }
+            return options
         }
     }
 }

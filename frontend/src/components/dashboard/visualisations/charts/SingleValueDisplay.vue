@@ -12,16 +12,13 @@ import { CanvasRenderer } from 'echarts/renderers'
 use([CanvasRenderer])
 
 export default {
-    name: 'SingleValueDisplay',
     components: {
         'vue-echarts': ECharts
     },
     props: {
         chartData: {
-            chartData: {
-                type: Object,
-                default: () => null
-            }
+            type: Object,
+            required: true
         }
     },
     watch: {
@@ -39,8 +36,6 @@ export default {
     },
     methods: {
         createOptions (chartData) {
-            if (!chartData) return {}
-
             const field = chartData.mapping?.['Value Field']?.key
             const title = chartData.title
             const name = chartData.mapping?.['Value Field']?.name
@@ -84,10 +79,3 @@ export default {
     }
 }
 </script>
-
-<style>
-
-.p {
-    display: block;
-}
-</style>

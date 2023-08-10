@@ -19,7 +19,6 @@
 <script>
 // https://stackoverflow.com/questions/45050119/click-to-edit-text-field-with-vue
 export default {
-    name: 'EditableText',
     props: {
         componentType: {
             datatype: String,

@@ -14,21 +14,11 @@
         <div class="edit-area-field">Overviews:</div>
         <OverviewSelection class="near-width">
         </OverviewSelection>
-
-        <div :style="{ height: '5px' }"></div>
-
-        <div class="full-width" :style="{ position: 'relative', width: '100%' }">
-            <Button label="Add overview" icon="pi pi-plus" class="p-button-success p-button-sm"
-                @click="addOverview">
-            </Button>
-        </div>
-
-        <div :style="{ height: '5px' }"></div>
     </div>
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 import OverviewSelection from '../OverviewSelection.vue'
 import InputText from 'primevue/inputtext'
@@ -41,13 +31,12 @@ export default {
     computed: {
         dashboardName: {
             get () { return this.getDashboardName()() },
-            set (value) { this.setDashboardName({ value: value }) }
+            async set (value) { this.setDashboardName({ value: value }) }
         }
     },
     methods: {
         ...mapGetters('dashboardModel', ['getDashboardName']),
-        ...mapMutations('dashboardModel', ['setDashboardName']),
-        ...mapActions('dashboardModel', ['addOverview'])
+        ...mapMutations('dashboardModel', ['setDashboardName'])
     }
 }
 </script>

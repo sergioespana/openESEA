@@ -1,4 +1,4 @@
-from Actions.Classes import ChangeVisualisationType, AddItemLimit, RemoveItemLimit
+from Dashboard.Actions.Classes import ChangeVisualisationType, AddItemLimit, RemoveItemLimit
 
 from Dashboard.Information import NUM_VISUALISATION_TYPES, MAX_ITEM_LIMIT, MAX_DATA_ITEMS
 

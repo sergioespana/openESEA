@@ -1,10 +1,10 @@
+from .Classes import Visualisation, VisualisationType, Dashboard
+from .Information import MAX_ITEM_LIMIT, MAX_DATA_ITEMS, NUM_VISUALISATION_TYPES
+
+from ..Encoding import Encode
+from ..Encoding import Decode
+
 import numpy as np
-
-import Encoding.Encode as Encode
-import Encoding.Decode as Decode
-
-from Dashboard.Classes import Visualisation, VisualisationType, Dashboard
-from Dashboard.Information import MAX_ITEM_LIMIT, MAX_DATA_ITEMS, NUM_VISUALISATION_TYPES
 
 def visualisationToArray(visualisation: Visualisation):
     # For each class member encode the value and append to the array

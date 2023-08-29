@@ -1,5 +1,5 @@
 <template>
-    <vue-echarts :option="this.options" autoresize>
+    <vue-echarts :option="createOptions(chartData)" autoresize>
     </vue-echarts>
 </template>
 
@@ -21,46 +21,29 @@ export default {
             required: true
         }
     },
-    watch: {
-        chartData: {
-            immediate: true,
-            handler (value) {
-                this.options = this.createOptions(value)
-            }
-        }
-    },
-    data () {
-        return {
-            options: {}
-        }
-    },
     methods: {
         createOptions (chartData) {
-            const field = chartData.mapping?.['Value Field']?.key
             const title = chartData.title
-            const name = chartData.mapping?.['Value Field']?.name
-
-            var value = 0
-            for (var row of chartData.data) {
-                if (row['Indicator Key'] === field) {
-                    value += parseInt(row.Value)
+            const titleOptions = {
+                type: 'text',
+                left: 'center',
+                top: '0%',
+                silent: true,
+                style: {
+                    text: title,
+                    fontSize: 12,
+                    fontWeight: 'bold',
+                    fill: '#000'
                 }
             }
+            const field = chartData.mapping?.['Value Field']?.key
+            const name = chartData.mapping?.['Value Field']?.name
+            if (!field) return { graphic: [titleOptions] }
+            const value = chartData.data[0][field] // Single value
 
             const options = {
                 graphic: [
-                    {
-                        type: 'text',
-                        left: 'center',
-                        top: '0%',
-                            silent: true,
-                        style: {
-                            text: title,
-                            fontSize: 12,
-                            fontWeight: 'bold',
-                            fill: '#000'
-                        }
-                    },
+                    titleOptions,
                     {
                         type: 'text',
                         left: 'center',

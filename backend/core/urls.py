@@ -3,7 +3,7 @@ from rest_framework_nested import routers
 from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView)
 
 from .views import (membershipview, respondentview, userview, networkview, network_memberview, organisationview, organisation_memberview, methodview, surveyview, sectionview, questionview, text_fragmentview, 
-                    topicview, direct_indicatorview2, indirect_indicatorview, survey_responseview, question_responseview, campaignview, esea_accountview, account_auditview, audit_surveyview, reportview, dashboardview)
+                    topicview, direct_indicatorview2, indirect_indicatorview, survey_responseview, question_responseview, campaignview, esea_accountview, account_auditview, audit_surveyview, reportview, dashboardview, dashboardsuggestionsview)
  
 
 router = routers.DefaultRouter()
@@ -72,6 +72,7 @@ urlpatterns = [
     path('', include(esea_account_router.urls)),
     path('', include(section_router.urls)),
     path('', include(organisation_router.urls)),
+    path('dashboardsuggestions/', dashboardsuggestionsview.dashboardsuggestions)
 ]
 
 

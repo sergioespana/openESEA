@@ -1,25 +1,23 @@
 <template>
     <!-- Icon for opening dashboard model edit text dialog -->
     <div class="edit-sidebar-model">
-        <i class="pi pi-cog" v-on:click="openDialog"></i>
-        <!-- Dialog screen for editing dashboard model -->
-        <div>
-        <Dialog class="dialog-screen" modal
-            header="Edit Dashboard Model"
-            :visible="visible"
-            @update:visible="closeDialog">
-            <!-- Area for editing dashboard model -->
-            <TextArea class="dashboard-model-text-area"
-                v-model="dashboardModel" >
-            </TextArea>
-            <!-- Footer for cancel or save buttons -->
-            <template #footer>
-                <Button label="Cancel" icon="pi pi-times" @click="closeDialog" text></Button>
-                <Button label="Apply Changes" icon="pi pi-check" @click="saveModel" autofocus></Button>
-            </template>
-        </Dialog>
+        <i class="pi pi-user-edit" v-on:click="openDialog"></i>
     </div>
-    </div>
+    <!-- Dialog screen for editing dashboard model -->
+    <Dialog class="dialog-screen" modal
+        header="Edit Dashboard Model"
+        :visible="visible"
+        @update:visible="closeDialog">
+        <!-- Area for editing dashboard model -->
+        <TextArea class="dashboard-model-text-area"
+            v-model="dashboardModel" >
+        </TextArea>
+        <!-- Footer for cancel or save buttons -->
+        <template #footer>
+            <Button label="Cancel" icon="pi pi-times" @click="closeDialog" text></Button>
+            <Button label="Apply Changes" icon="pi pi-check" @click="saveModel" autofocus></Button>
+        </template>
+    </Dialog>
 </template>
 
 <script>
@@ -58,7 +56,8 @@ export default {
         },
         async saveModel () {
             const dashboardModel = JSON.parse(this.dashboardModel)
-            await this.createDashboardModel(dashboardModel)
+            const payload = { value: dashboardModel }
+            await this.createDashboardModel(payload)
             this.closeDialog()
         }
     }

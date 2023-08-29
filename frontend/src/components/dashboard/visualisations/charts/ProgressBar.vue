@@ -1,5 +1,5 @@
 <template>
-    <vue-echarts :option="this.options" autoresize>
+    <vue-echarts :option="createOptions(chartData)" autoresize>
     </vue-echarts>
 </template>
 
@@ -21,50 +21,32 @@ export default {
             required: true
         }
     },
-    watch: {
-        chartData: {
-            immediate: true,
-            handler (value) {
-                this.options = this.createOptions(value)
-            }
-        }
-    },
-    data () {
-        return {
-            options: {}
-        }
-    },
     methods: {
         createOptions (chartData) {
+            const title = chartData?.title
+            const titleOptions = {
+                text: title,
+                left: 'center',
+                textStyle: {
+                    overflow: 'break',
+                    fontSize: 12,
+                    width: this.$parent.$el.clientWidth
+                }
+            }
             const currentValueField = chartData.mapping?.['Current Value Field']?.key
             const currentValueName = chartData.mapping?.['Current Value Field']?.name
             const targetValueField = chartData.mapping?.['Target Value Field']?.key
             const targetValueName = chartData.mapping?.['Target Value Field']?.name
-            const isPercentage = chartData.options?.isPercentage
-            var currentValue = null
-            var targetValue = null
-            if (chartData.data) {
-                for (var row of chartData.data) {
-                    if (row['Indicator Key'] === currentValueField) {
-                        currentValue += parseInt(row.Value)
-                    }
-                    if (row['Indicator Key'] === targetValueField) {
-                        targetValue += parseInt(row.Value)
-                    }
-                }
-            }
-            if (isPercentage && !targetValue) targetValue = 100
+            if (!currentValueField) return { title: titleOptions }
+            const isPercentage = !targetValueField ?? chartData.options?.isPercentage === true
+
+            const currentValue = chartData.data[0][currentValueField]
+            const targetValue = isPercentage ? 100 : chartData.data[0][targetValueField]
+
+            const currentValueNameRevised = currentValueName ?? [isPercentage ? 'Progress' : 'Current']
 
             const options = {
-                title: {
-                    text: chartData?.title,
-                    left: 'center',
-                    textStyle: {
-                        overflow: 'break',
-                        fontSize: 12,
-                        width: this.$parent.$el.clientWidth
-                    }
-                },
+                title: titleOptions,
                 xAxis: {
                     type: 'value',
                     min: 0,
@@ -73,7 +55,7 @@ export default {
                 },
                 yAxis: {
                     type: 'category',
-                    data: currentValueName ?? [isPercentage ? 'Progress' : 'Current'],
+                    data: currentValueNameRevised,
                     show: false
                 },
                 tooltip: {
@@ -81,7 +63,7 @@ export default {
                     axisPointer: {
                         type: 'shadow'
                     },
-                    formatter: '<b>{b}</b> {c}' + (isPercentage ? '%' : '<br /><b>' + (targetValueName ?? 'Target') + '</b> ' + targetValue)
+                    formatter: '<b>' + currentValueNameRevised + '</b> ' + currentValue + (isPercentage ? '%' : '<br /><b>' + (targetValueName ?? 'Target') + '</b> ' + targetValue)
                 },
                 series: [
                     {

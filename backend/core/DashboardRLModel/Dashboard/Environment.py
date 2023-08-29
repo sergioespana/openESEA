@@ -1,25 +1,24 @@
-from Dashboard.Classes import VisualisationType, Dashboard
-from Dashboard.Encoding import dashboardToArray
-from Dashboard.Information import MAX_DATA_ITEMS
+from .Classes import VisualisationType, Dashboard
 
-from Dashboard.Actions.Information import ACTIONS
+from .Encoding import dashboardToArray
+
+from .Information import MAX_DATA_ITEMS
+
+from .Actions.Information import ACTIONS
 
 
 class DashboardEnvironment:
     def __init__(self, dashboard: Dashboard):
         self.initial_dashboard: Dashboard = dashboard
 
-        self.initializeState()
-
-    def initializeState(self):
         self.dashboard: Dashboard = self.initial_dashboard
         self.state = dashboardToArray(self.dashboard)
 
     def initial(self):
         return dashboardToArray(self.initial_dashboard)
-    
+    # Item limit in segments of 5
+    # Item limit must not be larger than amount of data items
     def action_from_parameters(self, parameter_values):
-
         # Determine action, visualisation index and other parameters
         action_index = parameter_values[0]
         visualisation_index = parameter_values[1]
@@ -33,7 +32,7 @@ class DashboardEnvironment:
     def step(self, outputs):
         # Convert parameter from tensors to simple values
         parameter_values = [output.item() for output in outputs]
-
+        
         # Construct the action from the model outputs
         action = self.action_from_parameters(parameter_values)
 
@@ -59,7 +58,7 @@ class DashboardEnvironment:
         correct_visualisation_type_reward = 0
         for visualisation in self.dashboard.visualisations:
 
-            all_values_shown_reward += 1 - int(visualisation.itemLimitEnabled)
+            all_values_shown_reward += (1 - int(visualisation.itemLimitEnabled)) / 10
 
             less_items_reward += 1 - visualisation.dataItems / MAX_DATA_ITEMS
 

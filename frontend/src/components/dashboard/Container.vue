@@ -36,20 +36,22 @@ export default {
         position: {
             get () { return this.getContainerPosition()(this.config) }
         },
-        styleObject () {
-            var styleObject = {}
-            if (this.backgroundColor) {
-                styleObject['background-color'] = this.backgroundColor
+        styleObject: {
+            get () {
+                var styleObject = {}
+                if (this.backgroundColor) {
+                    styleObject['background-color'] = this.backgroundColor
+                }
+                const position = this.position
+                if (position) {
+                    styleObject.position = 'absolute'
+                    styleObject.left = position['X Start'] + '%'
+                    styleObject.right = (100 - position['X End']) + '%'
+                    styleObject.bottom = position['Y Start'] + '%'
+                    styleObject.top = (100 - position['Y End']) + '%'
+                }
+                return styleObject
             }
-            const position = this.position
-            if (position) {
-                styleObject.position = 'absolute'
-                styleObject.left = position['X Start'] + '%'
-                styleObject.right = (100 - position['X End']) + '%'
-                styleObject.bottom = position['Y Start'] + '%'
-                styleObject.top = (100 - position['Y End']) + '%'
-            }
-            return styleObject
         }
     },
     methods: {

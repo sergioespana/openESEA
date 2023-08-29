@@ -4,16 +4,28 @@ import torch.optim as optim
 import torch.nn.functional as F
 from torch.distributions import Categorical
 
-from AgentNetwork.Constants import EPSILON
-from AgentNetwork.Parameters import GAMMA, LEARNING_RATE
+from .Constants import EPSILON
+
+from .Parameters import GAMMA, LEARNING_RATE
 
 # Functions for categorical variables
 def sample_categorical(value_probabilities):
     dist = Categorical(value_probabilities)
-    value = dist.sample()
+    value = dist.sample() # Sample according to probabilities
     log_prob = dist.log_prob(value)
     return value, log_prob
 
+def argmax_categorical(value_probabilities):
+    dist = Categorical(value_probabilities)
+    value = torch.argmax(value_probabilities) # Get value with highest probability
+    log_prob = dist.log_prob(value)
+    return value, log_prob
+
+def get_categorical(value_probabilities, sampling):
+    if sampling:
+        return sample_categorical(value_probabilities)
+    return argmax_categorical(value_probabilities)
+    
 def one_hot_encode_categorical(value_probabilities, sampled_value):
     num_values = value_probabilities.size(dim = 0)
     one_hot_encoded_value = F.one_hot(sampled_value, num_classes = num_values)
@@ -45,7 +57,7 @@ class AgentNetwork(nn.Module):
         num_hidden *= 2
 
         # Embedding to hidden state
-        self.action_hidden_layer = nn.Linear(num_inputs, num_hidden)
+        self.action_hidden_layer = nn.Linear(num_hidden, num_hidden)
 
         # Hidden state to action prediction
         self.action_prediction_layer = nn.Linear(num_hidden, num_actions)
@@ -80,7 +92,7 @@ class AgentNetwork(nn.Module):
             setattr(self, f'action_{action_index}_critic', critic_layer)
 
     # @torch.jit.script_method
-    def forward(self, state):
+    def forward(self, state, sampling = True):
         extra_inputs = []
 
         # Unsqueeze for input in lstm
@@ -95,7 +107,7 @@ class AgentNetwork(nn.Module):
         action_probs = F.softmax(self.action_prediction_layer(hidden_state), dim = -1)
 
         # Sample an action from action probabilities, one hot encode the sampled action and add to hidden state
-        sampled_action, log_prob_action = sample_categorical(action_probs)
+        sampled_action, log_prob_action = get_categorical(action_probs, sampling)
         one_hot_action = one_hot_encode_categorical(action_probs, sampled_action)
         extra_inputs.append(one_hot_action)
         concatenated_hidden_state = torch.cat([hidden_state] + extra_inputs, dim = 0)
@@ -105,7 +117,7 @@ class AgentNetwork(nn.Module):
         visualisation_probs = F.softmax(self.visualisation_prediction_layer(hidden_state), dim = -1)
 
         # Sample a visualisation index from visualisation probabilities
-        sampled_visualisation, log_prob_vis = sample_categorical(visualisation_probs)
+        sampled_visualisation, log_prob_vis = get_categorical(visualisation_probs, sampling)
         one_hot_visualisation = one_hot_encode_categorical(visualisation_probs, sampled_visualisation)
         extra_inputs.append(one_hot_visualisation)
         concatenated_hidden_state = torch.cat([hidden_state] + extra_inputs, dim = 0)
@@ -122,7 +134,7 @@ class AgentNetwork(nn.Module):
             hidden_state = F.relu(hidden_layer(concatenated_hidden_state))
             param_probs = F.softmax(prediction_layer(hidden_state), dim = -1)
 
-            sampled_param, log_prob_param = sample_categorical(param_probs)
+            sampled_param, log_prob_param = get_categorical(param_probs, sampling)
             value_probabilities.append(log_prob_param)
             sampled_values.append(sampled_param)
 
@@ -137,12 +149,12 @@ class AgentNetwork(nn.Module):
         return sampled_values, value_probabilities, critic_value
 
     # @torch.jit.script_method
-    def output_parameters_values(self, state):
+    def output_parameters_values(self, state, sampling):
         # Pytorch Tensor from Numpy array state
         tensor_state = torch.as_tensor(state, dtype = torch.float)
 
         # Sample action parameters using the current model(/policy) by feeding state to itself
-        parameter_values, parameter_probabilities, critic_value = self(tensor_state)
+        parameter_values, parameter_probabilities, critic_value = self(tensor_state, sampling)
 
         # Save the parameter probabilities and critic value in the saved actions list
         saved_action = (parameter_probabilities, critic_value)

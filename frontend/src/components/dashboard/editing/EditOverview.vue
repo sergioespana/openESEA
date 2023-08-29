@@ -4,6 +4,16 @@
         <!-- Edit area title -> overview -->
         <div class="edit-area-title">Overview</div>
 
+        <div :style="{ height: '5px' }"></div>
+
+        <div class="full-width" :style="{ position: 'relative', width: '100%' }">
+            <Button label="Add Overview" icon="pi pi-plus" class="p-button-success p-button-sm"
+                @click="addOverview">
+            </Button>
+        </div>
+
+        <div :style="{ height: '5px' }"></div>
+
         <!-- Display current overview information-->
         <div v-if="overviews.length === 0">
             <div class="edit-area-field">Add an Overview to view information about the Overview</div>
@@ -24,8 +34,8 @@
 
             <div :style="{ height: '5px' }"></div>
 
-            <div class="full-width">
-                <Button label="delete" icon="pi pi-trash" class="p-button-danger p-button-sm" @click="deleteOverview">
+            <div class="full-width" :style="{ position: 'relative', width: '100%' }">
+                <Button label="Delete Overview" icon="pi pi-trash" class="p-button-danger p-button-sm" @click="deleteOverview">
                 </Button>
             </div>
 
@@ -64,7 +74,7 @@ export default {
     methods: {
         ...mapGetters('dashboardModel', ['getOverviews', 'getOverviewName', 'getHeadSectionTitle', 'getHeadSectionText']),
         ...mapMutations('dashboardModel', ['setOverviewName', 'setHeadSectionTitle', 'setHeadSectionText']),
-        ...mapActions('dashboardModel', ['deleteOverview'])
+        ...mapActions('dashboardModel', ['deleteOverview', 'addOverview'])
     }
 }
 </script>

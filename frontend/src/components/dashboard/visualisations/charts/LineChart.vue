@@ -1,5 +1,5 @@
 <template>
-    <vue-echarts :option="this.options" autoresize>
+    <vue-echarts :option="createOptions(chartData)" autoresize>
     </vue-echarts>
 </template>
 
@@ -22,24 +22,20 @@ export default {
             required: true
         }
     },
-    watch: {
-        chartData: {
-            immediate: true,
-            handler (value) {
-                this.options = this.createOptions(value)
-            }
-        }
-    },
-    data () {
-        return {
-            options: {}
-        }
-    },
     methods: {
         createOptions (chartData) {
+            const title = chartData.title
+            const titleOptions = {
+                text: title,
+                left: 'center',
+                textStyle: {
+                    fontSize: 12,
+                    overflow: 'break'
+                }
+            }
             const categoryKey = chartData.mapping['Category Field']?.key
             const valueKey = chartData.mapping['Value Field']?.key
-            const title = chartData.title
+            if (!categoryKey || !valueKey) return { title: titleOptions }
             const categories = [...new Set(chartData.data.map(el => el[categoryKey]))]
             var values = []
             for (const category of categories) {
@@ -49,14 +45,7 @@ export default {
             }
 
             const options = {
-                title: {
-                    text: title,
-                    left: 'center',
-                    textStyle: {
-                        fontSize: 12,
-                        overflow: 'break'
-                    }
-                },
+                title: titleOptions,
                 xAxis: {
                     type: 'category',
                     data: categories,

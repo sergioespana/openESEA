@@ -1,6 +1,6 @@
-from dataclasses import dataclass
+from ..Classes import VisualisationType, Dashboard
 
-from Dashboard.Classes import VisualisationType, Dashboard
+from dataclasses import dataclass
 
 @dataclass
 class ChangeVisualisationType:
@@ -10,6 +10,14 @@ class ChangeVisualisationType:
     def act(self, dashboard: Dashboard):
         dashboard.visualisations[self.visualisationIndex].visualisationType = VisualisationType(self.visualisationType)
 
+    def to_dict(self):
+        action_dict = {
+            'Type': 'Change Visualisation Type',
+            'Visualisation Index': self.visualisationIndex,
+            'Visualisation Type': self.visualisationType
+        }
+        return action_dict
+
 @dataclass
 class AddItemLimit:
     visualisationIndex: int
@@ -18,6 +26,14 @@ class AddItemLimit:
     def act(self, dashboard: Dashboard):
         dashboard.visualisations[self.visualisationIndex].itemLimitEnabled = True
         dashboard.visualisations[self.visualisationIndex].itemLimit = self.itemLimit
+
+    def to_dict(self):
+        action_dict = {
+            'Type': 'Add Item Limit',
+            'Visualisation Index': self.visualisationIndex,
+            'Item Limit': self.itemLimit
+        }
+        return action_dict
         
 @dataclass
 class RemoveItemLimit:
@@ -26,3 +42,10 @@ class RemoveItemLimit:
     def act(self, dashboard: Dashboard):
         dashboard.visualisations[self.visualisationIndex].itemLimitEnabled = False
         dashboard.visualisations[self.visualisationIndex].itemLimit = 0
+
+    def to_dict(self):
+        action_dict = {
+            'Type': 'Remove Item Limit',
+            'Visualisation Index': self.visualisationIndex
+        }
+        return action_dict

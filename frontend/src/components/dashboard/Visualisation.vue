@@ -97,8 +97,9 @@ export default {
         await this.createVisualisationDataSet()
     },
     methods: {
-        ...mapGetters('dashboardData', ['getIndicatorData']),
-        ...mapGetters('dashboardModel', ['getVisualisation', 'getVisualisationDataDisplay', 'getVisualisationGroupingField', 'getVisualisationStackingField', 'getVisualisationIndicators', 'getVisualisationCategories', 'getVisualisationType', 'getVisualisationPosition', 'getVisualisationTitle']),
+        ...mapGetters('dashboardData', ['getIndicatorData', 'getIndicatorDataSet', 'getVisualisationDatasets']),
+        ...mapActions('dashboardData', ['saveVisualisationDataset']),
+        ...mapGetters('dashboardModel', ['getVisualisation', 'getDataDisplay', 'getDataConfiguration', 'getValueField', 'getFractionalValueField', 'getTotalValueField', 'getCurrentValueField', 'getTargetValueField', 'getCategoryField', 'getGroupingField', 'getStackingField', 'getVisualisationType', 'getVisualisationPosition', 'getVisualisationTitle']),
         ...mapActions('dashboardModel', ['updateSelectionConfig']),
         async isClicked (event) {
             event.stopPropagation()
@@ -109,6 +110,9 @@ export default {
             this.dataSet = await this.createDataSet()
             // Add title to data set
             this.dataSet.title = this.visualisationTitle
+
+            // Save dataset
+            await this.saveVisualisationDataset({ config: this.config, dataset: this.dataSet.data })
         },
         async createDataSet () {
             // Create dataset based for this visualisation type
@@ -129,118 +133,343 @@ export default {
                     return {}
             }
         },
-        async createSingleValueDisplayDataSet () {
-            // Get data for all indicators
-            const methodIndicatorsData = await this.getIndicatorData()()
-
-            // Get indicator field for this visualisation
-            const dataDisplay = await this.getVisualisationDataDisplay()(this.config)
-            const dataConfiguration = dataDisplay?.DataConfiguration
-            const indicatorField = dataConfiguration['Value Field']?.Indicator
-            const indicatorName = dataConfiguration['Value Field']?.Name
-            const indicatorFields = [indicatorField]
-
-            // Get data for this visualisation
-            var indicatorsData = methodIndicatorsData?.filter(el => indicatorFields.includes(el['Indicator Key']))
-
-            // Devise mapping for fields
-            const mapping = {
-                'Value Field': { key: indicatorField, name: indicatorName }
-            }
-
-            // Filter data
-            const filters = dataConfiguration.Filters
-            if (filters) {
+        async applyFilters (dataSet, filters) {
+            if (filters && dataSet && dataSet[0]) {
                 for (const filter of filters) {
                     const filterField = filter.Field
+                    if (!Object.keys(dataSet[0]).includes(filterField)) continue
                     const filterValues = filter.Values
-                    indicatorsData = indicatorsData.filter(el => filterValues.includes(el[filterField]))
+                    dataSet = dataSet.filter(row => filterValues.includes(row[filterField]))
                 }
             }
+            return dataSet
+        },
+        async getFieldInfo (field) {
+            if (!field) return null
+            if (field.Indicator) {
+                return await this.getIndicatorInfo(field)
+            }
+            if (field.Indicators) {
+                return await this.getIndicatorsInfo(field)
+            }
+            if (field.Values) {
+                return await this.getValuesInfo(field)
+            }
+            // When no values -> name
+            if (field.Name) {
+                return await this.getNamedFieldInfo(field)
+            }
+            return null
+        },
+        async getIndicatorInfo (field) {
+            const fieldIndicator = field.Indicator
+            const fieldName = field.Name
+
+            // Get dataset for the current value field indicator
+            const indicatorDataSet = await this.getIndicatorDataSet()(fieldIndicator)
+            const indicatorName = indicatorDataSet.name
+            const indicatorData = indicatorDataSet.data
+
+            // Devise mapping for field
+            const fieldKey = indicatorName
+            const info = { key: fieldKey, name: fieldName, data: indicatorData, type: 'Indicator' }
+            return info
+        },
+        async getIndicatorsInfo (field) {
+            const fieldIndicators = field.Indicators
+            const fieldName = field.Name
+            const fieldKey = fieldName ?? 'Value Field'
+
+            var dataset = []
+            for (const fieldIndicator of fieldIndicators) {
+                // Get dataset for the current value field indicator
+                const indicatorDataSet = await this.getIndicatorDataSet()(fieldIndicator)
+                const indicatorName = indicatorDataSet.name
+                const indicatorData = indicatorDataSet.data
+
+                // Collect data together with indicator name
+                const indicatorFieldKey = indicatorName
+                for (const row of indicatorData) {
+                    var rowInfo = {}
+                    rowInfo.Year = row.Year
+                    rowInfo['Indicator Key'] = fieldIndicator
+                    // rowInfo['Indicator Name'] = indicatorFieldKey
+                    rowInfo[fieldKey] = row[indicatorFieldKey]
+                    dataset.push(rowInfo)
+                }
+            }
+            // Devise mapping for field
+            const info = { key: fieldKey, name: fieldName, data: dataset, type: 'Indicators' }
+            return info
+        },
+        async getValuesInfo (field) {
+            const fieldValues = field.Values
+            const fieldName = field.Name
+            const fieldKey = fieldName ?? 'Category Field'
+
+            var dataset = []
+            for (const fieldValue of fieldValues) {
+                var rowInfo = {}
+                rowInfo[fieldKey] = fieldValue
+                dataset.push(rowInfo)
+            }
+            // Devise mapping for field
+            const info = { key: fieldKey, name: fieldName, data: dataset, type: 'Values' }
+            return info
+        },
+        async getNamedFieldInfo (field) {
+            const fieldName = field.Name
+            const fieldKey = fieldName ?? 'Named Field'
+
+            var dataset = []
+
+            // Devise mapping for field
+            const info = { key: fieldKey, name: fieldName, data: dataset, type: 'Named Field' }
+            return info
+        },
+        async createSingleValueDisplayDataSet () {
+            // Record for single value
+            var dataset = []
+            // Values per field
+            var valueFields = []
+            // Mapping for fields
+            var mapping = {}
+            // Get filters
+            const dataConfiguration = await this.getDataConfiguration()(this.config)
+            const visualisationFilters = dataConfiguration.Filters
+
+            // Get value field info
+            const valueField = await this.getValueField()(this.config)
+            const valueFieldInfo = await this.getFieldInfo(valueField)
+            if (valueFieldInfo !== null) {
+                // Devise mapping for value field
+                mapping['Value Field'] = { key: valueFieldInfo.key, name: valueFieldInfo.name }
+
+                // Filter data and add data to list
+                const filteredValueIndicatorData = await this.applyFilters(valueFieldInfo.data, visualisationFilters)
+                valueFields.push({ key: valueFieldInfo.key, data: filteredValueIndicatorData })
+            }
+
+            // Create dataset
+            var valuesRecord = {}
+            for (const valueField of valueFields) {
+                const key = valueField.key
+                const data = valueField.data
+                var value = 0
+                for (const row of data) {
+                    value += parseInt(row[key])
+                }
+                valuesRecord[key] = value
+            }
+            dataset.push(valuesRecord)
 
             // Return data info
-            const dataSet = { data: indicatorsData, mapping: mapping }
+            const dataSet = { data: dataset, mapping: mapping }
             return dataSet
         },
         async createFractionalValueDisplayDataSet () {
-            // Get data for all indicators
-            const methodIndicatorsData = await this.getIndicatorData()()
+            // Record for single value
+            var dataset = []
+            // Values per field
+            var valueFields = []
+            // Mapping for fields
+            var mapping = {}
+            // Get filters
+            const dataConfiguration = await this.getDataConfiguration()(this.config)
+            const visualisationFilters = dataConfiguration.Filters
 
-            // Get indicator field for this visualisation
-            const dataDisplay = await this.getVisualisationDataDisplay()(this.config)
-            const dataConfiguration = dataDisplay?.DataConfiguration
-            const fractionalValueField = dataConfiguration['Fractional Value Field']?.Indicator
-            const fractionalValueName = dataConfiguration['Fractional Value Field']?.Name
-            const totalValueField = dataConfiguration['Total Value Field']?.Indicator
-            const totalValueName = dataConfiguration['Total Value Field']?.Name
-            const indicatorFields = [fractionalValueField, totalValueField]
+            // Get fractional value field
+            const fractionalValueField = await this.getFractionalValueField()(this.config)
+            const fractionalValueFieldInfo = await this.getFieldInfo(fractionalValueField)
+            if (fractionalValueFieldInfo !== null) {
+                // Devise mapping for value field
+                mapping['Fractional Value Field'] = { key: fractionalValueFieldInfo.key, name: fractionalValueFieldInfo.name }
 
-            // Get data for this visualisation
-            var indicatorsData = methodIndicatorsData?.filter(el => indicatorFields.includes(el['Indicator Key']))
-
-            // Devise mapping for fields
-            const mapping = {
-                'Fractional Value Field': { key: fractionalValueField, name: fractionalValueName },
-                'Total Value Field': { key: totalValueField, name: totalValueName }
+                // Filter data and add data to list
+                const filteredFractionalValueIndicatorData = await this.applyFilters(fractionalValueFieldInfo.data, visualisationFilters)
+                valueFields.push({ key: fractionalValueFieldInfo.key, data: filteredFractionalValueIndicatorData })
             }
 
-            // Filter data
-            const filters = dataConfiguration.Filters
-            if (filters) {
-                for (const filter of filters) {
-                    const filterField = filter.Field
-                    const filterValues = filter.Values
-                    indicatorsData = indicatorsData.filter(el => filterValues.includes(el[filterField]))
+            // Get total value field
+            const totalValueField = await this.getTotalValueField()(this.config)
+            const totalValueFieldInfo = await this.getFieldInfo(totalValueField)
+            if (totalValueFieldInfo !== null) {
+                // Devise mapping for value field
+                mapping['Total Value Field'] = { key: totalValueFieldInfo.key, name: totalValueFieldInfo.name }
+
+                // Filter data and add data to list
+                const filteredTotalValueIndicatorData = await this.applyFilters(totalValueFieldInfo.data, visualisationFilters)
+                valueFields.push({ key: totalValueFieldInfo.key, data: filteredTotalValueIndicatorData })
+            }
+
+            // Create dataset
+            var valuesRecord = {}
+            for (const valueField of valueFields) {
+                const key = valueField.key
+                const data = valueField.data
+                var value = 0
+                for (const row of data) {
+                    value += parseInt(row[key])
                 }
+                valuesRecord[key] = value
             }
+            dataset.push(valuesRecord)
 
             // Return data info
-            const dataSet = { data: indicatorsData, mapping: mapping }
+            const dataSet = { data: dataset, mapping: mapping }
             return dataSet
         },
         async createProgressBarDataSet () {
-            // Get data for all indicators
-            const methodIndicatorsData = await this.getIndicatorData()()
+            // Record for single value
+            var dataset = []
+            // Values per field
+            var valueFields = []
+            // Mapping for fields
+            var mapping = {}
+            // Get filters
+            const dataConfiguration = await this.getDataConfiguration()(this.config)
+            const visualisationFilters = dataConfiguration.Filters
 
-            // Get indicator field for this visualisation
-            const dataDisplay = await this.getVisualisationDataDisplay()(this.config)
-            const dataConfiguration = dataDisplay?.DataConfiguration
-            const currentValueField = dataConfiguration['Current Value Field']?.Indicator
-            const currentValueName = dataConfiguration['Current Value Field']?.Name
-            const targetValueField = dataConfiguration['Target Value Field']?.Indicator
-            const targetValueName = dataConfiguration['Target Value Field']?.Name
-            const isPercentage = dataConfiguration.isPercentage || false
-            const indicatorFields = [currentValueField].concat(targetValueField ? [targetValueField] : [])
+            // Get fractional value field
+            const currentValueField = await this.getCurrentValueField()(this.config)
+            const currentValueFieldInfo = await this.getFieldInfo(currentValueField)
+            if (currentValueFieldInfo !== null) {
+                // Devise mapping for value field
+                mapping['Current Value Field'] = { key: currentValueFieldInfo.key, name: currentValueFieldInfo.name }
 
-            // Get data for this visualisation
-            var indicatorsData = methodIndicatorsData?.filter(el => indicatorFields.includes(el['Indicator Key']))
-
-            // Devise mapping for fields
-            const mapping = {
-                'Current Value Field': { key: currentValueField, name: currentValueName },
-                'Target Value Field': { key: targetValueField, name: targetValueName }
+                // Filter data and add data to list
+                const filteredCurrentValueIndicatorData = await this.applyFilters(currentValueFieldInfo.data, visualisationFilters)
+                valueFields.push({ key: currentValueFieldInfo.key, data: filteredCurrentValueIndicatorData })
             }
 
-            // Filter data
-            const filters = dataConfiguration.Filters
-            if (filters) {
-                for (const filter of filters) {
-                    const filterField = filter.Field
-                    const filterValues = filter.Values
-                    indicatorsData = indicatorsData.filter(el => filterValues.includes(el[filterField]))
+            // Get target value field
+            const targetValueField = await this.getTargetValueField()(this.config)
+            const targetValueFieldInfo = await this.getFieldInfo(targetValueField)
+            if (targetValueFieldInfo !== null) {
+                // Devise mapping for value field
+                mapping['Target Value Field'] = { key: targetValueFieldInfo.key, name: targetValueFieldInfo.name }
+
+                // Filter data and add data to list
+                const filteredTargetValueIndicatorData = await this.applyFilters(targetValueFieldInfo.data, visualisationFilters)
+                valueFields.push({ key: targetValueFieldInfo.key, data: filteredTargetValueIndicatorData })
+            }
+
+            // Create dataset
+            var valuesRecord = {}
+            for (const valueField of valueFields) {
+                const key = valueField.key
+                const data = valueField.data
+                var value = 0
+                for (const row of data) {
+                    value += parseInt(row[key])
                 }
+                valuesRecord[key] = value
             }
+            dataset.push(valuesRecord)
 
             // Return data info
-            const dataSet = { data: indicatorsData, mapping: mapping, options: { isPercentage: isPercentage } }
+            const dataSet = { data: dataset, mapping: mapping }
             return dataSet
         },
         async createPieChartDataSet () {
+            // Record for single value
+            var dataset = []
+            // Values per field
+            var valueFields = []
+            // Groupings per field
+            var groupingFields = []
+            // Mapping for fields
+            var mapping = {}
+            // Get filters
+            const dataConfiguration = await this.getDataConfiguration()(this.config)
+            const visualisationFilters = dataConfiguration.Filters
+
+            // Get value field
+            const valueField = await this.getValueField()(this.config)
+            const valueFieldInfo = await this.getFieldInfo(valueField)
+            console.log(valueFieldInfo)
+            if (valueFieldInfo !== null) {
+                // Devise mapping for value field
+                mapping['Value Field'] = { key: valueFieldInfo.key, name: valueFieldInfo.name }
+
+                // Filter data and add data to list
+                const filteredValueIndicatorData = await this.applyFilters(valueFieldInfo.data, visualisationFilters)
+                valueFields.push({ key: valueFieldInfo.key, data: filteredValueIndicatorData })
+            }
+
+            // Get category field
+            const categoryField = await this.getCategoryField()(this.config)
+            const categoryFieldInfo = await this.getFieldInfo(categoryField)
+            console.log(categoryFieldInfo)
+            if (categoryFieldInfo !== null) {
+                // Devise mapping for category field
+                mapping['Category Field'] = { key: categoryFieldInfo.key, name: categoryFieldInfo.name }
+
+                // Filter data and add data to list
+                const filteredCategoryData = await this.applyFilters(valueFieldInfo.data, visualisationFilters)
+                groupingFields.push({ key: categoryFieldInfo.key, data: filteredCategoryData })
+            }
+
+            // Map list of category values to list of indicators
+            if (categoryFieldInfo.type === 'Values' && valueFieldInfo.type === 'Indicators') {
+                const valueFieldIndicators = valueField.Indicators
+                const categoryValues = categoryField.Values
+                var categoryMapping = {}
+                for (let i = 0; i < valueFieldIndicators.length; i++) {
+                    const valueFieldIndicator = valueFieldIndicators[i]
+                    const categoryValue = categoryValues[i]
+                    categoryMapping[valueFieldIndicator] = categoryValue
+                }
+                const valueData = valueFieldInfo.data
+                for (var valueDataRow of valueData) {
+                    const valueFieldIndicator = valueDataRow['Indicator Key']
+                    const categoryValue = categoryMapping[valueFieldIndicator]
+                    valueDataRow[categoryFieldInfo.key] = categoryValue
+                    delete valueDataRow['Indicator Key']
+                }
+            }
+            console.log(valueFieldInfo.data)
+
+            // Create dataset
+            var accumulatedRows = []
+            for (const valueField of valueFields) {
+                const valueKey = valueField.key
+                const valueData = valueField.data
+                for (const row of valueData) {
+                    for (const accumulatedRow of accumulatedRows) {
+                        var sameGrouping = true
+                        for (const groupingField of groupingFields) {
+                            if (accumulatedRow[groupingField.key] !== row[groupingField.key]) {
+                                sameGrouping = false
+                                break
+                            }
+                        }
+                        if (sameGrouping) {
+                            accumulatedRow[valueKey] = row[valueKey]
+                            break
+                        }
+                    }
+                    var newGroupingRow = {}
+                    newGroupingRow[valueKey] = row[valueKey]
+                    for (const groupingField of groupingFields) {
+                        newGroupingRow[groupingField.key] = row[groupingField.key]
+                    }
+                    accumulatedRows.push(newGroupingRow)
+                }
+            }
+            dataset = accumulatedRows
+            console.log(accumulatedRows)
+
+            // Return data info
+            const dataSet = { data: dataset, mapping: mapping }
+            return dataSet
+        },
+        async createPieChartDataSet2 () {
             // Get data for all indicators
             const methodIndicatorsData = await this.getIndicatorData()()
 
             // Get data/fields configuration for this visualisation
-            const dataDisplay = await this.getVisualisationDataDisplay()(this.config)
+            const dataDisplay = await this.getDataDisplay()(this.config)
             const dataConfiguration = dataDisplay?.DataConfiguration
             const valueFieldIndicators = dataConfiguration['Value Field']?.Indicators
             const valueFieldName = dataConfiguration['Value Field']?.Name
@@ -281,14 +510,7 @@ export default {
             }
 
             // Filter data
-            const filters = dataConfiguration.Filters
-            if (filters) {
-                for (const filter of filters) {
-                    const filterField = filter.Field
-                    const filterValues = filter.Values
-                    indicatorsData = indicatorsData.filter(el => filterValues.includes(el[filterField]))
-                }
-            }
+            indicatorsData = await this.applyFilters(indicatorsData, dataConfiguration.Filters)
 
             // Return data info
             const dataSet = { data: indicatorsData, mapping: mapping }
@@ -299,7 +521,7 @@ export default {
             const methodIndicatorsData = await this.getIndicatorData()()
 
             // Get data/fields configuration for this visualisation
-            const dataDisplay = await this.getVisualisationDataDisplay()(this.config)
+            const dataDisplay = await this.getDataDisplay()(this.config)
             const dataConfiguration = dataDisplay?.DataConfiguration
             const valueFieldIndicators = dataConfiguration['Value Field']?.Indicators
             const valueFieldName = dataConfiguration['Value Field']?.Name
@@ -345,14 +567,7 @@ export default {
             }
 
             // Filter data
-            const filters = dataConfiguration.Filters
-            if (filters) {
-                for (const filter of filters) {
-                    const filterField = filter.Field
-                    const filterValues = filter.Values
-                    indicatorsData = indicatorsData.filter(el => filterValues.includes(el[filterField]))
-                }
-            }
+            indicatorsData = await this.applyFilters(indicatorsData, dataConfiguration.Filters)
 
             // Return data info
             const dataSet = { data: indicatorsData, mapping: mapping }
@@ -363,7 +578,7 @@ export default {
             const methodIndicatorsData = await this.getIndicatorData()()
 
             // Get data/fields configuration for this visualisation
-            const dataDisplay = await this.getVisualisationDataDisplay()(this.config)
+            const dataDisplay = await this.getDataDisplay()(this.config)
             const dataConfiguration = dataDisplay?.DataConfiguration
             const valueFieldIndicators = dataConfiguration['Value Field']?.Indicators
             const valueFieldName = dataConfiguration['Value Field']?.Name
@@ -411,16 +626,7 @@ export default {
             }
 
             // Filter data
-            const filters = dataConfiguration.Filters
-            if (filters) {
-                for (const filter of filters) {
-                    const filterField = filter.Field
-                    const filterValues = filter.Values
-                    // console.log('Filtering start', indicatorsData)
-                    indicatorsData = indicatorsData.filter(el => filterValues.includes(el[filterField]))
-                    // console.log('Filtering end', indicatorsData)
-                }
-            }
+            indicatorsData = await this.applyFilters(indicatorsData, dataConfiguration.Filters)
 
             // Return data info
             const dataSet = { data: indicatorsData, mapping: mapping }

@@ -5,7 +5,7 @@
         <div class="edit-sidebar p-p-0">
 
             <!-- Arrow for folding/unfolding editing area  -->
-            <div class="edit-sidebar-angle" v-on:click="goIntoEdit(selectedEditElement)">
+            <div class="edit-sidebar-angle" v-on:click="goIntoEdit(selectedEditElementIndex)">
                 <i class="pi pi-angle-right larger-icon" v-if="editing"></i>
                 <i class="pi pi-angle-left larger-icon" v-else></i>
             </div>
@@ -13,8 +13,8 @@
             <div :style="{ height: '40px' }"></div>
 
             <!-- Icon for different edit elements -->
-            <div v-for="editElement in editElements" v-bind:key="editElement.name">
-                <i :class='editElement.icon' v-on:click="goIntoEdit(editElement.name)"></i>
+            <div v-for="(editElement, index) in editElements" v-bind:key="index">
+                <i :class='editElement.icon' v-on:click="goIntoEdit(index)"></i>
 
                 <div :style="{ height: '20px' }"></div>
             </div>
@@ -23,7 +23,7 @@
                 <!-- Edit Dashboard model directly -->
                 <ModifyDashboardModel></ModifyDashboardModel>
                 <!-- Save button -->
-                <div class="edit-sidebar-discard" v-on:click="this.$emit('discardButtonClicked')">
+                <div class="edit-sidebar-trash" v-on:click="this.$emit('discardButtonClicked')">
                     <i class="pi pi-times"></i>
                 </div>
                 <div class="edit-sidebar-save" v-on:click="this.$emit('saveButtonClicked')">
@@ -34,8 +34,8 @@
 
         <!-- Editing area which is shown in editing mode -->
         <div v-if="editing" class="edit-area-position edit-area-style">
-            <div v-for="editElement in editElements" v-bind:key="editElement.name">
-                <div v-if="editElement.name === selectedEditElement">
+            <div v-for="(editElement, index) in editElements" v-bind:key="index">
+                <div v-if="index === selectedEditElementIndex">
                     <div v-for="component in editElement.components" v-bind:key="component">
                         <component :is="component"></component>
                     </div>
@@ -51,6 +51,8 @@ import EditOverview from './editing/EditOverview.vue'
 import EditContainer from './editing/EditContainer.vue'
 import EditVisualisation from './editing/EditVisualisation.vue'
 import EditImage from './editing/EditImage.vue'
+import EditTextParagraph from './editing/EditTextParagraph.vue'
+import EditSuggestions from './editing/EditSuggestions.vue'
 import ModifyDashboardModel from './editing/ModifyDashboardModel.vue'
 
 export default {
@@ -60,32 +62,38 @@ export default {
         EditContainer,
         EditVisualisation,
         EditImage,
+        EditTextParagraph,
+        EditSuggestions,
         ModifyDashboardModel
     },
     data () {
         return {
             editing: false,
-            selectedEditElement: 'Dashboard',
+            selectedEditElementIndex: 0,
             editElements: [
                 {
-                    name: 'Dashboard',
                     icon: 'pi pi-chart-line',
                     components: [EditDashboard, EditOverview]
                 },
                 {
-                    name: 'Container',
                     icon: 'pi pi-clone',
                     components: [EditContainer]
                 },
                 {
-                    name: 'Visualisation',
                     icon: 'pi pi-chart-bar',
                     components: [EditVisualisation]
                 },
                 {
-                    name: 'Image',
                     icon: 'pi pi-image',
                     components: [EditImage]
+                },
+                {
+                    icon: 'pi pi-pencil',
+                    components: [EditTextParagraph]
+                },
+                {
+                    icon: 'pi pi-comments',
+                    components: [EditSuggestions]
                 }
             ]
         }
@@ -93,8 +101,8 @@ export default {
     methods: {
         goIntoEdit (targetEditElement) {
             // Toggle editing mode or go to selected edit element
-            if (targetEditElement !== this.selectedEditElement) {
-                this.selectedEditElement = targetEditElement
+            if (targetEditElement !== this.selectedEditElementIndex) {
+                this.selectedEditElementIndex = targetEditElement
                 this.editing = true
             } else {
                 this.editing = !this.editing
@@ -132,7 +140,7 @@ export default {
     left: 1px;
     position: absolute;
 }
-.edit-sidebar-discard {
+.edit-sidebar-trash {
     bottom: 25px;
     left: 1px;
     position: absolute;
@@ -141,7 +149,6 @@ export default {
     position: absolute;
     bottom: 50px;
     left: 1px;
-    cursor: pointer;
 }
 .edit-sidebar i {
     color: gray;

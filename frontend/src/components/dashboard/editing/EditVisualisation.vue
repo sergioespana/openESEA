@@ -4,6 +4,17 @@
         <!-- Edit area title -->
         <div class="edit-area-title">Visualisation</div>
 
+        <!-- Add Visualisation -->
+        <div :style="{ height: '5px' }"></div>
+
+        <div class="full-width" :style="{ position: 'relative', width: '100%' }">
+            <Button label="Add Visualisation" icon="pi pi-plus" class="p-button-success p-button-sm"
+                @click="addVisualisation">
+            </Button>
+        </div>
+
+        <div :style="{ height: '5px' }"></div>
+
         <!-- If no visualisation selected, display this message -->
         <div v-if="visualisationId === null">
             <div class="edit-area-field">Select a Visualisation to display its information!</div>
@@ -45,15 +56,68 @@
                 :options="visualisationTypes">
             </Dropdown>
             <!-- Indicators -->
-            <Dropdown class="near-width"
-                :options="indicators">
-            </Dropdown>
+            <div v-if="visualisationType === 'Single Value Display'">
+                <div class="edit-area-field">Value Field:</div>
+                <Dropdown class="near-width"
+                    v-model="valueField"
+                    :options="[{ key: null, name: 'No Indicator' }, ...indicators]"
+                    :optionLabel="'name'"
+                    :optionValue="'key'"
+                    placeholder="Choose an indicator field">
+                </Dropdown>
+            </div>
+            <div v-else-if="visualisationType === 'Fractional Value Display'">
+                <div class="edit-area-field">Fractional Value Field:</div>
+                <Dropdown class="near-width"
+                    v-model="fractionalValueField"
+                    :options="[{ key: null, name: 'No Indicator' }, ...indicators]"
+                    :optionLabel="'name'"
+                    :optionValue="'key'"
+                    placeholder="Choose an indicator field">
+                </Dropdown>
+                <div class="edit-area-field">Total Value Field:</div>
+                <Dropdown class="near-width"
+                    v-model="totalValueField"
+                    :options="[{ key: null, name: 'No Indicator' }, ...indicators]"
+                    :optionLabel="'name'"
+                    :optionValue="'key'"
+                    placeholder="Choose an indicator field">
+                </Dropdown>
+            </div>
+            <div v-else-if="visualisationType === 'Progress Bar'">
+                <div class="edit-area-field">Current Value Field:</div>
+                <Dropdown class="near-width"
+                    v-model="currentValueField"
+                    :options="[{ key: null, name: 'No Indicator' }, ...indicators]"
+                    :optionLabel="'name'"
+                    :optionValue="'key'"
+                    placeholder="Choose an indicator field">
+                </Dropdown>
+                <div class="edit-area-field">Target Value Field:</div>
+                <Dropdown class="near-width"
+                    v-model="targetValueField"
+                    :options="[{ key: null, name: 'No Indicator' }, ...indicators]"
+                    :optionLabel="'name'"
+                    :optionValue="'key'"
+                    placeholder="Choose an indicator field">
+                </Dropdown>
+            </div>
+
+            <!-- Delete Visualisation -->
+            <div :style="{ height: '5px' }"></div>
+
+            <div class="full-width" :style="{ position: 'relative', width: '100%' }">
+                <Button label="Delete Visualisation" icon="pi pi-trash" class="p-button-danger p-button-sm" @click="deleteVisualisation">
+                </Button>
+            </div>
+
+            <div :style="{ height: '5px' }"></div>
         </div>
     </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations } from 'vuex'
+import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
@@ -107,6 +171,26 @@ export default {
             get () { return this.getVisualisationType()() },
             set (value) { this.setVisualisationType({ value: value }) }
         },
+        valueField: {
+            get () { return this.getValueField()()?.Indicator },
+            set (value) { this.updateValueField({ value: { Indicator: value } }) }
+        },
+        fractionalValueField: {
+            get () { return this.getFractionalValueField()()?.Indicator },
+            set (value) { this.updateFractionalValueField({ value: { Indicator: value } }) }
+        },
+        totalValueField: {
+            get () { return this.getTotalValueField()()?.Indicator },
+            set (value) { this.updateTotalValueField({ value: { Indicator: value } }) }
+        },
+        currentValueField: {
+            get () { return this.getCurrentValueField()()?.Indicator },
+            set (value) { this.updateCurrentValueField({ value: { Indicator: value } }) }
+        },
+        targetValueField: {
+            get () { return this.getTargetValueField()()?.Indicator },
+            set (value) { this.updateTargetValueField({ value: { Indicator: value } }) }
+        },
         indicators: {
             get () { return this.getIndicators()() }
         }
@@ -114,8 +198,9 @@ export default {
     methods: {
         ...mapGetters('dashboardData', ['getIndicators']),
 
-        ...mapGetters('dashboardModel', ['getVisualisationTitle', 'getVisualisationType', 'getVisualisationXStart', 'getVisualisationXEnd', 'getVisualisationYStart', 'getVisualisationYEnd']),
-        ...mapMutations('dashboardModel', ['setVisualisationTitle', 'setVisualisationType', 'setVisualisationXStart', 'setVisualisationXEnd', 'setVisualisationYStart', 'setVisualisationYEnd'])
+        ...mapGetters('dashboardModel', ['getVisualisationTitle', 'getVisualisationType', 'getVisualisationXStart', 'getVisualisationXEnd', 'getVisualisationYStart', 'getVisualisationYEnd', 'getValueField', 'getFractionalValueField', 'getTotalValueField', 'getCurrentValueField', 'getTargetValueField']),
+        ...mapMutations('dashboardModel', ['setVisualisationTitle', 'setVisualisationType', 'setVisualisationXStart', 'setVisualisationXEnd', 'setVisualisationYStart', 'setVisualisationYEnd']),
+        ...mapActions('dashboardModel', ['addVisualisation', 'deleteVisualisation', 'updateValueField', 'updateFractionalValueField', 'updateTotalValueField', 'updateCurrentValueField', 'updateTargetValueField'])
     }
 }
 </script>

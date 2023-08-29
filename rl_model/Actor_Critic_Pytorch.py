@@ -172,7 +172,7 @@ def parseVisualisations(visualisations) -> Visualisations:
     return Visualisations([parseVisualisation(visualisation) for visualisation in visualisations])
 #endregion
 
-#region Actions
+#region Dashboard Actions
 @dataclass
 class ChangeVisualisationType:
     visualisationIndex: int

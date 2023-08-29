@@ -1,50 +1,61 @@
 <template>
+
+    <!-- Dashboard -->
     <div class="organisation-dashboard">
+
+        <!-- Show spinner while loading dashboard -->
         <div v-if="!dashboardLoaded" class="spinner-div">
             <ProgressSpinner class="center-spinner"></ProgressSpinner>
         </div>
+
+        <!-- If dashboard is loaded, show dashboard and editing section -->
         <div v-else>
-            <DashboardFileOperations v-if="false" @modelIsUploaded="loadDashboardFromFile"></DashboardFileOperations>
             <DashboardEditingSection @saveButtonClicked="saveDashboardToDatabase" @discardButtonClicked="discardChanges"></DashboardEditingSection>
             <Dashboard></Dashboard>
+
+            <!-- Dialog showing that there are unsaved changes -->
+            <Dialog ref="dialog" v-model:visible="showDialog" modal
+                :header="'There are unsaved changes to the dashboard. Do you want to save these changes?'">
+
+                <!-- Footer with buttons for options: Cancel, Discard Changes, Save Changes -->
+                <template #footer>
+                    <Button label="Cancel" icon="pi pi-times"
+                        @click="closeDialog" text>
+                    </Button>
+                    <Button label="Discard Changes" icon="pi pi-trash" class="p-button-danger p-button-sm"
+                        @click="discardChanges" text>
+                    </Button>
+                    <Button label="Save Changes" icon="pi pi-check" class="p-button-success p-button-sm"
+                        @click="saveChanges" autofocus>
+                    </Button>
+                </template>
+
+            </Dialog>
+
         </div>
+
     </div>
-    <Dialog ref="dialog" v-model:visible="showDialog" modal :header="'There are unsaved changes to the dashboard. Do you want to save these changes?'">
-        <!-- Footer for cancel or save buttons -->
-        <template #footer>
-            <Button label="Cancel" icon="pi pi-times"
-                @click="closeDialog" text>
-            </Button>
-            <Button label="Discard Changes" icon="pi pi-trash" class="p-button-danger p-button-sm"
-                @click="discardChanges" text>
-            </Button>
-            <Button label="Save Changes" icon="pi pi-check" class="p-button-success p-button-sm"
-                @click="saveChanges" autofocus>
-            </Button>
-        </template>
-    </Dialog>
+
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { isEqual, cloneDeep } from 'lodash'
 
-import Dashboard from '../../components/dashboard/Dashboard.vue'
-import DashboardFileOperations from '../../components/dashboard/DashboardFileOperations.vue'
-import DashboardEditingSection from '../../components/dashboard/DashboardEditingSection.vue'
+import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 
 import EseaAccountService from '../../services/EseaAccountService.js'
 import SurveyResponseService from '../../services/SurveyResponseService.js'
 import DirectIndicatorService from '../../services/DirectIndicatorService.js'
 import IndirectIndicatorService from '../../services/IndirectIndicatorService.js'
 
+import Dashboard from '../../components/dashboard/Dashboard.vue'
+import DashboardEditingSection from '../../components/dashboard/DashboardEditingSection.vue'
+
 import ProgressSpinner from 'primevue/progressspinner'
 import Dialog from 'primevue/dialog'
 
-import { isEqual, cloneDeep } from 'lodash'
-
 export default {
     components: {
-        DashboardFileOperations,
         DashboardEditingSection,
         Dashboard,
 
@@ -53,6 +64,7 @@ export default {
     },
     data () {
         return {
+            // Route parameters for organisation and dashboard ids
             organisationId: this.$route.params.OrganisationId,
             dashboardId: this.$route.params.DashboardId,
 
@@ -61,31 +73,40 @@ export default {
             initialDashboard: null,
 
             showDialog: false,
-            unloader: null
+
+            fetchSuggestionsTimer: null
         }
     },
     computed: {
         ...mapState('dashboardModel', ['dashboard'])
     },
-    mounted () {
-        // For showing unsaved changes message before unloading
-        this.unloader = window.addEventListener('beforeunload', this.unload)
+    watch: {
+        dashboard: {
+            handler: 'updateRLModel',
+            deep: true
+        }
     },
-    unmounted () {
-        window.removeEventListener(this.unloader)
+    async beforeUnmount () {
+        window.removeEventListener('beforeunload', this.unload)
     },
     async created () {
+        window.addEventListener('beforeunload', this.unload)
+
         // Fetch latest version of dashboard
         await this.fetchDashboard({ id: parseInt(this.dashboardId) })
         // Load dashboard from fetched dashboard
         await this.loadDashboardFromDatabase()
         await this.setInitialDashboard()
+
+        await this.initializeRLModel()
     },
     async beforeRouteLeave (to, from, next) {
+        console.log('Leaving route')
         if (!this.dashboardSaved()) {
             this.showDialog = true
             next(false)
         } else {
+            await this.stopRLModel()
             next(true)
         }
     },
@@ -93,11 +114,14 @@ export default {
         ...mapGetters('dashboard', ['getDashboard', 'getDashboards']),
         ...mapActions('dashboard', ['setDashboard', 'updateDashboard', 'fetchDashboard']),
 
-        ...mapGetters('dashboardData', ['getIndicators', 'getIndicatorData', 'getIndicatorFields']),
+        ...mapGetters('dashboardData', ['getIndicatorDataSets', 'getIndicatorFields', 'getIndicators']),
         ...mapMutations('dashboardData', ['setIndicators', 'setIndicatorData', 'setIndicatorFields']),
+        ...mapActions('dashboardData', ['createIndicatorDataSets']),
 
         ...mapGetters('dashboardModel', ['getDashboardModel', 'getMethods']),
         ...mapActions('dashboardModel', ['createDashboardModel']),
+
+        ...mapActions('dashboardSuggestions', ['buildDashboardRLModel', 'updateDashboardRLModel', 'deleteDashboardRLModel', 'fetchDashboardSuggestions']),
 
         setInitialDashboard () {
             this.initialDashboard = cloneDeep(this.dashboard)
@@ -106,21 +130,44 @@ export default {
             return isEqual(this.dashboard, this.initialDashboard)
         },
 
-        unload (event) {
+        async unload (event) {
+            console.log('Unloading page')
+            // Prevent page unloading if dashboard is not saved
             if (!this.dashboardSaved()) {
                 event.preventDefault()
                 event.returnValue = '' // Required for older browsers
             }
+        },
+        async initializeRLModel () {
+            // Build new RL Model and set interval for fetching suggestions
+            const dashboard = this.collectDashboardInfo()
+            await this.buildDashboardRLModel({ data: dashboard })
+            this.fetchSuggestionsTimer = setInterval(this.fetchDashboardSuggestions, 10000)
+        },
+        async collectDashboardInfo () {
+            const dashboard = cloneDeep(this.dashboard)
+            // var visualisations = []
+            return dashboard
+        },
+        async updateRLModel () {
+            // Update RL Model and set interval for fetching suggestions
+            const dashboard = this.collectDashboardInfo()
+            await this.updateDashboardRLModel({ data: dashboard })
+            this.fetchSuggestionsTimer = setInterval(this.fetchDashboardSuggestions, 10000)
+        },
+        async stopRLModel () {
+            console.log('stop rl model')
+            // Delete RL model and clear timer
+            await this.deleteDashboardRLModel()
+            clearInterval(this.fetchSuggestionsTimer)
         },
         async saveChanges () {
             await this.saveDashboardToDatabase()
             this.closeDialog()
         },
         async discardChanges () {
-            console.log(this.initialDashboard)
             const oldDashboard = cloneDeep(this.initialDashboard)
             await this.loadDashboardModel(oldDashboard)
-            console.log(this.dashboard)
             this.closeDialog()
         },
         closeDialog () {
@@ -138,7 +185,7 @@ export default {
             // Load dashboard model
             await this.loadDashboardModel(model)
             // Load dashboard data
-            await this.loadDashboardData(model)
+            await this.loadDashboardData()
             // When everything is ready show dashboard
             this.dashboardLoaded = true
         },
@@ -157,7 +204,8 @@ export default {
             // Force reload by first setting model to null
             await this.createDashboardModel(null)
             // Then set dashboard model
-            await this.createDashboardModel(model)
+            const payload = { value: model }
+            await this.createDashboardModel(payload)
         },
         async loadDashboardData () {
             // Retrieve and save all indicators of the given methods
@@ -167,6 +215,12 @@ export default {
             // Retrieve and save all data for the indicators of the given methods
             const indicatorData = await this.retrieveIndicatorData()
             await this.setIndicatorData(indicatorData)
+
+            // Create data sets for each indicator
+            await this.createIndicatorDataSets()
+            console.log(this.getIndicatorDataSets()())
+            console.log(this.getIndicators()())
+            console.log(this.getIndicatorFields()())
 
             // Get the metadata fields for the indicators
             var indicatorMetaDataFields = []
@@ -193,11 +247,11 @@ export default {
                 }
             }
             // console.log(indicators)
-            const indicatorNames = indicators?.map(el => el.name)
-            return indicatorNames
+            indicators = indicators?.map(el => ({ name: el.name, key: el.key }))
+            return indicators
         },
         async retrieveIndicatorData () {
-            // Determine current organisation and targeted methods
+            // Determine current organisation and targeted methods for dashboard
             const methodIds = await this.getMethods()()
             const organisationId = this.organisationId
 
@@ -212,6 +266,7 @@ export default {
             // Loop over esea accounts
             for (var eseaAccount of eseaAccounts) {
                 const eseaAccountId = eseaAccount.id
+                // Get year and method of this esea account
                 const eseaAccountYear = eseaAccount.year
                 const eseaMethod = eseaAccount.method
 
@@ -231,15 +286,16 @@ export default {
                     // Loop over all questions
                     for (var questionResponse of questionResponses) {
                         // Retrieve indicator data and the given values
-                        // const directIndicatorId = questionResponse.direct_indicator_id
                         const directIndicatorKey = questionResponse.direct_indicator_key
                         const directIndicatorValue = questionResponse.value ?? questionResponse.values
+                        const multipleChoice = questionResponse.value === null
 
                         // Store indicator data
                         eseaData.push({
                             'Indicator Key': directIndicatorKey,
                             Value: directIndicatorValue,
-                            Year: eseaAccountYear
+                            Year: eseaAccountYear,
+                            'Multiple Choice': multipleChoice
                             // 'Esea Account Id': eseaAccountId,
                             // 'Method Id': eseaMethod,
                             // 'Indicator Id': directIndicatorId

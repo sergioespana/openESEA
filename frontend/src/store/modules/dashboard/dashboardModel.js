@@ -1,3 +1,12 @@
+import { cloneDeep } from 'lodash'
+
+const elementPaths = {
+    DashboardModel: { previousPath: null },
+    DashboardName: { previousPath: 'DashboardModel', attribute: 'Name' },
+    Overviews: { previousPath: 'DashboardModel', attribute: 'Overviews' },
+    Overview: { previousPath: 'Overviews', id: 'overviewId' }
+}
+
 export default {
     namespaced: true,
     state: {
@@ -5,6 +14,13 @@ export default {
         selectionConfig: null
     },
     getters: {
+        get: (state, getters) => (name) => {
+            const elementPath = elementPaths[name]
+            const stateValue = elementPath.previousPath ? getters.get(elementPath.previousPath) : state.dashboard
+            const element = elementPath.attribute ?? state.selectionConfig[elementPath.id]
+            return stateValue[element]
+        },
+
         /* Get the given element ids from the payload or otherwise from the current selection */
         getOverviewId: (state, getters) => (payload) => {
             return payload?.overviewId ?? state.selectionConfig.overviewId
@@ -92,11 +108,15 @@ export default {
         getContainerTitle: (state, getters) => (payload) => {
             return getters.getContainer(payload)?.Title
         },
-        getContainerBackgroundColor: (state, getters) => (payload) => {
-            return getters.getContainer(payload)?.Style?.['Background Color']
-        },
         getContainerPosition: (state, getters) => (payload) => {
             return getters.getContainer(payload)?.Position
+        },
+        getContainerStyle: (state, getters) => (payload) => {
+            return getters.getContainer(payload)?.Style
+        },
+
+        getContainerBackgroundColor: (state, getters) => (payload) => {
+            return getters.getContainerStyle(payload)?.['Background Color']
         },
 
         getImages: (state, getters) => (payload) => {
@@ -133,7 +153,7 @@ export default {
         getVisualisationTitle: (state, getters) => (payload) => {
             return getters.getVisualisation(payload)?.Title
         },
-        getVisualisationDataDisplay: (state, getters) => (payload) => {
+        getDataDisplay: (state, getters) => (payload) => {
             return getters.getVisualisation(payload)?.DataDisplay
         },
 
@@ -151,19 +171,35 @@ export default {
         },
 
         getVisualisationType: (state, getters) => (payload) => {
-            return getters.getVisualisationDataDisplay(payload)?.Type
+            return getters.getDataDisplay(payload)?.Type
         },
-        getVisualisationIndicators: (state, getters) => (payload) => {
-            return getters.getVisualisationDataDisplay(payload)?.DataConfiguration?.Indicators
+        getDataConfiguration: (state, getters) => (payload) => {
+            return getters.getDataDisplay(payload)?.DataConfiguration
         },
-        getVisualisationCategories: (state, getters) => (payload) => {
-            return getters.getVisualisationDataDisplay(payload)?.DataConfiguration?.Categories
+
+        getValueField: (state, getters) => (payload) => {
+            return getters.getDataConfiguration(payload)?.['Value Field']
         },
-        getVisualisationGroupingField: (state, getters) => (payload) => {
-            return getters.getVisualisationDataDisplay(payload)?.DataConfiguration?.['Grouping Field']
+        getFractionalValueField: (state, getters) => (payload) => {
+            return getters.getDataConfiguration(payload)?.['Fractional Value Field']
         },
-        getVisualisationStackingField: (state, getters) => (payload) => {
-            return getters.getVisualisationDataDisplay(payload)?.DataConfiguration?.['Stacking Field']
+        getTotalValueField: (state, getters) => (payload) => {
+            return getters.getDataConfiguration(payload)?.['Total Value Field']
+        },
+        getCurrentValueField: (state, getters) => (payload) => {
+            return getters.getDataConfiguration(payload)?.['Current Value Field']
+        },
+        getTargetValueField: (state, getters) => (payload) => {
+            return getters.getDataConfiguration(payload)?.['Target Value Field']
+        },
+        getCategoryField: (state, getters) => (payload) => {
+            return getters.getDataConfiguration(payload)?.['Category Field']
+        },
+        getGroupingCategoryField: (state, getters) => (payload) => {
+            return getters.getDataConfiguration(payload)?.['Grouping Category Field']
+        },
+        getStackingCategoryField: (state, getters) => (payload) => {
+            return getters.getDataConfiguration(payload)?.['Stacking Category Field']
         }
     },
     mutations: {
@@ -177,7 +213,8 @@ export default {
             }
         },
 
-        setDashboardModel (state, dashboard) {
+        setDashboardModel (state, payload) {
+            const dashboard = payload?.value
             state.dashboard = dashboard
         },
         setDashboardName (state, payload) {
@@ -196,8 +233,7 @@ export default {
         },
         addOverview (state, payload) {
             const overview = payload?.value
-            const newOverviewId = state.dashboard.Overviews.push(overview)
-            return newOverviewId
+            state.dashboard.Overviews.push(overview)
         },
 
         setHeadSectionTitle (state, payload) {
@@ -211,11 +247,28 @@ export default {
             state.dashboard.Overviews[overviewId].HeadSection.Text = text
         },
 
+        setContainers (state, payload) {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containers = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers = containers
+        },
+        addContainer (state, payload) {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const container = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers.push(container)
+        },
+
         setContainerTitle (state, payload) {
             const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
             const containerId = payload?.containerId ?? state.selectionConfig.containerId
             const title = payload?.value
             state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Title = title
+        },
+        setContainerStyle (state, payload) {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const style = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Style = style
         },
 
         setContainerXStart: (state, payload) => {
@@ -243,6 +296,13 @@ export default {
             state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Position['Y End'] = yEnd
         },
 
+        setContainerBackgroundColor: (state, payload) => {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const backgroundColor = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Style['Background Color'] = backgroundColor
+        },
+
         setVisualisationTitle (state, payload) {
             const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
             const containerId = payload?.containerId ?? state.selectionConfig.containerId
@@ -257,7 +317,33 @@ export default {
             const type = payload?.value
             state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.Type = type
         },
+        addVisualisation (state, payload) {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const visualisation = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations.push(visualisation)
+        },
+        setVisualisations (state, payload) {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const visualisations = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations = visualisations
+        },
 
+        setDataDisplay: (state, payload) => {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
+            const dataDisplay = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay = dataDisplay
+        },
+        setDataConfiguration: (state, payload) => {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
+            const dataConfiguration = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration = dataConfiguration
+        },
         setVisualisationXStart: (state, payload) => {
             const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
             const containerId = payload?.containerId ?? state.selectionConfig.containerId
@@ -287,46 +373,79 @@ export default {
             state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].Position['Y End'] = yEnd
         },
 
-        setVisualisationValueField (state, payload) {
+        setValueField (state, payload) {
             const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
             const containerId = payload?.containerId ?? state.selectionConfig.containerId
             const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
-            const fieldInfo = {}
-            fieldInfo[payload?.fieldType] = payload?.field
-            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.Configuration['Value Field'] = fieldInfo
+            const valueField = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Value Field'] = valueField
         },
-        setVisualisationCategoryField (state, payload) {
+        setFractionalValueField (state, payload) {
             const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
             const containerId = payload?.containerId ?? state.selectionConfig.containerId
             const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
-            const fieldInfo = {}
-            fieldInfo[payload?.fieldType] = payload?.field
-            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.Configuration['Category Field'] = fieldInfo
+            const fractionalValueField = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Fractional Value Field'] = fractionalValueField
         },
-        setVisualisationGroupingCategoryField (state, payload) {
+        setTotalValueField (state, payload) {
             const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
             const containerId = payload?.containerId ?? state.selectionConfig.containerId
             const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
-            const fieldInfo = {}
-            fieldInfo[payload?.fieldType] = payload?.field
-            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.Configuration['Grouping Category Field'] = fieldInfo
+            const totalValueField = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Total Value Field'] = totalValueField
         },
-        setVisualisationStackingCategoryField (state, payload) {
+        setCurrentValueField (state, payload) {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
+            const currentValueField = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Current Value Field'] = currentValueField
+        },
+        setTargetValueField (state, payload) {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
+            const targetValueField = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Target Value Field'] = targetValueField
+        },
+        setCategoryField (state, payload) {
             const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
             const containerId = payload?.containerId ?? state.selectionConfig.containerId
             const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
             const fieldInfo = {}
             fieldInfo[payload?.fieldType] = payload?.field
-            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.Configuration['Stacking Category Field'] = fieldInfo
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Category Field'] = fieldInfo
+        },
+        setGroupingCategoryField (state, payload) {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
+            const fieldInfo = {}
+            fieldInfo[payload?.fieldType] = payload?.field
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Grouping Category Field'] = fieldInfo
+        },
+        setStackingCategoryField (state, payload) {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
+            const fieldInfo = {}
+            fieldInfo[payload?.fieldType] = payload?.field
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Stacking Category Field'] = fieldInfo
         }
     },
     actions: {
+        async updateSelectionConfig ({ commit }, payload) {
+            await commit('setSelectionConfig', payload)
+        },
+
         async createDashboardModel ({ commit, dispatch }, payload) {
             await commit('setDashboardModel', payload)
             const selection = { overviewId: 0 }
             await dispatch('updateSelectionConfig', selection)
         },
+
         async addOverview ({ commit, dispatch, getters }, payload) {
+            // Add an overview with the following information
             const overview = { Name: 'New Overview', HeadSection: { Title: 'New Title', Text: null }, BodySection: { Containers: [] } }
             const overviewPayload = { value: overview }
             await commit('addOverview', overviewPayload)
@@ -337,26 +456,171 @@ export default {
             const selection = { overviewId: newOverviewId }
             await dispatch('updateSelectionConfig', selection)
         },
+
         async deleteOverview ({ commit, dispatch, getters }, payload) {
+            // Get current overview id
             const overviewId = await getters.getOverviewId(payload)
-            const overviews = await getters.getOverviews()
+
+            // Delete overview if id is present
             if (overviewId !== null) {
+                // Get overviews and remove overview at overviewId
+                const overviews = await getters.getOverviews()
                 overviews.splice(overviewId, 1)
+
+                // Update the overviews with the overview removed
                 const payload = { value: overviews }
                 await commit('setOverviews', payload)
+
+                // Update the current selection to display the previous overview or otherwise the first overview
                 var selection = null
                 if (overviews.length === 0) {
-                    selection = null
+                    selection[overviewId] = null
                 } else if (overviewId === 0) {
-                    selection = { overviewId: 0 }
+                    selection[overviewId] = 0
                 } else {
-                    selection = { overviewId: overviewId - 1 }
+                    selection[overviewId] = overviewId - 1
                 }
                 await dispatch('updateSelectionConfig', selection)
             }
         },
-        async updateSelectionConfig ({ commit }, payload) {
-            await commit('setSelectionConfig', payload)
+
+        async addContainer ({ commit, dispatch, getters }, payload) {
+            // Add an container with the following information
+            const container = { Title: 'New Container', Position: { 'X Start': 40, 'X End': 60, 'Y Start': 45, 'Y End': 55 }, Visualisations: [], Images: [], TextParagraphs: [] }
+            const containerPayload = { value: container }
+            await commit('addContainer', containerPayload)
+
+            // Set current selection to added container
+            const containers = await getters.getContainers()
+            const newContainerId = containers.length - 1
+            const selection = { overviewId: await getters.getOverviewId(), containerId: newContainerId }
+            await dispatch('updateSelectionConfig', selection)
+        },
+
+        async deleteContainer ({ commit, dispatch, getters }, payload) {
+            // Get current overview id
+            const containerId = await getters.getContainerId(payload)
+
+            // Delete overview if id is present
+            if (containerId !== null) {
+                // Get overviews and remove overview at overviewId
+                const containers = await getters.getContainers()
+                containers.splice(containerId, 1)
+
+                // Update the overviews with the overview removed
+                const payload = { value: containers }
+                await commit('setContainers', payload)
+
+                // Update the current selection to display the previous overview or otherwise the first overview
+                const selection = { overviewId: await getters.getOverviewId() }
+                await dispatch('updateSelectionConfig', selection)
+            }
+        },
+
+        async addVisualisation ({ commit, dispatch, getters }, payload) {
+            // Add a container with the following information
+            const visualisation = { Title: 'New Visualisation', Position: { 'X Start': 40, 'X End': 60, 'Y Start': 45, 'Y End': 55 }, DataDisplay: { Type: null } }
+            const visualisationPayload = { value: visualisation }
+            await commit('addVisualisation', visualisationPayload)
+
+            // Set current selection to added container
+            const visualisations = await getters.getVisualisations()
+            const newVisualisationId = visualisations.length - 1
+            const selection = { overviewId: await getters.getOverviewId(), containerId: await getters.getContainerId(), visualisationId: newVisualisationId }
+            await dispatch('updateSelectionConfig', selection)
+        },
+
+        async deleteVisualisation ({ commit, dispatch, getters }, payload) {
+            // Get current overview id
+            const visualisationId = await getters.getVisualisationId(payload)
+
+            // Delete overview if id is present
+            if (visualisationId !== null) {
+                // Get overviews and remove overview at overviewId
+                const visualisations = await getters.getVisualisations()
+                visualisations.splice(visualisationId, 1)
+
+                // Update the overviews with the overview removed
+                const payload = { value: visualisations }
+                await commit('setVisualisations', payload)
+
+                // Update the current selection to display the previous overview or otherwise the first overview
+                const selection = { overviewId: await getters.getOverviewId(), containerId: await getters.getContainerId() }
+                await dispatch('updateSelectionConfig', selection)
+            }
+        },
+
+        async updateContainerBackgroundColor ({ commit, dispatch, getters }, payload) {
+            // Initialize style object if not exists
+            const style = getters.getContainerStyle(payload)
+            if (!style) {
+                var stylePayload = cloneDeep(payload)
+                stylePayload.value = {}
+                await commit('setContainerStyle', stylePayload)
+            }
+            // Set background color
+            await commit('setContainerBackgroundColor', payload)
+        },
+
+        async updateDataConfiguration ({ commit, dispatch, getters }, payload) {
+            // Initialize dataDisplay object if not exists
+            const dataDisplay = getters.getDataDisplay(payload)
+            if (!dataDisplay) {
+                var dataDisplayPayload = cloneDeep(payload)
+                dataDisplayPayload.value = {}
+                await commit('setDataDisplay', dataDisplayPayload)
+            }
+            await commit('setDataConfiguration', payload)
+        },
+        async updateValueField ({ commit, dispatch, getters }, payload) {
+            // Initialize dataConfiguration object if not exists
+            const dataConfiguration = getters.getDataConfiguration(payload)
+            if (!dataConfiguration) {
+                var dataConfigurationPayload = cloneDeep(payload)
+                dataConfigurationPayload.value = {}
+                await dispatch('updateDataConfiguration', dataConfigurationPayload)
+            }
+            await commit('setValueField', payload)
+        },
+        async updateFractionalValueField ({ commit, dispatch, getters }, payload) {
+            // Initialize dataConfiguration object if not exists
+            const dataConfiguration = getters.getDataConfiguration(payload)
+            if (!dataConfiguration) {
+                var dataConfigurationPayload = cloneDeep(payload)
+                dataConfigurationPayload.value = {}
+                await dispatch('updateDataConfiguration', dataConfigurationPayload)
+            }
+            await commit('setFractionalValueField', payload)
+        },
+        async updateTotalValueField ({ commit, dispatch, getters }, payload) {
+            // Initialize dataConfiguration object if not exists
+            const dataConfiguration = getters.getDataConfiguration(payload)
+            if (!dataConfiguration) {
+                var dataConfigurationPayload = cloneDeep(payload)
+                dataConfigurationPayload.value = {}
+                await dispatch('updateDataConfiguration', dataConfigurationPayload)
+            }
+            await commit('setTotalValueField', payload)
+        },
+        async updateCurrentValueField ({ commit, dispatch, getters }, payload) {
+            // Initialize dataConfiguration object if not exists
+            const dataConfiguration = getters.getDataConfiguration(payload)
+            if (!dataConfiguration) {
+                var dataConfigurationPayload = cloneDeep(payload)
+                dataConfigurationPayload.value = {}
+                await dispatch('updateDataConfiguration', dataConfigurationPayload)
+            }
+            await commit('setCurrentValueField', payload)
+        },
+        async updateTargetValueField ({ commit, dispatch, getters }, payload) {
+            // Initialize dataConfiguration object if not exists
+            const dataConfiguration = getters.getDataConfiguration(payload)
+            if (!dataConfiguration) {
+                var dataConfigurationPayload = cloneDeep(payload)
+                dataConfigurationPayload.value = {}
+                await dispatch('updateDataConfiguration', dataConfigurationPayload)
+            }
+            await commit('setTargetValueField', payload)
         }
     }
 }

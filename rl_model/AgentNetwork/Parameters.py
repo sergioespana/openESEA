@@ -1,2 +1,0 @@
-LEARNING_RATE = 1e-2
-GAMMA = 1.0

@@ -20,3 +20,6 @@ backend/venv_esea/**
 
 # Mac folder info
 **/.DS_Store
+
+# Temporary folder for RL model
+**/rl_model/**

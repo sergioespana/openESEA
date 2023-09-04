@@ -15,6 +15,8 @@ At this very moment, there are two branches of this tool:
 
 We are currently in the process of re-implementing the features of the earlier versions into this later version, so as to have the best of each branch.
 
+NEWS: As of July 2023, we reached an agreement with the Spanish Network of Networks of Alternative and Solidarity Economy (REAS RdR) and the Catalan Network of Solidarity Economy (XES) to merge openESEA with the tool Show your Heart (Enseña el Corazón -in Spanish-, Ensenya el Cor -in Catalan-, available in https://ensenaelcorazon.org/bs/login ). A refactoring process of Show your Heart to prepare it for the merge (e.g. an ontology-based redesign of the tool's conceptual model) will be followed by its extension with openESEA features (e.g. smart auditing, dashboard management). 
+
 
 If you want to collaborate in this project, please contact us.
 

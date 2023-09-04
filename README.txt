@@ -1,6 +1,6 @@
 openESEA is a model-driven ethical, social and environmental accounting tool. 
 
-This project is steered by University of Utrecht. We welcome collaboration with organisations and individuals. A tight collaboration with Universitat Politècnica de València has started in 2023.
+This project is steered by University of Utrecht. We welcome collaboration with organisations and individuals. A tight collaboration with Universitat Politècnica de València has started in 2023, financed by a María Zambrano grant of the Spanish Ministry of Universities, co-funded by the Next Generation EU European Recovery Plan, received by Sergio España.
 
 If you want to cite this tool, please also cite this scientific papers:
  - España, S., Bik, N., & Overbeek, S. (2019, May). Model-driven engineering support for social and environmental accounting. In 2019 13th International Conference on Research Challenges in Information Science (RCIS) (pp. 1-12). IEEE, https://doi.org/10.1109/RCIS.2019.8877042

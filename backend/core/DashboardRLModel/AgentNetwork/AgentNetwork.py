@@ -149,7 +149,7 @@ class AgentNetwork(nn.Module):
         return sampled_values, value_probabilities, critic_value
 
     # @torch.jit.script_method
-    def output_parameters_values(self, state, sampling):
+    def output_parameter_values(self, state, sampling = False):
         # Pytorch Tensor from Numpy array state
         tensor_state = torch.as_tensor(state, dtype = torch.float)
 
@@ -157,8 +157,9 @@ class AgentNetwork(nn.Module):
         parameter_values, parameter_probabilities, critic_value = self(tensor_state, sampling)
 
         # Save the parameter probabilities and critic value in the saved actions list
-        saved_action = (parameter_probabilities, critic_value)
-        self.saved_actions.append(saved_action)
+        if sampling:
+            saved_action = (parameter_probabilities, critic_value)
+            self.saved_actions.append(saved_action)
 
         # Return action parameters values
         return parameter_values
@@ -168,7 +169,7 @@ class AgentNetwork(nn.Module):
         # Initialise return value to 0 and create a list for the accumulated returns
         R = 0
         returns = []
-
+        # print(self.rewards, self.saved_actions)
         # Calculate the accumulated return value using rewards returned from the environment
         for r in self.rewards[::-1]:
             # Calculate the discounted return over the trajectory
@@ -194,7 +195,7 @@ class AgentNetwork(nn.Module):
 
             # Calculate critic (value) loss using L1 smooth loss
             value_losses.append(F.smooth_l1_loss(critic_value, torch.tensor([R])))
-
+            
         # Sum up the policy losses and value losses over all time steps
         loss = torch.stack(policy_losses).sum() + torch.stack(value_losses).sum()
 

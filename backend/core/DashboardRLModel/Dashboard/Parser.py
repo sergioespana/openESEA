@@ -5,9 +5,12 @@ from .Information import MAX_ITEM_LIMIT, MAX_DATA_ITEMS
 from typing import Dict
 
 VISUALISATION_TYPE_MAPPING: Dict[str, VisualisationType] = {
-    'Pie': VisualisationType.PIE,
-    'Bar': VisualisationType.BAR,
-    'Line': VisualisationType.LINE
+    'Single Value Display': VisualisationType.SINGLE,
+    'Fractional Value Display': VisualisationType.FRACTIONAL,
+    'Progress Bar': VisualisationType.PROGRESS,
+    'Pie Chart': VisualisationType.PIE,
+    'Bar Chart': VisualisationType.BAR,
+    'Line Chart': VisualisationType.LINE
 }
 
 def parseVisualisation(visualisation) -> Visualisation:

@@ -9,43 +9,50 @@ from .Dashboard.Parser import parseDashboard
 from .Dashboard.Actions.Information import ACTIONS_PARAMETERS, NUM_ACTIONS
 
 from datetime import datetime, timedelta
+import time
 
 class DashboardRLModel:
-    def __init__(self, dashboard):
-        visualisations = dashboard
+    def __init__(self, visualisations):
+        visualisations = visualisations
+        print('-------------------------------')
+        print('-------------------------------')
+        print('-------------------------------')
         print(visualisations)
-        visualisations = [
-            {
-                'Item Limit Enabled': True,
-                'Visualisation Type': 'Bar',
-                'Item Limit': 40,
-                'Data Items': 128
-            },
-            {
-                'Item Limit Enabled': False,
-                'Visualisation Type': 'Pie',
-                'Item Limit': 10,
-                'Data Items': 40
-            },
-            {
-                'Item Limit Enabled': False,
-                'Visualisation Type': 'Line',
-                'Item Limit': 0,
-                'Data Items': 30
-            },
-            {
-                'Item Limit Enabled': False,
-                'Visualisation Type': 'Line',
-                'Item Limit': 0,
-                'Data Items': 40
-            }
-        ]
-        visualisations = visualisations * 1 # 30
-        visualisations = [{
-                'Item Limit Enabled': False,
-                'Visualisation Type': 'Pie',
-                'Data Items': i * 4
-            } for i in range(0, 20)]
+        print('-------------------------------')
+        print('-------------------------------')
+        print('-------------------------------')
+        # visualisations = [
+        #     {
+        #         'Item Limit Enabled': True,
+        #         'Visualisation Type': 'Bar',
+        #         'Item Limit': 40,
+        #         'Data Items': 128
+        #     },
+        #     {
+        #         'Item Limit Enabled': False,
+        #         'Visualisation Type': 'Pie',
+        #         'Item Limit': 10,
+        #         'Data Items': 40
+        #     },
+        #     {
+        #         'Item Limit Enabled': False,
+        #         'Visualisation Type': 'Line',
+        #         'Item Limit': 0,
+        #         'Data Items': 30
+        #     },
+        #     {
+        #         'Item Limit Enabled': False,
+        #         'Visualisation Type': 'Line',
+        #         'Item Limit': 0,
+        #         'Data Items': 40
+        #     }
+        # ]
+        # visualisations = visualisations * 1 # 30
+        # visualisations = [{
+        #         'Item Limit Enabled': False,
+        #         'Visualisation Type': 'Pie',
+        #         'Data Items': i * 4
+        #     } for i in range(0, 20)]
 
         dashboard: Dashboard = parseDashboard(visualisations)
         dashboardArray = dashboardToArray(dashboard)
@@ -66,27 +73,27 @@ class DashboardRLModel:
         self.num_episodes = None # 100
         self.num_time_steps = 1000 # 10000
         self.render = False
+        self.updating = True # to lock predicting at first
+        self.predicting = False
 
         self.stop = False
         self.setLastRequestTime()
 
     def run(self):
-        # Run for amount of episodes
-        if self.num_episodes is not None:
-            for episode_number in range(0, self.num_episodes):
-                self.run_episode(episode_number)
+        print('running')
+        episode_number = 0
+        while True:
+            print('episode: ' + str(episode_number))
+            self.run_episode(episode_number)
+            print('episode finished')
+            episode_number += 1
 
-                if self.stop: return
-                if self.inactive(): return
-        # Otherwise run indefinetely
-        else:
-            episode_number = 0
-            while True:
-                self.run_episode(episode_number)
-                episode_number += 1
-
-                if self.stop: return
-                if self.inactive(): return
+        # Run for num_episodes, otherwise run indefinetely
+            if self.num_episodes is not None and episode_number >= self.num_episodes: return
+        # If model is stopped, return
+            if self.stop: return
+        # If model is inactive, return
+            if self.inactive(): return
 
     def kill(self):
         self.stop = True
@@ -115,7 +122,7 @@ class DashboardRLModel:
         for t in range(0, self.num_time_steps):
 
             # Select/Sample an action from the agent network following the agent's policy
-            outputs = self.agent_network.output_parameters_values(state, sampling = True)
+            outputs = self.agent_network.output_parameter_values(state, sampling = True)
 
             # Execute the action on the environment
             state, reward, done = self.dashboard_environment.step(outputs)
@@ -135,7 +142,15 @@ class DashboardRLModel:
         self.running_reward = 0.05 * episode_reward + (1 - 0.05) * self.running_reward
 
         # Update the agent network based on the accumulated rewards and losses
+        print('updating gradients')
+        while self.predicting:
+            time.sleep(0.5)
+            pass
+        print('really updating gradients')
+        self.updating = True
         self.agent_network.update_network_gradients()
+        self.updating = False
+        print('done updating gradients')
 
         # Print the episode reward and running episode reward
         if episode_number % 1 == 0:
@@ -150,7 +165,12 @@ class DashboardRLModel:
         # Initialize starting environment
         start_environment = self.dashboard_environment.initial()
         # Select an (/the current best) action through the agent network
-        outputs = self.agent_network.output_parameters_values(start_environment, sampling = False)
+        while self.updating:
+            time.sleep(0.5)
+            pass
+        self.predicting = True
+        outputs = self.agent_network.output_parameter_values(start_environment, sampling = False)
+        self.predicting = False
         # Convert parameter from tensors to simple values
         parameter_values = [output.item() for output in outputs]
         # Construct the action from the model outputs

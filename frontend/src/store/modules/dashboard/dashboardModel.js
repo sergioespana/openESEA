@@ -200,6 +200,30 @@ export default {
         },
         getStackingCategoryField: (state, getters) => (payload) => {
             return getters.getDataConfiguration(payload)?.['Stacking Category Field']
+        },
+        getValueFieldName: (state, getters) => (payload) => {
+            return getters.getValueField(payload)?.Name
+        },
+        getFractionalValueFieldName: (state, getters) => (payload) => {
+            return getters.getFractionalValueField(payload)?.Name
+        },
+        getTotalValueFieldName: (state, getters) => (payload) => {
+            return getters.getTotalValueField(payload)?.Name
+        },
+        getCurrentValueFieldName: (state, getters) => (payload) => {
+            return getters.getCurrentValueField(payload)?.Name
+        },
+        getTargetValueFieldName: (state, getters) => (payload) => {
+            return getters.getTargetValueField(payload)?.Name
+        },
+        getCategoryFieldName: (state, getters) => (payload) => {
+            return getters.getCategoryField(payload)?.Name
+        },
+        getGroupingCategoryFieldName: (state, getters) => (payload) => {
+            return getters.getGroupingCategoryField(payload)?.Name
+        },
+        getStackingCategoryFieldName: (state, getters) => (payload) => {
+            return getters.getStackingCategoryField(payload)?.Name
         }
     },
     mutations: {
@@ -412,25 +436,78 @@ export default {
             const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
             const containerId = payload?.containerId ?? state.selectionConfig.containerId
             const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
-            const fieldInfo = {}
-            fieldInfo[payload?.fieldType] = payload?.field
-            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Category Field'] = fieldInfo
+            const categoryField = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Category Field'] = categoryField
         },
         setGroupingCategoryField (state, payload) {
             const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
             const containerId = payload?.containerId ?? state.selectionConfig.containerId
             const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
-            const fieldInfo = {}
-            fieldInfo[payload?.fieldType] = payload?.field
-            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Grouping Category Field'] = fieldInfo
+            const groupingCategoryField = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Grouping Category Field'] = groupingCategoryField
         },
         setStackingCategoryField (state, payload) {
             const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
             const containerId = payload?.containerId ?? state.selectionConfig.containerId
             const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
-            const fieldInfo = {}
-            fieldInfo[payload?.fieldType] = payload?.field
-            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Stacking Category Field'] = fieldInfo
+            const stackingCategoryField = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Stacking Category Field'] = stackingCategoryField
+        },
+        setValueFieldName (state, payload) {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
+            const name = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Value Field'].Name = name
+        },
+        setFractionalValueFieldName (state, payload) {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
+            const name = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Fractional Value Field'].Name = name
+        },
+        setTotalValueFieldName (state, payload) {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
+            const name = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Total Value Field'].Name = name
+        },
+        setCurrentValueFieldName (state, payload) {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
+            const name = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Current Value Field'].Name = name
+        },
+        setTargetValueFieldName (state, payload) {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
+            const name = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Target Value Field'].Name = name
+        },
+        setCategoryFieldName (state, payload) {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
+            const name = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Category Field'].Name = name
+        },
+        setGroupingCategoryFieldName (state, payload) {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
+            const name = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Grouping Category Field'].Name = name
+        },
+        setStackingCategoryFieldName (state, payload) {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
+            const name = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Stacking Category Field'].Name = name
         }
     },
     actions: {
@@ -621,6 +698,16 @@ export default {
                 await dispatch('updateDataConfiguration', dataConfigurationPayload)
             }
             await commit('setTargetValueField', payload)
+        },
+        async updateCategoryField ({ commit, dispatch, getters }, payload) {
+            // Initialize dataConfiguration object if not exists
+            const dataConfiguration = getters.getDataConfiguration(payload)
+            if (!dataConfiguration) {
+                var dataConfigurationPayload = cloneDeep(payload)
+                dataConfigurationPayload.value = {}
+                await dispatch('updateDataConfiguration', dataConfigurationPayload)
+            }
+            await commit('setCategoryField', payload)
         }
     }
 }

@@ -34,16 +34,22 @@ export default {
                 }
             }
             const currentValueField = chartData.mapping?.['Current Value Field']?.key
-            const currentValueName = chartData.mapping?.['Current Value Field']?.name
             const targetValueField = chartData.mapping?.['Target Value Field']?.key
+            const currentValueName = chartData.mapping?.['Current Value Field']?.name
             const targetValueName = chartData.mapping?.['Target Value Field']?.name
             if (!currentValueField) return { title: titleOptions }
-            const isPercentage = !targetValueField ?? chartData.options?.isPercentage === true
+            const isPercentage = targetValueField === null || targetValueField === undefined || chartData.options?.isPercentage === true
 
             const currentValue = chartData.data[0][currentValueField]
             const targetValue = isPercentage ? 100 : chartData.data[0][targetValueField]
 
-            const currentValueNameRevised = currentValueName ?? [isPercentage ? 'Progress' : 'Current']
+            const currentValueNameRevised = !currentValueName ? [isPercentage ? 'Progress' : 'Current'] : currentValueName
+            const targetValueNameRevised = !targetValueName ? [isPercentage ? '' : 'Target'] : targetValueName
+            var formattedText = '<b>' + currentValueNameRevised + '</b> ' + currentValue + (isPercentage ? '%' : '')
+            if (!isPercentage) {
+                formattedText += '<br />' +
+                    '<b>' + targetValueNameRevised + '</b> ' + targetValue
+            }
 
             const options = {
                 title: titleOptions,
@@ -55,7 +61,6 @@ export default {
                 },
                 yAxis: {
                     type: 'category',
-                    data: currentValueNameRevised,
                     show: false
                 },
                 tooltip: {
@@ -63,7 +68,7 @@ export default {
                     axisPointer: {
                         type: 'shadow'
                     },
-                    formatter: '<b>' + currentValueNameRevised + '</b> ' + currentValue + (isPercentage ? '%' : '<br /><b>' + (targetValueName ?? 'Target') + '</b> ' + targetValue)
+                    formatter: formattedText
                 },
                 series: [
                     {
@@ -77,7 +82,8 @@ export default {
                     }
                 ],
                 grid: {
-                    height: this.$parent.$el.clientHeight / 10
+                    bottom: 'middle',
+                    height: this.$parent.$el.clientHeight / 4
                 }
             }
             return options

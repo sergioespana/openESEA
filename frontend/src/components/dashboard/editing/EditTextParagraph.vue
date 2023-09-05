@@ -28,7 +28,7 @@ export default {
         }
     },
     created () {
-        console.log(this.selectionConfig?.textParagraphId)
+        // console.log(this.selectionConfig?.textParagraphId)
     }
 }
 </script>

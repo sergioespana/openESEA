@@ -4,14 +4,19 @@ export default {
     namespaced: true,
     state: {
         dashboardSuggestions: [],
+        modelInstanceId: null,
         error: []
     },
     getters: {
-        getDashboardSuggestions: state => state.dashboardSuggestions
+        getDashboardSuggestions: state => state.dashboardSuggestions,
+        getModelInstanceId: (state, getters) => () => state.modelInstanceId
     },
     mutations: {
         setDashboardSuggestions (state, { data }) {
             state.dashboardSuggestions = data || []
+        },
+        setModelInstanceId (state, modelInstanceId) {
+            state.modelInstanceId = modelInstanceId
         },
         setError (state, { error }) {
             console.log('my error:', error?.response?.data)
@@ -19,33 +24,50 @@ export default {
         }
     },
     actions: {
-        async buildDashboardRLModel ({ commit }, payload) {
+        async buildDashboardRLModel ({ commit, dispatch, getters }, payload) {
             const { response, error } = await DashboardSuggestionsService.post(payload)
             if (error) {
                 await commit('setError', { error })
                 return
             }
-            console.log(response)
+            const modelInstanceId = response.data.modelInstanceId
+            commit('setModelInstanceId', modelInstanceId)
         },
-        async updateDashboardRLModel ({ commit }, payload) {
-            const { response, error } = await DashboardSuggestionsService.put(payload)
+        async updateDashboardRLModel ({ commit, dispatch, getters }, payload) {
+            const dashboard = payload.data.dashboard
+            const modelInstanceId = getters.getModelInstanceId()
+            var newPayload = {}
+            newPayload.data = {
+                dashboard: dashboard,
+                modelInstanceId: modelInstanceId
+            }
+            const { response, error } = await DashboardSuggestionsService.post(newPayload)
             if (error) {
                 await commit('setError', { error })
                 return
             }
-            console.log(response)
+            return response
         },
-        async deleteDashboardRLModel ({ commit }, payload) {
-            console.log('stopping rl model...')
-            const { response, error } = await DashboardSuggestionsService.delete()
-            console.log(response, error)
+        async deleteDashboardRLModel ({ commit, dispatch, getters }, payload) {
+            const modelInstanceId = getters.getModelInstanceId()
+            var newPayload = {}
+            newPayload.data = {
+                modelInstanceId: modelInstanceId
+            }
+            const { response, error } = await DashboardSuggestionsService.delete(newPayload)
             if (error) {
                 await commit('setError', { error })
-                // return
+                return
             }
+            return response
         },
-        async fetchDashboardSuggestions ({ commit }, payload) {
-            const { response, error } = await DashboardSuggestionsService.get()
+        async fetchDashboardSuggestions ({ commit, dispatch, getters }, payload) {
+            const modelInstanceId = getters.getModelInstanceId()
+            var newPayload = {}
+            newPayload.data = {
+                modelInstanceId: modelInstanceId
+            }
+            const { response, error } = await DashboardSuggestionsService.put(newPayload)
             if (error) {
                 await commit('setError', { error })
                 return

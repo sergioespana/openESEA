@@ -37,8 +37,9 @@ export default {
             const valueKey = chartData.mapping['Value Field']?.key
             if (!categoryKey || !valueKey) return { title: titleOptions }
             var data = []
+            // Value and Category key to respectively value and name key for data series
             if (chartData.data) {
-                for (var row of chartData.data) {
+                for (const row of chartData.data) {
                     data.push({ value: row[valueKey], name: row[categoryKey] })
                 }
             }

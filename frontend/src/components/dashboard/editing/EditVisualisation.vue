@@ -60,47 +60,146 @@
                 <div class="edit-area-field">Value Field:</div>
                 <Dropdown class="near-width"
                     v-model="valueField"
-                    :options="[{ key: null, name: 'No Indicator' }, ...indicators]"
+                    :options="[noIndicatorOption, ...indicators]"
                     :optionLabel="'name'"
                     :optionValue="'key'"
                     placeholder="Choose an indicator field">
                 </Dropdown>
+                <div class="edit-area-field">Name:</div>
+                <InputText class="near-width"
+                    v-model="valueFieldName">
+                </InputText>
             </div>
             <div v-else-if="visualisationType === 'Fractional Value Display'">
                 <div class="edit-area-field">Fractional Value Field:</div>
                 <Dropdown class="near-width"
                     v-model="fractionalValueField"
-                    :options="[{ key: null, name: 'No Indicator' }, ...indicators]"
+                    :options="[noIndicatorOption, ...indicators]"
                     :optionLabel="'name'"
                     :optionValue="'key'"
                     placeholder="Choose an indicator field">
                 </Dropdown>
+                <div class="edit-area-field">Name:</div>
+                <InputText class="near-width"
+                    v-model="fractionalValueFieldName">
+                </InputText>
                 <div class="edit-area-field">Total Value Field:</div>
                 <Dropdown class="near-width"
                     v-model="totalValueField"
-                    :options="[{ key: null, name: 'No Indicator' }, ...indicators]"
+                    :options="[noIndicatorOption, ...indicators]"
                     :optionLabel="'name'"
                     :optionValue="'key'"
                     placeholder="Choose an indicator field">
                 </Dropdown>
+                <div class="edit-area-field">Name:</div>
+                <InputText class="near-width"
+                    v-model="totalValueFieldName">
+                </InputText>
             </div>
             <div v-else-if="visualisationType === 'Progress Bar'">
                 <div class="edit-area-field">Current Value Field:</div>
                 <Dropdown class="near-width"
                     v-model="currentValueField"
-                    :options="[{ key: null, name: 'No Indicator' }, ...indicators]"
+                    :options="[noIndicatorOption, ...indicators]"
                     :optionLabel="'name'"
                     :optionValue="'key'"
                     placeholder="Choose an indicator field">
                 </Dropdown>
+                <div class="edit-area-field">Name:</div>
+                <InputText class="near-width"
+                    v-model="currentValueFieldName">
+                </InputText>
                 <div class="edit-area-field">Target Value Field:</div>
                 <Dropdown class="near-width"
                     v-model="targetValueField"
-                    :options="[{ key: null, name: 'No Indicator' }, ...indicators]"
+                    :options="[noIndicatorOption, ...indicators]"
                     :optionLabel="'name'"
                     :optionValue="'key'"
                     placeholder="Choose an indicator field">
                 </Dropdown>
+                <div class="edit-area-field">Name:</div>
+                <InputText class="near-width"
+                    v-model="targetValueFieldName">
+                </InputText>
+            </div>
+            <div v-else-if="visualisationType === 'Pie Chart' || visualisationType === 'Bar Chart' || visualisationType === 'Line Chart'">
+                <!-- Simple field or composed field -->
+                <div class="edit-area-field">
+                    Complex field:
+                    <InputSwitch
+                        v-model="complexField"
+                        @v-on:click="{ if (complexField) { valueFieldIndicators.set([]) } }">
+                    </InputSwitch>
+                </div>
+                <div v-if="complexField">
+                    <!-- Value field composed of multiple indicators -->
+                    <div class="edit-area-field">Value Indicators:</div>
+                    <!-- Alter/Remove indicators -->
+                    <div v-for="(item, index) in (valueFieldIndicators ?? [])" :key="index">
+                        <Dropdown class="near-width"
+                            :modelValue="valueFieldIndicators[index]"
+                            @update:modelValue="(newValue) => { if (newValue !== null) { valueFieldIndicators[index] = newValue } else { valueFieldIndicators.splice(index, 1); categoryFieldValues.splice(index, 1) } }"
+                            :options="[noIndicatorOption, ...indicators]"
+                            :optionLabel="'name'"
+                            :optionValue="'key'"
+                            placeholder="Choose an indicator field">
+                        </Dropdown>
+                    </div>
+                    <!-- Add additional indicators -->
+                    <Dropdown class="near-width"
+                        :modelValue="null"
+                        @update:modelValue="(newValue) => { if (newValue !== null) { if (!valueFieldIndicators) { valueFieldIndicators = []; categoryFieldValues = [] }; valueFieldIndicators.push(newValue); categoryFieldValues.push(null) } }"
+                        :options="[noIndicatorOption, ...indicators]"
+                        :optionLabel="'name'"
+                        :optionValue="'key'"
+                        placeholder="Choose an indicator field">
+                    </Dropdown>
+                </div>
+                <div v-else>
+                    <!-- Simple value field -->
+                    <div class="edit-area-field">Value Field:</div>
+                    <Dropdown class="near-width"
+                        v-model="valueField"
+                        :options="[noIndicatorOption, ...indicators]"
+                        :optionLabel="'name'"
+                        :optionValue="'key'"
+                        placeholder="Choose an indicator field">
+                    </Dropdown>
+                </div>
+                <!-- Value field name -->
+                <div class="edit-area-field">Name:</div>
+                <InputText class="near-width"
+                    v-model="valueFieldName">
+                </InputText>
+                <!-- Simple category field or values -->
+                <div v-if="complexField">
+                    <!-- Value field composed of multiple indicators -->
+                    <div class="edit-area-field">Category Values:</div>
+                    <!-- Alter values -->
+                    <div v-for="(item, index) in (valueFieldIndicators ?? [])" :key="index">
+                        <InputText class="near-width"
+                            :modelValue="categoryFieldValues[index]"
+                            @update:modelValue="(newValue) => { if (newValue !== null) { categoryFieldValues[index] = newValue } else { categoryFieldValues.splice(index, 1) } }"
+                            placeholder="Choose a category value">
+                        </InputText>
+                    </div>
+                </div>
+                <div v-else>
+                    <!-- Simple category field -->
+                    <div class="edit-area-field">Category Field:</div>
+                    <Dropdown class="near-width"
+                        v-model="categoryField"
+                        :options="[noIndicatorOption, yearField]"
+                        :optionLabel="'name'"
+                        :optionValue="'key'"
+                        placeholder="Choose an indicator field">
+                    </Dropdown>
+                </div>
+                <!-- Category field name -->
+                <div class="edit-area-field">Name:</div>
+                <InputText class="near-width"
+                    v-model="categoryFieldName">
+                </InputText>
             </div>
 
             <!-- Delete Visualisation -->
@@ -119,19 +218,24 @@
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 
+import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
-import Dropdown from 'primevue/dropdown'
+import InputSwitch from 'primevue/inputswitch'
 
 export default {
     components: {
+        Dropdown,
         InputText,
         InputNumber,
-        Dropdown
+        InputSwitch
     },
     data () {
         return {
             showPosition: false,
+            complexField: false,
+            noIndicatorOption: { key: null, name: 'No Indicator' },
+            yearField: { key: 'Year', name: 'Year' },
             visualisationTypes: [
                 'Single Value Display',
                 'Fractional Value Display',
@@ -151,6 +255,11 @@ export default {
             get () { return this.getVisualisationTitle()() },
             set (value) { this.setVisualisationTitle({ value: value }) }
         },
+        visualisationType: {
+            get () { return this.getVisualisationType()() },
+            set (value) { this.setVisualisationType({ value: value }) }
+        },
+
         visualisationXStart: {
             get () { return this.getVisualisationXStart()() },
             set (value) { this.setVisualisationXStart({ value: value }) }
@@ -167,13 +276,14 @@ export default {
             get () { return this.getVisualisationYEnd()() },
             set (value) { this.setVisualisationYEnd({ value: value }) }
         },
-        visualisationType: {
-            get () { return this.getVisualisationType()() },
-            set (value) { this.setVisualisationType({ value: value }) }
-        },
+
         valueField: {
             get () { return this.getValueField()()?.Indicator },
             set (value) { this.updateValueField({ value: { Indicator: value } }) }
+        },
+        valueFieldIndicators: {
+            get () { return this.getValueField()()?.Indicators },
+            set (value) { this.updateValueField({ value: { Indicators: value } }) }
         },
         fractionalValueField: {
             get () { return this.getFractionalValueField()()?.Indicator },
@@ -191,16 +301,62 @@ export default {
             get () { return this.getTargetValueField()()?.Indicator },
             set (value) { this.updateTargetValueField({ value: { Indicator: value } }) }
         },
+        categoryField: {
+            get () { return this.getCategoryField()()?.Name },
+            set (value) { this.updateCategoryField({ value: { Name: value } }) }
+        },
+        categoryFieldValues: {
+            get () { return this.getCategoryField()()?.Values },
+            set (value) { this.updateCategoryField({ value: { Values: value } }) }
+        },
+
+        valueFieldName: {
+            get () { return this.getValueFieldName()() },
+            set (value) { this.setValueFieldName({ value: value }) }
+        },
+        fractionalValueFieldName: {
+            get () { return this.getFractionalValueFieldName()() },
+            set (value) { this.setFractionalValueFieldName({ value: value }) }
+        },
+        totalValueFieldName: {
+            get () { return this.getTotalValueFieldName()() },
+            set (value) { this.setTotalValueFieldName({ value: value }) }
+        },
+        currentValueFieldName: {
+            get () { return this.getCurrentValueFieldName()() },
+            set (value) { this.setCurrentValueFieldName({ value: value }) }
+        },
+        targetValueFieldName: {
+            get () { return this.getTargetValueFieldName()() },
+            set (value) { this.setTargetValueFieldName({ value: value }) }
+        },
+        categoryFieldName: {
+            get () { return this.getCategoryFieldName()() },
+            set (value) { this.setCategoryFieldName({ value: value }) }
+        },
         indicators: {
-            get () { return this.getIndicators()() }
+            get () {
+                const indicators = this.getIndicators()()
+                const sortedIndicators = indicators.sort(function (a, b) { if (a.name > b.name) return 1; if (a.name < b.name) return -1; return 0 })
+                return sortedIndicators
+            }
         }
     },
     methods: {
         ...mapGetters('dashboardData', ['getIndicators']),
 
-        ...mapGetters('dashboardModel', ['getVisualisationTitle', 'getVisualisationType', 'getVisualisationXStart', 'getVisualisationXEnd', 'getVisualisationYStart', 'getVisualisationYEnd', 'getValueField', 'getFractionalValueField', 'getTotalValueField', 'getCurrentValueField', 'getTargetValueField']),
-        ...mapMutations('dashboardModel', ['setVisualisationTitle', 'setVisualisationType', 'setVisualisationXStart', 'setVisualisationXEnd', 'setVisualisationYStart', 'setVisualisationYEnd']),
-        ...mapActions('dashboardModel', ['addVisualisation', 'deleteVisualisation', 'updateValueField', 'updateFractionalValueField', 'updateTotalValueField', 'updateCurrentValueField', 'updateTargetValueField'])
+        ...mapGetters('dashboardModel', ['getVisualisationTitle', 'getVisualisationType', // Title & Type
+            'getVisualisationXStart', 'getVisualisationXEnd', 'getVisualisationYStart', 'getVisualisationYEnd', // Position
+            'getValueField', 'getFractionalValueField', 'getTotalValueField', 'getCurrentValueField', 'getTargetValueField', 'getCategoryField', // Fields
+            'getValueFieldName', 'getFractionalValueFieldName', 'getTotalValueFieldName', 'getCurrentValueFieldName', 'getTargetValueFieldName', 'getCategoryFieldName' // Field Names
+        ]),
+        ...mapMutations('dashboardModel', ['setVisualisationTitle', 'setVisualisationType', // Title & Type
+            'setVisualisationXStart', 'setVisualisationXEnd', 'setVisualisationYStart', 'setVisualisationYEnd', // Position
+            'setValueFieldName', 'setFractionalValueFieldName', 'setTotalValueFieldName', 'setCurrentValueFieldName', 'setTargetValueFieldName', 'setCategoryFieldName' // Field Names
+        ]),
+        ...mapActions('dashboardModel', ['addVisualisation', 'deleteVisualisation', // Add / Delete
+            'updateValueField', 'updateFractionalValueField', 'updateTotalValueField', 'updateCurrentValueField', 'updateTargetValueField', 'updateCategoryField' // Fields
+        ])
     }
 }
 </script>

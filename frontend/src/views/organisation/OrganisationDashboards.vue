@@ -53,7 +53,6 @@
 
                 await this.createDashboard({ data: data }) // this sets current dashboard to the newly created one
                 const dashboard = await this.getDashboard()
-                console.log('Created the following Dashboard:', dashboard)
                 await this.navigateToDashboard(dashboard)
             },
             async goToDashboard (dashboard) {

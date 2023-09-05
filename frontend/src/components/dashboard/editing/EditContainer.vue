@@ -123,7 +123,7 @@ export default {
             set (value) { this.setContainerYEnd({ value: value }) }
         },
         containerBackgroundColor: {
-            get () { const color = this.getContainerBackgroundColor()(); console.log(color); return color },
+            get () { const color = this.getContainerBackgroundColor()(); return color },
             set (value) { this.updateContainerBackgroundColor({ value: '#' + value }) }
         },
         hasBackgroundColor: {

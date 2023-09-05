@@ -11,6 +11,9 @@ class VisualisationType(IntEnum):
     PIE  = 0
     BAR  = 1
     LINE = 2
+    SINGLE = 3
+    FRACTIONAL = 4
+    PROGRESS = 5
 
 @dataclass
 class Visualisation:

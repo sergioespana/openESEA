@@ -58,7 +58,6 @@
             ...mapActions('method', ['fetchMethods']),
             ...mapActions('dashboard', ['createDashboard']),
             async createNewEseaMethod () {
-                console.log('Validating new Dashboard...')
                 this.v$.dashboardform.$touch()
                 if (this.v$.$invalid) { return }
                 const data = {
@@ -66,9 +65,7 @@
                     Methods: this.dashboardform.methods.map((method) => method.id),
                     Overviews: [{ Name: 'New Overview' }]
                 }
-                console.log('Dashboard', this.dashboard)
                 await this.createDashboard({ data: data })
-                console.log('Dashboard', this.dashboard)
                 this.$emit('dashboardCreated')
                 if (this.dashboard.id) {
                     this.$router.push({ name: 'organisationdashboard', params: { DashboardId: this.dashboard.id } })

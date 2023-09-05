@@ -11,7 +11,7 @@ export default {
     },
     getters: {
         getIndicators: (state, getters) => () => {
-            return state.indicators
+            return state.indicators ?? []
         },
         getIndicatorData: (state, getters) => () => {
             return state.indicatorData
@@ -73,12 +73,10 @@ export default {
             commit('setIndicatorDataSets', indicatorDataSets)
         },
         saveVisualisationDataset ({ commit, dispatch, getters }, payload) {
-            const visualisationDatasets = getters.getVisualisationDatasets()
-            console.log(payload)
+            var visualisationDatasets = getters.getVisualisationDatasets()
             const config = payload.config
             const dataset = payload.dataset
             var newDataset = true
-            console.log(visualisationDatasets)
             for (var visualisationDataset of visualisationDatasets) {
                 if (isEqual(visualisationDataset.config, config)) {
                     newDataset = false

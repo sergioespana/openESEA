@@ -28,7 +28,7 @@ export default {
         }
     },
     created () {
-        console.log(this.selectionConfig?.imageId)
+        // console.log(this.selectionConfig?.imageId)
     }
 }
 </script>

@@ -78,7 +78,7 @@ export default {
         }
     },
     computed: {
-        ...mapState('dashboardModel', ['dashboard'])
+        ...mapState('dashboardModel', ['dashboard', 'selectionConfig'])
     },
     watch: {
         dashboard: {
@@ -98,10 +98,12 @@ export default {
         await this.loadDashboardFromDatabase()
         await this.setInitialDashboard()
 
+        // Initialize RL model
         await this.initializeRLModel()
     },
     async beforeRouteLeave (to, from, next) {
         console.log('Leaving route')
+        if (!this.dashboardLoaded) next(true)
         if (!this.dashboardSaved()) {
             this.showDialog = true
             next(false)
@@ -114,11 +116,11 @@ export default {
         ...mapGetters('dashboard', ['getDashboard', 'getDashboards']),
         ...mapActions('dashboard', ['setDashboard', 'updateDashboard', 'fetchDashboard']),
 
-        ...mapGetters('dashboardData', ['getIndicatorDataSets', 'getIndicatorFields', 'getIndicators']),
+        ...mapGetters('dashboardData', ['getIndicatorDataSets', 'getIndicatorFields', 'getIndicators', 'getVisualisationDatasets']),
         ...mapMutations('dashboardData', ['setIndicators', 'setIndicatorData', 'setIndicatorFields']),
         ...mapActions('dashboardData', ['createIndicatorDataSets']),
 
-        ...mapGetters('dashboardModel', ['getDashboardModel', 'getMethods']),
+        ...mapGetters('dashboardModel', ['getDashboardModel', 'getMethods', 'getOverview', 'getContainers', 'getVisualisations', 'getVisualisationTitle', 'getVisualisationType']),
         ...mapActions('dashboardModel', ['createDashboardModel']),
 
         ...mapActions('dashboardSuggestions', ['buildDashboardRLModel', 'updateDashboardRLModel', 'deleteDashboardRLModel', 'fetchDashboardSuggestions']),
@@ -132,6 +134,7 @@ export default {
 
         async unload (event) {
             console.log('Unloading page')
+            if (!this.dashboardLoaded) return
             // Prevent page unloading if dashboard is not saved
             if (!this.dashboardSaved()) {
                 event.preventDefault()
@@ -139,26 +142,79 @@ export default {
             }
         },
         async initializeRLModel () {
+            // Wait 2 seconds before visualisations are loaded
+            const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+            await sleep(2000)
             // Build new RL Model and set interval for fetching suggestions
-            const dashboard = this.collectDashboardInfo()
-            await this.buildDashboardRLModel({ data: dashboard })
+            const dashboard = await this.collectDashboardInfo()
+            await this.buildDashboardRLModel({ data: { dashboard: dashboard } })
             this.fetchSuggestionsTimer = setInterval(this.fetchDashboardSuggestions, 10000)
         },
         async collectDashboardInfo () {
-            const dashboard = cloneDeep(this.dashboard)
-            // var visualisations = []
-            return dashboard
+            // Initialize list with info for all visualisations
+            var visualisationInfoList = []
+
+            // Select current overview
+            const overviewId = this.selectionConfig.overviewId
+            var selectionConfig = { overviewId: overviewId }
+
+            // Get all containers with possible visualisations, if no containers, return
+            const containers = await this.getContainers()(selectionConfig)
+            if (!containers) return visualisationInfoList
+
+            // Get visualisation datasets
+            var visualisationDatasets = await this.getVisualisationDatasets()()
+            // Collect visualisations for each container
+            for (let containerId = 0; containerId < containers.length; containerId++) {
+                // Update selection to current conainer
+                selectionConfig.containerId = containerId
+                // Get all visualisation for this container
+                const visualisations = await this.getVisualisations()(selectionConfig)
+                // Get info for each visualisation
+                for (let visualisationId = 0; visualisationId < visualisations.length; visualisationId++) {
+                    // Update selection to current visualisation
+                    selectionConfig.visualisationId = visualisationId
+
+                    // Get dataset for this visualisation
+                    var visualisationData = null
+
+                    for (const visualisationDataset of visualisationDatasets) {
+                        const config = visualisationDataset.config
+                        const dataset = visualisationDataset.dataset
+                        if (isEqual(config, selectionConfig)) {
+                            visualisationData = dataset
+                            break
+                        }
+                    }
+
+                    // Get visualisation type
+                    const visualisationType = await this.getVisualisationType()(selectionConfig)
+                    const visualisationTitle = await this.getVisualisationTitle()(selectionConfig)
+
+                    // Gather all visualisation information into one object
+                    var visualisationInfo = {}
+                    visualisationInfo['Selection Configuration'] = selectionConfig // For applying this to the correct visualisation
+                    visualisationInfo['Visualisation Type'] = visualisationType
+                    visualisationInfo['Visualisation Title'] = visualisationTitle
+                    visualisationInfo['Data Items'] = visualisationData?.length ?? 0
+                    visualisationInfo['Item Limit Enabled'] = false
+                    visualisationInfo['Item Limit'] = 0
+                    visualisationInfoList.push(visualisationInfo)
+                }
+            }
+            return visualisationInfoList
         },
         async updateRLModel () {
             // Update RL Model and set interval for fetching suggestions
-            const dashboard = this.collectDashboardInfo()
-            await this.updateDashboardRLModel({ data: dashboard })
+            const dashboard = await this.collectDashboardInfo()
+            await this.updateDashboardRLModel({ data: { dashboard: dashboard } })
+            // Reset timer for fetching suggestions
+            clearInterval(this.fetchSuggestionsTimer)
             this.fetchSuggestionsTimer = setInterval(this.fetchDashboardSuggestions, 10000)
         },
         async stopRLModel () {
-            console.log('stop rl model')
             // Delete RL model and clear timer
-            await this.deleteDashboardRLModel()
+            await this.deleteDashboardRLModel({ data: {} })
             clearInterval(this.fetchSuggestionsTimer)
         },
         async saveChanges () {
@@ -218,9 +274,9 @@ export default {
 
             // Create data sets for each indicator
             await this.createIndicatorDataSets()
-            console.log(this.getIndicatorDataSets()())
-            console.log(this.getIndicators()())
-            console.log(this.getIndicatorFields()())
+            // console.log(this.getIndicatorDataSets()())
+            // console.log(this.getIndicators()())
+            // console.log(this.getIndicatorFields()())
 
             // Get the metadata fields for the indicators
             var indicatorMetaDataFields = []
@@ -232,21 +288,18 @@ export default {
             var indicators = []
             for (var methodId of methodIds) {
                 const directIndicators = await DirectIndicatorService.get({ mId: methodId })
-                // console.log('Direct', directIndicators)
                 if (!directIndicators?.error || directIndicators?.error?.response?.status === 404) {
                     for (var directIndicator of directIndicators?.response?.data) {
                         indicators.push(directIndicator)
                     }
                 }
                 const indirectIndicators = await IndirectIndicatorService.get({ mId: methodId })
-                // console.log('Indirect', indirectIndicators)
                 if (!indirectIndicators?.error || indirectIndicators?.error?.response?.status === 404) {
                     for (var indirectIndicator of (indirectIndicators?.response?.data || [])) {
                         indicators.push(indirectIndicator)
                     }
                 }
             }
-            // console.log(indicators)
             indicators = indicators?.map(el => ({ name: el.name, key: el.key }))
             return indicators
         },

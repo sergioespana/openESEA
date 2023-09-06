@@ -36,13 +36,9 @@ export default {
             const categoryKey = chartData.mapping['Category Field']?.key
             const valueKey = chartData.mapping['Value Field']?.key
             if (!categoryKey || !valueKey) return { title: titleOptions }
-            var data = []
-            // Value and Category key to respectively value and name key for data series
-            if (chartData.data) {
-                for (const row of chartData.data) {
-                    data.push({ value: row[valueKey], name: row[categoryKey] })
-                }
-            }
+            const data = chartData.data.map(row => { return { value: row[valueKey], name: row[categoryKey] } })
+
+            const showLabels = false
 
             const options = {
                 title: titleOptions,
@@ -57,11 +53,14 @@ export default {
                     {
                         type: 'pie',
                         data: data,
-                        radius: '30%',
+                        radius: '60%',
                         label: {
-                            show: true,
+                            show: showLabels,
                             overflow: 'none',
                             distance: 5
+                        },
+                        labelLine: {
+                            show: showLabels
                         }
                     }
                 ]

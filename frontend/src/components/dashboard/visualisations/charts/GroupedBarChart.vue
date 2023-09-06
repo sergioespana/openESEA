@@ -34,11 +34,33 @@ export default {
                     width: this.$parent.$el.clientWidth
                 }
             }
-            const categoryKey = chartData.mapping['Category Field']?.key
-            const valueKey = chartData.mapping['Value Field']?.key
-            if (!categoryKey || !valueKey) return { title: titleOptions }
-            const categories = chartData.data.map(el => el[categoryKey])
-            const values = chartData.data.map(el => el[valueKey])
+            const mapping = chartData?.mapping
+            const data = chartData?.data
+            const categoryKey = mapping?.['Category Field']?.key
+            const groupingKey = mapping?.['Grouping Field']?.key
+            const valueKey = mapping?.['Value Field']?.key
+            if (!categoryKey || !groupingKey || !valueKey) return { title: titleOptions }
+            const categoryList = data.map(row => row[categoryKey])
+            const groupList = data.map(row => row[groupingKey])
+
+            // Get distinct categories and groups to make lists of values
+            const categories = [...new Set(categoryList)]
+            const groups = [...new Set(groupList)]
+            const dataLists = groups.map(
+                group => {
+                    return {
+                        group: group,
+                        values: categories.map(
+                            category => {
+                                return data.find(row => row[groupingKey] === group && row[categoryKey] === category)?.[valueKey]
+                            }
+                        )
+                    }
+                }
+            )
+
+            // Encapsulate in series object
+            const series = dataLists.map(data => { return { type: 'bar', group: 'Group', data: data.values, name: data.group } })
 
             const options = {
                 title: titleOptions,
@@ -60,14 +82,13 @@ export default {
                     containLabel: true
                 },
                 tooltip: {
-                    trigger: 'item'
+                    trigger: 'axis'
                 },
-                series: [
-                    {
-                        type: 'bar',
-                        data: values
-                    }
-                ]
+                legend: {
+                    orient: 'horizontal',
+                    bottom: 'left'
+                },
+                series: series
             }
             return options
         }

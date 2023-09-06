@@ -96,7 +96,7 @@
                     v-model="totalValueFieldName">
                 </InputText>
             </div>
-            <div v-else-if="visualisationType === 'Progress Bar'">
+            <div v-else-if="visualisationType === 'Progress Bar' || visualisationType === 'Radial Progress Bar'">
                 <div class="edit-area-field">Current Value Field:</div>
                 <Dropdown class="near-width"
                     v-model="currentValueField"
@@ -122,16 +122,16 @@
                     v-model="targetValueFieldName">
                 </InputText>
             </div>
-            <div v-else-if="visualisationType === 'Pie Chart' || visualisationType === 'Bar Chart' || visualisationType === 'Line Chart'">
+            <div v-else-if="visualisationType === 'Pie Chart' || visualisationType === 'Bar Chart' || visualisationType === 'Grouped Bar Chart' || visualisationType === 'Stacked Bar Chart' || visualisationType === 'Line Chart' || visualisationType === 'Table'">
                 <!-- Simple field or composed field -->
                 <div class="edit-area-field">
-                    Complex field:
+                    Composed field:
                     <InputSwitch
-                        v-model="complexField"
-                        @v-on:click="{ if (complexField) { valueFieldIndicators.set([]) } }">
+                        v-model="composedField"
+                        @v-on:click="{ if (composedField) { valueFieldIndicators.set([]) } }">
                     </InputSwitch>
                 </div>
-                <div v-if="complexField">
+                <div v-if="composedField">
                     <!-- Value field composed of multiple indicators -->
                     <div class="edit-area-field">Value Indicators:</div>
                     <!-- Alter/Remove indicators -->
@@ -172,7 +172,7 @@
                     v-model="valueFieldName">
                 </InputText>
                 <!-- Simple category field or values -->
-                <div v-if="complexField">
+                <div v-if="composedField">
                     <!-- Value field composed of multiple indicators -->
                     <div class="edit-area-field">Category Values:</div>
                     <!-- Alter values -->
@@ -199,6 +199,38 @@
                 <div class="edit-area-field">Name:</div>
                 <InputText class="near-width"
                     v-model="categoryFieldName">
+                </InputText>
+            </div>
+            <div v-if="visualisationType === 'Grouped Bar Chart'">
+                <!-- Simple grouping field -->
+                <div class="edit-area-field">Grouping Field:</div>
+                <Dropdown class="near-width"
+                    v-model="groupingField"
+                    :options="[noIndicatorOption, yearField]"
+                    :optionLabel="'name'"
+                    :optionValue="'key'"
+                    placeholder="Choose an indicator field">
+                </Dropdown>
+                <!-- Grouping field name -->
+                <div class="edit-area-field">Grouping Field Name:</div>
+                <InputText class="near-width"
+                    v-model="groupingFieldName">
+                </InputText>
+            </div>
+            <div v-if="visualisationType === 'Stacked Bar Chart'">
+                <!-- Simple stacking field -->
+                <div class="edit-area-field">Stacking Field:</div>
+                <Dropdown class="near-width"
+                    v-model="stackingField"
+                    :options="[noIndicatorOption, yearField]"
+                    :optionLabel="'name'"
+                    :optionValue="'key'"
+                    placeholder="Choose an indicator field">
+                </Dropdown>
+                <!-- Stacking field name -->
+                <div class="edit-area-field">Stacking Field Name:</div>
+                <InputText class="near-width"
+                    v-model="stackingFieldName">
                 </InputText>
             </div>
 
@@ -233,16 +265,20 @@ export default {
     data () {
         return {
             showPosition: false,
-            complexField: false,
+            composedField: false,
             noIndicatorOption: { key: null, name: 'No Indicator' },
             yearField: { key: 'Year', name: 'Year' },
             visualisationTypes: [
                 'Single Value Display',
                 'Fractional Value Display',
                 'Progress Bar',
+                'Radial Progress Bar',
                 'Pie Chart',
                 'Bar Chart',
-                'Line Chart'
+                'Grouped Bar Chart',
+                'Stacked Bar Chart',
+                'Line Chart',
+                'Table'
             ]
         }
     },
@@ -309,6 +345,14 @@ export default {
             get () { return this.getCategoryField()()?.Values },
             set (value) { this.updateCategoryField({ value: { Values: value } }) }
         },
+        groupingField: {
+            get () { return this.getGroupingField()()?.Name },
+            set (value) { this.updateGroupingField({ value: { Name: value } }) }
+        },
+        stackingField: {
+            get () { return this.getStackingField()()?.Name },
+            set (value) { this.updateStackingField({ value: { Name: value } }) }
+        },
 
         valueFieldName: {
             get () { return this.getValueFieldName()() },
@@ -334,6 +378,14 @@ export default {
             get () { return this.getCategoryFieldName()() },
             set (value) { this.setCategoryFieldName({ value: value }) }
         },
+        groupingFieldName: {
+            get () { return this.getGroupingFieldName()() },
+            set (value) { this.updateGroupingFieldName({ value: value }) }
+        },
+        stackingFieldName: {
+            get () { return this.getStackingFieldName()() },
+            set (value) { this.updateStackingFieldName({ value: value }) }
+        },
         indicators: {
             get () {
                 const indicators = this.getIndicators()()
@@ -347,15 +399,15 @@ export default {
 
         ...mapGetters('dashboardModel', ['getVisualisationTitle', 'getVisualisationType', // Title & Type
             'getVisualisationXStart', 'getVisualisationXEnd', 'getVisualisationYStart', 'getVisualisationYEnd', // Position
-            'getValueField', 'getFractionalValueField', 'getTotalValueField', 'getCurrentValueField', 'getTargetValueField', 'getCategoryField', // Fields
-            'getValueFieldName', 'getFractionalValueFieldName', 'getTotalValueFieldName', 'getCurrentValueFieldName', 'getTargetValueFieldName', 'getCategoryFieldName' // Field Names
+            'getValueField', 'getFractionalValueField', 'getTotalValueField', 'getCurrentValueField', 'getTargetValueField', 'getCategoryField', 'getGroupingField', 'getStackingField', // Fields
+            'getValueFieldName', 'getFractionalValueFieldName', 'getTotalValueFieldName', 'getCurrentValueFieldName', 'getTargetValueFieldName', 'getCategoryFieldName', 'getGroupingFieldName', 'getStackingFieldName' // Field Names
         ]),
         ...mapMutations('dashboardModel', ['setVisualisationTitle', 'setVisualisationType', // Title & Type
             'setVisualisationXStart', 'setVisualisationXEnd', 'setVisualisationYStart', 'setVisualisationYEnd', // Position
-            'setValueFieldName', 'setFractionalValueFieldName', 'setTotalValueFieldName', 'setCurrentValueFieldName', 'setTargetValueFieldName', 'setCategoryFieldName' // Field Names
+            'setValueFieldName', 'setFractionalValueFieldName', 'setTotalValueFieldName', 'setCurrentValueFieldName', 'setTargetValueFieldName', 'setCategoryFieldName', 'setGroupingFieldName', 'setStackingFieldName' // Field Names
         ]),
         ...mapActions('dashboardModel', ['addVisualisation', 'deleteVisualisation', // Add / Delete
-            'updateValueField', 'updateFractionalValueField', 'updateTotalValueField', 'updateCurrentValueField', 'updateTargetValueField', 'updateCategoryField' // Fields
+            'updateValueField', 'updateFractionalValueField', 'updateTotalValueField', 'updateCurrentValueField', 'updateTargetValueField', 'updateCategoryField', 'updateGroupingField', 'updateStackingField' // Fields
         ])
     }
 }

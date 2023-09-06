@@ -13,23 +13,33 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 
+import EmptyVisualisation from './visualisations/charts/EmptyVisualisation.vue'
 import SingleValueDisplay from './visualisations/charts/SingleValueDisplay.vue'
 import FractionalValueDisplay from './visualisations/charts/FractionalValueDisplay.vue'
 import ProgressBar from './visualisations/charts/ProgressBar.vue'
+import RadialProgressBar from './visualisations/charts/RadialProgressBar.vue'
 import PieChart from './visualisations/charts/PieChart.vue'
 import BarChart from './visualisations/charts/BarChart.vue'
+import GroupedBarChart from './visualisations/charts/GroupedBarChart.vue'
+import StackedBarChart from './visualisations/charts/StackedBarChart.vue'
 import LineChart from './visualisations/charts/LineChart.vue'
+import Table from './visualisations/tables/Table.vue'
 
 import ProgressSpinner from 'primevue/progressspinner'
 
 export default {
     components: {
+        EmptyVisualisation,
         SingleValueDisplay,
         FractionalValueDisplay,
         ProgressBar,
+        RadialProgressBar,
         PieChart,
         BarChart,
+        GroupedBarChart,
+        StackedBarChart,
         LineChart,
+        Table,
 
         ProgressSpinner
     },
@@ -60,14 +70,22 @@ export default {
                         return 'FractionalValueDisplay'
                     case 'Progress Bar':
                         return 'ProgressBar'
+                    case 'Radial Progress Bar':
+                        return 'RadialProgressBar'
                     case 'Pie Chart':
                         return 'PieChart'
                     case 'Bar Chart':
                         return 'BarChart'
+                    case 'Grouped Bar Chart':
+                        return 'GroupedBarChart'
+                    case 'Stacked Bar Chart':
+                        return 'StackedBarChart'
                     case 'Line Chart':
                         return 'LineChart'
+                    case 'Table':
+                        return 'Table'
                     default:
-                        return 'p'
+                        return 'EmptyVisualisation'
                 }
             }
         },
@@ -122,19 +140,29 @@ export default {
                 case 'Fractional Value Display':
                     return await this.createFractionalValueDisplayDataSet()
                 case 'Progress Bar':
+                case 'Radial Progress Bar':
                     return await this.createProgressBarDataSet()
+                // case 'Pie Chart':
+                //     return await this.createPieChartDataSet()
+                // case 'Bar Chart':
+                //     return await this.createBarChartDataSet()
+                // case 'Line Chart':
+                //     return await this.createLineChartDataSet()
                 case 'Pie Chart':
-                    return await this.createPieChartDataSet()
                 case 'Bar Chart':
-                    return await this.createPieChartDataSet()
                 case 'Line Chart':
-                    return await this.createLineChartDataSet()
+                case 'Table':
+                    return await this.createCategoryValueDataSet()
+                case 'Grouped Bar Chart':
+                case 'Stacked Bar Chart':
+                    return await this.createGroupedCategoryValueDataSet()
                 default:
                     return {}
             }
         },
-        async applyFilters (dataSet, filters) {
-            if (filters && dataSet && dataSet[0]) {
+        async applyVisualisationFilters (dataSet) {
+            const filters = await this.getVisualisationFilters()
+            if (filters && dataSet?.[0]) {
                 for (const filter of filters) {
                     const filterField = filter.Field
                     if (!Object.keys(dataSet[0]).includes(filterField)) continue
@@ -143,6 +171,12 @@ export default {
                 }
             }
             return dataSet
+        },
+        async getVisualisationFilters () {
+            // Get filters
+            const dataConfiguration = await this.getDataConfiguration()(this.config)
+            const visualisationFilters = dataConfiguration?.Filters
+            return visualisationFilters
         },
         // Get data/info for the indicator fields/values/named field
         async getFieldInfo (field, type) {
@@ -156,7 +190,6 @@ export default {
             if (field.Values) {
                 return await this.getValuesInfo(field)
             }
-            // When no values -> get name
             if (field.Name && type !== 'Indicator' && type !== 'Indicators') {
                 return await this.getNamedFieldInfo(field)
             }
@@ -179,7 +212,7 @@ export default {
         async getIndicatorsInfo (field) {
             const fieldIndicators = field.Indicators
             const fieldName = field.Name
-            const fieldKey = fieldName ?? 'Value Field'
+            const fieldKey = fieldName !== null && fieldName !== '' ? fieldName : 'Value Field'
 
             var dataset = []
             for (const fieldIndicator of fieldIndicators) {
@@ -198,6 +231,7 @@ export default {
                     dataset.push(rowInfo)
                 }
             }
+
             // Devise mapping for field
             const info = { key: fieldKey, name: fieldName, data: dataset, type: 'Indicators' }
             return info
@@ -205,7 +239,7 @@ export default {
         async getValuesInfo (field) {
             const fieldValues = field.Values
             const fieldName = field.Name
-            const fieldKey = fieldName ?? 'Category Field'
+            const fieldKey = fieldName !== null && fieldName !== '' ? fieldName : 'Category Field'
 
             var dataset = []
             for (const fieldValue of fieldValues) {
@@ -213,13 +247,14 @@ export default {
                 rowInfo[fieldKey] = fieldValue
                 dataset.push(rowInfo)
             }
+
             // Devise mapping for field
             const info = { key: fieldKey, name: fieldName, data: dataset, type: 'Values' }
             return info
         },
         async getNamedFieldInfo (field) {
             const fieldName = field.Name
-            const fieldKey = fieldName ?? 'Named Field'
+            const fieldKey = fieldName !== null && fieldName !== '' ? fieldName : 'Named Field'
 
             var dataset = []
 
@@ -234,9 +269,6 @@ export default {
             var valueFields = []
             // Mapping for fields
             var mapping = {}
-            // Get filters
-            const dataConfiguration = await this.getDataConfiguration()(this.config)
-            const visualisationFilters = dataConfiguration.Filters
 
             // Get value field info
             const valueField = await this.getValueField()(this.config)
@@ -246,7 +278,7 @@ export default {
                 mapping['Value Field'] = { key: valueFieldInfo.key, name: valueFieldInfo.name }
 
                 // Filter data and add data to list
-                const filteredValueIndicatorData = await this.applyFilters(valueFieldInfo.data, visualisationFilters)
+                const filteredValueIndicatorData = await this.applyVisualisationFilters(valueFieldInfo.data)
                 valueFields.push({ key: valueFieldInfo.key, data: filteredValueIndicatorData })
             }
 
@@ -274,9 +306,6 @@ export default {
             var valueFields = []
             // Mapping for fields
             var mapping = {}
-            // Get filters
-            const dataConfiguration = await this.getDataConfiguration()(this.config)
-            const visualisationFilters = dataConfiguration.Filters
 
             // Get fractional value field
             const fractionalValueField = await this.getFractionalValueField()(this.config)
@@ -286,7 +315,7 @@ export default {
                 mapping['Fractional Value Field'] = { key: fractionalValueFieldInfo.key, name: fractionalValueFieldInfo.name }
 
                 // Filter data and add data to list
-                const filteredFractionalValueIndicatorData = await this.applyFilters(fractionalValueFieldInfo.data, visualisationFilters)
+                const filteredFractionalValueIndicatorData = await this.applyVisualisationFilters(fractionalValueFieldInfo.data)
                 valueFields.push({ key: fractionalValueFieldInfo.key, data: filteredFractionalValueIndicatorData })
             }
 
@@ -298,7 +327,7 @@ export default {
                 mapping['Total Value Field'] = { key: totalValueFieldInfo.key, name: totalValueFieldInfo.name }
 
                 // Filter data and add data to list
-                const filteredTotalValueIndicatorData = await this.applyFilters(totalValueFieldInfo.data, visualisationFilters)
+                const filteredTotalValueIndicatorData = await this.applyVisualisationFilters(totalValueFieldInfo.data)
                 valueFields.push({ key: totalValueFieldInfo.key, data: filteredTotalValueIndicatorData })
             }
 
@@ -326,9 +355,6 @@ export default {
             var valueFields = []
             // Mapping for fields
             var mapping = {}
-            // Get filters
-            const dataConfiguration = await this.getDataConfiguration()(this.config)
-            const visualisationFilters = dataConfiguration.Filters
 
             // Get fractional value field
             const currentValueField = await this.getCurrentValueField()(this.config)
@@ -338,7 +364,7 @@ export default {
                 mapping['Current Value Field'] = { key: currentValueFieldInfo.key, name: currentValueFieldInfo.name }
 
                 // Filter data and add data to list
-                const filteredCurrentValueIndicatorData = await this.applyFilters(currentValueFieldInfo.data, visualisationFilters)
+                const filteredCurrentValueIndicatorData = await this.applyVisualisationFilters(currentValueFieldInfo.data)
                 valueFields.push({ key: currentValueFieldInfo.key, data: filteredCurrentValueIndicatorData })
             }
 
@@ -350,7 +376,7 @@ export default {
                 mapping['Target Value Field'] = { key: targetValueFieldInfo.key, name: targetValueFieldInfo.name }
 
                 // Filter data and add data to list
-                const filteredTargetValueIndicatorData = await this.applyFilters(targetValueFieldInfo.data, visualisationFilters)
+                const filteredTargetValueIndicatorData = await this.applyVisualisationFilters(targetValueFieldInfo.data)
                 valueFields.push({ key: targetValueFieldInfo.key, data: filteredTargetValueIndicatorData })
             }
 
@@ -389,9 +415,6 @@ export default {
             var groupingFields = []
             // Mapping for fields
             var mapping = {}
-            // Get filters
-            const dataConfiguration = await this.getDataConfiguration()(this.config)
-            const visualisationFilters = dataConfiguration.Filters
 
             // Get value field
             const valueField = await this.getValueField()(this.config)
@@ -401,7 +424,7 @@ export default {
                 mapping['Value Field'] = { key: valueFieldInfo.key, name: valueFieldInfo.name }
 
                 // Filter data and add data to list
-                const filteredValueIndicatorData = await this.applyFilters(valueFieldInfo.data, visualisationFilters)
+                const filteredValueIndicatorData = await this.applyVisualisationFilters(valueFieldInfo.data)
                 valueFields.push({ key: valueFieldInfo.key, data: filteredValueIndicatorData })
             }
 
@@ -413,7 +436,7 @@ export default {
                 mapping['Category Field'] = { key: categoryFieldInfo.key, name: categoryFieldInfo.name }
 
                 // Filter data and add data to list
-                const filteredCategoryData = await this.applyFilters(valueFieldInfo.data, visualisationFilters)
+                const filteredCategoryData = await this.applyVisualisationFilters(valueFieldInfo.data)
                 groupingFields.push({ key: categoryFieldInfo.key, data: filteredCategoryData })
             }
 
@@ -446,8 +469,6 @@ export default {
             for (const valueField of valueFields) {
                 const valueKey = valueField.key
                 const valueData = valueField.data
-                console.log(valueData)
-                console.log(groupingFields)
                 for (const row of valueData) {
                     var groupingAlreadyPresent = false
                     for (const accumulatedRow of accumulatedRows) {
@@ -472,7 +493,131 @@ export default {
                         }
                         accumulatedRows.push(newGroupingRow)
                     }
-                    console.log(accumulatedRows)
+                }
+            }
+            // Optional sorting by Year
+            for (const groupingField of groupingFields) {
+                if (groupingField.key === 'Year') accumulatedRows = accumulatedRows.sort((a, b) => a.Year - b.Year)
+            }
+            dataset = accumulatedRows
+
+            // Return data info
+            const dataSet = { data: dataset, mapping: mapping }
+            return dataSet
+        },
+        async createGroupedCategoryValueDataSet () {
+            // Record for single value
+            var dataset = []
+            // Values per field
+            var valueFields = []
+            // Groupings per field
+            var groupingFields = []
+            // Mapping for fields
+            var mapping = {}
+
+            // Get value field
+            const valueField = await this.getValueField()(this.config)
+            const valueFieldInfo = await this.getFieldInfo(valueField)
+            if (valueFieldInfo !== null) {
+                // Devise mapping for value field
+                mapping['Value Field'] = { key: valueFieldInfo.key, name: valueFieldInfo.name }
+
+                // Filter data and add data to list
+                const filteredValueIndicatorData = await this.applyVisualisationFilters(valueFieldInfo.data)
+                valueFields.push({ key: valueFieldInfo.key, data: filteredValueIndicatorData })
+            }
+
+            // Get category field
+            const categoryField = await this.getCategoryField()(this.config)
+            const categoryFieldInfo = await this.getFieldInfo(categoryField)
+            if (categoryFieldInfo !== null) {
+                // Devise mapping for category field
+                mapping['Category Field'] = { key: categoryFieldInfo.key, name: categoryFieldInfo.name }
+
+                // Filter data and add data to list
+                const filteredCategoryData = await this.applyVisualisationFilters(categoryFieldInfo.data)
+                groupingFields.push({ key: categoryFieldInfo.key, data: filteredCategoryData })
+            }
+
+            // Get grouping field
+            const groupingField = await this.getGroupingField()(this.config)
+            const groupingFieldInfo = await this.getFieldInfo(groupingField)
+            if (groupingFieldInfo !== null) {
+                // Devise mapping for category field
+                mapping['Grouping Field'] = { key: groupingFieldInfo.key, name: groupingFieldInfo.name }
+
+                // Filter data and add data to list
+                const filteredGroupingData = await this.applyVisualisationFilters(groupingFieldInfo.data)
+                groupingFields.push({ key: groupingFieldInfo.key, data: filteredGroupingData })
+            }
+            // Or get stacking field
+            const stackingField = await this.getStackingField()(this.config)
+            const stackingFieldInfo = await this.getFieldInfo(stackingField)
+            if (stackingFieldInfo !== null) {
+                // Devise mapping for category field
+                mapping['Stacking Field'] = { key: stackingFieldInfo.key, name: stackingFieldInfo.name }
+
+                // Filter data and add data to list
+                const filteredStackingData = await this.applyVisualisationFilters(stackingFieldInfo.data)
+                groupingFields.push({ key: stackingFieldInfo.key, data: filteredStackingData })
+            }
+            console.log(categoryFieldInfo)
+            console.log(groupingFieldInfo)
+            console.log(stackingFieldInfo)
+
+            // Map list of category values to list of indicators
+            if (categoryFieldInfo?.type === 'Values' && valueFieldInfo?.type === 'Indicators') {
+                const valueFieldIndicators = valueField.Indicators
+                const categoryValues = categoryField.Values
+                // Check if both are present
+                if (valueFieldIndicators && categoryValues) {
+                    // Mapping to category value for each indicator key
+                    var categoryMapping = {}
+                    for (let i = 0; i < valueFieldIndicators.length; i++) {
+                        const valueFieldIndicator = valueFieldIndicators[i]
+                        const categoryValue = categoryValues[i]
+                        categoryMapping[valueFieldIndicator] = categoryValue
+                    }
+                    // Add category field with value for each indicator
+                    const valueData = valueFieldInfo.data
+                    for (var valueDataRow of valueData) {
+                        const valueFieldIndicator = valueDataRow['Indicator Key']
+                        const categoryValue = categoryMapping[valueFieldIndicator]
+                        valueDataRow[categoryFieldInfo.key] = categoryValue
+                        delete valueDataRow['Indicator Key']
+                    }
+                }
+            }
+
+            // Create dataset
+            var accumulatedRows = []
+            for (const valueField of valueFields) {
+                const valueKey = valueField.key
+                const valueData = valueField.data
+                for (const row of valueData) {
+                    var groupingAlreadyPresent = false
+                    for (const accumulatedRow of accumulatedRows) {
+                        var sameGrouping = true
+                        for (const groupingField of groupingFields) {
+                            if (accumulatedRow[groupingField.key] !== row[groupingField.key]) {
+                                sameGrouping = false
+                                break
+                            }
+                        }
+                        if (sameGrouping) {
+                            accumulatedRow[valueKey] += Number(row[valueKey])
+                            groupingAlreadyPresent = true
+                            break
+                        }
+                    }
+                    if (!groupingAlreadyPresent) {
+                        var newGroupingRow = {}
+                        newGroupingRow[valueKey] = Number(row[valueKey])
+                        for (const groupingField of groupingFields) {
+                            newGroupingRow[groupingField.key] = row[groupingField.key]
+                        }
+                        accumulatedRows.push(newGroupingRow)
+                    }
                 }
             }
             // Optional sorting by Year

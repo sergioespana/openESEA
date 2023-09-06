@@ -195,11 +195,11 @@ export default {
         getCategoryField: (state, getters) => (payload) => {
             return getters.getDataConfiguration(payload)?.['Category Field']
         },
-        getGroupingCategoryField: (state, getters) => (payload) => {
-            return getters.getDataConfiguration(payload)?.['Grouping Category Field']
+        getGroupingField: (state, getters) => (payload) => {
+            return getters.getDataConfiguration(payload)?.['Grouping Field']
         },
-        getStackingCategoryField: (state, getters) => (payload) => {
-            return getters.getDataConfiguration(payload)?.['Stacking Category Field']
+        getStackingField: (state, getters) => (payload) => {
+            return getters.getDataConfiguration(payload)?.['Stacking Field']
         },
         getValueFieldName: (state, getters) => (payload) => {
             return getters.getValueField(payload)?.Name
@@ -219,11 +219,11 @@ export default {
         getCategoryFieldName: (state, getters) => (payload) => {
             return getters.getCategoryField(payload)?.Name
         },
-        getGroupingCategoryFieldName: (state, getters) => (payload) => {
-            return getters.getGroupingCategoryField(payload)?.Name
+        getGroupingFieldName: (state, getters) => (payload) => {
+            return getters.getGroupingField(payload)?.Name
         },
-        getStackingCategoryFieldName: (state, getters) => (payload) => {
-            return getters.getStackingCategoryField(payload)?.Name
+        getStackingFieldName: (state, getters) => (payload) => {
+            return getters.getStackingField(payload)?.Name
         }
     },
     mutations: {
@@ -439,19 +439,19 @@ export default {
             const categoryField = payload?.value
             state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Category Field'] = categoryField
         },
-        setGroupingCategoryField (state, payload) {
+        setGroupingField (state, payload) {
             const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
             const containerId = payload?.containerId ?? state.selectionConfig.containerId
             const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
-            const groupingCategoryField = payload?.value
-            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Grouping Category Field'] = groupingCategoryField
+            const groupingField = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Grouping Field'] = groupingField
         },
-        setStackingCategoryField (state, payload) {
+        setStackingField (state, payload) {
             const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
             const containerId = payload?.containerId ?? state.selectionConfig.containerId
             const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
-            const stackingCategoryField = payload?.value
-            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Stacking Category Field'] = stackingCategoryField
+            const stackingField = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Stacking Field'] = stackingField
         },
         setValueFieldName (state, payload) {
             const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
@@ -495,14 +495,14 @@ export default {
             const name = payload?.value
             state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Category Field'].Name = name
         },
-        setGroupingCategoryFieldName (state, payload) {
+        setGroupingFieldName (state, payload) {
             const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
             const containerId = payload?.containerId ?? state.selectionConfig.containerId
             const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
             const name = payload?.value
             state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Grouping Category Field'].Name = name
         },
-        setStackingCategoryFieldName (state, payload) {
+        setStackingFieldName (state, payload) {
             const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
             const containerId = payload?.containerId ?? state.selectionConfig.containerId
             const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
@@ -708,6 +708,26 @@ export default {
                 await dispatch('updateDataConfiguration', dataConfigurationPayload)
             }
             await commit('setCategoryField', payload)
+        },
+        async updateGroupingField ({ commit, dispatch, getters }, payload) {
+            // Initialize dataConfiguration object if not exists
+            const dataConfiguration = getters.getDataConfiguration(payload)
+            if (!dataConfiguration) {
+                var dataConfigurationPayload = cloneDeep(payload)
+                dataConfigurationPayload.value = {}
+                await dispatch('updateDataConfiguration', dataConfigurationPayload)
+            }
+            await commit('setGroupingField', payload)
+        },
+        async updateStackingField ({ commit, dispatch, getters }, payload) {
+            // Initialize dataConfiguration object if not exists
+            const dataConfiguration = getters.getDataConfiguration(payload)
+            if (!dataConfiguration) {
+                var dataConfigurationPayload = cloneDeep(payload)
+                dataConfigurationPayload.value = {}
+                await dispatch('updateDataConfiguration', dataConfigurationPayload)
+            }
+            await commit('setStackingField', payload)
         }
     }
 }

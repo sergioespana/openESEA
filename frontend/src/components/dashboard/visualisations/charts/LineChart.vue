@@ -36,13 +36,8 @@ export default {
             const categoryKey = chartData.mapping['Category Field']?.key
             const valueKey = chartData.mapping['Value Field']?.key
             if (!categoryKey || !valueKey) return { title: titleOptions }
-            const categories = [...new Set(chartData.data.map(el => el[categoryKey]))]
-            var values = []
-            for (const category of categories) {
-                const filteredData = chartData.data.filter(el => el[categoryKey] === category)
-                const value = filteredData.map(el => parseInt(el[valueKey])).reduce((partialSum, a) => partialSum + a, 0)
-                values.push(value)
-            }
+            const categories = chartData.data.map(el => el[categoryKey])
+            const values = chartData.data.map(el => el[valueKey])
 
             const options = {
                 title: titleOptions,

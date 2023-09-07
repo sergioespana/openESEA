@@ -69,6 +69,9 @@ export default {
         getSidePanel: (state, getters) => (payload) => {
             return getters.getOverview(payload)?.SidePanel
         },
+        getOverviewFilters: (state, getters) => (payload) => {
+            return getters.getOverview(payload)?.Filters
+        },
 
         getHeadSectionTitle: (state, getters) => (payload) => {
             return getters.getHeadSection(payload)?.Title
@@ -177,6 +180,10 @@ export default {
             return getters.getDataDisplay(payload)?.DataConfiguration
         },
 
+        getVisualisationFilters: (state, getters) => (payload) => {
+            return getters.getDataConfiguration(payload)?.Filters
+        },
+
         getValueField: (state, getters) => (payload) => {
             return getters.getDataConfiguration(payload)?.['Value Field']
         },
@@ -201,6 +208,7 @@ export default {
         getStackingField: (state, getters) => (payload) => {
             return getters.getDataConfiguration(payload)?.['Stacking Field']
         },
+
         getValueFieldName: (state, getters) => (payload) => {
             return getters.getValueField(payload)?.Name
         },
@@ -508,6 +516,14 @@ export default {
             const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
             const name = payload?.value
             state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Stacking Category Field'].Name = name
+        },
+
+        setCategoryLimit (state, payload) {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
+            const categoryLimit = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Category Limit'] = categoryLimit
         }
     },
     actions: {
@@ -640,94 +656,55 @@ export default {
         },
 
         async updateDataConfiguration ({ commit, dispatch, getters }, payload) {
-            // Initialize dataDisplay object if not exists
-            const dataDisplay = getters.getDataDisplay(payload)
-            if (!dataDisplay) {
-                var dataDisplayPayload = cloneDeep(payload)
-                dataDisplayPayload.value = {}
-                await commit('setDataDisplay', dataDisplayPayload)
-            }
+            await dispatch('createDataConfiguration', payload)
             await commit('setDataConfiguration', payload)
         },
         async updateValueField ({ commit, dispatch, getters }, payload) {
-            // Initialize dataConfiguration object if not exists
-            const dataConfiguration = getters.getDataConfiguration(payload)
-            if (!dataConfiguration) {
-                var dataConfigurationPayload = cloneDeep(payload)
-                dataConfigurationPayload.value = {}
-                await dispatch('updateDataConfiguration', dataConfigurationPayload)
-            }
+            await dispatch('createDataConfiguration', payload)
             await commit('setValueField', payload)
         },
         async updateFractionalValueField ({ commit, dispatch, getters }, payload) {
-            // Initialize dataConfiguration object if not exists
-            const dataConfiguration = getters.getDataConfiguration(payload)
-            if (!dataConfiguration) {
-                var dataConfigurationPayload = cloneDeep(payload)
-                dataConfigurationPayload.value = {}
-                await dispatch('updateDataConfiguration', dataConfigurationPayload)
-            }
+            await dispatch('createDataConfiguration', payload)
             await commit('setFractionalValueField', payload)
         },
         async updateTotalValueField ({ commit, dispatch, getters }, payload) {
-            // Initialize dataConfiguration object if not exists
-            const dataConfiguration = getters.getDataConfiguration(payload)
-            if (!dataConfiguration) {
-                var dataConfigurationPayload = cloneDeep(payload)
-                dataConfigurationPayload.value = {}
-                await dispatch('updateDataConfiguration', dataConfigurationPayload)
-            }
+            await dispatch('createDataConfiguration', payload)
             await commit('setTotalValueField', payload)
         },
         async updateCurrentValueField ({ commit, dispatch, getters }, payload) {
-            // Initialize dataConfiguration object if not exists
-            const dataConfiguration = getters.getDataConfiguration(payload)
-            if (!dataConfiguration) {
-                var dataConfigurationPayload = cloneDeep(payload)
-                dataConfigurationPayload.value = {}
-                await dispatch('updateDataConfiguration', dataConfigurationPayload)
-            }
+            await dispatch('createDataConfiguration', payload)
             await commit('setCurrentValueField', payload)
         },
         async updateTargetValueField ({ commit, dispatch, getters }, payload) {
-            // Initialize dataConfiguration object if not exists
-            const dataConfiguration = getters.getDataConfiguration(payload)
-            if (!dataConfiguration) {
-                var dataConfigurationPayload = cloneDeep(payload)
-                dataConfigurationPayload.value = {}
-                await dispatch('updateDataConfiguration', dataConfigurationPayload)
-            }
+            await dispatch('createDataConfiguration', payload)
             await commit('setTargetValueField', payload)
         },
         async updateCategoryField ({ commit, dispatch, getters }, payload) {
-            // Initialize dataConfiguration object if not exists
-            const dataConfiguration = getters.getDataConfiguration(payload)
-            if (!dataConfiguration) {
-                var dataConfigurationPayload = cloneDeep(payload)
-                dataConfigurationPayload.value = {}
-                await dispatch('updateDataConfiguration', dataConfigurationPayload)
-            }
+            await dispatch('createDataConfiguration', payload)
             await commit('setCategoryField', payload)
         },
         async updateGroupingField ({ commit, dispatch, getters }, payload) {
-            // Initialize dataConfiguration object if not exists
-            const dataConfiguration = getters.getDataConfiguration(payload)
-            if (!dataConfiguration) {
-                var dataConfigurationPayload = cloneDeep(payload)
-                dataConfigurationPayload.value = {}
-                await dispatch('updateDataConfiguration', dataConfigurationPayload)
-            }
+            await dispatch('createDataConfiguration', payload)
             await commit('setGroupingField', payload)
         },
         async updateStackingField ({ commit, dispatch, getters }, payload) {
-            // Initialize dataConfiguration object if not exists
+            await dispatch('createDataConfiguration', payload)
+            await commit('setStackingField', payload)
+        },
+
+        async updateCategoryLimit ({ commit, dispatch, getters }, payload) {
+            await dispatch('createDataConfiguration', payload)
+            await commit('setCategoryLimit', payload)
+        },
+
+        // Initialize dataConfiguration object if not exists
+        async createDataConfiguration ({ commit, dispatch, getters }, payload) {
             const dataConfiguration = getters.getDataConfiguration(payload)
             if (!dataConfiguration) {
                 var dataConfigurationPayload = cloneDeep(payload)
                 dataConfigurationPayload.value = {}
                 await dispatch('updateDataConfiguration', dataConfigurationPayload)
             }
-            await commit('setStackingField', payload)
         }
     }
 }

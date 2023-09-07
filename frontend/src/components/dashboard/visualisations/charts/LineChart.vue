@@ -33,16 +33,42 @@ export default {
                     overflow: 'break'
                 }
             }
-            const categoryKey = chartData.mapping['Category Field']?.key
-            const valueKey = chartData.mapping['Value Field']?.key
+            const mapping = chartData?.mapping
+            if (!mapping) return { title: titleOptions }
+            const categoryKey = mapping?.['Category Field']?.key
+            const valueKey = mapping?.['Value Field']?.key
             if (!categoryKey || !valueKey) return { title: titleOptions }
+            const categoryName = mapping?.['Category Field']?.name
+            const valueName = mapping?.['Value Field']?.name
             const categories = chartData.data.map(el => el[categoryKey])
             const values = chartData.data.map(el => el[valueKey])
+
+            const itemLimit = 0
+
+            var sliderObject = null
+            if (itemLimit > 0) {
+                sliderObject = {
+                    type: 'slider', // Create a slider
+                    show: true, // Show It
+                    xAxisIndex: [0], // Show on correct axis
+                    startValue: 0, // Show `itemLimit` values, first starting at index 0
+                    endValue: itemLimit - 1, // Show `itemLimit` values
+                    handleSize: 0, // Disable handles at the edge of the slider
+                    zoomLock: true, // Prevent adjusting the slider size
+                    showDataShadow: false, // Hide the miniature chart
+                    brushSelect: false // Prevent arbitrary brush selection
+                }
+            }
 
             const options = {
                 title: titleOptions,
                 xAxis: {
                     type: 'category',
+                    name: categoryName,
+                    nameLocation: 'center',
+                    nameTextStyle: {
+                        align: 'left'
+                    },
                     data: categories,
                     axisLabel: {
                         interval: 0,
@@ -50,11 +76,13 @@ export default {
                     }
                 },
                 yAxis: {
-                    type: 'value'
+                    type: 'value',
+                    name: valueName
                 },
+                dataZoom: [sliderObject],
                 grid: {
                     top: '15%',
-                    bottom: '5%',
+                    bottom: sliderObject ? '5%' : '20%',
                     left: '5%',
                     right: '5%',
                     containLabel: true

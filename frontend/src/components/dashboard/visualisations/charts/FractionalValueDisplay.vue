@@ -38,14 +38,14 @@ export default {
                     fill: '#000'
                 }
             }
-            const fractionalValueField = chartData.mapping?.['Fractional Value Field']?.key
-            const totalValueField = chartData.mapping?.['Total Value Field']?.key
-            const fractionalValueFieldName = chartData.mapping?.['Fractional Value Field']?.name
-            const totalValueFieldName = chartData.mapping?.['Total Value Field']?.name
+            const mapping = chartData?.mapping
+            if (!mapping) return { graphic: [titleOptions] }
+            const fractionalValueField = mapping?.['Fractional Value Field']?.key
+            const totalValueField = mapping?.['Total Value Field']?.key
             if (!totalValueField || !fractionalValueField) return { graphic: [titleOptions] }
-
-            var name = fractionalValueFieldName
-            if (fractionalValueFieldName && totalValueFieldName) name = fractionalValueFieldName + ' / ' + totalValueFieldName
+            const fractionalValueFieldName = mapping?.['Fractional Value Field']?.name
+            const totalValueFieldName = mapping?.['Total Value Field']?.name
+            const name = (fractionalValueFieldName && totalValueFieldName) ? fractionalValueFieldName + ' / ' + totalValueFieldName : ''
 
             const fractionalValue = chartData.data[0][fractionalValueField]
             const totalValue = chartData.data[0][totalValueField]

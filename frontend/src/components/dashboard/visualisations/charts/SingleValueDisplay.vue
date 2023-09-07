@@ -36,9 +36,12 @@ export default {
                     fill: '#000'
                 }
             }
-            const field = chartData.mapping?.['Value Field']?.key
-            const name = chartData.mapping?.['Value Field']?.name
+            const mapping = chartData?.mapping
+            if (!mapping) return { graphic: [titleOptions] }
+            const field = mapping?.['Value Field']?.key
             if (!field) return { graphic: [titleOptions] }
+            const name = mapping?.['Value Field']?.name
+
             const value = chartData.data[0][field] // Single value
 
             const options = {

@@ -33,10 +33,13 @@ export default {
                     fontSize: 12
                 }
             }
-            const categoryKey = chartData.mapping['Category Field']?.key
-            const valueKey = chartData.mapping['Value Field']?.key
+            const mapping = chartData?.mapping
+            if (!mapping) return { title: titleOptions }
+            const categoryKey = mapping?.['Category Field']?.key
+            const valueKey = mapping?.['Value Field']?.key
             if (!categoryKey || !valueKey) return { title: titleOptions }
-            const data = chartData.data.map(row => { return { value: row[valueKey], name: row[categoryKey] } })
+            const unsortedData = chartData.data.map(row => { return { value: row[valueKey], name: row[categoryKey] } })
+            const data = unsortedData.sort(function (a, b) { if (a[valueKey] > b[valueKey]) { return -1 } if (a[valueKey] < b[valueKey]) { return 1 } if (a[categoryKey] > b[categoryKey]) { return -1 } if (a[categoryKey] < b[categoryKey]) { return 1 } return 0 })
 
             const showLabels = false
 

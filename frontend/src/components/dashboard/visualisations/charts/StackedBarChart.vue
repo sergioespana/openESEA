@@ -35,11 +35,16 @@ export default {
                 }
             }
             const mapping = chartData?.mapping
+            if (!mapping) return { title: titleOptions }
             const data = chartData?.data
             const categoryKey = mapping?.['Category Field']?.key
             const stackingKey = mapping?.['Stacking Field']?.key
             const valueKey = mapping?.['Value Field']?.key
             if (!categoryKey || !stackingKey || !valueKey) return { title: titleOptions }
+            const categoryName = mapping?.['Category Field']?.name
+            const stackingName = mapping?.['Stacking Field']?.name
+            const valueName = mapping?.['Value Field']?.name
+
             const categoryList = data.map(row => row[categoryKey])
             const stackList = data.map(row => row[stackingKey])
 
@@ -60,33 +65,64 @@ export default {
             )
 
             // Encapsulate in series object
-            const series = dataLists.map(data => { return { type: 'bar', stack: 'Stack', data: data.values, name: data.stack } })
+            const series = dataLists.map(data => { return { type: 'bar', stack: 'Stack', data: data.values, name: data.stack, encode: { tooltip: [0, 2] } } })
+
+            const itemLimit = 0
+            const sideways = false
+
+            var sliderObject = null
+            if (itemLimit > 0) {
+                sliderObject = {
+                    type: 'slider', // Create a slider
+                    show: true, // Show It
+                    xAxisIndex: sideways ? [] : [0], // Show on correct axis
+                    yAxisIndex: sideways ? [0] : [], // Show on correct axis
+                    startValue: 0, // Show `itemLimit` values, first starting at index 0
+                    endValue: itemLimit - 1, // Show `itemLimit` values
+                    handleSize: 0, // Disable handles at the edge of the slider
+                    zoomLock: true, // Prevent adjusting the slider size
+                    showDataShadow: false, // Hide the miniature chart
+                    brushSelect: false // Prevent arbitrary brush selection
+                }
+            }
+
+            const categoryAxis = {
+                type: 'category',
+                data: categories,
+                name: categoryName,
+                axisLabel: {
+                    interval: 0
+                }
+            }
+            const valueAxis = {
+                type: 'value',
+                name: valueName
+            }
+            const xAxis = sideways ? valueAxis : categoryAxis
+            const yAxis = sideways ? categoryAxis : valueAxis
 
             const options = {
                 title: titleOptions,
-                xAxis: {
-                    type: 'category',
-                    data: categories,
-                    axisLabel: {
-                        interval: 0
-                    }
-                },
-                yAxis: {
-                    type: 'value'
-                },
+                xAxis: xAxis,
+                yAxis: yAxis,
+                dataZoom: [sliderObject],
                 grid: {
                     top: '15%',
-                    bottom: '5%',
+                    bottom: sliderObject && !sideways ? '20%' : '5%',
                     left: '5%',
-                    right: '5%',
+                    right: sliderObject && sideways ? '20%' : '5%',
                     containLabel: true
                 },
                 tooltip: {
-                    trigger: 'axis'
+                    formatter: function (params) {
+                        return params.name + '<br/>' + params.marker + params.seriesName + '&nbsp;&nbsp;&nbsp;&nbsp;' + '<b>' + params.value + '</b>'
+                    },
+                    trigger: 'item'
                 },
                 legend: {
                     orient: 'horizontal',
-                    bottom: 'left'
+                    bottom: sliderObject && !sideways ? '10%' : '0%',
+                    name: stackingName
                 },
                 series: series
             }

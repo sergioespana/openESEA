@@ -34,29 +34,60 @@ export default {
                     width: this.$parent.$el.clientWidth
                 }
             }
-            const categoryKey = chartData.mapping['Category Field']?.key
-            const valueKey = chartData.mapping['Value Field']?.key
+            const mapping = chartData?.mapping
+            if (!mapping) return { title: titleOptions }
+            const categoryKey = mapping?.['Category Field']?.key
+            const valueKey = mapping?.['Value Field']?.key
             if (!categoryKey || !valueKey) return { title: titleOptions }
+            const categoryName = mapping?.['Category Field']?.name
+            const valueName = mapping?.['Value Field']?.name
             const categories = chartData.data.map(el => el[categoryKey])
             const values = chartData.data.map(el => el[valueKey])
 
+            const itemLimit = 0
+            const sideways = false
+
+            var sliderObject = null
+            if (itemLimit > 0) {
+                sliderObject = {
+                    type: 'slider', // Create a slider
+                    show: true, // Show It
+                    xAxisIndex: sideways ? [] : [0], // Show on correct axis
+                    yAxisIndex: sideways ? [0] : [], // Show on correct axis
+                    startValue: 0, // Show `itemLimit` values, first starting at index 0
+                    endValue: itemLimit - 1, // Show `itemLimit` values
+                    handleSize: 0, // Disable handles at the edge of the slider
+                    zoomLock: true, // Prevent adjusting the slider size
+                    showDataShadow: false, // Hide the miniature chart
+                    brushSelect: false // Prevent arbitrary brush selection
+                }
+            }
+
+            const categoryAxis = {
+                type: 'category',
+                data: categories,
+                name: categoryName,
+                axisLabel: {
+                    interval: 0
+                }
+            }
+            const valueAxis = {
+                type: 'value',
+                name: valueName
+            }
+            const xAxis = sideways ? valueAxis : categoryAxis
+            const yAxis = sideways ? categoryAxis : valueAxis
+
             const options = {
                 title: titleOptions,
-                xAxis: {
-                    type: 'category',
-                    data: categories,
-                    axisLabel: {
-                        interval: 0
-                    }
-                },
-                yAxis: {
-                    type: 'value'
-                },
+                xAxis: xAxis,
+                yAxis: yAxis,
+                dataZoom: [sliderObject],
                 grid: {
                     top: '15%',
-                    bottom: '5%',
+                    bottom: sliderObject && !sideways ? '20%' : '5%',
                     left: '5%',
-                    right: '5%',
+                    right: sliderObject && sideways ? '20%' : '5%',
                     containLabel: true
                 },
                 tooltip: {

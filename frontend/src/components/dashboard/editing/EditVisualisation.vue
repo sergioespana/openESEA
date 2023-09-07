@@ -338,20 +338,28 @@ export default {
             set (value) { this.updateTargetValueField({ value: { Indicator: value } }) }
         },
         categoryField: {
-            get () { return this.getCategoryField()()?.Name },
-            set (value) { this.updateCategoryField({ value: { Name: value } }) }
+            get () { return this.getCategoryField()()?.['Named Field'] },
+            set (value) { this.updateCategoryField({ value: { 'Named Field': value } }) }
         },
         categoryFieldValues: {
             get () { return this.getCategoryField()()?.Values },
             set (value) { this.updateCategoryField({ value: { Values: value } }) }
         },
         groupingField: {
-            get () { return this.getGroupingField()()?.Name },
-            set (value) { this.updateGroupingField({ value: { Name: value } }) }
+            get () { return this.getGroupingField()()?.['Named Field'] },
+            set (value) { this.updateGroupingField({ value: { 'Named Field': value } }) }
+        },
+        groupingFieldValues: {
+            get () { return this.getGroupingField()()?.Values },
+            set (value) { this.updateGroupingField({ value: { Values: value } }) }
         },
         stackingField: {
-            get () { return this.getStackingField()()?.Name },
-            set (value) { this.updateStackingField({ value: { Name: value } }) }
+            get () { return this.getStackingField()()?.['Named Field'] },
+            set (value) { this.updateStackingField({ value: { 'Named Field': value } }) }
+        },
+        stackingFieldValues: {
+            get () { return this.getStackingField()()?.Values },
+            set (value) { this.updateStackingField({ value: { Values: value } }) }
         },
 
         valueFieldName: {

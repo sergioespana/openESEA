@@ -33,11 +33,13 @@ export default {
                     width: this.$parent.$el.clientWidth
                 }
             }
-            const currentValueField = chartData.mapping?.['Current Value Field']?.key
-            const targetValueField = chartData.mapping?.['Target Value Field']?.key
-            const currentValueName = chartData.mapping?.['Current Value Field']?.name
-            const targetValueName = chartData.mapping?.['Target Value Field']?.name
+            const mapping = chartData?.mapping
+            if (!mapping) return { title: titleOptions }
+            const currentValueField = mapping?.['Current Value Field']?.key
+            const targetValueField = mapping?.['Target Value Field']?.key
             if (!currentValueField) return { title: titleOptions }
+            const currentValueName = mapping?.['Current Value Field']?.name
+            const targetValueName = mapping?.['Target Value Field']?.name
             const isPercentage = targetValueField === null || targetValueField === undefined || chartData.options?.isPercentage === true
 
             const currentValue = chartData.data[0][currentValueField]

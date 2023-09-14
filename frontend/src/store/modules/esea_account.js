@@ -7,6 +7,9 @@ export default {
         eseaAccount: {},
         error: []
     },
+    getters: {
+        getEseaAccounts: state => state.eseaAccounts
+    },
     mutations: {
         setEseaAccounts (state, { data }) {
             state.eseaAccounts = data

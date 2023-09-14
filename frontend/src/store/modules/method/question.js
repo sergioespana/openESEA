@@ -15,6 +15,7 @@ export default {
 		updatedList: false
     },
 	getters: {
+		getQuestions: state => state.questions,
 		getById: state => id => state.questions.find(object => object.id === id),
 		topicQuestions: (state) => {
 			const filtered = {}

@@ -30,3 +30,4 @@ from .survey_audit import SurveyAudit
 #from .network_method import NetworkMethod
 #from .certification_level import CertificationLevel
 from .report import Report
+from .dashboard import Dashboard

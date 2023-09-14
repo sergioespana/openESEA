@@ -24,6 +24,10 @@ import auditIndicators from './modules/method/audit/audit_indicators'
 import accountAudit from './modules/method/audit/account_audit'
 import surveyAudit from './modules/method/audit/survey_audit'
 import respondent from './modules/respondent'
+import dashboard from './modules/dashboard/dashboard'
+import dashboardModel from './modules/dashboard/dashboardModel'
+import dashboardData from './modules/dashboard/dashboardData'
+import dashboardSuggestions from './modules/dashboard/dashboardSuggestions.js'
 
 const vuexLocalStorage = new VuexPersistance({
   storage: window.localStorage
@@ -55,7 +59,11 @@ export default createStore({
     auditIndicators,
     accountAudit,
     surveyAudit,
-    respondent
+    respondent,
+    dashboard,
+    dashboardModel,
+    dashboardData,
+    dashboardSuggestions
   },
   plugins: [vuexLocalStorage.plugin]
 })

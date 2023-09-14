@@ -14,6 +14,7 @@ export default {
 		isSaved: {}
     },
 	getters: {
+        getSections: state => state.sections,
 		getById: state => id => state.sections.find(object => object.id === id),
         surveySections: (state) => {
 			const filtered = {}

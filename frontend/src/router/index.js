@@ -69,6 +69,16 @@ const routes = [
         requiresLogin: true
         }
     },
+    // Separate dashboards view
+    // {
+    //     path: '/dashboards',
+    //     name: 'dashboards',
+    //     component: () => import('../views/dashboards/Dashboards.vue'),
+    //     meta: {
+    //     requiresLogin: true,
+    //     title: 'openESEA Dashboards'
+    //     }
+    // },
     {
         path: '/users/:id',
         name: 'userdetails',
@@ -277,6 +287,30 @@ const routes = [
                     { label: 'Organisations', to: '/organisations' },
                     { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
                     { label: 'Reports', to: { name: 'organisationreports' } }
+                    ]
+                }
+            },
+            {
+                path: 'dashboard',
+                name: 'organisationdashboards',
+                component: () => import('../views/organisation/OrganisationDashboards'),
+                meta: {
+                    breadcrumb: [
+                    { label: 'Organisations', to: '/organisations' },
+                    { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
+                    { label: 'Dashboards', to: { name: 'organisationdashboards' } }
+                    ]
+                }
+            },
+            {
+                path: 'dashboard/:DashboardId',
+                name: 'organisationdashboard',
+                component: () => import('../views/organisation/OrganisationDashboard'),
+                meta: {
+                    breadcrumb: [
+                    { label: 'Organisations', to: '/organisations' },
+                    { label: '', to: { name: 'organisationoverview', params: { id: '' } } },
+                    { label: 'Dashboards', to: { name: 'organisationdashboards' } }
                     ]
                 }
             },

@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import * as Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
@@ -44,6 +45,8 @@ import Sidebar from 'primevue/sidebar'
 import BadgeDirective from 'primevue/badgedirective'
 import Tooltip from 'primevue/tooltip'
 
+import HighchartsVue from 'highcharts-vue'
+import VueApexCharts from 'vue3-apexcharts'
 // const eventsHub = createApp
 
 router.beforeEach((to, from, next) => {
@@ -78,6 +81,16 @@ router.beforeEach((to, from, next) => {
     }
   })
 
+// Page Titles displayed in Tab
+const DEFAULT_TITLE = 'openESEA'
+router.afterEach((to, from) => {
+    // Use next tick to handle router history correctly
+    // see: https://github.com/vuejs/vue-router/issues/914#issuecomment-384477609
+    Vue.nextTick(() => {
+        document.title = to.meta.title || DEFAULT_TITLE
+    })
+})
+
 // const eventsHub = createApp()
 // const options = {
 //   eventEmitter: eventsHub,
@@ -92,6 +105,8 @@ const app = createApp(App).use(store).use(router).use(Primevue).use(ToastService
 //   store,
 //   startAtIdle: false
 // })
+
+app.use(HighchartsVue).use(VueApexCharts)
 
 app.component('Menubar', Menubar)
 app.component('Menu', Menu)

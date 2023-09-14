@@ -16,7 +16,7 @@ psycopg2==2.8.6
 PyJWT==2.0.1
 python-dateutil==2.8.2
 python-dotenv==0.17.1
-torch==2.0.1
+torch==2.0.1+cpu
 pytz==2021.1
 PyYAML==5.4.1
 six==1.16.0

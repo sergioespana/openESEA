@@ -45,8 +45,6 @@ import Sidebar from 'primevue/sidebar'
 import BadgeDirective from 'primevue/badgedirective'
 import Tooltip from 'primevue/tooltip'
 
-import HighchartsVue from 'highcharts-vue'
-import VueApexCharts from 'vue3-apexcharts'
 // const eventsHub = createApp
 
 router.beforeEach((to, from, next) => {
@@ -105,8 +103,6 @@ const app = createApp(App).use(store).use(router).use(Primevue).use(ToastService
 //   store,
 //   startAtIdle: false
 // })
-
-app.use(HighchartsVue).use(VueApexCharts)
 
 app.component('Menubar', Menubar)
 app.component('Menu', Menu)

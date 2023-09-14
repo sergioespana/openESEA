@@ -104,14 +104,6 @@ const app = createApp(App).use(store).use(router).use(Primevue).use(ToastService
 //   startAtIdle: false
 // })
 
-// Cors Policy
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'https://openesea-frontend.herokuapp.com')
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-    next()
-})
-
 app.component('Menubar', Menubar)
 app.component('Menu', Menu)
 app.component('Card', Card)

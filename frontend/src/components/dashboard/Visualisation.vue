@@ -1,8 +1,10 @@
 <template>
     <div class="visualisation" v-on:click="isClicked" :style="styleObject">
+        <!-- Display visualisation of type `visualisationComponent` and giving the `dataSet` object when this is loaded -->
         <component v-if="dataSet" :is="visualisationComponent"
             :chartData="dataSet">
         </component>
+        <!-- While waiting, display progress spinner -->
         <div v-else class="loading-container">
             <ProgressSpinner class="progress-spinner">
             </ProgressSpinner>
@@ -117,20 +119,26 @@ export default {
     methods: {
         ...mapGetters('dashboardData', ['getIndicatorData', 'getIndicatorDataSet', 'getVisualisationDatasets']),
         ...mapActions('dashboardData', ['saveVisualisationDataset']),
-        ...mapGetters('dashboardModel', ['getOverviewFilters', 'getVisualisation', 'getDataDisplay', 'getDataConfiguration', 'getVisualisationFilters', 'getValueField', 'getFractionalValueField', 'getTotalValueField', 'getCurrentValueField', 'getTargetValueField', 'getCategoryField', 'getGroupingField', 'getStackingField', 'getVisualisationType', 'getVisualisationPosition', 'getVisualisationTitle']),
+        ...mapGetters('dashboardModel', ['getOverviewFilters', 'getVisualisation', 'getDataDisplay', 'getDataConfiguration', 'getVisualisationFilters', 'getValueField', 'getFractionalValueField', 'getTotalValueField', 'getCurrentValueField', 'getTargetValueField', 'getCategoryField', 'getGroupingField', 'getStackingField', 'getCategoryLimit', 'getSideways', 'getVisualisationType', 'getVisualisationPosition', 'getVisualisationTitle']),
         ...mapActions('dashboardModel', ['updateSelectionConfig']),
         async isClicked (event) {
             event.stopPropagation()
+            console.log('Click!')
+            console.log(this.config)
             await this.updateSelectionConfig(this.config)
         },
         isEmpty (string) { return string === null || string === undefined || string === '' },
         // Create dataset, add title and save the dataset
         async createVisualisationDataSet () {
             // Create data set
-            this.dataSet = await this.createDataSet()
+            this.dataSet = await this.createDataSet() // { mapping: ..., data: ... }
             // Add title to data set
             this.dataSet.title = this.visualisationTitle
-            // Save dataset
+            // Add category limit to dataset
+            this.dataSet.categoryLimit = await this.getCategoryLimit()(this.config)
+            // Add sideways indicator to dataset
+            this.dataSet.sideways = await this.getSideways()(this.config)
+            // Save dataset for sending to rl model
             await this.saveVisualisationDataset({ config: this.config, dataset: this.dataSet.data })
         },
         // For each visualisation type create the corresponding dataset

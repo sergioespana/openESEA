@@ -10,7 +10,9 @@
 
         <!-- If dashboard is loaded, show dashboard and editing section -->
         <div v-else>
+            <!-- Editing Section -->
             <DashboardEditingSection @saveButtonClicked="saveDashboardToDatabase" @discardButtonClicked="discardChanges"></DashboardEditingSection>
+            <!-- Actual dashboard -->
             <Dashboard></Dashboard>
 
             <!-- Dialog showing that there are unsaved changes -->
@@ -86,6 +88,12 @@ export default {
             deep: true
         }
     },
+    async mounted () {
+        this.fetchSuggestionsTimer = setInterval(this.fetchDashboardSuggestions, 10000)
+    },
+    async unmounted () {
+        clearInterval(this.fetchSuggestionsTimer)
+    },
     async beforeUnmount () {
         window.removeEventListener('beforeunload', this.unload)
     },
@@ -120,7 +128,7 @@ export default {
         ...mapMutations('dashboardData', ['setIndicators', 'setIndicatorData', 'setIndicatorFields']),
         ...mapActions('dashboardData', ['createIndicatorDataSets']),
 
-        ...mapGetters('dashboardModel', ['getDashboardModel', 'getMethods', 'getOverview', 'getContainers', 'getVisualisations', 'getVisualisationTitle', 'getVisualisationType']),
+        ...mapGetters('dashboardModel', ['getDashboardModel', 'getMethods', 'getOverview', 'getContainers', 'getVisualisations', 'getVisualisationTitle', 'getVisualisationType', 'getCategoryLimit']),
         ...mapActions('dashboardModel', ['createDashboardModel']),
 
         ...mapActions('dashboardSuggestions', ['buildDashboardRLModel', 'updateDashboardRLModel', 'deleteDashboardRLModel', 'fetchDashboardSuggestions']),
@@ -148,14 +156,13 @@ export default {
             // Build new RL Model and set interval for fetching suggestions
             const dashboard = await this.collectDashboardInfo()
             await this.buildDashboardRLModel({ data: { dashboard: dashboard } })
-            this.fetchSuggestionsTimer = setInterval(this.fetchDashboardSuggestions, 10000)
         },
         async collectDashboardInfo () {
             // Initialize list with info for all visualisations
             var visualisationInfoList = []
 
             // Select current overview
-            const overviewId = this.selectionConfig.overviewId
+            const overviewId = this.selectionConfig?.overviewId
             var selectionConfig = { overviewId: overviewId }
 
             // Get all containers with possible visualisations, if no containers, return
@@ -190,6 +197,7 @@ export default {
                     // Get visualisation type
                     const visualisationType = await this.getVisualisationType()(selectionConfig)
                     const visualisationTitle = await this.getVisualisationTitle()(selectionConfig)
+                    const categoryLimit = await this.getCategoryLimit()(selectionConfig)
 
                     // Gather all visualisation information into one object
                     var visualisationInfo = {}
@@ -197,8 +205,8 @@ export default {
                     visualisationInfo['Visualisation Type'] = visualisationType
                     visualisationInfo['Visualisation Title'] = visualisationTitle
                     visualisationInfo['Data Items'] = visualisationData?.length ?? 0
-                    visualisationInfo['Item Limit Enabled'] = false
-                    visualisationInfo['Item Limit'] = 0
+                    visualisationInfo['Item Limit Enabled'] = categoryLimit > 0
+                    visualisationInfo['Item Limit'] = categoryLimit ?? 0
                     visualisationInfoList.push(visualisationInfo)
                 }
             }

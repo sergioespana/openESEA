@@ -7,7 +7,8 @@ from typing import Dict
 VISUALISATION_TYPE_MAPPING: Dict[str, VisualisationType] = {
     'Single Value Display': VisualisationType.SINGLE,
     'Fractional Value Display': VisualisationType.FRACTIONAL,
-    'Progress Bar': VisualisationType.PROGRESS,
+    'Radial Progress Bar': VisualisationType.RADIAL_PROGRESS_BAR,
+    'Progress Bar': VisualisationType.PROGRESS_BAR,
     'Pie Chart': VisualisationType.PIE,
     'Bar Chart': VisualisationType.BAR,
     'Line Chart': VisualisationType.LINE

@@ -13,7 +13,8 @@ class VisualisationType(IntEnum):
     LINE = 2
     SINGLE = 3
     FRACTIONAL = 4
-    PROGRESS = 5
+    PROGRESS_BAR = 5
+    RADIAL_PROGRESS_BAR = 6
 
 @dataclass
 class Visualisation:

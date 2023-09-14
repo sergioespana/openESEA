@@ -11,7 +11,13 @@ export default {
     namespaced: true,
     state: {
         dashboard: null,
-        selectionConfig: null
+        selectionConfig: {
+            overviewId: null,
+            containerId: null,
+            visualisationId: null,
+            imageId: null,
+            textParagraphId: null
+        }
     },
     getters: {
         get: (state, getters) => (name) => {
@@ -126,7 +132,7 @@ export default {
             return getters.getContainer(payload)?.Images ?? []
         },
         getTextParagraphs: (state, getters) => (payload) => {
-            return getters.getContainer(payload)?.['Text Paragraphs'] ?? []
+            return getters.getContainer(payload)?.TextParagraphs ?? []
         },
         getVisualisations: (state, getters) => (payload) => {
             return getters.getContainer(payload)?.Visualisations ?? []
@@ -148,6 +154,10 @@ export default {
         getVisualisation: (state, getters) => (payload) => {
             const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
             return getters.getVisualisations(payload)?.[visualisationId]
+        },
+        getTextParagraph: (state, getters) => (payload) => {
+            const textParagraphId = payload?.textParagraphId ?? state.selectionConfig.textParagraphId
+            return getters.getTextParagraphs(payload)?.[textParagraphId]
         },
 
         getVisualisationPosition: (state, getters) => (payload) => {
@@ -182,6 +192,12 @@ export default {
 
         getVisualisationFilters: (state, getters) => (payload) => {
             return getters.getDataConfiguration(payload)?.Filters
+        },
+        getCategoryLimit: (state, getters) => (payload) => {
+            return getters.getDataConfiguration(payload)?.['Category Limit']
+        },
+        getSideways: (state, getters) => (payload) => {
+            return getters.getDataDisplay(payload)?.Sideways
         },
 
         getValueField: (state, getters) => (payload) => {
@@ -232,17 +248,41 @@ export default {
         },
         getStackingFieldName: (state, getters) => (payload) => {
             return getters.getStackingField(payload)?.Name
+        },
+
+        getTextParagraphText: (state, getters) => (payload) => {
+            return getters.getTextParagraph(payload)?.Text
+        },
+        getTextParagraphTitle: (state, getters) => (payload) => {
+            return getters.getTextParagraph(payload)?.Title
+        },
+        getTextParagraphPosition: (state, getters) => (payload) => {
+            return getters.getTextParagraph(payload)?.Position
+        },
+
+        getTextParagraphXStart: (state, getters) => (payload) => {
+            return getters.getTextParagraphPosition(payload)?.['X Start']
+        },
+        getTextParagraphXEnd: (state, getters) => (payload) => {
+            return getters.getTextParagraphPosition(payload)?.['X End']
+        },
+        getTextParagraphYStart: (state, getters) => (payload) => {
+            return getters.getTextParagraphPosition(payload)?.['Y Start']
+        },
+        getTextParagraphYEnd: (state, getters) => (payload) => {
+            return getters.getTextParagraphPosition(payload)?.['Y End']
         }
     },
     mutations: {
         setSelectionConfig (state, payload) {
-            state.selectionConfig = {
-                overviewId: payload?.overviewId ?? null,
-                containerId: payload?.containerId ?? null,
-                visualisationId: payload?.visualisationId ?? null,
-                imageId: payload?.imageId ?? null,
-                textParagraphId: payload?.textParagraphId ?? null
-            }
+            // Initialize, because the state won't do this apparently?
+            if (!state.selectionConfig) { state.selectionConfig = {} }
+            // Prevent unneccessary updates of other elements by updating each id seperately
+            state.selectionConfig.overviewId = payload?.overviewId ?? null
+            state.selectionConfig.containerId = payload?.containerId ?? null
+            state.selectionConfig.visualisationId = payload?.visualisationId ?? null
+            state.selectionConfig.imageId = payload?.imageId ?? null
+            state.selectionConfig.textParagraphId = payload?.textParagraphId ?? null
         },
 
         setDashboardModel (state, payload) {
@@ -360,6 +400,19 @@ export default {
             const containerId = payload?.containerId ?? state.selectionConfig.containerId
             const visualisations = payload?.value
             state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations = visualisations
+        },
+
+        addTextParagraph (state, payload) {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const textParagraph = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].TextParagraphs.push(textParagraph)
+        },
+        setTextParagraphs (state, payload) {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const textParagraphs = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].TextParagraphs = textParagraphs
         },
 
         setDataDisplay: (state, payload) => {
@@ -524,6 +577,56 @@ export default {
             const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
             const categoryLimit = payload?.value
             state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Category Limit'] = categoryLimit
+        },
+        setSideways (state, payload) {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
+            const sideways = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.Sideways = sideways
+        },
+
+        setTextParagraphText: (state, payload) => {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const textParagraphId = payload?.textParagraphId ?? state.selectionConfig.textParagraphId
+            const text = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].TextParagraphs[textParagraphId].Text = text
+        },
+        setTextParagraphTitle: (state, payload) => {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const textParagraphId = payload?.textParagraphId ?? state.selectionConfig.textParagraphId
+            const title = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].TextParagraphs[textParagraphId].Title = title
+        },
+        setTextParagraphXStart: (state, payload) => {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const textParagraphId = payload?.textParagraphId ?? state.selectionConfig.textParagraphId
+            const xStart = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].TextParagraphs[textParagraphId].Position['X Start'] = xStart
+        },
+        setTextParagraphXEnd: (state, payload) => {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const textParagraphId = payload?.textParagraphId ?? state.selectionConfig.textParagraphId
+            const xEnd = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].TextParagraphs[textParagraphId].Position['X End'] = xEnd
+        },
+        setTextParagraphYStart: (state, payload) => {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const textParagraphId = payload?.textParagraphId ?? state.selectionConfig.textParagraphId
+            const yStart = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].TextParagraphs[textParagraphId].Position['Y Start'] = yStart
+        },
+        setTextParagraphYEnd: (state, payload) => {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const textParagraphId = payload?.textParagraphId ?? state.selectionConfig.textParagraphId
+            const yEnd = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].TextParagraphs[textParagraphId].Position['Y End'] = yEnd
         }
     },
     actions: {
@@ -643,6 +746,39 @@ export default {
             }
         },
 
+        async addTextParagraph ({ commit, dispatch, getters }, payload) {
+            // Add a container with the following information
+            const textParagraph = { Title: 'New Text Paragraph', Text: '...', Position: { 'X Start': 40, 'X End': 60, 'Y Start': 45, 'Y End': 55 } }
+            const textParagraphPayload = { value: textParagraph }
+            await commit('addTextParagraph', textParagraphPayload)
+
+            // Set current selection to added container
+            const textParagraphs = await getters.getTextParagraphs()
+            const newTextParagraphId = textParagraphs.length - 1
+            const selection = { overviewId: await getters.getOverviewId(), containerId: await getters.getContainerId(), textParagraphId: newTextParagraphId }
+            await dispatch('updateSelectionConfig', selection)
+        },
+
+        async deleteTextParagraph ({ commit, dispatch, getters }, payload) {
+            // Get current overview id
+            const textParagraphId = await getters.getTextParagraphId(payload)
+
+            // Delete overview if id is present
+            if (textParagraphId !== null) {
+                // Get overviews and remove overview at overviewId
+                const textParagraphs = await getters.getTextParagraphs()
+                textParagraphs.splice(textParagraphId, 1)
+
+                // Update the overviews with the overview removed
+                const payload = { value: textParagraphs }
+                await commit('setTextParagraphs', payload)
+
+                // Update the current selection to display the previous overview or otherwise the first overview
+                const selection = { overviewId: await getters.getOverviewId(), containerId: await getters.getContainerId() }
+                await dispatch('updateSelectionConfig', selection)
+            }
+        },
+
         async updateContainerBackgroundColor ({ commit, dispatch, getters }, payload) {
             // Initialize style object if not exists
             const style = getters.getContainerStyle(payload)
@@ -656,7 +792,6 @@ export default {
         },
 
         async updateDataConfiguration ({ commit, dispatch, getters }, payload) {
-            await dispatch('createDataConfiguration', payload)
             await commit('setDataConfiguration', payload)
         },
         async updateValueField ({ commit, dispatch, getters }, payload) {
@@ -696,8 +831,12 @@ export default {
             await dispatch('createDataConfiguration', payload)
             await commit('setCategoryLimit', payload)
         },
+        async updateSideways ({ commit, dispatch, getters }, payload) {
+            await dispatch('createDataConfiguration', payload)
+            await commit('setSideways', payload)
+        },
 
-        // Initialize dataConfiguration object if not exists
+        // Create dataConfiguration object if not exists
         async createDataConfiguration ({ commit, dispatch, getters }, payload) {
             const dataConfiguration = getters.getDataConfiguration(payload)
             if (!dataConfiguration) {

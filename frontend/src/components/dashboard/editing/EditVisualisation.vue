@@ -16,7 +16,7 @@
         <div :style="{ height: '5px' }"></div>
 
         <!-- If no visualisation selected, display this message -->
-        <div v-if="visualisationId === null">
+        <div v-if="visualisationId === null || visualisationId === undefined">
             <div class="edit-area-field">Select a Visualisation to display its information!</div>
         </div>
         <!-- Otherwise display visualisation information -->
@@ -96,7 +96,7 @@
                     v-model="totalValueFieldName">
                 </InputText>
             </div>
-            <div v-else-if="visualisationType === 'Progress Bar' || visualisationType === 'Radial Progress Bar'">
+            <div v-else-if="progressBarVisualisations.includes(visualisationType)">
                 <div class="edit-area-field">Current Value Field:</div>
                 <Dropdown class="near-width"
                     v-model="currentValueField"
@@ -122,13 +122,13 @@
                     v-model="targetValueFieldName">
                 </InputText>
             </div>
-            <div v-else-if="visualisationType === 'Pie Chart' || visualisationType === 'Bar Chart' || visualisationType === 'Grouped Bar Chart' || visualisationType === 'Stacked Bar Chart' || visualisationType === 'Line Chart' || visualisationType === 'Table'">
+            <div v-else-if="categoricalVisualisations.includes(visualisationType)">
                 <!-- Simple field or composed field -->
                 <div class="edit-area-field">
                     Composed field:
                     <InputSwitch
-                        v-model="composedField"
-                        @v-on:click="{ if (composedField) { valueFieldIndicators.set([]) } }">
+                        :modelValue="composedField"
+                        @update:modelValue="(isComposedField) => { if (isComposedField) { valueFieldIndicators = []; categoryFieldValues = [] } else { valueFieldIndicators = null; categoryFieldValues = null } }">
                     </InputSwitch>
                 </div>
                 <div v-if="composedField">
@@ -148,7 +148,7 @@
                     <!-- Add additional indicators -->
                     <Dropdown class="near-width"
                         :modelValue="null"
-                        @update:modelValue="(newValue) => { if (newValue !== null) { if (!valueFieldIndicators) { valueFieldIndicators = []; categoryFieldValues = [] }; valueFieldIndicators.push(newValue); categoryFieldValues.push(null) } }"
+                        @update:modelValue="(newValue) => { if (false) { console.log(valueFieldIndicators, newValue, (valueFieldIndicators ?? []).push(newValue)) } else if (newValue !== null) { if (!valueFieldIndicators) { valueFieldIndicators = []; categoryFieldValues = [] }; valueFieldIndicators.push(newValue); categoryFieldValues.push(null) } }"
                         :options="[noIndicatorOption, ...indicators]"
                         :optionLabel="'name'"
                         :optionValue="'key'"
@@ -179,7 +179,7 @@
                     <div v-for="(item, index) in (valueFieldIndicators ?? [])" :key="index">
                         <InputText class="near-width"
                             :modelValue="categoryFieldValues[index]"
-                            @update:modelValue="(newValue) => { if (newValue !== null) { categoryFieldValues[index] = newValue } else { categoryFieldValues.splice(index, 1) } }"
+                            @update:modelValue="(newValue) => { categoryFieldValues[index] = newValue }"
                             placeholder="Choose a category value">
                         </InputText>
                     </div>
@@ -234,6 +234,21 @@
                 </InputText>
             </div>
 
+            <div v-if="categoricalVisualisations.includes(visualisationType)">
+                <!-- Item Limit -->
+                <div class="edit-area-field">Category Limit:</div>
+                <InputNumber
+                    v-model="categoryLimit">
+                </InputNumber>
+            </div>
+            <div v-if="barChartVisualisations.includes(visualisationType)">
+                <!-- Sideways Bars -->
+                <div class="edit-area-field">Sideways:</div>
+                <InputSwitch
+                    v-model="sideways">
+                </InputSwitch>
+            </div>
+
             <!-- Delete Visualisation -->
             <div :style="{ height: '5px' }"></div>
 
@@ -265,7 +280,6 @@ export default {
     data () {
         return {
             showPosition: false,
-            composedField: false,
             noIndicatorOption: { key: null, name: 'No Indicator' },
             yearField: { key: 'Year', name: 'Year' },
             visualisationTypes: [
@@ -279,13 +293,30 @@ export default {
                 'Stacked Bar Chart',
                 'Line Chart',
                 'Table'
+            ],
+            progressBarVisualisations: [
+                'Progress Bar',
+                'Radial Progress Bar'
+            ],
+            barChartVisualisations: [
+                'Bar Chart',
+                'Grouped Bar Chart',
+                'Stacked Bar Chart'
+            ],
+            categoricalVisualisations: [
+                'Pie Chart',
+                'Bar Chart',
+                'Grouped Bar Chart',
+                'Stacked Bar Chart',
+                'Line Chart',
+                'Table'
             ]
         }
     },
     computed: {
         ...mapState('dashboardModel', ['selectionConfig']),
         visualisationId: {
-            get () { return this.selectionConfig?.visualisationId ?? null }
+            get () { return this.selectionConfig?.visualisationId }
         },
         visualisationTitle: {
             get () { return this.getVisualisationTitle()() },
@@ -400,6 +431,17 @@ export default {
                 const sortedIndicators = indicators.sort(function (a, b) { if (a.name > b.name) return 1; if (a.name < b.name) return -1; return 0 })
                 return sortedIndicators
             }
+        },
+        composedField: {
+            get () { return this.valueFieldIndicators !== null && this.valueFieldIndicators !== undefined }
+        },
+        categoryLimit: {
+            get () { return this.getCategoryLimit()() },
+            set (value) { this.updateCategoryLimit({ value: value }) }
+        },
+        sideways: {
+            get () { return this.getSideways()() },
+            set (value) { this.updateSideways({ value: value }) }
         }
     },
     methods: {
@@ -408,14 +450,18 @@ export default {
         ...mapGetters('dashboardModel', ['getVisualisationTitle', 'getVisualisationType', // Title & Type
             'getVisualisationXStart', 'getVisualisationXEnd', 'getVisualisationYStart', 'getVisualisationYEnd', // Position
             'getValueField', 'getFractionalValueField', 'getTotalValueField', 'getCurrentValueField', 'getTargetValueField', 'getCategoryField', 'getGroupingField', 'getStackingField', // Fields
-            'getValueFieldName', 'getFractionalValueFieldName', 'getTotalValueFieldName', 'getCurrentValueFieldName', 'getTargetValueFieldName', 'getCategoryFieldName', 'getGroupingFieldName', 'getStackingFieldName' // Field Names
+            'getValueFieldName', 'getFractionalValueFieldName', 'getTotalValueFieldName', 'getCurrentValueFieldName', 'getTargetValueFieldName', 'getCategoryFieldName', 'getGroupingFieldName', 'getStackingFieldName', // Field Names
+            'getCategoryLimit', // Category Limit
+            'getSideways' // Bar chart sideways
         ]),
         ...mapMutations('dashboardModel', ['setVisualisationTitle', 'setVisualisationType', // Title & Type
             'setVisualisationXStart', 'setVisualisationXEnd', 'setVisualisationYStart', 'setVisualisationYEnd', // Position
             'setValueFieldName', 'setFractionalValueFieldName', 'setTotalValueFieldName', 'setCurrentValueFieldName', 'setTargetValueFieldName', 'setCategoryFieldName', 'setGroupingFieldName', 'setStackingFieldName' // Field Names
         ]),
         ...mapActions('dashboardModel', ['addVisualisation', 'deleteVisualisation', // Add / Delete
-            'updateValueField', 'updateFractionalValueField', 'updateTotalValueField', 'updateCurrentValueField', 'updateTargetValueField', 'updateCategoryField', 'updateGroupingField', 'updateStackingField' // Fields
+            'updateValueField', 'updateFractionalValueField', 'updateTotalValueField', 'updateCurrentValueField', 'updateTargetValueField', 'updateCategoryField', 'updateGroupingField', 'updateStackingField', // Fields
+            'updateCategoryLimit', // Category Limit
+            'updateSideways' // Bar chart sideways
         ])
     }
 }

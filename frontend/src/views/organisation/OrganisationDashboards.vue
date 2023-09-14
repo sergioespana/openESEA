@@ -60,7 +60,8 @@
                 await this.loadDashboard()
             },
             async loadDashboard () {
-                this.$router.push({ name: 'organisationdashboard', params: { DashboardId: this.dashboard.id } })
+                // console.log(this.dashboard?.id)
+                this.$router.push({ name: 'organisationdashboard', params: { DashboardId: this.dashboard?.id } })
             }
             // ,
             // async dialogClosed () {

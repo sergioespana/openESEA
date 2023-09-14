@@ -19,20 +19,32 @@
             :paginator="true" :rows="10" paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
             :rowsPerPageOptions="[5,10,25]" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" class="p-datatable-striped">
 
-            <Column v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" bodyStyle="" />
+            <Column v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" bodyStyle="">
+            </Column>
+            <Column v-if="(organisation?.accesLevel === 'organisation admin' || organisation?.accesLevel === 'admin')" header="Actions" headerStyle="width: 10rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
+            <template #body="{data}">
+                <div class="p-d-flex">
+                    <Button label="Delete" icon="pi pi-trash" class="p-button-danger p-button-sm" @click="removeOrganisationDashboard(data)">
+                    </Button>
+                </div>
+            </template>
+        </Column>
         </Datatable>
     </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex'
+
 import ProgressSpinner from 'primevue/progressspinner'
 import ListBar from '@/components/lists/ListBar/'
+import Button from 'primevue/button'
 
 export default {
     components: {
         ProgressSpinner,
-        ListBar
+        ListBar,
+        Button
     },
     data () {
         return {
@@ -48,6 +60,7 @@ export default {
         }
     },
     computed: {
+        ...mapState('organisation', ['organisation']),
         ...mapState('dashboard', ['dashboards', 'dashboard']),
         filteredDashboards () {
             const search = this.customSearch.toLowerCase()
@@ -64,10 +77,14 @@ export default {
         setTimeout(() => { this.failedLoad = true }, 10000)
     },
     methods: {
-        ...mapActions('dashboard', ['fetchDashboards']),
+        ...mapActions('dashboard', ['fetchDashboards', 'deleteDashboard']),
         async getDashboards () {
             await this.fetchDashboards({})
             this.loading = false
+        },
+        async removeOrganisationDashboard (data) {
+            console.log(data)
+            await this.deleteDashboard({ oId: this.$route.params.OrganisationId, id: data.id })
         }
     }
 }

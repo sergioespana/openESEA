@@ -63,13 +63,10 @@
                 const data = {
                     Name: this.dashboardform.name,
                     Methods: this.dashboardform.methods.map((method) => method.id),
-                    Overviews: [{ Name: 'New Overview' }]
+                    Overviews: []
                 }
                 await this.createDashboard({ data: data })
                 this.$emit('dashboardCreated')
-                if (this.dashboard.id) {
-                    this.$router.push({ name: 'organisationdashboard', params: { DashboardId: this.dashboard.id } })
-                }
             },
             closeDialog () {
                 this.$emit('closedialog')

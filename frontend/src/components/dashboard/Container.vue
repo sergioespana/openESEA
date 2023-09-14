@@ -8,6 +8,11 @@
             :key="index"
             :config="{ ...config, visualisationId: index }">
         </Visualisation>
+        <TextParagraph
+            v-for="(item, index) in textParagraphs"
+            :key="index"
+            :config="{ ...config, textParagraphId: index }">
+        </TextParagraph>
     </div>
 </template>
 
@@ -15,10 +20,12 @@
 import { mapGetters, mapActions } from 'vuex'
 
 import Visualisation from './Visualisation.vue'
+import TextParagraph from './TextParagraph.vue'
 
 export default {
     components: {
-        Visualisation
+        Visualisation,
+        TextParagraph
     },
     props: {
         config: { type: Object, required: true }
@@ -32,6 +39,9 @@ export default {
         },
         visualisations: {
             get () { return this.getVisualisations()(this.config) }
+        },
+        textParagraphs: {
+            get () { return this.getTextParagraphs()(this.config) }
         },
         position: {
             get () { return this.getContainerPosition()(this.config) }
@@ -55,7 +65,7 @@ export default {
         }
     },
     methods: {
-        ...mapGetters('dashboardModel', ['getDashboardModel', 'getContainerTitle', 'getContainerPosition', 'getContainerBackgroundColor', 'getVisualisations']),
+        ...mapGetters('dashboardModel', ['getDashboardModel', 'getContainerTitle', 'getContainerPosition', 'getContainerBackgroundColor', 'getVisualisations', 'getTextParagraphs']),
         ...mapActions('dashboardModel', ['updateSelectionConfig']),
         async isClicked (event) {
             event.stopPropagation()

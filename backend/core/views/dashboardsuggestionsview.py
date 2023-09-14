@@ -4,23 +4,24 @@ from rest_framework.response import Response
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
+import time
 import threading
 import uuid
+import json
 
 from ..DashboardRLModel import DashboardRLModel
 
+INACTIVITY_THRESHOLD = 60 # 60 # 1 minute
+INACTIVE_CHECK_INTERVAL = 20 # 10 seconds
 modelInstances = {}
-
-# modelInstance verwijderen uit deze mapping als model inactive is!!!!!!
-# modelInstanceId meegeven aan requests, met modelInstanceId = request.data['modelInstanceId]
-# dashboard meegeven aan requests, zodat dashboard = request.data['dashboard'] ipv request.data
 
 @method_decorator(csrf_exempt, name = 'dispatch')
 @api_view(['POST', 'PUT', 'DELETE'])
 @permission_classes((AllowAny, ))
 def dashboardsuggestions(request):
     print('Request Data', request.data)
-    return Response() # Temporarily disable rl backend
+    # return Response() # Temporarily disable rl backend
+    global modelInstances
 
     modelInstanceId = request.data.get('modelInstanceId')
     dashboard = request.data.get('dashboard')
@@ -34,9 +35,11 @@ def dashboardsuggestions(request):
         if modelInstanceId is None:
             # Generate a unique identifier
             modelInstanceId = str(uuid.uuid4())
+            
             # Initialize instance from dashboard to build & run model
             modelInstance = DashboardRLModelInstance(dashboard)
             modelInstances[modelInstanceId] = modelInstance
+                
             # Return succesful response with the generated modelInstanceId
             return Response({ 'modelInstanceId': modelInstanceId })
         else: 
@@ -45,17 +48,6 @@ def dashboardsuggestions(request):
             modelInstance.rebuildAndRunRLModel(dashboard)
             # Return succesful response
             return Response()
-    
-    ### Delete model when unloading dashboard ###
-    elif request.method == 'DELETE':
-        # If there is no model instance yet, return error message
-        if modelInstanceId not in modelInstances:
-            return Response(f'Model instance with identifier {modelInstanceId} not found!')
-        
-        modelInstance = modelInstances[modelInstanceId]
-
-        modelInstance.terminate()
-        return Response('Model deleted!')
     
     ### Get recommendations ###
     elif request.method == 'PUT':
@@ -67,7 +59,20 @@ def dashboardsuggestions(request):
     
         # Get actions and return it
         actions = modelInstance.retrieveBestActions()
-        return Response({ 'request': '', 'actions': actions.to_dict() })
+        return Response({ 'request': '', 'actions': json.dumps(actions) })
+    
+    ### Delete model when unloading dashboard ###
+    elif request.method == 'DELETE':
+        # If there is no model instance yet, return error message
+        if modelInstanceId not in modelInstances:
+            return Response(f'Model instance with identifier {modelInstanceId} not found!')
+        
+        modelInstance = modelInstances[modelInstanceId]
+        print('Terminating model with modelInstanceId: ', modelInstanceId)
+        modelInstance.terminate()
+        del modelInstances[modelInstanceId]
+        
+        return Response('Model deleted!')
     else:
         return Response()
 
@@ -76,31 +81,77 @@ class DashboardRLModelInstance():
         self.buildAndRunRLModel(dashboard)
 
     def buildAndRunRLModel(self, dashboard):
+        self.updateLastActivity()
+
         self.buildRLModel(dashboard)
         self.runRLModel()
 
     def rebuildAndRunRLModel(self, dashboard):
+        self.updateLastActivity()
+
         self.terminate(wait = True) # Stop previous model and Wait until last episode is done
         self.buildAndRunRLModel(dashboard) # Override previous model and run model
         
     def buildRLModel(self, dashboard):
         # Build RL model
+        self.dashboard = dashboard
         self.model = DashboardRLModel.DashboardRLModel(dashboard)
         print('Model is built!')
 
     def runRLModel(self):
         # Start running model in separate thread
         self.thread = threading.Thread(target = self.model.run)
+        self.thread.daemon = True
         self.thread.start()
         print('Running model...')
 
     def retrieveBestActions(self):
-        # Otherwise, predict best action from model and return this in response
-        action = self.model.predict()
-        return action
+        self.updateLastActivity()
+
+        # Predict best action from model and return this in response
+        actions = self.model.best_actions
+        actionList = []
+        for action in actions:
+            visualisationIndex = action.visualisationIndex
+
+            visualisationInfo = self.dashboard[visualisationIndex]
+            visualisationTitle = visualisationInfo['Visualisation Title']
+
+            actionInfo = action.to_dict()
+            actionInfo['Visualisation Title'] = visualisationTitle
+            actionList.append(actionInfo)
+        return actionList
     
+    def updateLastActivity(self):
+        self.lastActivity = time.time()
+
     def terminate(self, wait = False):
         # Terminate model after last episode is done
         self.model.kill()
         # Wait for episode to finish
         if wait: self.thread.join()
+
+# Keep track of active model instances, and terminate instances which have been inactive for some time
+def stopInactiveModelInstances():
+    while True:
+        currentTime = time.time()
+        # Identify inactive model instances
+        inactiveModelInstanceIds = []
+        for modelInstanceId in modelInstances:
+            modelInstance = modelInstances[modelInstanceId]
+            if currentTime - modelInstance.lastActivity > INACTIVITY_THRESHOLD:
+                inactiveModelInstanceIds.append(modelInstanceId)
+        # Delete from dict of active models
+        for inactiveModelInstanceId in inactiveModelInstanceIds:
+            modelInstance = modelInstances[inactiveModelInstanceId]
+            print('Terminating model with modelInstanceId: ', modelInstanceId)
+            modelInstance.terminate()
+            del modelInstances[inactiveModelInstanceId]
+
+        # Sleep for a while before checking again (e.g., every minute)
+        time.sleep(INACTIVE_CHECK_INTERVAL)
+
+# Start the function to periodically check for inactive model instances as a separate thread
+stopInactiveModelsThread = threading.Thread(target = stopInactiveModelInstances)
+stopInactiveModelsThread.daemon = True  # Make the thread a daemon, so it terminates when the main program exits
+stopInactiveModelsThread.start()

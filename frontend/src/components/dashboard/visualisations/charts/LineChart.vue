@@ -43,16 +43,16 @@ export default {
             const categories = chartData.data.map(el => el[categoryKey])
             const values = chartData.data.map(el => el[valueKey])
 
-            const itemLimit = 0
+            const categoryLimit = chartData?.categoryLimit ?? 0
 
             var sliderObject = null
-            if (itemLimit > 0) {
+            if (categoryLimit > 0) {
                 sliderObject = {
                     type: 'slider', // Create a slider
                     show: true, // Show It
                     xAxisIndex: [0], // Show on correct axis
-                    startValue: 0, // Show `itemLimit` values, first starting at index 0
-                    endValue: itemLimit - 1, // Show `itemLimit` values
+                    startValue: 0, // Show `categoryLimit` values, first starting at index 0
+                    endValue: categoryLimit - 1, // Show `categoryLimit` values
                     handleSize: 0, // Disable handles at the edge of the slider
                     zoomLock: true, // Prevent adjusting the slider size
                     showDataShadow: false, // Hide the miniature chart

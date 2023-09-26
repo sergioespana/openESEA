@@ -42,7 +42,8 @@ export default {
             if (!field) return { graphic: [titleOptions] }
             const name = mapping?.['Value Field']?.name
 
-            const value = chartData.data[0][field] // Single value
+            const data = chartData.data
+            const value = data[0][field] // Single value
 
             const options = {
                 graphic: [

@@ -282,32 +282,27 @@ export default {
 
             // Create data sets for each indicator
             await this.createIndicatorDataSets()
-            // console.log(this.getIndicatorDataSets()())
-            // console.log(this.getIndicators()())
-            // console.log(this.getIndicatorFields()())
-
-            // Get the metadata fields for the indicators
-            var indicatorMetaDataFields = []
-            if (indicatorData.length) indicatorMetaDataFields = Object.keys(indicatorData[0])
-            await this.setIndicatorFields(indicatorMetaDataFields)
         },
         async retrieveIndicators () {
             const methodIds = await this.getMethods()()
             var indicators = []
             for (var methodId of methodIds) {
                 const directIndicators = await DirectIndicatorService.get({ mId: methodId })
+                console.log(directIndicators)
                 if (!directIndicators?.error || directIndicators?.error?.response?.status === 404) {
-                    for (var directIndicator of directIndicators?.response?.data) {
+                    for (var directIndicator of (directIndicators?.response?.data || [])) {
                         indicators.push(directIndicator)
                     }
                 }
                 const indirectIndicators = await IndirectIndicatorService.get({ mId: methodId })
+                console.log(indirectIndicators)
                 if (!indirectIndicators?.error || indirectIndicators?.error?.response?.status === 404) {
                     for (var indirectIndicator of (indirectIndicators?.response?.data || [])) {
                         indicators.push(indirectIndicator)
                     }
                 }
             }
+            // console.log(indicators)
             indicators = indicators?.map(el => ({ name: el.name, key: el.key }))
             return indicators
         },

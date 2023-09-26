@@ -45,10 +45,11 @@ export default {
             if (!totalValueField || !fractionalValueField) return { graphic: [titleOptions] }
             const fractionalValueFieldName = mapping?.['Fractional Value Field']?.name
             const totalValueFieldName = mapping?.['Total Value Field']?.name
-            const name = (fractionalValueFieldName && totalValueFieldName) ? fractionalValueFieldName + ' / ' + totalValueFieldName : ''
+            const name = (fractionalValueFieldName && totalValueFieldName) ? fractionalValueFieldName + ' / ' + totalValueFieldName : (fractionalValueFieldName ?? '')
 
-            const fractionalValue = chartData.data[0][fractionalValueField]
-            const totalValue = chartData.data[0][totalValueField]
+            const data = chartData.data
+            const fractionalValue = data[0][fractionalValueField]
+            const totalValue = data[0][totalValueField]
 
             const options = {
                 graphic: [

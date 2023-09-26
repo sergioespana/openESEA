@@ -36,7 +36,7 @@ export default {
             }
             const mapping = chartData?.mapping
             if (!mapping) return { title: titleOptions }
-            const data = chartData?.data
+            const data = chartData.data
             const categoryKey = mapping?.['Category Field']?.key
             const groupingKey = mapping?.['Grouping Field']?.key
             const valueKey = mapping?.['Value Field']?.key
@@ -67,8 +67,9 @@ export default {
             // Encapsulate in series object
             const series = dataLists.map(data => { return { type: 'bar', group: 'Group', data: data.values, name: data.group } })
 
-            const categoryLimit = chartData?.categoryLimit ?? 0
-            const sideways = chartData?.sideways
+            const chartOptions = chartData.options
+            const categoryLimit = chartOptions?.categoryLimit ?? 0
+            const sideways = chartOptions?.sideways
 
             var sliderObject = null
             if (categoryLimit > 0) {

@@ -40,10 +40,14 @@ export default {
             if (!categoryKey || !valueKey) return { title: titleOptions }
             const categoryName = mapping?.['Category Field']?.name
             const valueName = mapping?.['Value Field']?.name
-            const categories = chartData.data.map(el => el[categoryKey])
-            const values = chartData.data.map(el => el[valueKey])
+            const data = chartData.data
+            const categories = data.map(el => el[categoryKey])
+            const values = data.map(el => el[valueKey])
 
-            const categoryLimit = chartData?.categoryLimit ?? 0
+            const chartOptions = chartData.options
+            const categoryLimit = chartOptions?.categoryLimit ?? 0
+            const areaStyle = chartOptions?.showArea ? {} : null
+            const boundaryGap = chartOptions?.showBoundaryGap ?? true
 
             var sliderObject = null
             if (categoryLimit > 0) {
@@ -65,6 +69,7 @@ export default {
                 xAxis: {
                     type: 'category',
                     name: categoryName,
+                    boundaryGap: boundaryGap,
                     nameLocation: 'center',
                     nameTextStyle: {
                         align: 'left'
@@ -93,7 +98,8 @@ export default {
                 series: [
                     {
                         type: 'line',
-                        data: values
+                        data: values,
+                        areaStyle: areaStyle
                     }
                 ]
             }

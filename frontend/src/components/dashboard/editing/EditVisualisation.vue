@@ -148,7 +148,7 @@
                     <!-- Add additional indicators -->
                     <Dropdown class="near-width"
                         :modelValue="null"
-                        @update:modelValue="(newValue) => { if (false) { console.log(valueFieldIndicators, newValue, (valueFieldIndicators ?? []).push(newValue)) } else if (newValue !== null) { if (!valueFieldIndicators) { valueFieldIndicators = []; categoryFieldValues = [] }; valueFieldIndicators.push(newValue); categoryFieldValues.push(null) } }"
+                        @update:modelValue="(newValue) => { if (false) { console.log(valueFieldIndicators, newValue, (valueFieldIndicators ?? []).push(newValue)) } else if (newValue !== null) { if (!valueFieldIndicators) { valueFieldIndicators = []; categoryFieldValues = [] }; valueFieldIndicators.push(newValue); categoryFieldValues.push('') } }"
                         :options="[noIndicatorOption, ...indicators]"
                         :optionLabel="'name'"
                         :optionValue="'key'"
@@ -233,6 +233,93 @@
                     v-model="stackingFieldName">
                 </InputText>
             </div>
+            <div v-if="visualisationType === 'Multi-Series Line Chart'">
+                <div v-for="(_, valueFieldIndex) in valueFields" :key="valueFieldIndex">
+                    <div v-if="composedFields">
+                        <!-- Value field composed of multiple indicators -->
+                        <div class="edit-area-field">Value Indicators:</div>
+                        <!-- Alter/Remove indicators -->
+                        <div v-for="(indicator, indicatorIndex) in (valueFields[valueFieldIndex]?.Indicators ?? [])" :key="indicatorIndex">
+                            <Dropdown class="near-width"
+                                :modelValue="valueFields[valueFieldIndex].Indicators[indicatorIndex]"
+                                @update:modelValue="(newValue) => { if (newValue !== null) { valueFields[valueFieldIndex].Indicators[indicatorIndex] = newValue } else { valueFields = valueFields.foreach(field => field.Indicators.splice(indicatorIndex, 1)) } }"
+                                :options="[noIndicatorOption, ...indicators]"
+                                :optionLabel="'name'"
+                                :optionValue="'key'"
+                                placeholder="Choose an indicator field">
+                            </Dropdown>
+                        </div>
+                        <!-- Add additional indicators -->
+                        <Dropdown class="near-width"
+                            :modelValue="null"
+                            @update:modelValue="(newValue) => { console.log(newValue, valueFields); if (newValue !== null) { valueFields = valueFields.map(field => { if (field?.Indicators === null || field?.Indicators === undefined) { field.Indicators = [null]; return field } else { field?.Indicators.push(null); return field } }); valueFields[valueFieldIndex].Indicators[valueFields[valueFieldIndex].Indicators.length - 1] = newValue } }"
+                            :options="[noIndicatorOption, ...indicators]"
+                            :optionLabel="'name'"
+                            :optionValue="'key'"
+                            placeholder="Choose an indicator field">
+                        </Dropdown>
+                    </div>
+                    <div v-else>
+                        <!-- Simple value field -->
+                        <div class="edit-area-field">Value Field:</div>
+                        <Dropdown class="near-width"
+                            :modelValue="valueFields[valueFieldIndex]?.Indicator"
+                            @update:modelValue="(newValue) => valueFields[valueFieldIndex].Indicator = newValue"
+                            :options="[noIndicatorOption, ...indicators]"
+                            :optionLabel="'name'"
+                            :optionValue="'key'"
+                            placeholder="Choose an indicator field">
+                        </Dropdown>
+                    </div>
+                    <!-- Value field name -->
+                    <div class="edit-area-field">Name:</div>
+                    <InputText class="near-width"
+                        :modelValue="valueFields[valueFieldIndex]?.Name"
+                        @update:modelValue="(newValue) => valueFields[valueFieldIndex].Name = newValue">
+                    </InputText>
+                </div>
+                <!-- Simple fields or composed fields -->
+                <div class="edit-area-field">
+                    Composed fields:
+                    <InputSwitch
+                        :modelValue="composedFields"
+                        @update:modelValue="(isComposedField) => { if (isComposedField) { categoryFieldValues = [] } else { categoryFieldValues = null }; valueFields = valueFields.map(field => { if (isComposedField) { var newField = field; newField.Indicators = []; return newField } else { var newField = field; newField.Indicators = null; return newField } }) }">
+                    </InputSwitch>
+                </div>
+                <!-- Simple category field or values -->
+                <div v-if="composedFields">
+                    <!-- Value field composed of multiple indicators -->
+                    <div class="edit-area-field">Category Values:</div>
+                    <!-- Alter values -->
+                    <div v-for="(item, index) in (valueFields?.[0]?.Indicators ?? [])" :key="index">
+                        <InputText class="near-width"
+                            :modelValue="categoryFieldValues?.[index]"
+                            @update:modelValue="(newValue) => { categoryFieldValues[index] = newValue }"
+                            placeholder="Choose a category value">
+                        </InputText>
+                    </div>
+                </div>
+                <div v-else>
+                    <!-- Simple category field -->
+                    <div class="edit-area-field">Category Field:</div>
+                    <Dropdown class="near-width"
+                        v-model="categoryField"
+                        :options="[noIndicatorOption, yearField]"
+                        :optionLabel="'name'"
+                        :optionValue="'key'"
+                        placeholder="Choose an indicator field">
+                    </Dropdown>
+                </div>
+                <!-- Category field name -->
+                <div class="edit-area-field">Name:</div>
+                <InputText class="near-width"
+                    v-model="categoryFieldName">
+                </InputText>
+                <!-- Add additional value fields -->
+                <Button label="Add Value Field" icon="pi pi-plus" class="p-button-success p-button-sm"
+                    @click="{ console.log(valueFields, composedFields); if (valueFields === null || valueFields === undefined) { if (!composedFields) { valueFields = [{ Indicator: null }]} else { valueFields = [{ Indicators: null }] } } else { if (!composedFields) { valueFields = valueFields.concat([{ Indicator: null }]) } else { var nullIndicators = []; for (const _ of valueFields?.[0]?.Indicators) { nullIndicators.push(null) }; valueFields = valueFields.concat([{ Indicators: nullIndicators }]) } } }">
+                </Button>
+            </div>
 
             <div v-if="categoricalVisualisations.includes(visualisationType)">
                 <!-- Item Limit -->
@@ -292,6 +379,7 @@ export default {
                 'Grouped Bar Chart',
                 'Stacked Bar Chart',
                 'Line Chart',
+                'Multi-Series Line Chart',
                 'Table'
             ],
             progressBarVisualisations: [
@@ -309,7 +397,11 @@ export default {
                 'Grouped Bar Chart',
                 'Stacked Bar Chart',
                 'Line Chart',
+                // 'Multi-Series Line Chart',
                 'Table'
+            ],
+            multiSeriesVisualisations: [
+                'Multi-Series Line Chart'
             ]
         }
     },
@@ -343,7 +435,10 @@ export default {
             get () { return this.getVisualisationYEnd()() },
             set (value) { this.setVisualisationYEnd({ value: value }) }
         },
-
+        valueFields: {
+            get () { return this.getValueFields()() ?? [] },
+            set (value) { this.updateValueFields({ value: value }) }
+        },
         valueField: {
             get () { return this.getValueField()()?.Indicator },
             set (value) { this.updateValueField({ value: { Indicator: value } }) }
@@ -435,6 +530,9 @@ export default {
         composedField: {
             get () { return this.valueFieldIndicators !== null && this.valueFieldIndicators !== undefined }
         },
+        composedFields: {
+            get () { for (var field of this.valueFields) { if (field?.Indicators !== null && field?.Indicators !== undefined) { return true } } return false }
+        },
         categoryLimit: {
             get () { return this.getCategoryLimit()() },
             set (value) { this.updateCategoryLimit({ value: value }) }
@@ -449,7 +547,7 @@ export default {
 
         ...mapGetters('dashboardModel', ['getVisualisationTitle', 'getVisualisationType', // Title & Type
             'getVisualisationXStart', 'getVisualisationXEnd', 'getVisualisationYStart', 'getVisualisationYEnd', // Position
-            'getValueField', 'getFractionalValueField', 'getTotalValueField', 'getCurrentValueField', 'getTargetValueField', 'getCategoryField', 'getGroupingField', 'getStackingField', // Fields
+            'getValueField', 'getValueFields', 'getFractionalValueField', 'getTotalValueField', 'getCurrentValueField', 'getTargetValueField', 'getCategoryField', 'getGroupingField', 'getStackingField', // Fields
             'getValueFieldName', 'getFractionalValueFieldName', 'getTotalValueFieldName', 'getCurrentValueFieldName', 'getTargetValueFieldName', 'getCategoryFieldName', 'getGroupingFieldName', 'getStackingFieldName', // Field Names
             'getCategoryLimit', // Category Limit
             'getSideways' // Bar chart sideways
@@ -459,7 +557,7 @@ export default {
             'setValueFieldName', 'setFractionalValueFieldName', 'setTotalValueFieldName', 'setCurrentValueFieldName', 'setTargetValueFieldName', 'setCategoryFieldName', 'setGroupingFieldName', 'setStackingFieldName' // Field Names
         ]),
         ...mapActions('dashboardModel', ['addVisualisation', 'deleteVisualisation', // Add / Delete
-            'updateValueField', 'updateFractionalValueField', 'updateTotalValueField', 'updateCurrentValueField', 'updateTargetValueField', 'updateCategoryField', 'updateGroupingField', 'updateStackingField', // Fields
+            'updateValueField', 'updateValueFields', 'updateFractionalValueField', 'updateTotalValueField', 'updateCurrentValueField', 'updateTargetValueField', 'updateCategoryField', 'updateGroupingField', 'updateStackingField', // Fields
             'updateCategoryLimit', // Category Limit
             'updateSideways' // Bar chart sideways
         ])

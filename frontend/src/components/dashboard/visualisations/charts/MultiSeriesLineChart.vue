@@ -7,10 +7,10 @@
 import 'echarts'
 import ECharts from 'vue-echarts'
 import { use } from 'echarts/core'
-import { BarChart } from 'echarts/charts'
+import { LineChart } from 'echarts/charts'
 import { CanvasRenderer } from 'echarts/renderers'
 
-use([BarChart, CanvasRenderer])
+use([LineChart, CanvasRenderer])
 
 export default {
     components: {
@@ -24,38 +24,44 @@ export default {
     },
     methods: {
         createOptions (chartData) {
+            console.log(chartData)
             const title = chartData.title
             const titleOptions = {
                 text: title,
                 left: 'center',
                 textStyle: {
-                    overflow: 'break',
                     fontSize: 12,
-                    width: this.$parent.$el.clientWidth
+                    overflow: 'break'
                 }
             }
             const mapping = chartData?.mapping
             if (!mapping) return { title: titleOptions }
             const categoryKey = mapping?.['Category Field']?.key
-            const valueKey = mapping?.['Value Field']?.key
-            if (!categoryKey || !valueKey) return { title: titleOptions }
+            var valueFields = []
+            for (const key in mapping) {
+                if (key.startsWith('Value Fields ')) {
+                    valueFields.push(mapping[key])
+                }
+            }
+            const valueKeys = valueFields.map(el => el.key)
+            if (!categoryKey || !valueKeys) return { title: titleOptions }
             const categoryName = mapping?.['Category Field']?.name
-            const valueName = mapping?.['Value Field']?.name
+            const valueNames = valueFields.map(el => el.name ?? '')
             const data = chartData.data
             const categories = data.map(el => el[categoryKey])
-            const values = data.map(el => el[valueKey])
+            const valueLists = valueKeys.map(valueKey => data.map(el => el[valueKey]))
 
             const chartOptions = chartData.options
             const categoryLimit = chartOptions?.categoryLimit ?? 0
-            const sideways = chartOptions?.sideways
+            const areaStyle = chartOptions?.showArea ? {} : null
+            const boundaryGap = chartOptions?.showBoundaryGap ?? true
 
             var sliderObject = null
             if (categoryLimit > 0) {
                 sliderObject = {
                     type: 'slider', // Create a slider
                     show: true, // Show It
-                    xAxisIndex: sideways ? [] : [0], // Show on correct axis
-                    yAxisIndex: sideways ? [0] : [], // Show on correct axis
+                    xAxisIndex: [0], // Show on correct axis
                     startValue: 0, // Show `categoryLimit` values, first starting at index 0
                     endValue: categoryLimit - 1, // Show `categoryLimit` values
                     handleSize: 0, // Disable handles at the edge of the slider
@@ -65,43 +71,54 @@ export default {
                 }
             }
 
-            const categoryAxis = {
-                type: 'category',
-                data: categories,
-                name: categoryName,
-                axisLabel: {
-                    interval: 0
+            const dataSeries = valueLists.map(
+                (values, index) => {
+                    return {
+                        type: 'line',
+                        name: valueNames[index],
+                        data: values,
+                        areaStyle: areaStyle
+                    }
                 }
-            }
-            const valueAxis = {
-                type: 'value',
-                name: valueName
-            }
-            const xAxis = sideways ? valueAxis : categoryAxis
-            const yAxis = sideways ? categoryAxis : valueAxis
+            )
 
             const options = {
                 title: titleOptions,
-                xAxis: xAxis,
-                yAxis: yAxis,
+                legend: {
+                    data: valueNames,
+                    left: 'right'
+                },
+                xAxis: {
+                    type: 'category',
+                    name: categoryName,
+                    boundaryGap: boundaryGap,
+                    nameLocation: 'center',
+                    nameTextStyle: {
+                        align: 'left'
+                    },
+                    data: categories,
+                    axisLabel: {
+                        interval: 0,
+                        rotate: 37.5
+                    }
+                },
+                yAxis: {
+                    // type: 'value'
+                },
                 dataZoom: [sliderObject],
                 grid: {
                     top: '15%',
-                    bottom: sliderObject && !sideways ? '20%' : '5%',
+                    bottom: sliderObject ? '5%' : '20%',
                     left: '5%',
-                    right: sliderObject && sideways ? '20%' : '5%',
+                    right: '5%',
                     containLabel: true
                 },
                 tooltip: {
-                    trigger: 'item'
+                    show: 'item'
                 },
-                series: [
-                    {
-                        type: 'bar',
-                        data: values
-                    }
-                ]
+                series: dataSeries
             }
+
             return options
         }
     }

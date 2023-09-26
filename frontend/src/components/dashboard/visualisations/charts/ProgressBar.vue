@@ -40,10 +40,13 @@ export default {
             if (!currentValueField) return { title: titleOptions }
             const currentValueName = mapping?.['Current Value Field']?.name
             const targetValueName = mapping?.['Target Value Field']?.name
-            const isPercentage = targetValueField === null || targetValueField === undefined || chartData.options?.isPercentage === true
 
-            const currentValue = chartData.data[0][currentValueField]
-            const targetValue = isPercentage ? 100 : chartData.data[0][targetValueField]
+            const data = chartData.data
+            const chartOptions = chartData.options
+            const isPercentage = targetValueField === null || targetValueField === undefined || chartOptions?.isPercentage === true
+
+            const currentValue = data[0][currentValueField]
+            const targetValue = isPercentage ? 100 : data[0][targetValueField]
 
             const currentValueNameRevised = !currentValueName ? [isPercentage ? 'Progress' : 'Current'] : currentValueName
             const targetValueNameRevised = !targetValueName ? [isPercentage ? '' : 'Target'] : targetValueName

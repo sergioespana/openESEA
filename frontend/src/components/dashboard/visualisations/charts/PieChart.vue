@@ -38,11 +38,13 @@ export default {
             const categoryKey = mapping?.['Category Field']?.key
             const valueKey = mapping?.['Value Field']?.key
             if (!categoryKey || !valueKey) return { title: titleOptions }
-            const unsortedData = chartData?.data?.map(row => { return { value: row[valueKey], name: row[categoryKey] } })
+            const data = chartData.data
+            const unsortedData = data?.map(row => { return { value: row[valueKey], name: row[categoryKey] } })
             const allData = unsortedData.sort(function (a, b) { if (a.value > b.value) { return -1 } else if (a.value < b.value) { return 1 } else if (a.name > b.name) { return -1 } else if (a.name < b.name) { return 1 } else { return 0 } })
 
-            const categoryLimit = chartData?.categoryLimit ?? 0
-            const data = categoryLimit > 0 ? allData.slice(0, categoryLimit) : allData
+            const chartOptions = chartData.options
+            const categoryLimit = chartOptions?.categoryLimit ?? 0
+            const slicedData = categoryLimit > 0 ? allData.slice(0, categoryLimit) : allData
 
             const showLabels = false
 
@@ -58,7 +60,7 @@ export default {
                 series: [
                     {
                         type: 'pie',
-                        data: data,
+                        data: slicedData,
                         radius: '60%',
                         label: {
                             show: showLabels,

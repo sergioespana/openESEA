@@ -40,20 +40,37 @@ export default {
             if (!currentValueField) return { title: titleOptions }
             const currentValueName = mapping?.['Current Value Field']?.name
             const targetValueName = mapping?.['Target Value Field']?.name
-            const isPercentage = targetValueField === null || targetValueField === undefined || chartData.options?.isPercentage === true
 
-            const currentValue = chartData.data[0][currentValueField]
-            const targetValue = isPercentage ? 100 : chartData.data[0][targetValueField]
+            const data = chartData.data
+            const chartOptions = chartData.options
+            const isPercentage = targetValueField === null || targetValueField === undefined || chartOptions?.isPercentage === true
+
+            const currentValue = data[0][currentValueField]
+            const targetValue = isPercentage ? 100 : data[0][targetValueField]
 
             const currentValueNameRevised = !currentValueName ? [isPercentage ? 'Progress' : 'Current'] : currentValueName
             const targetValueNameRevised = !targetValueName ? [isPercentage ? '' : 'Target'] : targetValueName
-            var formattedText = '<b>' + currentValueNameRevised + '</b> ' + currentValue + (isPercentage ? '%' : '')
+            const currentValueText = currentValue + (isPercentage ? '%' : '')
+            var formattedText = '<b>' + currentValueNameRevised + '</b> ' + currentValueText
             if (!isPercentage) {
                 formattedText += '<br />' +
                     '<b>' + targetValueNameRevised + '</b> ' + targetValue
             }
 
+            const showValueOptions = chartOptions?.showValue ? [{
+                    type: 'text',
+                    left: 'center',
+                    top: '55%',
+                    style: {
+                        text: currentValueText + (targetValue ? ' / ' + targetValue : ''),
+                        fontSize: 15,
+                        fontWeight: 'normal',
+                        fill: '#888'
+                    }
+                }] : []
+
             const options = {
+                graphic: showValueOptions,
                 title: titleOptions,
                 tooltip: {
                     trigger: 'item',

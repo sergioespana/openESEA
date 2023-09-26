@@ -203,6 +203,9 @@ export default {
         getValueField: (state, getters) => (payload) => {
             return getters.getDataConfiguration(payload)?.['Value Field']
         },
+        getValueFields: (state, getters) => (payload) => {
+            return getters.getDataConfiguration(payload)?.['Value Fields']
+        },
         getFractionalValueField: (state, getters) => (payload) => {
             return getters.getDataConfiguration(payload)?.['Fractional Value Field']
         },
@@ -464,6 +467,13 @@ export default {
             const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
             const valueField = payload?.value
             state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Value Field'] = valueField
+        },
+        setValueFields (state, payload) {
+            const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
+            const containerId = payload?.containerId ?? state.selectionConfig.containerId
+            const visualisationId = payload?.visualisationId ?? state.selectionConfig.visualisationId
+            const valueFields = payload?.value
+            state.dashboard.Overviews[overviewId].BodySection.Containers[containerId].Visualisations[visualisationId].DataDisplay.DataConfiguration['Value Fields'] = valueFields
         },
         setFractionalValueField (state, payload) {
             const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
@@ -797,6 +807,10 @@ export default {
         async updateValueField ({ commit, dispatch, getters }, payload) {
             await dispatch('createDataConfiguration', payload)
             await commit('setValueField', payload)
+        },
+        async updateValueFields ({ commit, dispatch, getters }, payload) {
+            await dispatch('createDataConfiguration', payload)
+            await commit('setValueFields', payload)
         },
         async updateFractionalValueField ({ commit, dispatch, getters }, payload) {
             await dispatch('createDataConfiguration', payload)

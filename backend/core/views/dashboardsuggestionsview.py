@@ -45,7 +45,7 @@ def dashboardsuggestions(request):
         else: 
             # Rebuild model from dashboard & run model
             modelInstance = modelInstances[modelInstanceId]
-            modelInstance.rebuildAndRunRLModel(dashboard)
+            modelInstance.buildAndRunRLModel(dashboard)
             # Return succesful response
             return Response()
     
@@ -78,24 +78,33 @@ def dashboardsuggestions(request):
 
 class DashboardRLModelInstance():
     def __init__(self, dashboard):
+        self.thread = None
         self.buildAndRunRLModel(dashboard)
 
     def buildAndRunRLModel(self, dashboard):
         self.updateLastActivity()
 
-        self.buildRLModel(dashboard)
+        # Terminate existing thread
+        if self.thread is not None: self.terminate(wait = True)
+
+        # Exit if dashboard is empty
+        self.dashboard = dashboard
+        if self.dashboard == []: 
+            self.model = None
+            return
+
+        self.buildRLModel()
         self.runRLModel()
 
-    def rebuildAndRunRLModel(self, dashboard):
-        self.updateLastActivity()
+    # def rebuildAndRunRLModel(self, dashboard):
+    #     self.updateLastActivity()
 
-        self.terminate(wait = True) # Stop previous model and Wait until last episode is done
-        self.buildAndRunRLModel(dashboard) # Override previous model and run model
+    #     self.terminate(wait = True) # Stop previous model and Wait until last episode is done
+    #     self.buildAndRunRLModel(dashboard) # Override previous model and run model
         
-    def buildRLModel(self, dashboard):
+    def buildRLModel(self):
         # Build RL model
-        self.dashboard = dashboard
-        self.model = DashboardRLModel.DashboardRLModel(dashboard)
+        self.model = DashboardRLModel.DashboardRLModel(self.dashboard)
         print('Model is built!')
 
     def runRLModel(self):
@@ -106,6 +115,8 @@ class DashboardRLModelInstance():
         print('Running model...')
 
     def retrieveBestActions(self):
+        if self.model is None: return []
+
         self.updateLastActivity()
 
         # Predict best action from model and return this in response
@@ -127,9 +138,9 @@ class DashboardRLModelInstance():
 
     def terminate(self, wait = False):
         # Terminate model after last episode is done
-        self.model.kill()
+        if self.model is not None: self.model.kill()
         # Wait for episode to finish
-        if wait: self.thread.join()
+        if wait and self.thread is not None: self.thread.join()
 
 # Keep track of active model instances, and terminate instances which have been inactive for some time
 def stopInactiveModelInstances():

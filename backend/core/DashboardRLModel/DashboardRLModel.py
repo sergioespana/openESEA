@@ -75,7 +75,7 @@ class DashboardRLModel:
             outputs = self.agent_network.output_parameter_values(state)
 
             # Execute the action on the environment
-            state, reward, done = self.dashboard_environment.step(outputs)
+            state, reward, done, flags = self.dashboard_environment.step(outputs)
 
             # Save reward for updating gradient after episode 
             self.agent_network.rewards.append(reward)
@@ -112,6 +112,9 @@ class DashboardRLModel:
         # Construct the action from the model outputs
         action = self.dashboard_environment.action_from_parameters(parameter_values)
         actions = [action]
+
+        # Get reward + flags for this action
+        states = [self.dashboard_environment.perform_action_on_initial(action) for action in actions] # [(state, reward, done, flags)]
 
         # Return actions
         return actions

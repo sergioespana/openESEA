@@ -26,6 +26,8 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 import Dialog from 'primevue/dialog'
 import TextArea from 'primevue/textarea'
 
+import * as yaml from 'yaml'
+
 export default {
     components: {
         Dialog,
@@ -51,11 +53,13 @@ export default {
         },
         async openDialog () {
             const dashboardModel = await this.getDashboardModel()()
-            this.dashboardModel = JSON.stringify(dashboardModel, null, '\t')
+            // this.dashboardModel = JSON.stringify(dashboardModel, null, '\t')
+            this.dashboardModel = yaml.dump(dashboardModel)
             this.showDialog()
         },
         async saveModel () {
-            const dashboardModel = JSON.parse(this.dashboardModel)
+            const dashboardModel = yaml.load(this.dashboardModel)
+            // const dashboardModel = JSON.parse(this.dashboardModel)
             const payload = { value: dashboardModel }
             await this.createDashboardModel(payload)
             this.closeDialog()

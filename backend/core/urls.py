@@ -3,7 +3,7 @@ from rest_framework_nested import routers
 from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView)
 
 from .views import (membershipview, respondentview, userview, networkview, network_memberview, organisationview, organisation_memberview, methodview, surveyview, sectionview, questionview, text_fragmentview, 
-                    topicview, direct_indicatorview2, indirect_indicatorview, survey_responseview, question_responseview, campaignview, esea_accountview, account_auditview, audit_surveyview, reportview, dashboardview, dashboardsuggestionsview)
+                    topicview, direct_indicatorview2, indirect_indicatorview, organisation_methodview, calculated_indicatorview, survey_responseview, question_responseview, campaignview, esea_accountview, account_auditview, audit_surveyview, reportview, dashboardview, dashboardsuggestionsview)
  
 
 router = routers.DefaultRouter()
@@ -23,6 +23,10 @@ organisation_router = routers.NestedSimpleRouter(router, r'organisations', looku
 organisation_router.register(r'esea-accounts', esea_accountview.EseaAccountViewSet, basename="organisation-esea-accounts")
 organisation_router.register(r'members', organisation_memberview.OrganisationMemberViewSet, basename="organisation-members")
 organisation_router.register(r'responses', survey_responseview.SurveyResponseViewSet, basename='responses')
+organisation_router.register(r'methods', organisation_methodview.OrganisationMethodView, basename="organisation-methods")
+
+organisation_method_router = routers.NestedDefaultRouter(organisation_router, r'methods', lookup="method")
+organisation_method_router.register(r'calculated-indicators', calculated_indicatorview.CalculatedIndicatorViewSet, basename = 'calculated-indicators')
 
 esea_account_router = routers.NestedSimpleRouter(organisation_router, r'esea-accounts', lookup="esea_account")
 # esea_account_router.register(r'surveys', surveyview.SurveyViewSet, basename="esea-account-surveys")
@@ -45,7 +49,7 @@ method_router.register(r'surveys', surveyview.SurveyViewSet, basename="method-su
 
 method_router.register(r'topics', topicview.TopicViewSet, basename="method-topics") 
 method_router.register(r'direct-indicators', direct_indicatorview2.DirectIndicatorViewSet, basename="method-direct-indicators")
-# method_router.register(r'indirect-indicators', indirect_indicatorview.IndirectIndicatorViewSet, basename="method-indirect-indicators")
+method_router.register(r'indirect-indicators', indirect_indicatorview.IndirectIndicatorViewSet, basename="method-indirect-indicators")
 
 survey_router = routers.NestedSimpleRouter(method_router, r'surveys', lookup="survey")
 survey_router.register(r'sections', sectionview.SectionViewSet, basename="survey-sections")
@@ -65,6 +69,7 @@ urlpatterns = [
     path('audit-account/<int:eseaaccount_pk>/', reportview.audit_eseaaccount, name="audit_esea_account"), 
     path('esea-account/<int:eseaaccount_pk>/survey-audit/<int:survey_pk>/sample-survey-responses/', audit_surveyview.sample_survey_responses, name='sample_survey_responses'),
     path('esea-account/<int:eseaaccount_pk>/survey-audit/<int:survey_pk>/send-audit-emails/', audit_surveyview.send_audit_emails, name='send_audit_emails'),
+    path('dashboardsuggestions/', dashboardsuggestionsview.dashboardsuggestions),
     path('', include(router.urls)),
     path('', include(network_router.urls)),
     path('', include(method_router.urls)),
@@ -72,7 +77,7 @@ urlpatterns = [
     path('', include(esea_account_router.urls)),
     path('', include(section_router.urls)),
     path('', include(organisation_router.urls)),
-    path('dashboardsuggestions/', dashboardsuggestionsview.dashboardsuggestions)
+    path('', include(organisation_method_router.urls))
 ]
 
 

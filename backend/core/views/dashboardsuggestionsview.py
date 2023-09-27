@@ -59,7 +59,7 @@ def dashboardsuggestions(request):
     
         # Get actions and return it
         actions = modelInstance.retrieveBestActions()
-        return Response({ 'request': '', 'actions': json.dumps(actions) })
+        return Response({ 'request': '', 'actions': actions })
     
     ### Delete model when unloading dashboard ###
     elif request.method == 'DELETE':
@@ -122,7 +122,7 @@ class DashboardRLModelInstance():
         # Predict best action from model and return this in response
         actions = self.model.best_actions
         actionList = []
-        for action in actions:
+        for action, explanation in actions:
             visualisationIndex = action.visualisationIndex
 
             visualisationInfo = self.dashboard[visualisationIndex]
@@ -130,7 +130,7 @@ class DashboardRLModelInstance():
 
             actionInfo = action.to_dict()
             actionInfo['Visualisation Title'] = visualisationTitle
-            actionList.append(actionInfo)
+            actionList.append((actionInfo, explanation))
         return actionList
     
     def updateLastActivity(self):

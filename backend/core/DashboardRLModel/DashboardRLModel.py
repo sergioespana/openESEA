@@ -69,10 +69,12 @@ class DashboardRLModel:
         episode_reward = 0
 
         # For each episode, run a trajectory for `num_time_steps` time steps
-        for t in range(0, self.num_time_steps):
-
+        t = 0
+        while True:
             # Select/Sample an action from the agent network following the agent's policy
-            outputs = self.agent_network.output_parameter_values(state)
+            outputs = self.agent_network.output_parameter_values(state, self.dashboard_environment)
+            if outputs is None: 
+                continue # retry, without consuming time step
 
             # Execute the action on the environment
             state, reward, done, flags = self.dashboard_environment.step(outputs)
@@ -87,6 +89,11 @@ class DashboardRLModel:
 
             # If the environment is in a final state, stop this episode
             if done: break
+
+            # Check if final time step, or continue
+            if t >= self.num_time_steps - 1:
+                break
+            t += 1
 
         # Update the running reward over the episodes
         self.running_reward = 0.05 * episode_reward + (1 - 0.05) * self.running_reward
@@ -117,7 +124,11 @@ class DashboardRLModel:
         states = [self.dashboard_environment.perform_action_on_initial(action) for action in actions] # [(state, reward, done, flags)]
 
         # Return actions
-        return actions
+        actions_with_explanations = []
+        for i in range(len(actions)):
+            state, reward, done, flags = states[i]
+            actions_with_explanations.append((actions[i], flags))
+        return actions_with_explanations
 
 def main():
     model = DashboardRLModel()

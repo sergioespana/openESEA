@@ -199,12 +199,15 @@ export default {
                     const visualisationTitle = await this.getVisualisationTitle()(selectionConfig)
                     const categoryLimit = await this.getCategoryLimit()(selectionConfig)
 
+                    const numberOfDataPoints = visualisationData?.data?.length ?? 0
+                    const amountOfValueFields = Object.keys(visualisationData?.mapping).filter(fieldKey => fieldKey.includes('Value Field')).length
+
                     // Gather all visualisation information into one object
                     var visualisationInfo = {}
                     visualisationInfo['Selection Configuration'] = selectionConfig // For applying this to the correct visualisation
                     visualisationInfo['Visualisation Type'] = visualisationType
                     visualisationInfo['Visualisation Title'] = visualisationTitle
-                    visualisationInfo['Data Items'] = visualisationData?.length ?? 0
+                    visualisationInfo['Data Items'] = numberOfDataPoints * amountOfValueFields
                     visualisationInfo['Item Limit Enabled'] = categoryLimit > 0
                     visualisationInfo['Item Limit'] = categoryLimit ?? 0
                     visualisationInfoList.push(visualisationInfo)

@@ -130,7 +130,7 @@ export default {
             await this.updateSelectionConfig(this.config)
         },
         isEmpty (string) { return string === null || string === undefined || string === '' },
-        // Create dataset, add title and save the dataset
+        // Create dataset and save the dataset
         async createAndSaveDataset () {
             // Create data set
             const dataset = await this.createDataset()

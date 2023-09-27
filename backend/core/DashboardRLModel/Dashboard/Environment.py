@@ -2,20 +2,22 @@ from .Classes import VisualisationType, Dashboard
 
 from .Encoding import dashboardToArray
 
-from .Information import MAX_DATA_ITEMS
+from .Information import MAX_DATA_ITEMS, MAX_ITEM_LIMIT
 
 from .Actions.Information import ACTIONS
+from .Actions.Classes import *
 
 import copy
+import torch
 
 class DashboardEnvironment:
     def __init__(self, dashboard: Dashboard):
-        self.initial_dashboard: Dashboard = dashboard
+        self.initial_dashboard: Dashboard = copy.deepcopy(dashboard)
 
-        self.dashboard: Dashboard = copy.deepcopy(self.initial_dashboard)
-        self.state = dashboardToArray(self.dashboard)
+        self.dashboard: Dashboard = copy.deepcopy(dashboard)
+        self.state = dashboardToArray(dashboard)
 
-        self.rewards_info = [
+        self.state_rewards_info = [
             {
                 'Name': 'Decluttering',
                 'Weight': 1,
@@ -30,6 +32,13 @@ class DashboardEnvironment:
                 'Name': 'Appropriate Visualisation Types',
                 'Weight': 0.5,
                 'Function': DashboardEnvironment.reward_appropriate_visualisation_types
+            }
+        ]
+        self.action_rewards_info = [
+            {
+                'Name': 'Valid Action',
+                'Weight': 1,
+                'Function': DashboardEnvironment.reward_valid_action
             }
         ]
 
@@ -97,7 +106,7 @@ class DashboardEnvironment:
         reward, explanation = self.reward(self.initial_dashboard, action)
 
         # Flags
-        flags = { 'Explanation': None }
+        flags = { 'Explanation': explanation }
 
         # Always keep going
         done = False
@@ -106,67 +115,135 @@ class DashboardEnvironment:
         return self.state, reward, done, flags
 
     def reward(self, previous_dashboard, action):
+        current_dashboard = self.dashboard
+        current_state_rewards  = self.collect_state_rewards(current_dashboard)
+        previous_state_rewards = self.collect_state_rewards(previous_dashboard)
         
-        sum_of_reward_weights = 0
-        reward = 0
-        for reward_info in self.rewards_info:
-            reward_weight = reward_info['Weight']
-            reward_function = reward_info['Function']
-            reward += reward_weight * reward_function(self, previous_dashboard, action)
-            sum_of_reward_weights += reward_weight
-        
-        if sum_of_reward_weights == 0:
-            return 0, None
-        
-        normalized_reward = reward / sum_of_reward_weights
-        explanation = None
+        # action_reward_weights = []
+        # action_rewards = []
+        # for action_reward_info in self.action_rewards_info:
+        #     action_reward_weight = action_reward_info['Weight']
+        #     action_reward_function = action_reward_info['Function']
+        #     action_reward = action_reward_weight * action_reward_function(self, previous_dashboard, action)
 
+        #     action_rewards.append(action_reward)
+        #     action_reward_weights.append(action_reward_weight)
+
+        current_state_reward_weight = 0
+        current_state_reward = 0
+        for reward, weight in current_state_rewards:
+            current_state_reward += weight * reward
+            current_state_reward_weight += weight
+
+        if current_state_reward_weight == 0:
+            return 0, ""
+        
+        normalized_reward = current_state_reward / current_state_reward_weight
+        explanation = "Action chosen because of higher rewards w.r.t.:\n"
+        # print(current_state_rewards, previous_state_rewards)
+        for i in range(len(current_state_rewards)):
+            c_reward, c_reward_weight = current_state_rewards[i]
+            p_reward, p_reward_weight = previous_state_rewards[i]
+            if c_reward > p_reward:
+                # print('Unequal!')
+                # print('Dashboard')
+                # print(current_dashboard)
+                # print('Dashboard prev')
+                # print(previous_dashboard)
+                # print('Action')
+                # print(action)
+                # print('Rewards')
+                # print(current_state_rewards)
+                # print('Rewards prev')
+                # print(previous_state_rewards)
+                # input()
+                explanation += "\t" + self.state_rewards_info[i]["Name"] + "\t" + "Reward difference: " + str(c_reward - p_reward) + "\t" + "Weighted: " + str(c_reward_weight * (c_reward - p_reward)) + "\n"
+        # print(explanation)
         return normalized_reward, explanation
 
-    def reward_data_completeness(self, previous_dashboard, action):
-        current_dashboard = self.dashboard
+    def collect_state_rewards(self, state):
+        state_rewards = []
+        for state_reward_info in self.state_rewards_info:
+            state_reward_weight = state_reward_info['Weight']
+            state_reward_function = state_reward_info['Function']
+            state_reward = state_reward_weight * state_reward_function(self, state)
+
+            state_rewards.append((state_reward, state_reward_weight))
+        return state_rewards
+    
+    def reward_data_completeness(self, state):
         reward = 0
-        for visualisation in current_dashboard.visualisations:
+        for visualisation in state.visualisations:
             reward += 1 - int(visualisation.itemLimitEnabled)
             # Already weighted less because of weights
-        normalized_reward = reward / len(current_dashboard.visualisations)
+        normalized_reward = reward / len(state.visualisations)
         return normalized_reward
 
-    def reward_decluttering(self, previous_dashboard, action):
-        current_dashboard = self.dashboard
+    def reward_decluttering(self, state):
         reward = 0
-        for visualisation in current_dashboard.visualisations:
-            reward += 1 - visualisation.dataItems / MAX_DATA_ITEMS
-            # The less items, the higher reward
-        normalized_reward = reward / len(current_dashboard.visualisations)
+        for visualisation in state.visualisations:
+            reward += 0.5 * int(visualisation.itemLimitEnabled)
+            reward += 0.5 * (0 if visualisation.dataItems <= visualisation.itemLimit else ((visualisation.dataItems - visualisation.itemLimit) / visualisation.dataItems))
+            # The less items (the lower the item limit), the higher the reward
+        normalized_reward = reward / len(state.visualisations)
         return normalized_reward
     
-    def reward_appropriate_visualisation_types(self, previous_dashboard, action):
-        current_dashboard = self.dashboard
+    def reward_appropriate_visualisation_types(self, state):
         reward = 0
-        for visualisation in current_dashboard.visualisations:
-            if visualisation.visualisationType in [VisualisationType.SINGLE]:
-                if visualisation.dataItems == 1:
+        for visualisation in state.visualisations:
+            visualisationType = visualisation.visualisationType
+            dataItems = visualisation.dataItems
+            if visualisationType in [VisualisationType.SINGLE]:
+                if dataItems == 1:
                     reward += 1
-            elif visualisation.visualisationType in [VisualisationType.PROGRESS_BAR, VisualisationType.RADIAL_PROGRESS_BAR]:
-                if visualisation.dataItems == 1 or visualisation.dataItems == 2:
+            elif visualisationType in [VisualisationType.PROGRESS_BAR, VisualisationType.RADIAL_PROGRESS_BAR]:
+                if dataItems == 1 or dataItems == 2:
                     reward += 1
-            elif visualisation.visualisationType in [VisualisationType.FRACTIONAL]:
-                if visualisation.dataItems == 2:
+            elif visualisationType in [VisualisationType.FRACTIONAL]:
+                if dataItems == 2:
                     reward += 1
-            elif visualisation.visualisationType in [VisualisationType.PIE]:
-                if visualisation.dataItems >= 3 and visualisation.dataItems <= 8:
-                    reward += 1 - (visualisation.dataItems - 3) / 10
-                    # (3 -> 1, 4 -> 0.9, ..., 8 -> 0.5)
-            elif visualisation.visualisationType in [VisualisationType.BAR]:
-                if visualisation.dataItems >= 3:
+            elif visualisationType in [VisualisationType.PIE]: # Literature: 4, 5, 6
+                if dataItems >= 3 and dataItems <= 6:
+                    reward += 1 - (dataItems - 3) / 10
+                    # (3 -> 1, 4 -> 0.9, 5 -> 0.8, 6 -> 0.7)
+            elif visualisationType in [VisualisationType.BAR]: # Literature: 10, 12, 15
+                if dataItems >= 3 and dataItems <= 6:
+                    reward += 1 - (7 - dataItems) / 10
+                    # (3 -> 0.6, 4 -> 0.7, 5 -> 0.8, 6 -> 0.9)
+                elif dataItems >= 7 and dataItems <= 15:
                     reward += 1
-            elif visualisation.visualisationType in [VisualisationType.LINE]:
-                if visualisation.dataItems >= 3:
+            elif visualisationType in [VisualisationType.LINE]:
+                if dataItems >= 3 and dataItems <= 6:
+                    reward += 1 - (7 - dataItems) / 10
+                    # (3 -> 0.6, 4 -> 0.7, 5 -> 0.8, 6 -> 0.9)
+                elif dataItems >= 7 and dataItems <= 15:
+                    reward += 0.9
+                elif dataItems >= 16:
                     reward += 1
-        normalized_reward = reward / len(current_dashboard.visualisations)
+        normalized_reward = reward / len(state.visualisations)
         return normalized_reward
+
+    def reward_valid_action(previous_dashboard, action):
+        return 1
 
     def render(self):
         # No need to render visualisations
         pass
+
+
+    ### MASKING
+    def get_visualisation_mask(self, action_index):
+
+        def appropriate_action(action, visualisation):
+            if action == RemoveItemLimit:
+                if not visualisation.itemLimitEnabled:
+                    return False
+            elif action == AddItemLimit:
+                if visualisation.itemLimitEnabled:
+                    return False
+            return True
+        
+        action = ACTIONS[action_index]
+        mask_list = [int(appropriate_action(action, visualisation)) for visualisation in self.dashboard.visualisations]
+        return torch.tensor(mask_list, dtype = float)
+

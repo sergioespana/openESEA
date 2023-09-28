@@ -41,7 +41,14 @@ export default {
             if (!categoryKey || !valueKey) return { title: titleOptions }
             const categoryName = mapping?.['Category Field']?.name
             const valueName = mapping?.['Value Field']?.name
-            const data = chartData.data
+            var data = chartData.data
+
+            // Sort data if there is an item limit
+            const sort = true
+            if (sort && chartData?.options?.categoryLimit > 0) {
+                data = data.sort((a, b) => b[valueKey] - a[valueKey])
+            }
+
             const categories = data.map(el => el[categoryKey])
             const values = data.map(el => el[valueKey])
 

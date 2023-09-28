@@ -23,17 +23,17 @@ class DashboardRLModel:
         num_actions = NUM_ACTIONS
         num_params_list = ACTIONS_PARAMETERS
 
-        # Create the agent network
-        self.agent_network = AgentNetwork(num_inputs, num_hidden, num_actions, num_visualisations, num_params_list)
         # Create the dashboard environment
         self.dashboard_environment = DashboardEnvironment(dashboard)
+        # Create the agent network
+        self.agent_network = AgentNetwork(num_inputs, num_hidden, num_actions, num_visualisations, num_params_list, self.dashboard_environment)
 
         # Initialize running reward
         self.running_reward = 10
 
         # Set parameters
         self.num_episodes = None # 100
-        self.num_time_steps = 1000 # 10000
+        self.num_time_steps = 200 # 10000
         self.render = False
 
         # Set control variables
@@ -69,12 +69,16 @@ class DashboardRLModel:
         episode_reward = 0
 
         # For each episode, run a trajectory for `num_time_steps` time steps
+        sampled_actions = 0
         t = 0
         while True:
+            t += 1
             # Select/Sample an action from the agent network following the agent's policy
-            outputs = self.agent_network.output_parameter_values(state, self.dashboard_environment)
-            if outputs is None: 
-                continue # retry, without consuming time step
+            outputs = self.agent_network.output_parameter_values(state)
+            if outputs is None:
+                continue # retry, consuming a time step
+            else:
+                sampled_actions += 1
 
             # Execute the action on the environment
             state, reward, done, flags = self.dashboard_environment.step(outputs)
@@ -91,10 +95,10 @@ class DashboardRLModel:
             if done: break
 
             # Check if final time step, or continue
-            if t >= self.num_time_steps - 1:
+            if t >= self.num_time_steps:
                 break
-            t += 1
 
+        episode_reward = episode_reward if sampled_actions == 0 else episode_reward * self.num_time_steps / sampled_actions
         # Update the running reward over the episodes
         self.running_reward = 0.05 * episode_reward + (1 - 0.05) * self.running_reward
 
@@ -113,7 +117,9 @@ class DashboardRLModel:
         # Initialize starting environment
         start_environment = self.dashboard_environment.initial()
         # Select an (/the current best) action through the agent network
-        outputs = self.agent_network.forward_collect(start_environment)
+        while True:    
+            outputs = self.agent_network.forward_collect(start_environment)
+            if outputs is not None: break
         # Convert parameter from tensors to simple values
         parameter_values = [output.item() for output in outputs]
         # Construct the action from the model outputs

@@ -61,8 +61,8 @@ class DashboardEnvironment:
     
     def action_from_parameters(self, parameter_values):
         # Determine action, visualisation index and other parameters
-        action_index = parameter_values[0]
-        visualisation_index = parameter_values[1]
+        visualisation_index = parameter_values[0]
+        action_index = parameter_values[1]
         other_parameters = parameter_values[2:]
 
         # Construct the action from the parameters
@@ -232,18 +232,17 @@ class DashboardEnvironment:
 
 
     ### MASKING
-    def get_visualisation_mask(self, action_index):
+    def get_action_mask(self, visualisation_index):
 
-        def appropriate_action(action, visualisation):
+        visualisation = self.dashboard.visualisations[visualisation_index]
+
+        def valid_action(action):
             if action == RemoveItemLimit:
-                if not visualisation.itemLimitEnabled:
-                    return False
+                return visualisation.itemLimitEnabled
             elif action == AddItemLimit:
-                if visualisation.itemLimitEnabled:
-                    return False
-            return True
-        
-        action = ACTIONS[action_index]
-        mask_list = [int(appropriate_action(action, visualisation)) for visualisation in self.dashboard.visualisations]
-        return torch.tensor(mask_list, dtype = float)
+                return not visualisation.itemLimitEnabled
+            else:
+                return True
 
+        mask_list = [int(valid_action(action)) for action in ACTIONS]
+        return torch.tensor(mask_list, dtype = float)

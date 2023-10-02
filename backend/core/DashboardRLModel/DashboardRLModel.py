@@ -94,8 +94,8 @@ class DashboardRLModel:
             # If the environment is in a final state, stop this episode
             if done: break
 
-            # Check if final time step, or continue
-            if t >= self.num_time_steps:
+            # Stop if we reached the final time step and have minimal success, otherwise continue
+            if t >= self.num_time_steps and sampled_actions > self.num_time_steps / 10:
                 break
 
         episode_reward = episode_reward if sampled_actions == 0 else episode_reward * self.num_time_steps / sampled_actions
@@ -120,11 +120,15 @@ class DashboardRLModel:
         while True:    
             outputs = self.agent_network.forward_collect(start_environment)
             if outputs is not None: break
+        # print(outputs)
+        # input()
+        actions_values = [[val.item() for val in output['values']] for output in outputs]
+        # outputs is [{"values": ..., "one_hots": ..., "log_probs": ..., "probs": ...}, ...]
         # Convert parameter from tensors to simple values
-        parameter_values = [output.item() for output in outputs]
+        # parameter_values = [output.item() for output in outputs]
         # Construct the action from the model outputs
-        action = self.dashboard_environment.action_from_parameters(parameter_values)
-        actions = [action]
+        actions = [self.dashboard_environment.action_from_parameters(action_values) for action_values in actions_values]
+        # actions = [action]
 
         # Get reward + flags for this action
         states = [self.dashboard_environment.perform_action_on_initial(action) for action in actions] # [(state, reward, done, flags)]

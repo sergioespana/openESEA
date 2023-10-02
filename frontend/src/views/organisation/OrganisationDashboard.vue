@@ -1,7 +1,7 @@
 <template>
 
     <!-- Dashboard -->
-    <div class="organisation-dashboard">
+    <div class="organisation-dashboard" :ref="'dashboard'">
 
         <!-- Show spinner while loading dashboard -->
         <div v-if="!dashboardLoaded" class="spinner-div">
@@ -155,6 +155,7 @@ export default {
             await sleep(2000)
             // Build new RL Model and set interval for fetching suggestions
             const dashboard = await this.collectDashboardInfo()
+            console.log(dashboard)
             await this.buildDashboardRLModel({ data: { dashboard: dashboard } })
         },
         async collectDashboardInfo () {
@@ -169,16 +170,32 @@ export default {
             const containers = await this.getContainers()(selectionConfig)
             if (!containers) return visualisationInfoList
 
+            // Dashboard size
+            const dashboardWidth = this.$refs.dashboard.clientWidth
+            const dashboardHeight = this.$refs.dashboard.clientHeight
+            const dashboardDisplayArea = dashboardWidth * dashboardHeight
+
             // Get visualisation datasets
             var visualisationDatasets = await this.getVisualisationDatasets()()
             // Collect visualisations for each container
             for (let containerId = 0; containerId < containers.length; containerId++) {
+                const containerPosition = containers[containerId].Position
+                const containerWidth = (containerPosition['X End'] - containerPosition['X Start']) * dashboardWidth / 100
+                const containerHeight = (containerPosition['Y End'] - containerPosition['Y Start']) * dashboardHeight / 100
+
                 // Update selection to current conainer
                 selectionConfig.containerId = containerId
                 // Get all visualisation for this container
                 const visualisations = await this.getVisualisations()(selectionConfig)
                 // Get info for each visualisation
                 for (let visualisationId = 0; visualisationId < visualisations.length; visualisationId++) {
+                    const visualisationPosition = visualisations[visualisationId].Position
+                    const xStartPixels = dashboardWidth * containerPosition['X Start'] + containerWidth * visualisationPosition['X Start']
+                    const xEndPixels = dashboardWidth * containerPosition['X End'] + containerWidth * visualisationPosition['X End']
+                    const yStartPixels = dashboardHeight * containerPosition['Y Start'] + containerHeight * visualisationPosition['Y Start']
+                    const yEndPixels = dashboardHeight * containerPosition['Y End'] + containerHeight * visualisationPosition['Y End']
+                    const visualisationDisplayArea = (xEndPixels - xStartPixels) * (yEndPixels - yStartPixels)
+
                     // Update selection to current visualisation
                     selectionConfig.visualisationId = visualisationId
 
@@ -210,10 +227,12 @@ export default {
                     visualisationInfo['Data Items'] = numberOfDataPoints * amountOfValueFields
                     visualisationInfo['Item Limit Enabled'] = categoryLimit > 0
                     visualisationInfo['Item Limit'] = categoryLimit ?? 0
+                    visualisationInfo['Display Area'] = visualisationDisplayArea
+                    visualisationInfo.Position = { 'X Start': xStartPixels, 'X End': xEndPixels, 'Y Start': yStartPixels, 'Y End': yEndPixels }
                     visualisationInfoList.push(visualisationInfo)
                 }
             }
-            return visualisationInfoList
+            return { Visualisations: visualisationInfoList, 'Display Area': dashboardDisplayArea }
         },
         async updateRLModel () {
             // Update RL Model and set interval for fetching suggestions

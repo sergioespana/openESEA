@@ -125,7 +125,7 @@ class DashboardRLModelInstance():
         for action, explanation in actions:
             visualisationIndex = action.visualisationIndex
 
-            visualisationInfo = self.dashboard[visualisationIndex]
+            visualisationInfo = self.dashboard['Visualisations'][visualisationIndex]
             visualisationTitle = visualisationInfo['Visualisation Title']
 
             actionInfo = action.to_dict()

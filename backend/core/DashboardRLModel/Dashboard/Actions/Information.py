@@ -6,12 +6,12 @@ ACTIONS_INFORMATION = [
     {
         'Action': ChangeVisualisationType,
         'Name': 'Change Visualisation Type',
-        'Parameters': [{ 'values': NUM_VISUALISATION_TYPES, 'type': 'categorical' }]
+        'Parameters': [{ 'Values': NUM_VISUALISATION_TYPES, 'Type': 'categorical' }]
     },
     {
         'Action': AddItemLimit,
         'Name': 'Add Item Limit',
-        'Parameters': [{ 'values': MAX_ITEM_LIMIT, 'type': 'numerical' }]
+        'Parameters': [{ 'Values': MAX_ITEM_LIMIT, 'Type': 'numerical' }]
     },
     {
         'Action': RemoveItemLimit,

@@ -32,7 +32,12 @@ def parseVisualisation(visualisation) -> Visualisation:
     manyDataItems = dataItems >= MAX_DATA_ITEMS 
     if manyDataItems: dataItems = MAX_DATA_ITEMS
 
-    return Visualisation(visualisationType, itemLimitEnabled, itemLimitLarge, itemLimit, manyDataItems, dataItems)
+    # Display area
+    displayArea = visualisation['Display Area']
+
+    return Visualisation(visualisationType, itemLimitEnabled, itemLimitLarge, itemLimit, manyDataItems, dataItems, displayArea)
 
 def parseDashboard(dashboard) -> Dashboard:
-    return Dashboard([parseVisualisation(visualisation) for visualisation in dashboard])
+    displayArea = dashboard['Display Area']
+    visualisations = dashboard['Visualisations']
+    return Dashboard([parseVisualisation(visualisation) for visualisation in visualisations], displayArea)

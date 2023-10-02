@@ -28,6 +28,9 @@ class Visualisation:
     manyDataItems: bool
     dataItems: int
 
+    displayArea: float
+
 @dataclass
 class Dashboard:
     visualisations: List[Visualisation]
+    displayArea: float

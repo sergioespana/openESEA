@@ -2,13 +2,12 @@ from .Classes import VisualisationType, Dashboard
 
 from .Encoding import dashboardToArray
 
-from .Information import MAX_DATA_ITEMS, MAX_ITEM_LIMIT
+from .Information import MAX_DATA_ITEMS, MAX_ITEM_LIMIT, NUM_VISUALISATION_TYPES
 
-from .Actions.Information import ACTIONS
+from .Actions.Information import ACTIONS, ACTIONS_PARAMETERS
 from .Actions.Classes import *
 
 import copy
-import torch
 
 class DashboardEnvironment:
     def __init__(self, dashboard: Dashboard):
@@ -244,5 +243,54 @@ class DashboardEnvironment:
             else:
                 return True
 
-        mask_list = [int(valid_action(action)) for action in ACTIONS]
-        return torch.tensor(mask_list, dtype = float)
+        return [int(valid_action(action)) for action in ACTIONS]
+    
+    def get_parameter_mask(self, visualisation_index, action_index, sampled_params, param_index):
+        visualisation = self.dashboard.visualisations[visualisation_index]
+        action = ACTIONS[action_index]
+        # print(visualisation_index, action_index, param_index, ACTIONS_PARAMETERS)
+        param_values = ACTIONS_PARAMETERS[action_index][param_index]['Values']
+
+        # Should not be reached
+        if action == RemoveItemLimit:
+            return None
+        # Item limit up to data_items
+        elif action == AddItemLimit:
+            data_items = visualisation.dataItems
+            max_values = param_values
+            return [1 if value <= data_items else 0 for value in range(max_values)]
+        # Visualisation type which is possible
+        if action == ChangeVisualisationType:
+            visualisation_type = visualisation.visualisationType
+            data_items = visualisation.dataItems
+            categoricalVisualisations = [VisualisationType.PIE, VisualisationType.BAR]
+            temporalVisualisations = [VisualisationType.LINE]
+            progressBarVisualisations = [VisualisationType.PROGRESS_BAR, VisualisationType.RADIAL_PROGRESS_BAR]
+            fractionalVisualisations = [VisualisationType.FRACTIONAL] + progressBarVisualisations
+            def valid_change(newType):
+                # Single to single
+                if visualisation_type == VisualisationType.SINGLE:
+                    return newType == VisualisationType.SINGLE
+                    # or if percentage -> progress bar
+                # Fractional to fractional/progress_bars or pie
+                if visualisation_type == VisualisationType.FRACTIONAL:
+                    return newType in fractionalVisualisations or newType == VisualisationType.PIE
+                # Progress bars to progress bars or if 1 item -> single, 2 items -> fractional/pie
+                if visualisation_type in progressBarVisualisations:
+                    if data_items == 1:
+                        return newType in progressBarVisualisations or newType == VisualisationType.SINGLE
+                    return newType in fractionalVisualisations or newType == VisualisationType.PIE
+                # Categorical to categorical or if 1 item -> single
+                if visualisation_type in categoricalVisualisations:
+                    if newType in categoricalVisualisations:
+                        return True
+                    if data_items == 1:
+                        return newType == VisualisationType.SINGLE
+                # Categorical to categorical or if 1 item -> single
+                if visualisation_type == VisualisationType.LINE:
+                    if newType in categoricalVisualisations or newType in temporalVisualisations:
+                        return True
+                    if data_items == 1:
+                        return newType == VisualisationType.SINGLE
+                return False
+            return [int(valid_change(visualisation_type.value)) for visualisation_type in VisualisationType]

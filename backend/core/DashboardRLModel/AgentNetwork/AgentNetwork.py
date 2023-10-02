@@ -4,6 +4,8 @@ import torch.optim as optim
 import torch.nn.functional as F
 from torch.distributions import Categorical
 
+import numpy as np
+
 from .Constants import EPSILON
 
 from .Parameters import GAMMA, LEARNING_RATE
@@ -37,16 +39,30 @@ def argmax_categorical_random(value_probabilities):
 
 def collect_categorical(value_probabilities, top = None):
     dist = Categorical(value_probabilities)
-    values_and_log_probs = [{ "value": value, "log_prob": dist.log_prob(value) } for value in range(len(value_probabilities))]
-    sorted_values_and_log_probs = values_and_log_probs.sort(key = lambda x: x.get('log_prob'), reverse = True)
-    if top is not None:
-        return sorted_values_and_log_probs[0:top]
-    return sorted_values_and_log_probs
+    values_and_log_probs = []
+    for value in range(len(value_probabilities)):
+        value = torch.tensor(value)
+        prob = value_probabilities[value]
+        log_prob = dist.log_prob(value)
+        one_hot = one_hot_encode_categorical(value_probabilities, value)
+
+        values_and_log_probs.append({ "value": value, "one_hot": one_hot, "log_prob": log_prob, "prob": prob })
+    return values_and_log_probs
     
 def one_hot_encode_categorical(value_probabilities, sampled_value):
     num_values = value_probabilities.size(dim = 0)
     one_hot_encoded_value = F.one_hot(sampled_value, num_classes = num_values)
     return one_hot_encoded_value
+
+def mask_probabilities(probabilities, mask):
+    # If there are no possibilities -> return None
+    if mask is None or torch.sum(mask) == 0: return None
+    # Otherwise apply mask to probabilities
+    probabilities = probabilities * mask
+    # If the available options have no probability, return to mask to sample from possible options
+    if torch.sum(probabilities) == 0: return mask
+    # Else return probabilities
+    return probabilities
 
 class FeedForwardLayer(nn.Module):
     def __init__(self, num_inputs, num_outputs, num_extra_inputs = None, num_hidden = None, num_lstm_hidden = None, bidirectionalembedding = False):
@@ -59,12 +75,28 @@ class FeedForwardLayer(nn.Module):
         self.linear_activation_layer = nn.Linear(num_lstm_hidden, num_hidden)
         self.softmax_probs_layer = nn.Linear(num_hidden, num_outputs)
 
-    def forward(self, input_state, extra_inputs = []):
-        current_state = torch.cat(extra_inputs + [input_state], dim = 0)
+    def forward(self, input_state, sampled_values = []):
+        # print(input_state, sampled_values)
+        current_state = torch.cat(sampled_values + [input_state], dim = 0)
         embedding = self.embedding_layer(current_state)
         hidden_state = F.relu(self.linear_activation_layer(embedding))
         output_probs = F.softmax(self.softmax_probs_layer(hidden_state), dim = -1)
         return hidden_state, output_probs
+    
+class CriticLayer(nn.Module):
+    def __init__(self, num_inputs, num_extra_inputs = None, num_hidden = None, bidirectionalembedding = False):
+        super(CriticLayer, self).__init__()
+        if num_hidden is None: num_hidden = num_inputs
+        if num_extra_inputs is not None: num_inputs += num_extra_inputs
+        self.embedding_layer = LSTMEmbeddingLayer(num_inputs, num_hidden, bidirectional = bidirectionalembedding)
+        if bidirectionalembedding: num_hidden *= 2
+        self.critic_layer = nn.Linear(num_hidden, 1)
+
+    def forward(self, input_state, sampled_values = []):
+        current_state = torch.cat(sampled_values + [input_state], dim = 0)
+        embedding = self.embedding_layer(current_state)
+        critic_value = self.critic_layer(embedding)
+        return critic_value
 
 class LSTMEmbeddingLayer(nn.Module):
     def __init__(self, num_inputs, num_hidden, bidirectional):
@@ -72,8 +104,11 @@ class LSTMEmbeddingLayer(nn.Module):
         self.lstm_embedding_layer = nn.LSTM(num_inputs, num_hidden, bidirectional = bidirectional)
 
     def forward(self, state):
+        # Unsqueeze to match lstm dimensions
         unsqueezed_state = state.unsqueeze(0).unsqueeze(0)
+        # Forward into lstm layer
         unsqueezed_embedding, (_, _) = self.lstm_embedding_layer(unsqueezed_state)
+        # Squeeze back into 1d tensor
         embedding = unsqueezed_embedding.squeeze()
         return embedding
     
@@ -117,8 +152,8 @@ class AgentNetwork(nn.Module):
 
             # Layer for every param
             for param in list_of_params:
-                param_size = param['values']
-                param_type = param['type']
+                param_size = param['Values']
+                param_type = param['Type']
 
                 # Hidden & Prediction layer
                 param_layer = FeedForwardLayer(num_hidden, param_size, num_extra_inputs = num_extra_inputs_with_params)
@@ -130,126 +165,251 @@ class AgentNetwork(nn.Module):
                 num_extra_inputs_with_params += param_size
 
             # Critic layer
-            critic_layer = FeedForwardLayer(num_hidden, 1, num_extra_inputs = num_extra_inputs_with_params)
+            critic_layer = CriticLayer(num_hidden, num_extra_inputs = num_extra_inputs_with_params)
 
             # Add modules for this action
             self.action_layers_list.append(nn.ModuleList([parameter_layers, critic_layer]))
 
     # @torch.jit.script_method
     def forward(self, state):
+        # Lists for storing extra inputs, sampled values and value probabilities
+        log_probabilities = []
+        sampled_values = []
         extra_inputs = []
 
-        ### Visualisation Layer
+
+        ### Feed forward: Visualisation Layer ###
         hidden_state, visualisation_probs = self.visualisation_layer(state)
 
-        ### Sampling visualisation ###
-
-        # Sample a visualisation index from the visualisation probabilities
+        ### Sampling: Visualisation ###
         sampled_visualisation, log_prob_vis = sample_categorical(visualisation_probs)
-        # One hot encode the sampled visualisation and add to the extra inputs
+        # Keep track of probabilities, sampled value and encoded input
+        sampled_values.append(sampled_visualisation)
+        log_probabilities.append(log_prob_vis)
         extra_inputs.append(one_hot_encode_categorical(visualisation_probs, sampled_visualisation))
 
-        ### Action layer
-        hidden_state, action_probs = self.action_layer(state, extra_inputs)
 
-        ### Sampling action ###
+        ### Feed forward: Action layer ###
+        hidden_state, action_probs = self.action_layer(hidden_state, extra_inputs)
 
-        # Masking actions
-        action_mask = self.get_action_mask(sampled_visualisation)
-        # If there are no possible actions -> return
-        if torch.sum(action_mask) == 0: return None, None, None
-        # Otherwise apply mask to probabilities
-        action_probs *= action_mask
-        # If there are no available options, select a random valid action from the mask
-        if torch.sum(action_probs) == 0: action_probs = action_mask
+        ### Masking probabilities: Action ###
+        action_probs = mask_probabilities(action_probs, self.get_action_mask(sampled_visualisation))
+        # If no options, return
+        if action_probs is None: return None, None, None
 
-        # Sample an action from the action probabilities
+        ### Sampling: Action ###
         sampled_action, log_prob_action = sample_categorical(action_probs)
-        # One hot encode the sampled action and add to the extra inputs
+        # Keep track of probabilities, sampled value and encoded input
+        sampled_values.append(sampled_action)
+        log_probabilities.append(log_prob_action)
         extra_inputs.append(one_hot_encode_categorical(action_probs, sampled_action))
 
-        # Get branch corresponding to chosen action
-        sampled_values = [sampled_visualisation, sampled_action]
-        value_probabilities = [log_prob_vis, log_prob_action]
-        action_layer_dict = self.action_layers_list[sampled_action]
-        for param_layer in action_layer_dict[0]:
+
+        ### Parameter layers ###
+        for param_index, param_layer in enumerate(self.action_layers_list[sampled_action][0]): # [0] to get parameter layers
+
+            ### Feed forward: Parameter layer ###
             hidden_state, param_probs = param_layer(hidden_state, extra_inputs)
 
-            sampled_param, log_prob_param = sample_categorical(param_probs)
-            value_probabilities.append(log_prob_param)
-            sampled_values.append(sampled_param)
+            ### Masking probabilities: Parameter ###
+            parameter_probs = mask_probabilities(param_probs, self.get_parameter_mask(sampled_visualisation, sampled_action, sampled_values[2:], param_index))
+            # If no options, return
+            if parameter_probs is None: return None, None, None
 
-            encoded_param = one_hot_encode_categorical(param_probs, sampled_param)
-            extra_inputs.append(encoded_param)
+            ### Sampling: Parameter ###
+            sampled_parameter, log_prob_parameter = sample_categorical(parameter_probs)
+            # Keep track of probabilities, sampled value and encoded input
+            sampled_values.append(sampled_parameter)
+            log_probabilities.append(log_prob_parameter)
+            extra_inputs.append(one_hot_encode_categorical(parameter_probs, sampled_parameter))
 
-        _, critic_value = action_layer_dict[1](hidden_state, extra_inputs)
 
-        return sampled_values, value_probabilities, critic_value
+        ### Critic layer ###
+        critic_value = self.action_layers_list[sampled_action][1](hidden_state, extra_inputs) # [1] to get critic layer
+
+        return sampled_values, log_probabilities, critic_value
     
     def get_action_mask(self, sampled_visualisation):
-        return self.dashboard_environment.get_action_mask(sampled_visualisation)
+        mask_list = self.dashboard_environment.get_action_mask(sampled_visualisation)
+        return torch.tensor(mask_list, dtype = float)
+    
+    def get_parameter_mask(self, sampled_visualisation, sampled_action, sampled_params, param_index):
+        mask_list = self.dashboard_environment.get_parameter_mask(sampled_visualisation, sampled_action, sampled_params, param_index)
+        if mask_list is None: return None
+        return torch.tensor(mask_list, dtype = float)
     
     def simple_argmax_forward(self, state):
+        # Lists for storing extra inputs, sampled values and value probabilities
+        log_probabilities = []
+        sampled_values = []
         extra_inputs = []
 
-        ### Visualisation Layer
+
+        ### Feed forward: Visualisation Layer ###
         hidden_state, visualisation_probs = self.visualisation_layer(state)
 
-        ### Sampling visualisation ###
-
-        # Sample a visualisation index from the visualisation probabilities
+        ### Sampling: Visualisation ###
         sampled_visualisation, log_prob_vis = argmax_categorical_random(visualisation_probs)
-        # One hot encode the sampled visualisation and add to the extra inputs
+        # Keep track of probabilities, sampled value and encoded input
+        sampled_values.append(sampled_visualisation)
+        log_probabilities.append(log_prob_vis)
         extra_inputs.append(one_hot_encode_categorical(visualisation_probs, sampled_visualisation))
 
-        ### Action layer
-        hidden_state, action_probs = self.action_layer(state, extra_inputs)
 
-        ### Sampling action ###
+        ### Feed forward: Action layer ###
+        hidden_state, action_probs = self.action_layer(hidden_state, extra_inputs)
 
-        # Masking actions
-        action_mask = self.get_action_mask(sampled_visualisation)
-        # If there are no possible actions -> return
-        if torch.sum(action_mask) == 0: return None, None, None
-        # Otherwise apply mask to probabilities
-        action_probs *= action_mask
-        # If there are no available options, select a random valid action from the mask
-        if torch.sum(action_probs) == 0: action_probs = action_mask
+        ### Masking probabilities: Action ###
+        action_probs = mask_probabilities(action_probs, self.get_action_mask(sampled_visualisation))
+        # If no options, return
+        if action_probs is None: return None, None, None
 
-        # Sample an action from the action probabilities
+        ### Sampling: Action ###
         sampled_action, log_prob_action = argmax_categorical_random(action_probs)
-        # One hot encode the sampled action and add to the extra inputs
+        # Keep track of probabilities, sampled value and encoded input
+        sampled_values.append(sampled_action)
+        log_probabilities.append(log_prob_action)
         extra_inputs.append(one_hot_encode_categorical(action_probs, sampled_action))
 
-        # Get branch corresponding to chosen action
-        sampled_values = [sampled_visualisation, sampled_action]
-        value_probabilities = [log_prob_vis, log_prob_action]
-        action_layer_dict = self.action_layers_list[sampled_action]
-        for param_layer in action_layer_dict[0]:
+
+        ### Parameter layers ###
+        for param_index, param_layer in enumerate(self.action_layers_list[sampled_action][0]): # [0] to get parameter layers
+
+            ### Feed forward: Parameter layer ###
             hidden_state, param_probs = param_layer(hidden_state, extra_inputs)
 
-            sampled_param, log_prob_param = argmax_categorical_random(param_probs)
-            value_probabilities.append(log_prob_param)
-            sampled_values.append(sampled_param)
+            ### Masking probabilities: Parameter ###
+            parameter_probs = mask_probabilities(param_probs, self.get_parameter_mask(sampled_visualisation, sampled_action, sampled_values[2:], param_index))
+            # If no options, return
+            if parameter_probs is None: return None, None, None
 
-            encoded_param = one_hot_encode_categorical(param_probs, sampled_param)
-            extra_inputs.append(encoded_param)
+            ### Sampling: Parameter ###
+            sampled_parameter, log_prob_parameter = argmax_categorical_random(parameter_probs)
+            # Keep track of probabilities, sampled value and encoded input
+            sampled_values.append(sampled_parameter)
+            log_probabilities.append(log_prob_parameter)
+            extra_inputs.append(one_hot_encode_categorical(parameter_probs, sampled_parameter))
 
-        _, critic_value = action_layer_dict[1](hidden_state, extra_inputs)
 
-        return sampled_values, value_probabilities, critic_value
+        ### Critic layer ###
+        critic_value = self.action_layers_list[sampled_action][1](hidden_state, extra_inputs) # [1] to get critic layer
 
-    def forward_collect(self, state, top = None):
+        return sampled_values, log_probabilities, critic_value
+
+    def forward_collect(self, state, top = 5):
+        # Pytorch Tensor from Numpy array state
+        tensor_state = torch.as_tensor(state, dtype = torch.float)
         TESTING = True
-        if TESTING:
-            # Pytorch Tensor from Numpy array state
-            tensor_state = torch.as_tensor(state, dtype = torch.float)
+        if not TESTING:
 
             # Sample action parameters using the current model(/policy) by feeding state to itself
             parameter_values, _, _ = self.simple_argmax_forward(tensor_state)
 
             # Return action parameters values
             return parameter_values
+        
+        ### Feed forward: Visualisation Layer ###
+        hidden_state, visualisation_probs = self.visualisation_layer(tensor_state)
+
+        ### Sampling: Visualisation ###
+        sampled_visualisations = collect_categorical(visualisation_probs)
+        sampled_information_list = []
+        for sampled_visualisation in sampled_visualisations:
+            sampled_information_list.append(
+                { 
+                    "values": [sampled_visualisation["value"]], 
+                    "one_hots": [sampled_visualisation["one_hot"]], 
+                    "log_probs": [sampled_visualisation["log_prob"]], 
+                    "probs": [sampled_visualisation["prob"]] 
+                }
+            )
+        # If top is set, sort by probability and get top K
+        if top is not None:
+            # print(sampled_information_list)
+            # print('regel 328')
+            # input()
+            sampled_information_list.sort(key = lambda x: np.prod([0 if val is None else val.item() for val in x.get('probs')]), reverse = True)
+            sampled_information_list = sampled_information_list[0:top]
+
+        # Keep track of probabilities, sampled value and encoded input
+        for sampled_information in sampled_information_list:
+            extra_inputs = sampled_information['one_hots']
+
+            ### Feed forward: Action layer ###
+            hidden_state, action_probs = self.action_layer(hidden_state, extra_inputs)
+
+            ### Masking probabilities: Action ###
+            action_probs = mask_probabilities(action_probs, self.get_action_mask(sampled_information['values'][0]))
+            # If no options, skip this action
+            if action_probs is None: continue
+
+            ### Sampling: Action ###
+            sampled_actions = collect_categorical(action_probs)
+            new_sampled_information_list = []
+            for sampled_action in sampled_actions:
+                new_information = sampled_action
+                new_sampled_information_list.append(
+                    { 
+                        "values": sampled_information["values"] + [new_information['value']], 
+                        "one_hots": sampled_information["one_hots"] + [new_information['one_hot']], 
+                        "log_probs": sampled_information["log_probs"] + [new_information['log_prob']], 
+                        "probs": sampled_information["probs"] + [new_information['prob']] 
+                    }
+                )
+
+        sampled_information_list = new_sampled_information_list
+        # If top is set, sort by probability and get top K
+        if top is not None: 
+            # print(sampled_information_list)
+            # print('regel 363')
+            # input()
+            sampled_information_list.sort(key = lambda x: np.prod([0 if val is None else val.item() for val in x.get('probs')]), reverse = True)
+            sampled_information_list = sampled_information_list[0:top]
+
+        for sampled_information in sampled_information_list:
+            sampled_values = sampled_information['values']
+            sampled_visualisation = sampled_values[0]
+            sampled_action = sampled_values[1]
+            extra_inputs = sampled_information['one_hots']
+
+            ### FOR NOW 1 PARAM, BUT MAY BECOME MORE COMPLEX
+            ### Parameter layers ###
+            for param_index, param_layer in enumerate(self.action_layers_list[sampled_action][0]): # [0] to get parameter layers
+
+                ### Feed forward: Parameter layer ###
+                hidden_state, param_probs = param_layer(hidden_state, extra_inputs)
+
+                ### Masking probabilities: Parameter ###
+                parameter_probs = mask_probabilities(param_probs, self.get_parameter_mask(sampled_visualisation, sampled_action, sampled_values[2:], param_index))
+                # If no options, return
+                if parameter_probs is None: continue
+
+                ###### divide by max value to compensate for dimensionality of parameters (scale to where max = 1)
+                parameter_probs = torch.div(parameter_probs, torch.max(parameter_probs))
+
+                ### Sampling: Parameter ###
+                sampled_parameters = collect_categorical(parameter_probs)
+                new_sampled_information_list = []
+                for sampled_parameter in sampled_parameters:
+                    new_information = sampled_parameter
+                    new_sampled_information_list.append(
+                        { 
+                            "values": sampled_information["values"] + [new_information['value']], 
+                            "one_hots": sampled_information["one_hots"] + [new_information['one_hot']], 
+                            "log_probs": sampled_information["log_probs"] + [new_information['log_prob']], 
+                            "probs": sampled_information["probs"] + [new_information['prob']] 
+                        }
+                    )
+
+        sampled_information_list = new_sampled_information_list
+        # If top is set, sort by probability and get top K
+        if top is not None: 
+            sampled_information_list.sort(key = lambda x: np.prod([0 if val is None else val.item() for val in x.get('probs')]), reverse = True)
+            sampled_information_list = sampled_information_list[0:top]
+        # print(sampled_information_list)
+        # input()
+
+        return sampled_information_list
 
     # @torch.jit.script_method
     def output_parameter_values(self, state):
@@ -258,8 +418,7 @@ class AgentNetwork(nn.Module):
 
         # Sample action parameters using the current model(/policy) by feeding state to itself
         parameter_values, parameter_probabilities, critic_value = self(tensor_state)
-        if parameter_values is None: 
-            return None
+        if parameter_values is None: return None
         
         # Save the parameter probabilities and critic value in the saved actions list
         saved_action = (parameter_probabilities, critic_value)
@@ -307,6 +466,9 @@ class AgentNetwork(nn.Module):
         self.optimizer.zero_grad()
         torch.autograd.set_detect_anomaly(True)
         # Calculate the gradients by backpropagating loss
+        # print(loss)
+        # print(self.rewards[:])
+        # print(self.saved_actions[:])
         loss.backward()
         # Apply the calculated gradients to the network
         self.optimizer.step()

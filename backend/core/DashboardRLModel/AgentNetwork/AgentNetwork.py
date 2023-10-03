@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from torch.distributions import Categorical
 
 import numpy as np
+from enum import IntEnum
 
 from .Constants import EPSILON
 
@@ -13,18 +14,28 @@ from .Parameters import GAMMA, LEARNING_RATE
 from ..Dashboard.Environment import DashboardEnvironment
 
 # Functions for categorical variables
+# Sample a value according to probabilities
 def sample_categorical(value_probabilities):
     dist = Categorical(value_probabilities)
     value = dist.sample() # Sample according to probabilities
     log_prob = dist.log_prob(value)
     return value, log_prob
 
+# Get the value with the highest probability
 def argmax_categorical(value_probabilities):
     dist = Categorical(value_probabilities)
     value = torch.argmax(value_probabilities) # Get value with highest probability
     log_prob = dist.log_prob(value)
     return value, log_prob
 
+# Enforce getting the given value
+def get_categorical(value_probabilities, value):
+    dist = Categorical(value_probabilities)
+    value = torch.tensor(value.item()).long()
+    log_prob = dist.log_prob(value)
+    return value, log_prob
+
+# Get a random value with the highest probability
 def argmax_categorical_random(value_probabilities):
     dist = Categorical(value_probabilities)
     value = torch.argmax(value_probabilities)
@@ -37,7 +48,8 @@ def argmax_categorical_random(value_probabilities):
     log_prob = dist.log_prob(value)
     return value, log_prob
 
-def collect_categorical(value_probabilities, top = None):
+# Collect all values with their probabilities
+def collect_categorical(value_probabilities):
     dist = Categorical(value_probabilities)
     values_and_log_probs = []
     for value in range(len(value_probabilities)):
@@ -49,11 +61,13 @@ def collect_categorical(value_probabilities, top = None):
         values_and_log_probs.append({ "value": value, "one_hot": one_hot, "log_prob": log_prob, "prob": prob })
     return values_and_log_probs
     
+# One hot encode a categorical variable
 def one_hot_encode_categorical(value_probabilities, sampled_value):
     num_values = value_probabilities.size(dim = 0)
     one_hot_encoded_value = F.one_hot(sampled_value, num_classes = num_values)
     return one_hot_encoded_value
 
+# Mask probabilities and return possibilities
 def mask_probabilities(probabilities, mask):
     # If there are no possibilities -> return None
     if mask is None or torch.sum(mask) == 0: return None
@@ -112,6 +126,11 @@ class LSTMEmbeddingLayer(nn.Module):
         embedding = unsqueezed_embedding.squeeze()
         return embedding
     
+class ForwardPass(IntEnum):
+    SAMPLE = 0
+    PREDICT = 1
+    EMULATE = 2
+
 class AgentNetwork(nn.Module):
     def __init__(self, num_inputs: int, num_hidden: int, num_actions: int, num_visualisations: int, list_of_param_lists, dashboard_environment: DashboardEnvironment):
         # Initialise base nn.Module class
@@ -129,6 +148,9 @@ class AgentNetwork(nn.Module):
         # Lists for saving action probabilities and rewards
         self.saved_actions = []
         self.rewards = []
+
+        self.saved_user_actions = []
+        self.user_rewards = []
 
     def build_network(self, num_inputs: int, num_hidden: int, num_actions: int, num_visualisations: int, list_of_param_lists):
         self.list_of_param_lists = list_of_param_lists
@@ -171,12 +193,72 @@ class AgentNetwork(nn.Module):
             self.action_layers_list.append(nn.ModuleList([parameter_layers, critic_layer]))
 
     # @torch.jit.script_method
-    def forward(self, state):
-        # Lists for storing extra inputs, sampled values and value probabilities
+    def forward_emulate(self, state, action_values):
+        # Get values from action values 
+        visualisation = action_values[0]
+        action = action_values[1]
+        parameters = action_values[2:]
+
+        # Lists for storing extra inputs and value probabilities
         log_probabilities = []
         sampled_values = []
         extra_inputs = []
 
+        ### Feed forward: Visualisation Layer ###
+        hidden_state, visualisation_probs = self.visualisation_layer(state)
+
+        ### Sampling: Visualisation ###
+        sampled_visualisation, log_prob_vis = get_categorical(visualisation_probs, visualisation)
+        # Keep track of probabilities, sampled value and encoded input
+        sampled_values.append(sampled_visualisation)
+        log_probabilities.append(log_prob_vis)
+        extra_inputs.append(one_hot_encode_categorical(visualisation_probs, sampled_visualisation))
+
+
+        ### Feed forward: Action layer ###
+        hidden_state, action_probs = self.action_layer(hidden_state, extra_inputs)
+
+        ### Sampling: Action ###
+        sampled_action, log_prob_action = get_categorical(action_probs, action)
+        # Keep track of probabilities, sampled value and encoded input
+        sampled_values.append(sampled_action)
+        log_probabilities.append(log_prob_action)
+        extra_inputs.append(one_hot_encode_categorical(action_probs, sampled_action))
+
+
+        ### Parameter layers ###
+        for param_index, param_layer in enumerate(self.action_layers_list[sampled_action][0]): # [0] to get parameter layers
+
+            ### Feed forward: Parameter layer ###
+            hidden_state, parameter_probs = param_layer(hidden_state, extra_inputs)
+
+            ### Sampling: Parameter ###
+            sampled_parameter, log_prob_parameter = get_categorical(parameter_probs, parameters[param_index])
+            # Keep track of probabilities, sampled value and encoded input
+            sampled_values.append(sampled_parameter)
+            log_probabilities.append(log_prob_parameter)
+            extra_inputs.append(one_hot_encode_categorical(parameter_probs, sampled_parameter))
+
+
+        ### Critic layer ###
+        critic_value = self.action_layers_list[sampled_action][1](hidden_state, extra_inputs) # [1] to get critic layer
+
+        return sampled_values, log_probabilities, critic_value
+    
+    # @torch.jit.script_method
+    def forward(self, forward_pass: ForwardPass, *args, **kwargs):
+        if forward_pass == ForwardPass.SAMPLE:
+            return self.forward_sample(*args, **kwargs)
+        elif forward_pass == ForwardPass.PREDICT:
+            return self.forward_predict(*args, **kwargs)
+        elif forward_pass == ForwardPass.EMULATE:
+            return self.forward_emulate(*args, **kwargs)
+
+    def forward_sample(self, state):
+        # Lists for storing extra inputs, sampled values and value probabilities
+        log_probabilities = []
+        sampled_values = []
+        extra_inputs = []
 
         ### Feed forward: Visualisation Layer ###
         hidden_state, visualisation_probs = self.visualisation_layer(state)
@@ -209,10 +291,10 @@ class AgentNetwork(nn.Module):
         for param_index, param_layer in enumerate(self.action_layers_list[sampled_action][0]): # [0] to get parameter layers
 
             ### Feed forward: Parameter layer ###
-            hidden_state, param_probs = param_layer(hidden_state, extra_inputs)
+            hidden_state, parameter_probs = param_layer(hidden_state, extra_inputs)
 
             ### Masking probabilities: Parameter ###
-            parameter_probs = mask_probabilities(param_probs, self.get_parameter_mask(sampled_visualisation, sampled_action, sampled_values[2:], param_index))
+            parameter_probs = mask_probabilities(parameter_probs, self.get_parameter_mask(sampled_visualisation, sampled_action, sampled_values[2:], param_index))
             # If no options, return
             if parameter_probs is None: return None, None, None
 
@@ -238,72 +320,14 @@ class AgentNetwork(nn.Module):
         if mask_list is None: return None
         return torch.tensor(mask_list, dtype = float)
     
-    def simple_argmax_forward(self, state):
-        # Lists for storing extra inputs, sampled values and value probabilities
-        log_probabilities = []
-        sampled_values = []
-        extra_inputs = []
-
-
-        ### Feed forward: Visualisation Layer ###
-        hidden_state, visualisation_probs = self.visualisation_layer(state)
-
-        ### Sampling: Visualisation ###
-        sampled_visualisation, log_prob_vis = argmax_categorical_random(visualisation_probs)
-        # Keep track of probabilities, sampled value and encoded input
-        sampled_values.append(sampled_visualisation)
-        log_probabilities.append(log_prob_vis)
-        extra_inputs.append(one_hot_encode_categorical(visualisation_probs, sampled_visualisation))
-
-
-        ### Feed forward: Action layer ###
-        hidden_state, action_probs = self.action_layer(hidden_state, extra_inputs)
-
-        ### Masking probabilities: Action ###
-        action_probs = mask_probabilities(action_probs, self.get_action_mask(sampled_visualisation))
-        # If no options, return
-        if action_probs is None: return None, None, None
-
-        ### Sampling: Action ###
-        sampled_action, log_prob_action = argmax_categorical_random(action_probs)
-        # Keep track of probabilities, sampled value and encoded input
-        sampled_values.append(sampled_action)
-        log_probabilities.append(log_prob_action)
-        extra_inputs.append(one_hot_encode_categorical(action_probs, sampled_action))
-
-
-        ### Parameter layers ###
-        for param_index, param_layer in enumerate(self.action_layers_list[sampled_action][0]): # [0] to get parameter layers
-
-            ### Feed forward: Parameter layer ###
-            hidden_state, param_probs = param_layer(hidden_state, extra_inputs)
-
-            ### Masking probabilities: Parameter ###
-            parameter_probs = mask_probabilities(param_probs, self.get_parameter_mask(sampled_visualisation, sampled_action, sampled_values[2:], param_index))
-            # If no options, return
-            if parameter_probs is None: return None, None, None
-
-            ### Sampling: Parameter ###
-            sampled_parameter, log_prob_parameter = argmax_categorical_random(parameter_probs)
-            # Keep track of probabilities, sampled value and encoded input
-            sampled_values.append(sampled_parameter)
-            log_probabilities.append(log_prob_parameter)
-            extra_inputs.append(one_hot_encode_categorical(parameter_probs, sampled_parameter))
-
-
-        ### Critic layer ###
-        critic_value = self.action_layers_list[sampled_action][1](hidden_state, extra_inputs) # [1] to get critic layer
-
-        return sampled_values, log_probabilities, critic_value
-
-    def forward_collect(self, state, top = 5):
+    def forward_predict(self, state, top = 5):
         # Pytorch Tensor from Numpy array state
         tensor_state = torch.as_tensor(state, dtype = torch.float)
         TESTING = True
         if not TESTING:
 
             # Sample action parameters using the current model(/policy) by feeding state to itself
-            parameter_values, _, _ = self.simple_argmax_forward(tensor_state)
+            parameter_values, _, _ = self(ForwardPass.PREDICT, tensor_state)
 
             # Return action parameters values
             return parameter_values
@@ -326,11 +350,16 @@ class AgentNetwork(nn.Module):
         # If top is set, sort by probability and get top K
         if top is not None:
             # print(sampled_information_list)
+            # print(top)
             # print('regel 328')
             # input()
+            print(sampled_information_list)
             sampled_information_list.sort(key = lambda x: np.prod([0 if val is None else val.item() for val in x.get('probs')]), reverse = True)
             sampled_information_list = sampled_information_list[0:top]
+            print(sampled_information_list)
+            input()
 
+        new_sampled_information_list = []
         # Keep track of probabilities, sampled value and encoded input
         for sampled_information in sampled_information_list:
             extra_inputs = sampled_information['one_hots']
@@ -345,7 +374,6 @@ class AgentNetwork(nn.Module):
 
             ### Sampling: Action ###
             sampled_actions = collect_categorical(action_probs)
-            new_sampled_information_list = []
             for sampled_action in sampled_actions:
                 new_information = sampled_action
                 new_sampled_information_list.append(
@@ -363,9 +391,13 @@ class AgentNetwork(nn.Module):
             # print(sampled_information_list)
             # print('regel 363')
             # input()
+            print(sampled_information_list)
             sampled_information_list.sort(key = lambda x: np.prod([0 if val is None else val.item() for val in x.get('probs')]), reverse = True)
             sampled_information_list = sampled_information_list[0:top]
+            print(sampled_information_list)
+            input()
 
+        new_sampled_information_list = []
         for sampled_information in sampled_information_list:
             sampled_values = sampled_information['values']
             sampled_visualisation = sampled_values[0]
@@ -377,10 +409,10 @@ class AgentNetwork(nn.Module):
             for param_index, param_layer in enumerate(self.action_layers_list[sampled_action][0]): # [0] to get parameter layers
 
                 ### Feed forward: Parameter layer ###
-                hidden_state, param_probs = param_layer(hidden_state, extra_inputs)
+                hidden_state, parameter_probs = param_layer(hidden_state, extra_inputs)
 
                 ### Masking probabilities: Parameter ###
-                parameter_probs = mask_probabilities(param_probs, self.get_parameter_mask(sampled_visualisation, sampled_action, sampled_values[2:], param_index))
+                parameter_probs = mask_probabilities(parameter_probs, self.get_parameter_mask(sampled_visualisation, sampled_action, sampled_values[2:], param_index))
                 # If no options, return
                 if parameter_probs is None: continue
 
@@ -389,7 +421,6 @@ class AgentNetwork(nn.Module):
 
                 ### Sampling: Parameter ###
                 sampled_parameters = collect_categorical(parameter_probs)
-                new_sampled_information_list = []
                 for sampled_parameter in sampled_parameters:
                     new_information = sampled_parameter
                     new_sampled_information_list.append(
@@ -404,8 +435,11 @@ class AgentNetwork(nn.Module):
         sampled_information_list = new_sampled_information_list
         # If top is set, sort by probability and get top K
         if top is not None: 
+            print(sampled_information_list)
             sampled_information_list.sort(key = lambda x: np.prod([0 if val is None else val.item() for val in x.get('probs')]), reverse = True)
             sampled_information_list = sampled_information_list[0:top]
+            print(sampled_information_list)
+            input()
         # print(sampled_information_list)
         # input()
 
@@ -417,15 +451,28 @@ class AgentNetwork(nn.Module):
         tensor_state = torch.as_tensor(state, dtype = torch.float)
 
         # Sample action parameters using the current model(/policy) by feeding state to itself
-        parameter_values, parameter_probabilities, critic_value = self(tensor_state)
-        if parameter_values is None: return None
+        parameter_values, parameter_probabilities, critic_value = self(ForwardPass.SAMPLE, tensor_state)
+        if parameter_values is None: return None, None
         
         # Save the parameter probabilities and critic value in the saved actions list
         saved_action = (parameter_probabilities, critic_value)
-        self.saved_actions.append(saved_action)
 
         # Return action parameters values
-        return parameter_values
+        return parameter_values, saved_action
+    
+    def emulate_output_parameter_values(self, state, action):
+        # Pytorch Tensor from Numpy array state
+        tensor_state = torch.as_tensor(state, dtype = torch.float)
+
+        # Sample action parameters using the current model(/policy) by feeding state to itself
+        parameter_values, parameter_probabilities, critic_value = self(ForwardPass.EMULATE, tensor_state, action)
+        if parameter_values is None: return None, None
+        
+        # Save the parameter probabilities and critic value in the saved actions list
+        saved_action = (parameter_probabilities, critic_value)
+
+        # Return action parameters values
+        return parameter_values, saved_action
     
     # @torch.jit.script
     def update_network_gradients(self):
@@ -444,11 +491,21 @@ class AgentNetwork(nn.Module):
         returns = torch.tensor(returns).float()
         returns = (returns - returns.mean()) / (returns.std() + EPSILON)
 
+        # Add user feedback
+        # Weight to give more value to user rewards, user rewards -> 50%
+        user_weight = len(self.rewards) / len(self.user_rewards)
+        # Create reward tensor and multiply rewards by this weight
+        user_returns = torch.tensor(self.user_rewards).float()
+        user_returns = torch.mul(user_returns, torch.tensor(user_weight))
+
+        returns = torch.cat([returns, user_returns], dim = 0)
+        saved_actions = self.saved_actions + self.saved_user_actions
+
         # Create lists for storing value and policy losses
         policy_losses = []
         value_losses = []
         # Calculate losses for each time step
-        for (log_probs, critic_value), R in zip(self.saved_actions, returns):
+        for (log_probs, critic_value), R in zip(saved_actions, returns):
             advantage = R - critic_value.item()
 
             log_prob = sum(log_probs)
@@ -458,7 +515,7 @@ class AgentNetwork(nn.Module):
 
             # Calculate critic (value) loss using L1 smooth loss
             value_losses.append(F.smooth_l1_loss(critic_value, torch.tensor([R])))
-            
+
         # Sum up the policy losses and value losses over all time steps
         loss = torch.stack(policy_losses).sum() + torch.stack(value_losses).sum()
 
@@ -466,13 +523,17 @@ class AgentNetwork(nn.Module):
         self.optimizer.zero_grad()
         torch.autograd.set_detect_anomaly(True)
         # Calculate the gradients by backpropagating loss
-        # print(loss)
-        # print(self.rewards[:])
-        # print(self.saved_actions[:])
         loss.backward()
         # Apply the calculated gradients to the network
         self.optimizer.step()
 
+        print(self.rewards[:])
+        print(self.saved_actions[:])
+        print(self.user_rewards[:])
+        print(self.saved_user_actions[:])
+        # input()
         # Reset the reward and saved action buffers
         del self.rewards[:]
         del self.saved_actions[:]
+        del self.user_rewards[:]
+        del self.saved_user_actions[:]

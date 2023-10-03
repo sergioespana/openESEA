@@ -6,7 +6,7 @@ from ..Encoding import Decode
 
 import numpy as np
 
-def visualisationToArray(visualisation: Visualisation):
+def visualisationToArray(dashboard: Dashboard, visualisation: Visualisation):
     # For each class member encode the value and append to the array
     total_array = np.array([])
     
@@ -28,6 +28,9 @@ def visualisationToArray(visualisation: Visualisation):
 
     array = Encode.integer_and_normalise(visualisation.dataItems, MAX_DATA_ITEMS)
     total_array = np.append(total_array, array) 
+
+    array = Encode.integer_and_normalise(visualisation.displayArea, dashboard.displayArea)
+    total_array = np.append(total_array, array) 
     
     return total_array
 
@@ -35,7 +38,7 @@ def dashboardToArray(dashboard: Dashboard):
     array = np.array([])
 
     for visualisation in dashboard.visualisations:
-        array = np.append(array, visualisationToArray(visualisation))
+        array = np.append(array, visualisationToArray(dashboard, visualisation))
 
     return array
 
@@ -60,6 +63,11 @@ def visualisationFromArray(array) -> Visualisation:
     offset += 1
 
     dataItems = Decode.integer_normalised(array, offset, MAX_DATA_ITEMS)
+    offset += 1
+
+    # Currently this function is not used, but we would times this by the dashboard display area
+    dashboardDisplayArea = 10000
+    dataItems = Decode.integer_normalised(array, offset, dashboardDisplayArea)
     offset += 1
 
     # Wrap into Visualisation class

@@ -8,13 +8,17 @@ from typing import List
 
 # Integer enumeration for visualisation types
 class VisualisationType(IntEnum):
-    PIE  = 0
-    BAR  = 1
-    LINE = 2
-    SINGLE = 3
-    FRACTIONAL = 4
-    PROGRESS_BAR = 5
-    RADIAL_PROGRESS_BAR = 6
+    SINGLE = 0
+    FRACTIONAL = 1
+    PROGRESS_BAR = 2
+    RADIAL_PROGRESS_BAR = 3
+    PIE  = 4
+    BAR  = 5
+    GROUPED_BAR = 6
+    STACKED_BAR = 7
+    LINE = 8
+    MULTI_SERIES_LINE = 9
+    TABLE = 10
 
 @dataclass
 class Visualisation:

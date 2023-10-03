@@ -251,22 +251,23 @@ class DashboardEnvironment:
         # print(visualisation_index, action_index, param_index, ACTIONS_PARAMETERS)
         param_values = ACTIONS_PARAMETERS[action_index][param_index]['Values']
 
-        # Should not be reached
+        # Should not be reached, since there are no parameters
         if action == RemoveItemLimit:
             return None
         # Item limit up to data_items
         elif action == AddItemLimit:
             data_items = visualisation.dataItems
             max_values = param_values
-            return [1 if value <= data_items else 0 for value in range(max_values)]
+            return [0 if value == 0 or value > data_items else 1 for value in range(max_values)]
         # Visualisation type which is possible
         if action == ChangeVisualisationType:
             visualisation_type = visualisation.visualisationType
             data_items = visualisation.dataItems
-            categoricalVisualisations = [VisualisationType.PIE, VisualisationType.BAR]
-            temporalVisualisations = [VisualisationType.LINE]
             progressBarVisualisations = [VisualisationType.PROGRESS_BAR, VisualisationType.RADIAL_PROGRESS_BAR]
             fractionalVisualisations = [VisualisationType.FRACTIONAL] + progressBarVisualisations
+            categoricalVisualisations = [VisualisationType.PIE, VisualisationType.BAR]
+            groupedBarVisualisations = [VisualisationType.GROUPED_BAR, VisualisationType.STACKED_BAR]
+            temporalVisualisations = [VisualisationType.LINE]
             def valid_change(newType):
                 # Single to single
                 if visualisation_type == VisualisationType.SINGLE:
@@ -286,11 +287,24 @@ class DashboardEnvironment:
                         return True
                     if data_items == 1:
                         return newType == VisualisationType.SINGLE
+                # Grouped/stacked bar to grouped/stacked bar or table
+                if visualisation in groupedBarVisualisations:
+                    if newType in groupedBarVisualisations or newType == VisualisationType.TABLE:
+                        return True
                 # Categorical to categorical or if 1 item -> single
                 if visualisation_type == VisualisationType.LINE:
                     if newType in categoricalVisualisations or newType in temporalVisualisations:
                         return True
                     if data_items == 1:
                         return newType == VisualisationType.SINGLE
+                # Multi series line
+                if visualisation_type == VisualisationType.MULTI_SERIES_LINE:
+                    if newType == VisualisationType.MULTI_SERIES_LINE or newType == VisualisationType.TABLE:
+                        return True
+                # Table
+                ### table to grouped bar or others if fields correspond
+                if visualisation_type == VisualisationType.TABLE:
+                    if newType == VisualisationType.TABLE:
+                        return True
                 return False
             return [int(valid_change(visualisation_type.value)) for visualisation_type in VisualisationType]

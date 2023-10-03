@@ -11,7 +11,11 @@ VISUALISATION_TYPE_MAPPING: Dict[str, VisualisationType] = {
     'Progress Bar': VisualisationType.PROGRESS_BAR,
     'Pie Chart': VisualisationType.PIE,
     'Bar Chart': VisualisationType.BAR,
-    'Line Chart': VisualisationType.LINE
+    'Grouped Bar Chart': VisualisationType.GROUPED_BAR,
+    'Stacked Bar Chart': VisualisationType.STACKED_BAR,
+    'Line Chart': VisualisationType.LINE,
+    'Multi-Series Line Chart': VisualisationType.MULTI_SERIES_LINE,
+    'Table': VisualisationType.TABLE
 }
 
 def parseVisualisation(visualisation) -> Visualisation:

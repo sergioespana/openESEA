@@ -8,6 +8,10 @@ from .Dashboard.Parser import parseDashboard
 
 from .Dashboard.Actions.Information import ACTIONS_PARAMETERS, NUM_ACTIONS
 
+from .AgentNetwork.AgentNetwork import ForwardPass
+
+import torch
+
 class DashboardRLModel:
     def __init__(self, visualisations):
         print(visualisations)
@@ -74,7 +78,7 @@ class DashboardRLModel:
         while True:
             t += 1
             # Select/Sample an action from the agent network following the agent's policy
-            outputs = self.agent_network.output_parameter_values(state)
+            outputs, saved_action = self.agent_network.output_parameter_values(state)
             if outputs is None:
                 continue # retry, consuming a time step
             else:
@@ -83,6 +87,8 @@ class DashboardRLModel:
             # Execute the action on the environment
             state, reward, done, flags = self.dashboard_environment.step(outputs)
 
+            # Save action
+            self.agent_network.saved_actions.append(saved_action)
             # Save reward for updating gradient after episode 
             self.agent_network.rewards.append(reward)
             # Keep track of episode reward
@@ -98,6 +104,19 @@ class DashboardRLModel:
             if t >= self.num_time_steps and sampled_actions > self.num_time_steps / 10:
                 break
 
+
+        # Reset the state of the environment for the user actions
+        state = self.dashboard_environment.initial()
+        # List of actions with user feedback (+1/-1)
+        user_actions = [([torch.tensor(6), torch.tensor(2)], 1)]
+        for action, reward in user_actions:
+            # Emulate selection of this action
+            outputs, saved_action = self.agent_network.emulate_output_parameter_values(state, action)
+            # => No need to get reward from outputs
+            # Store reward and action in agent network
+            self.agent_network.user_rewards.append(reward)
+            self.agent_network.saved_user_actions.append(saved_action)
+        
         episode_reward = episode_reward if sampled_actions == 0 else episode_reward * self.num_time_steps / sampled_actions
         # Update the running reward over the episodes
         self.running_reward = 0.05 * episode_reward + (1 - 0.05) * self.running_reward
@@ -109,7 +128,7 @@ class DashboardRLModel:
         print('Episode {}\tLast reward: {:.2f}\tAverage reward: {:.2f}'.format(episode_number, episode_reward, self.running_reward))
 
         # Get best actions every 2 episodes
-        if episode_number % 2 == 0:
+        if episode_number % 1 == 0:
             self.best_actions = self.predict()
 
 
@@ -118,7 +137,7 @@ class DashboardRLModel:
         start_environment = self.dashboard_environment.initial()
         # Select an (/the current best) action through the agent network
         while True:    
-            outputs = self.agent_network.forward_collect(start_environment)
+            outputs = self.agent_network(ForwardPass.PREDICT, start_environment)
             if outputs is not None: break
         # print(outputs)
         # input()

@@ -417,20 +417,21 @@ class AgentNetwork(nn.Module):
                 if parameter_probs is None: continue
 
                 ###### divide by max value to compensate for dimensionality of parameters (scale to where max = 1)
-                parameter_probs = torch.div(parameter_probs, torch.max(parameter_probs))
+                # parameter_probs = torch.div(parameter_probs, torch.max(parameter_probs))
 
                 ### Sampling: Parameter ###
                 sampled_parameters = collect_categorical(parameter_probs)
-                for sampled_parameter in sampled_parameters:
-                    new_information = sampled_parameter
-                    new_sampled_information_list.append(
-                        { 
-                            "values": sampled_information["values"] + [new_information['value']], 
-                            "one_hots": sampled_information["one_hots"] + [new_information['one_hot']], 
-                            "log_probs": sampled_information["log_probs"] + [new_information['log_prob']], 
-                            "probs": sampled_information["probs"] + [new_information['prob']] 
-                        }
-                    )
+                # for sampled_parameter in sampled_parameters:
+                sampled_parameters.sort(key = lambda x: 0 if x.get('prob') is None else x['prob'], reverse = True)
+                new_information = sampled_parameters[0]
+                new_sampled_information_list.append(
+                    { 
+                        "values": sampled_information["values"] + [new_information['value']], 
+                        "one_hots": sampled_information["one_hots"] + [new_information['one_hot']], 
+                        "log_probs": sampled_information["log_probs"] + [new_information['log_prob']], 
+                        "probs": sampled_information["probs"] + [new_information['prob']] 
+                    }
+                )
 
         sampled_information_list = new_sampled_information_list
         # If top is set, sort by probability and get top K

@@ -12,15 +12,14 @@ ESEA_method:
 	'Description:' STRING
 	'GPcreateNetwork:' BOOLEAN
 	'GPcreateMembers:' BOOLEAN
-	
+	dashboard+=Dashboard
 	list_of_topics+=List_of_topics
 	list_of_indicators+=List_of_indicators
 	list_of_surveys+=List_of_surveys
 	(list_of_certification_levels+=List_of_certification_levels)?
 	(list_of_validation_rules+=List_of_validation_rules)?
 	(registration_survey=Survey)?
-	//Constraint: The registration survey should be single respondent
-	(dashboard+=Dashboard)?
+	//Constraint: The registration survey should be single respondent	
 ;
 
 
@@ -261,6 +260,7 @@ ValidationRule:
 //--------------------------DASHBOARD--------------------------------
 
 Dashboard:
+	"Dashboard:"
 	'Id:' id=ID
 	'Name:' name=STRING
 	'Methods:' methodIdList=MethodIdList
@@ -484,7 +484,7 @@ enum INDICATORCLASSIFICATION: performance='performance' | score='scoring' | cert
 enum RULETYPE: warning='warning' | error='error' ;
 enum UNARY_NUMERIC_FUNCTION: absolute='abs' | int='int' ; //abs explanation: https://support.google.com/docs/answer/3093459 , int explanation: https://support.google.com/docs/answer/3093490
 enum BINARY_NUMERIC_FUNCTION: roundup='roundUp' | rounddown='roundDown' | round='round' | countif='countIf' ; // Round up explanation: https://support.google.com/docs/answer/3093443 , round down: https://support.google.com/docs/answer/3093442 , round: https://support.google.com/docs/answer/3093440, countIf: https://support.google.com/docs/answer/3093480?hl=en-GB
-enum UICOMPONENT: field='field' | line='line' | textBox='textBox' | checkBox='checkBox' | dropDown='dropDown' | radioButton='radioButton';
+enum UICOMPONENT: field='field' | line='line' | textBox='textBox' | checkBox='checkBox' | dropDown='dropDown' | radioButton='radioButton' | radioTextBox = 'radioTextBox' | checkTextBox = 'checkTextBox';
 enum STATISTICAL_FUNCTION: minimum='min' | maximum='max' | sum='sum' | mean='avg' | mode='mode' | median='median';
 enum SURVEYTYPE: multi='multi' | single='single' ;
 terminal BOOLEAN : ('true'|'false');

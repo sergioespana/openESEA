@@ -20,6 +20,7 @@ ESEA_method:
 	list_of_validation_rules+=List_of_validation_rules
 	(registration_survey=Survey)?
 	//Constraint: The registration survey should be single respondent
+	(dashboard+=Dashboard)?
 ;
 
 

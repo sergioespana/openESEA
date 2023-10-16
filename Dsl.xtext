@@ -12,14 +12,19 @@ ESEA_method:
 	'Description:' STRING
 	'GPcreateNetwork:' BOOLEAN
 	'GPcreateMembers:' BOOLEAN
-	dashboard+=Dashboard
+	'Origin:' origin=ORIGIN
+	('NameMethod1' STRING)?
+	('NameMethod2' STRING)?
 	list_of_topics+=List_of_topics
 	list_of_indicators+=List_of_indicators
 	list_of_surveys+=List_of_surveys
 	(list_of_certification_levels+=List_of_certification_levels)?
 	(list_of_validation_rules+=List_of_validation_rules)?
 	(registration_survey=Survey)?
+	dashboard+=Dashboard
 	//Constraint: The registration survey should be single respondent	
+	//NameMethod1 and NameMethod2 are used in the case of a merge
+	//They indicate the original methods that the merged method is based upon 
 ;
 
 
@@ -64,7 +69,15 @@ Indicator:
 	'DataType:' datatype=Datatype
 	'LowerThresholds:' DOUBLE
 	'UpperThresholds:' DOUBLE
+	('Indicator1:' STRING)?
+	('Indicator2:' STRING)?
+	('FormulaIndicator1:' formula1=Formula)?
+	('FormulaIndicator2:' formula2=Formula)?
 	//Constraint: only direct indicators can have datatype list
+	//Indicator1 and Indicator2 are only used for methods that are produced as part of a merge
+	//In the case of a merge, indicator1 and indicator2 refer to the indicators from method1 and method 2 that are the source for this indicator
+	//In the case of a merge, FormulaIndicator1 shows how the indicator can be reconstructed to the indicator from method1
+	//FormulaIndicator2 shows how the indicator can be reconstructed to the indicator from method2	
 ;
 
 Datatype:
@@ -479,7 +492,7 @@ CategoryValuesField:
 
 
 enum VISUALISATIONTYPE: singlevaluedisplay='Single Value Display' | fractionalvaluedisplay='Fractional Value Display' | progressbar='Progress Bar' | piechart='Pie Chart' | barchart='Bar Chart' | linechart='Line Chart' | scatterplot='Scatter Plot'; // | multiserieslinechart='Multi-Series Line Chart'; 
-
+enum ORIGIN: extended='extended' | original='original'| merged='merged';
 enum INDICATORCLASSIFICATION: performance='performance' | score='scoring' | certification='certification';
 enum RULETYPE: warning='warning' | error='error' ;
 enum UNARY_NUMERIC_FUNCTION: absolute='abs' | int='int' ; //abs explanation: https://support.google.com/docs/answer/3093459 , int explanation: https://support.google.com/docs/answer/3093490

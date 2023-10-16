@@ -2,14 +2,17 @@ grammar org.example.domainmodel.Domainmodel with
                                       org.eclipse.xtext.common.Terminals
  
 generate domainmodel "http://www.example.org/domainmodel/Domainmodel"
+
+//---------------------------METHOD----------------------------------------
  
 ESEA_method: 
 	'Name:' STRING 
 	'Version:' DOUBLE
 	'isPublic:' BOOLEAN
 	'Description:' STRING
-	'AuditingScoreThreshold:' DOUBLE
-	'AuditingIndicatorThreshold:' INT	
+	'GPcreateNetwork:' BOOLEAN
+	'GPcreateMembers:' BOOLEAN
+	
 	list_of_topics+=List_of_topics
 	list_of_indicators+=List_of_indicators
 	list_of_surveys+=List_of_surveys
@@ -59,6 +62,8 @@ Indicator:
 	'Topic:' linkTopic=[Topic]
 	'Indicator_type:' indicator_type=Indicator_type
 	'DataType:' datatype=Datatype
+	'LowerThresholds:' DOUBLE
+	'UpperThresholds:' DOUBLE
 	//Constraint: only direct indicators can have datatype list
 ;
 
@@ -68,17 +73,17 @@ Datatype:
 
 MultipleChoice:
 	'multipleChoice'
-	'Answer_options:'
-	(answer_option+=Answer_option)+
+	'List_items:'
+	(list_item+=List_item)+
 ;
 
 SingleChoice:
 	'singleChoice'
-	'Answer_options:'
-	(answer_option+=Answer_option)+
+	'List_items:'
+	(list_item+=List_item)+
 ;
 
-Answer_option:
+List_item:
 	'Order:' INT
 	'Text:' STRING
 ;
@@ -177,7 +182,21 @@ Section:
 	'section_id:' name=ID
 	'Title:' STRING
 	'Order:' INT
-	list_of_questions+=List_of_questions
+	("Topic:" linkTopic=[Topic])?
+	(list_of_subsections+=List_of_subsections)+
+;
+
+
+List_of_subsections:
+	"Subsections:"
+	(subsection+=Subsection)+
+;
+
+Subsection:
+	"subsection_id:" name=ID
+	"Title:" STRING
+    ("Topic:" linkTopic=[Topic])?
+    (list_of_questions+=List_of_questions)
 	(list_of_fragments+=List_of_fragments)?
 ;
 
@@ -238,7 +257,7 @@ ValidationRule:
 ;
 //So far, the validation rules should only be triggered when the user validates the data or submits the survey response. It should only be possible to submit when there are no errors. And when there are warnings someone should confirm that they want to submit the data with the warnings
 
-
+//--------------------------DASHBOARD--------------------------------
 
 Dashboard:
 	'Id:' id=ID
@@ -264,18 +283,18 @@ Overview:
 ;
 
 HeadSection:
-	'Title:' title=STRING?
+	'Title:' title=STRING
 	'Text:' text=STRING?
-	(overviewselection=OverViewSelection)?
-	(datafilters=DataFilters)?
+	(overviewselection=OverviewSelection)?
+	(dataFilterSection=DataFilterSection)?
 	('Visualisation:' visualisation=Visualisation)?
-	('Download Button:' downloadbuttonconfiguration=DownloadButtonConfiguration)?
+	('DownloadButton:' downloadbuttonconfiguration=DownloadButtonConfiguration)?
 	// Buttons (Other than download button)
 ;
 
 SidePanel:
-	(overviewselection=OverViewSelection)?
-	(datafilters=DataFilters)?
+	overviewselection=OverviewSelection
+	dataFilterSection=DataFilterSection
 ;
 
 OverviewSelection:
@@ -288,7 +307,7 @@ OverviewSelectionConfiguration:
 	// Possibly a list or hierarchy of overview names
 ;
 
-DataFilters:
+DataFilterSection:
 	'Filters:'
 	(datafilter+=DataFilter)+
 ;
@@ -320,7 +339,7 @@ Container:
 ;
 
 TextParagraphs:
-	'Text Paragraphs:'
+	'TextParagraphs:'
 	(textparagraph+=TextParagraph)+
 ;
 
@@ -352,15 +371,15 @@ Visualisations:
 Visualisation:
 	'Position:' position=POSITION
 	'Title:' STRING?
-	'Type:' visualisationType=VisualisationType
+	'Type:' visualisationType=VISUALISATIONTYPE
 	'Configuration:' visualisationConfiguration=VisualisationConfiguration
-	(datafiltersegment=DataFilterSegment)?
+	(dataFilterSection=DataFilterSection)?
 	// ('Download Button:' downloadbuttonconfiguration=DownloadButtonConfiguration)?
 	// Data Entry Navigation
 ;
 
 DataDisplay:
-	'Type:' visualisationType=VisualisationType
+	'Type:' visualisationType=VISUALISATIONTYPE
 	'DataConfiguration:' visualisationConfiguration=VisualisationConfiguration
 	// ('Axis System:' axissystem=AxisSystem)?
 ;
@@ -374,85 +393,89 @@ VisualisationConfiguration:
 ;
 
 SingleValueDisplayConfiguration:
-	'Value Field:' singlevaluefield=SingleValueField
-	(datafilters=DataFilters)?
+	'SingleValueDisplay'
+	'ValueField:' singlevaluefield=SingleValueField
+	(dataFilterSection=DataFilterSection)?
 ;
 
 FractionalValueDisplayConfiguration:
-	'Fractional Value Field:' singlevaluefield=SingleValueField
-	'Total Value Field:' singlevaluefield=SingleValueField
-	(datafilters=DataFilters)?
+	'FractionalValueDisplay'
+	'FractionalValueField:' singlevaluefield=SingleValueField
+	'TotalValueField:' singlevaluefield=SingleValueField
+	(dataFilterSection=DataFilterSection)?
 ;
 
 ProgressBarConfiguration:
-	'Current Value Field:' singlevaluefield=SingleValueField
-	('Target Value Field:' singlevaluefield=SingleValueField)?
-	(datafilters=DataFilters)?
+	'ProgressBar'
+	'CurrentValueField:' singlevaluefield=SingleValueField
+	('TargetValueField:' singlevaluefield=SingleValueField)?
+	(dataFilterSection=DataFilterSection)?
 ;
 
 PieChartConfiguration:
-	'Value Field:' valuefield=ValueField
-	'Category Field' categoryfield=CategoryField
-	('Category Limit:' INT)?
-	(datafilters=DataFilters)?
+	'PieChart'
+	'ValueField:' valuefield=ValueField
+	'CategoryField' categoryfield=CategoryField
+	('CategoryLimit:' INT)?
+	(dataFilterSection=DataFilterSection)?
 ;
 
 BarChartConfiguration:
-	'Value Field:' valuefield=ValueField
-	'Category Field:' categoryfield=CategoryField
+	'BarChart'
+	'ValueField:' valuefield=ValueField
+	'CategoryField:' categoryfield=CategoryField
 	// ('Grouping Categories:' FIELD)?
 	// ('Stacking Categories:' FIELD)?
-	('Category Limit:' INT)?
-	(datafilters=DataFilters)?
+	('CategoryLimit:' INT)?
+	(dataFilterSection=DataFilterSection)?
 ;
 
 LineChartConfiguration:
-	'Value Field:' valuefield=ValueField
-	'Category Field:' categoryfield=CategoryField
-	('Category Limit:' INT)?
-	(datafilters=DataFilters)?
+	'LineChart'
+	'ValueField:' valuefield=ValueField
+	'CategoryField:' categoryfield=CategoryField
+	('CategoryLimit:' INT)?
+	(dataFilterSection=DataFilterSection)?
 ;
 
 // MultiSeriesLineChartConfiguration:
 // 	'Value Fields:' (FIELD+)+
 // 	('Categories:' FIELD+)?
 // 	('Category Limit:' INT)?
-// 	(datafilters=DataFilters)?
+// 	(dataFilterSection=DataFilterSection)?
 // ;
 
-Position:
-	'X Start:' xstart=INT
-	'X End:' xendpos=INT
-	'Y Start:' ystart=INT
-	'Y End:' yend=INT
+POSITION:
+	'XStart:' xstart=INT
+	'XEnd:' xendpos=INT
+	'YStart:' ystart=INT
+	'YEnd:' yend=INT
 ;
 
 SingleValueField:
 	('Name:' name=STRING)?
-	'Indicator:' indicator=Indicator
+	'Indicator:' linkIndicator=[Indicator]
 ;
 
 ValueField:
 	('Name:' name=STRING)?
-	'Indicators:' (indicator+=Indicator)+
+	'Indicators:' (linkIndicator+=[Indicator])+
 ;
 
 CategoryField:
 	categorynamedfield=CategoryNamedField | categoryvalues=CategoryValuesField
 ;
 
-CategoryNamedField
+CategoryNamedField:
 	'Name:' name=STRING
 ;
 
-CategoryValuesField
+CategoryValuesField:
 	('Name:' name=STRING)?
 	'Values:' (value+=STRING)+
 ;
 
-Indicator:
-	STRING
-;
+
 
 enum VISUALISATIONTYPE: singlevaluedisplay='Single Value Display' | fractionalvaluedisplay='Fractional Value Display' | progressbar='Progress Bar' | piechart='Pie Chart' | barchart='Bar Chart' | linechart='Line Chart' | scatterplot='Scatter Plot'; // | multiserieslinechart='Multi-Series Line Chart'; 
 
@@ -465,3 +488,4 @@ enum STATISTICAL_FUNCTION: minimum='min' | maximum='max' | sum='sum' | mean='avg
 enum SURVEYTYPE: multi='multi' | single='single' ;
 terminal BOOLEAN : ('true'|'false');
 terminal DOUBLE: INT '.' INT;
+terminal ARRAY: '['STRING(','STRING)*']';

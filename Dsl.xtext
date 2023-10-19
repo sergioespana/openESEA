@@ -1,20 +1,20 @@
-grammar org.example.domainmodel.Domainmodel with
-                                      org.eclipse.xtext.common.Terminals
- 
-generate domainmodel "http://www.example.org/domainmodel/Domainmodel"
+grammar openeseaversion4.Dsl with org.eclipse.xtext.common.Terminals
+
+generate dsl "http://www.Dsl.openeseaversion4"
+
 
 //---------------------------METHOD----------------------------------------
  
-ESEA_method: 
-	'Name:' STRING 
+ESEA_method:
+	'Name:' STRING
 	'Version:' DOUBLE
 	'isPublic:' BOOLEAN
 	'Description:' STRING
 	'GPcreateNetwork:' BOOLEAN
 	'GPcreateMembers:' BOOLEAN
 	'Origin:' origin=ORIGIN
-	('NameMethod1' STRING)?
-	('NameMethod2' STRING)?
+	('NameMethod1:' STRING)?
+	('NameMethod2:' STRING)?
 	list_of_topics+=List_of_topics
 	list_of_indicators+=List_of_indicators
 	list_of_surveys+=List_of_surveys
@@ -67,8 +67,8 @@ Indicator:
 	'Topic:' linkTopic=[Topic]
 	'Indicator_type:' indicator_type=Indicator_type
 	'DataType:' datatype=Datatype
-	'LowerThresholds:' DOUBLE
-	'UpperThresholds:' DOUBLE
+	('LowerThresholds:' DOUBLE)?
+	('UpperThresholds:' DOUBLE)?
 	('Indicator1:' STRING)?
 	('Indicator2:' STRING)?
 	('FormulaIndicator1:' formula1=Formula)?
@@ -270,7 +270,7 @@ ValidationRule:
 ;
 //So far, the validation rules should only be triggered when the user validates the data or submits the survey response. It should only be possible to submit when there are no errors. And when there are warnings someone should confirm that they want to submit the data with the warnings
 
-//--------------------------DASHBOARD--------------------------------
+//---------------------------DASHBOARD--------------------------------
 
 Dashboard:
 	"Dashboard:"

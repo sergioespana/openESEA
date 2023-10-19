@@ -353,11 +353,11 @@ class AgentNetwork(nn.Module):
             # print(top)
             # print('regel 328')
             # input()
-            print(sampled_information_list)
+            # print(sampled_information_list)
             sampled_information_list.sort(key = lambda x: np.prod([0 if val is None else val.item() for val in x.get('probs')]), reverse = True)
             sampled_information_list = sampled_information_list[0:top]
-            print(sampled_information_list)
-            input()
+            # print(sampled_information_list)
+            # input()
 
         new_sampled_information_list = []
         # Keep track of probabilities, sampled value and encoded input
@@ -391,11 +391,11 @@ class AgentNetwork(nn.Module):
             # print(sampled_information_list)
             # print('regel 363')
             # input()
-            print(sampled_information_list)
+            # print(sampled_information_list)
             sampled_information_list.sort(key = lambda x: np.prod([0 if val is None else val.item() for val in x.get('probs')]), reverse = True)
             sampled_information_list = sampled_information_list[0:top]
-            print(sampled_information_list)
-            input()
+            # print(sampled_information_list)
+            # input()
 
         new_sampled_information_list = []
         for sampled_information in sampled_information_list:
@@ -436,15 +436,15 @@ class AgentNetwork(nn.Module):
         sampled_information_list = new_sampled_information_list
         # If top is set, sort by probability and get top K
         if top is not None: 
-            print(sampled_information_list)
+            # print(sampled_information_list)
             sampled_information_list.sort(key = lambda x: np.prod([0 if val is None else val.item() for val in x.get('probs')]), reverse = True)
             sampled_information_list = sampled_information_list[0:top]
-            print(sampled_information_list)
-            input()
+            # print(sampled_information_list)
+            # input()
         # print(sampled_information_list)
         # input()
 
-        return sampled_information_list
+        return [sampled_information['values'] for sampled_information in sampled_information_list]
 
     # @torch.jit.script_method
     def output_parameter_values(self, state):
@@ -528,10 +528,6 @@ class AgentNetwork(nn.Module):
         # Apply the calculated gradients to the network
         self.optimizer.step()
 
-        print(self.rewards[:])
-        print(self.saved_actions[:])
-        print(self.user_rewards[:])
-        print(self.saved_user_actions[:])
         # input()
         # Reset the reward and saved action buffers
         del self.rewards[:]

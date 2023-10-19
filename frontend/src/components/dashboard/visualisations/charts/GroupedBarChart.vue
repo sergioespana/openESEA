@@ -24,6 +24,7 @@ export default {
     },
     methods: {
         createOptions (chartData) {
+            console.log(chartData)
             const title = chartData.title
             const titleOptions = {
                 text: title,

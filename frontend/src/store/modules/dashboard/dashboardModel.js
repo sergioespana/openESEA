@@ -57,6 +57,13 @@ export default {
         getOverviews: (state, getters) => () => {
             return getters.getDashboardModel()?.Overviews ?? []
         },
+        getDashboardStyle: (state, getters) => (payload) => {
+            return getters.getDashboardModel(payload)?.Style
+        },
+
+        getDashboardBackgroundColor: (state, getters) => (payload) => {
+            return getters.getDashboardStyle(payload)?.['Background Color']
+        },
 
         getOverview: (state, getters) => (payload) => {
             const overviewId = payload?.overviewId ?? state.selectionConfig.overviewId
@@ -97,6 +104,9 @@ export default {
         getHeadSectionDownloadButton: (state, getters) => (payload) => {
             return getters.getHeadSection(payload)?.['Download Button']
         },
+        getHeadSectionPosition: (state, getters) => (payload) => {
+            return getters.getHeadSection(payload)?.Position
+        },
 
         getSidePanelOverviewSelection: (state, getters) => (payload) => {
             return getters.getSidePanel(payload)?.OverviewSelection
@@ -105,6 +115,9 @@ export default {
             return getters.getSidePanel(payload)?.['Data Filters'] ?? []
         },
 
+        getBodySectionPosition: (state, getters) => (payload) => {
+            return getters.getBodySection(payload)?.Position
+        },
         getContainers: (state, getters) => (payload) => {
             return getters.getBodySection(payload)?.Containers ?? []
         },

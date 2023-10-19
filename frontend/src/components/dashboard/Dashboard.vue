@@ -21,10 +21,22 @@ export default {
         ...mapState('dashboardModel', ['selectionConfig']),
         overviews: {
             get () { return this.getOverviews()() }
+        },
+        backgroundColor: {
+            get () { return this.getDashboardBackgroundColor()(this.config) }
+        },
+        styleObject: {
+            get () {
+                var styleObject = {}
+                if (this.backgroundColor) {
+                    styleObject['background-color'] = this.backgroundColor
+                }
+                return styleObject
+            }
         }
     },
     methods: {
-        ...mapGetters('dashboardModel', ['getOverviews'])
+        ...mapGetters('dashboardModel', ['getOverviews', 'getDashboardBackgroundColor'])
     }
 }
 </script>

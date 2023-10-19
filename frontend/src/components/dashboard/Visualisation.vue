@@ -174,6 +174,7 @@ export default {
         },
         // For each visualisation type create the corresponding dataset
         async collectData () {
+            // return await this.createDatasetForFields(['Value Field', 'Value Fields', 'Fractional Value Field', 'Total Value Field', 'Current Value Field', 'Target Value Field'], ['Category Field', 'Stacking Field', 'Grouping Field'])
             // Create dataset based for this visualisation type
             switch (this.visualisationType) {
                 case 'Single Value Display':
@@ -197,7 +198,7 @@ export default {
                     return {}
             }
         },
-        async retrieveInfoForField (field) {
+        async retrieveInfoForField (field, fieldName) {
             if (field?.Indicators) {
                 return await this.retrieveIndicatorsInfo(field)
             }
@@ -208,7 +209,7 @@ export default {
                 return await this.retrieveNamedFieldInfo(field)
             }
             if (field?.Values) {
-                return await this.retrieveFieldValuesInfo(field)
+                return await this.retrieveFieldValuesInfo(field, fieldName)
             }
             return null
         },
@@ -282,10 +283,10 @@ export default {
             const info = { key: fieldKey, name: fieldName, data: dataset, indicators: fieldIndicators }
             return info
         },
-        async retrieveFieldValuesInfo (field) {
+        async retrieveFieldValuesInfo (field, origFieldName) {
             const fieldValues = field.Values
             const fieldName = field.Name
-            const fieldKey = this.isEmpty(fieldName) ? 'Category Field' : fieldName
+            const fieldKey = this.isEmpty(fieldName) ? (origFieldName ?? 'Category Field') : fieldName
 
             var dataset = []
             for (const fieldValue of fieldValues) {
@@ -380,13 +381,13 @@ export default {
             for (const fieldName of fieldNames) {
                 const field = await this.getField(fieldName)
                 if (!Array.isArray(field)) {
-                    var fieldInfo = await this.retrieveInfoForField(field)
+                    var fieldInfo = await this.retrieveInfoForField(field, fieldName)
                     if (fieldInfo === null) continue
                     fieldInfo.fieldName = fieldName
                     fieldsInfo.push(fieldInfo)
                 } else {
                     for (let i = 0; i < field.length; i++) {
-                        var subFieldInfo = await this.retrieveInfoForField(field[i])
+                        var subFieldInfo = await this.retrieveInfoForField(field[i], fieldName)
                         if (subFieldInfo === null) continue
                         subFieldInfo.fieldName = fieldName + ' ' + i.toString()
                         subFieldInfo.fieldNumber = i
@@ -403,6 +404,8 @@ export default {
             const groupingFields = await this.collectFields(groupingFieldNames)
 
             // Map category values to indicators
+            console.log(valueFields)
+            console.log(groupingFields)
             this.mapCategoryValues(valueFields, groupingFields)
 
             // Create dataset by summarizing data

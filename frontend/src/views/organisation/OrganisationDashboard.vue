@@ -1,7 +1,7 @@
 <template>
 
     <!-- Dashboard -->
-    <div class="organisation-dashboard" :ref="'dashboard'">
+    <div class="organisation-dashboard">
 
         <!-- Show spinner while loading dashboard -->
         <div v-if="!dashboardLoaded" class="spinner-div">
@@ -164,10 +164,10 @@ export default {
 
             // Select current overview
             const overviewId = this.selectionConfig?.overviewId
-            var selectionConfig = { overviewId: overviewId }
+            var selectionConfigCurrent = { overviewId: overviewId }
 
             // Get all containers with possible visualisations, if no containers, return
-            const containers = await this.getContainers()(selectionConfig)
+            const containers = await this.getContainers()(selectionConfigCurrent)
             if (!containers) return visualisationInfoList
 
             // Dashboard size
@@ -184,9 +184,9 @@ export default {
                 const containerHeight = (containerPosition['Y End'] - containerPosition['Y Start']) * dashboardHeight / 100
 
                 // Update selection to current conainer
-                selectionConfig.containerId = containerId
+                selectionConfigCurrent.containerId = containerId
                 // Get all visualisation for this container
-                const visualisations = await this.getVisualisations()(selectionConfig)
+                const visualisations = await this.getVisualisations()(selectionConfigCurrent)
                 // Get info for each visualisation
                 for (let visualisationId = 0; visualisationId < visualisations.length; visualisationId++) {
                     const visualisationPosition = visualisations[visualisationId].Position
@@ -197,7 +197,7 @@ export default {
                     const visualisationDisplayArea = (xEndPixels - xStartPixels) * (yEndPixels - yStartPixels)
 
                     // Update selection to current visualisation
-                    selectionConfig.visualisationId = visualisationId
+                    selectionConfigCurrent.visualisationId = visualisationId
 
                     // Get dataset for this visualisation
                     var visualisationData = null
@@ -205,23 +205,23 @@ export default {
                     for (const visualisationDataset of visualisationDatasets) {
                         const config = visualisationDataset.config
                         const dataset = visualisationDataset.dataset
-                        if (isEqual(config, selectionConfig)) {
+                        if (isEqual(config, selectionConfigCurrent)) {
                             visualisationData = dataset
                             break
                         }
                     }
 
                     // Get visualisation type
-                    const visualisationType = await this.getVisualisationType()(selectionConfig)
-                    const visualisationTitle = await this.getVisualisationTitle()(selectionConfig)
-                    const categoryLimit = await this.getCategoryLimit()(selectionConfig)
+                    const visualisationType = await this.getVisualisationType()(selectionConfigCurrent)
+                    const visualisationTitle = await this.getVisualisationTitle()(selectionConfigCurrent)
+                    const categoryLimit = await this.getCategoryLimit()(selectionConfigCurrent)
 
                     const numberOfDataPoints = visualisationData?.data?.length ?? 0
                     const amountOfValueFields = Object.keys(visualisationData?.mapping).filter(fieldKey => fieldKey.includes('Value Field')).length
 
                     // Gather all visualisation information into one object
                     var visualisationInfo = {}
-                    visualisationInfo['Selection Configuration'] = selectionConfig // For applying this to the correct visualisation
+                    visualisationInfo['Selection Configuration'] = cloneDeep(selectionConfigCurrent) // For applying this to the correct visualisation
                     visualisationInfo['Visualisation Type'] = visualisationType
                     visualisationInfo['Visualisation Title'] = visualisationTitle
                     visualisationInfo['Data Items'] = numberOfDataPoints * amountOfValueFields
@@ -395,7 +395,7 @@ export default {
     position: relative;
 
     font-family: Arial, Helvetica, sans-serif;
-
+    background-color: white;
     height: 100%;
 
     /* Handle edit area element */

@@ -68,6 +68,7 @@ export default {
                 modelInstanceId: modelInstanceId
             }
             const { response, error } = await DashboardSuggestionsService.put(newPayload)
+            console.log(response)
             if (error) {
                 await commit('setError', { error })
                 return

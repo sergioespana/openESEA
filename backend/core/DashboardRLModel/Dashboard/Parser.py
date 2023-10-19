@@ -18,6 +18,11 @@ VISUALISATION_TYPE_MAPPING: Dict[str, VisualisationType] = {
     'Table': VisualisationType.TABLE
 }
 
+# Reverse mapping
+VISUALISATION_NAME_MAPPING: Dict[VisualisationType, str] = {
+    VISUALISATION_TYPE_MAPPING[name]: name for name in VISUALISATION_TYPE_MAPPING
+}
+
 def parseVisualisation(visualisation) -> Visualisation:
     # Get visualisation type and lookup enum value
     visualisationTypeString = visualisation['Visualisation Type']

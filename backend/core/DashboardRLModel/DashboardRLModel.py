@@ -4,7 +4,7 @@ from .Dashboard.Classes import Dashboard
 from .Dashboard.Environment import DashboardEnvironment
 
 from .Dashboard.Encoding import dashboardToArray
-from .Dashboard.Parser import parseDashboard
+from .Dashboard.Parser import parseDashboard, VISUALISATION_NAME_MAPPING
 
 from .Dashboard.Actions.Information import ACTIONS_PARAMETERS, NUM_ACTIONS
 
@@ -13,11 +13,12 @@ from .AgentNetwork.AgentNetwork import ForwardPass
 import torch
 
 class DashboardRLModel:
-    def __init__(self, visualisations):
-        print(visualisations)
+    def __init__(self, dashboard):
+        # print(visualisations)
+        self.original_dashboard = dashboard
 
         # Create dashboard object from visualisations info and encode into array
-        dashboard: Dashboard = parseDashboard(visualisations)
+        dashboard: Dashboard = parseDashboard(dashboard)
         dashboardArray = dashboardToArray(dashboard)
 
         # Determine the different sizes for the agent network
@@ -108,7 +109,7 @@ class DashboardRLModel:
         # Reset the state of the environment for the user actions
         state = self.dashboard_environment.initial()
         # List of actions with user feedback (+1/-1)
-        user_actions = [([torch.tensor(6), torch.tensor(2)], 1)]
+        user_actions = [] # [([torch.tensor(6), torch.tensor(2)], 1)]
         for action, reward in user_actions:
             # Emulate selection of this action
             outputs, saved_action = self.agent_network.emulate_output_parameter_values(state, action)
@@ -137,33 +138,39 @@ class DashboardRLModel:
         start_environment = self.dashboard_environment.initial()
         # Select an (/the current best) action through the agent network
         while True:    
-            outputs = self.agent_network(ForwardPass.PREDICT, start_environment)
-            if outputs is not None: break
-        # print(outputs)
-        # input()
-        actions_values = [[val.item() for val in output['values']] for output in outputs]
-        # outputs is [{"values": ..., "one_hots": ..., "log_probs": ..., "probs": ...}, ...]
+            outputs_list = self.agent_network(ForwardPass.PREDICT, start_environment)
+            if outputs_list is not None: break
+
         # Convert parameter from tensors to simple values
-        # parameter_values = [output.item() for output in outputs]
+        actions_values = [[output.item() for output in outputs] for outputs in outputs_list]
+
         # Construct the action from the model outputs
         actions = [self.dashboard_environment.action_from_parameters(action_values) for action_values in actions_values]
-        # actions = [action]
 
-        # Get reward + flags for this action
-        states = [self.dashboard_environment.perform_action_on_initial(action) for action in actions] # [(state, reward, done, flags)]
+        # Add reward + flags (etc.) to this action
+        actions_info = [(action, self.dashboard_environment.perform_action_on_initial(action)) for action in actions] # [(state, reward, done, flags)]
 
         # Return actions
         actions_with_explanations = []
-        for i in range(len(actions)):
-            state, reward, done, flags = states[i]
-            actions_with_explanations.append((actions[i], flags))
+        for action_info in actions_info:
+            action, state = action_info
+            new_state, reward, done, flags = state
+            explanation = flags.get('Explanation', '')
+
+            visualisationIndex = action.visualisationIndex
+            visualisationInfo = self.original_dashboard['Visualisations'][visualisationIndex]
+
+            # print(self.original_dashboard)
+            # print(visualisationIndex)
+            # print(visualisationInfo)
+            # print(action.to_dict())
+            # input()
+
+            actionInfo = action.to_dict()
+            actionInfo['Explanation'] = explanation
+            if actionInfo.get('Visualisation Type') is not None: actionInfo['Visualisation Type'] = VISUALISATION_NAME_MAPPING[actionInfo['Visualisation Type']]
+            actionInfo['Visualisation Title'] = visualisationInfo['Visualisation Title']
+            actionInfo['Selection Configuration'] = visualisationInfo['Selection Configuration']
+            
+            actions_with_explanations.append(actionInfo)
         return actions_with_explanations
-
-def main():
-    model = DashboardRLModel()
-    print('Running...')
-    model.run()
-    print(model.predict())
-
-if __name__ == '__main__':
-    main()

@@ -1,4 +1,4 @@
-from .Classes import VisualisationType, Dashboard
+from .Classes import VisualisationType, Dashboard, Visualisation
 
 from .Encoding import dashboardToArray
 
@@ -23,8 +23,13 @@ class DashboardEnvironment:
                 'Function': DashboardEnvironment.reward_decluttering
             },
             {
+                'Name': 'Chart Variety',
+                'Weight': 0.3,
+                'Function': DashboardEnvironment.reward_visualisation_variety
+            },
+            {
                 'Name': 'Data Completeness',
-                'Weight': 0.1,
+                'Weight': 0.2,
                 'Function': DashboardEnvironment.reward_data_completeness
             },
             {
@@ -93,13 +98,10 @@ class DashboardEnvironment:
 
     def perform_action_on_initial(self, action):
         # Get initial dashboard
-        dashboard = copy.deepcopy(self.initial_dashboard)
+        self.dashboard = copy.deepcopy(self.initial_dashboard)
 
         # Perform the action on the dashboard
-        action.act(dashboard)
-
-        # Update state for new dashboard
-        self.state = dashboardToArray(dashboard)
+        action.act(self.dashboard)
 
         # Determine reward for this step
         reward, explanation = self.reward(self.initial_dashboard, action)
@@ -118,16 +120,6 @@ class DashboardEnvironment:
         current_state_rewards  = self.collect_state_rewards(current_dashboard)
         previous_state_rewards = self.collect_state_rewards(previous_dashboard)
         
-        # action_reward_weights = []
-        # action_rewards = []
-        # for action_reward_info in self.action_rewards_info:
-        #     action_reward_weight = action_reward_info['Weight']
-        #     action_reward_function = action_reward_info['Function']
-        #     action_reward = action_reward_weight * action_reward_function(self, previous_dashboard, action)
-
-        #     action_rewards.append(action_reward)
-        #     action_reward_weights.append(action_reward_weight)
-
         current_state_reward_weight = 0
         current_state_reward = 0
         for reward, weight in current_state_rewards:
@@ -156,15 +148,16 @@ class DashboardEnvironment:
                 # print('Rewards prev')
                 # print(previous_state_rewards)
                 # input()
-                explanation += "\t" + self.state_rewards_info[i]["Name"] + "\t" + "Reward difference: " + str(c_reward - p_reward) + "\t" + "Weighted: " + str(c_reward_weight * (c_reward - p_reward)) + "\n"
+                explanation += "\t" + self.state_rewards_info[i].get("Name", "Reward " + str(i)) + "\t" + "Reward difference: " + str(c_reward - p_reward) + "\t" + "Weighted: " + str(c_reward_weight * (c_reward - p_reward)) + "\n"
         # print(explanation)
         return normalized_reward, explanation
 
     def collect_state_rewards(self, state):
         state_rewards = []
         for state_reward_info in self.state_rewards_info:
-            state_reward_weight = state_reward_info['Weight']
-            state_reward_function = state_reward_info['Function']
+            state_reward_function = state_reward_info.get('Function')
+            if state_reward_function is None: continue
+            state_reward_weight = state_reward_info.get('Weight', 1)
             state_reward = state_reward_weight * state_reward_function(self, state)
 
             state_rewards.append((state_reward, state_reward_weight))
@@ -222,6 +215,31 @@ class DashboardEnvironment:
         normalized_reward = reward / len(state.visualisations)
         return normalized_reward
 
+    def reward_visualisation_variety(self, state):
+        chart_types = set()
+        for visualisation in state.visualisations:
+            visualisation: Visualisation = visualisation
+            chart_types.add(visualisation.visualisationType)
+        if len(chart_types) == 1:
+            return 0.8
+        elif len(chart_types) == 2:
+            return 0.9
+        elif len(chart_types) == 3:
+            return 1
+        elif len(chart_types) == 4:
+            return 1
+        elif len(chart_types) == 5:
+            return 0.8
+        elif len(chart_types) == 6:
+            return 0.6
+        elif len(chart_types) == 7:
+            return 0.3
+        elif len(chart_types) == 8:
+            return 0.2
+        elif len(chart_types) == 9:
+            return 0.1
+        return 0.05
+
     def reward_valid_action(previous_dashboard, action):
         return 1
 
@@ -239,6 +257,15 @@ class DashboardEnvironment:
             if action == RemoveItemLimit:
                 return visualisation.itemLimitEnabled
             elif action == AddItemLimit:
+                # Visualisation groups
+                progressBarVisualisations = [VisualisationType.PROGRESS_BAR, VisualisationType.RADIAL_PROGRESS_BAR]
+                fractionalVisualisations = [VisualisationType.FRACTIONAL] + progressBarVisualisations
+                visualisation_type = visualisation.visualisationType
+                if visualisation_type == VisualisationType.SINGLE:
+                    return False
+                if visualisation_type in fractionalVisualisations:
+                    return False
+                # For all other visualisations:
                 return not visualisation.itemLimitEnabled
             else:
                 return True
@@ -251,24 +278,29 @@ class DashboardEnvironment:
         # print(visualisation_index, action_index, param_index, ACTIONS_PARAMETERS)
         param_values = ACTIONS_PARAMETERS[action_index][param_index]['Values']
 
+        # Visualisation groups
+        progressBarVisualisations = [VisualisationType.PROGRESS_BAR, VisualisationType.RADIAL_PROGRESS_BAR]
+        fractionalVisualisations = [VisualisationType.FRACTIONAL] + progressBarVisualisations
+        categoricalVisualisations = [VisualisationType.PIE, VisualisationType.BAR]
+        groupedBarVisualisations = [VisualisationType.GROUPED_BAR, VisualisationType.STACKED_BAR]
+        temporalVisualisations = [VisualisationType.LINE]
+
         # Should not be reached, since there are no parameters
         if action == RemoveItemLimit:
             return None
-        # Item limit up to data_items
+        # Item limit up to data_items and starting from 2
         elif action == AddItemLimit:
             data_items = visualisation.dataItems
             max_values = param_values
-            return [0 if value == 0 or value > data_items else 1 for value in range(max_values)]
+            return [0 if value < 2 or value > data_items else 1 for value in range(max_values)]
         # Visualisation type which is possible
         if action == ChangeVisualisationType:
             visualisation_type = visualisation.visualisationType
             data_items = visualisation.dataItems
-            progressBarVisualisations = [VisualisationType.PROGRESS_BAR, VisualisationType.RADIAL_PROGRESS_BAR]
-            fractionalVisualisations = [VisualisationType.FRACTIONAL] + progressBarVisualisations
-            categoricalVisualisations = [VisualisationType.PIE, VisualisationType.BAR]
-            groupedBarVisualisations = [VisualisationType.GROUPED_BAR, VisualisationType.STACKED_BAR]
-            temporalVisualisations = [VisualisationType.LINE]
             def valid_change(newType):
+                # Discourage changing to existing type
+                if visualisation_type == newType:
+                    return 0.01
                 # Single to single
                 if visualisation_type == VisualisationType.SINGLE:
                     return newType == VisualisationType.SINGLE

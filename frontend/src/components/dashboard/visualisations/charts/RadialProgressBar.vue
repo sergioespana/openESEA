@@ -93,6 +93,9 @@ export default {
                                 },
                                 labelLine: {
                                     show: false
+                                },
+                                emphasis: {
+                                    scale: false
                                 }
                             },
                             {

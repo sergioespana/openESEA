@@ -1,13 +1,13 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework import status
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
 import time
 import threading
 import uuid
-import json
 
 from ..DashboardRLModel import DashboardRLModel
 
@@ -29,7 +29,7 @@ def dashboardsuggestions(request):
     if request.method == 'POST':
         # Get dashboard model from request
         if dashboard is None:
-            return Response('No dashboard given!')
+            return Response('No dashboard given!', status = status.HTTP_400_BAD_REQUEST)
         
         # If there is no model instance yet, create a new one from dashboard
         if modelInstanceId is None:
@@ -53,19 +53,25 @@ def dashboardsuggestions(request):
     elif request.method == 'PUT':
         # If there is no model instance yet, return error message
         if modelInstanceId is None or modelInstanceId not in modelInstances:
-            return Response(f'Model instance with identifier {modelInstanceId} not found!')
+            return Response(f'Model instance with identifier {modelInstanceId} not found!', status = status.HTTP_404_NOT_FOUND)
         
+        feedback = request.data.get('feedback')
+        if feedback is not None:
+            # For now print the feedback
+            print(feedback)
+            return Response()
+
         modelInstance = modelInstances[modelInstanceId]
     
         # Get actions and return it
         actions = modelInstance.retrieveBestActions()
-        return Response({ 'request': '', 'actions': actions })
+        return Response(actions)
     
     ### Delete model when unloading dashboard ###
     elif request.method == 'DELETE':
         # If there is no model instance yet, return error message
         if modelInstanceId not in modelInstances:
-            return Response(f'Model instance with identifier {modelInstanceId} not found!')
+            return Response(f'Model instance with identifier {modelInstanceId} not found!', status = status.HTTP_404_NOT_FOUND)
         
         modelInstance = modelInstances[modelInstanceId]
         print('Terminating model with modelInstanceId: ', modelInstanceId)
@@ -74,7 +80,7 @@ def dashboardsuggestions(request):
         
         return Response('Model deleted!')
     else:
-        return Response()
+        return Response('')
 
 class DashboardRLModelInstance():
     def __init__(self, dashboard):
@@ -120,18 +126,7 @@ class DashboardRLModelInstance():
         self.updateLastActivity()
 
         # Predict best action from model and return this in response
-        actions = self.model.best_actions
-        actionList = []
-        for action, explanation in actions:
-            visualisationIndex = action.visualisationIndex
-
-            visualisationInfo = self.dashboard['Visualisations'][visualisationIndex]
-            visualisationTitle = visualisationInfo['Visualisation Title']
-
-            actionInfo = action.to_dict()
-            actionInfo['Visualisation Title'] = visualisationTitle
-            actionList.append((actionInfo, explanation))
-        return actionList
+        return self.model.best_actions
     
     def updateLastActivity(self):
         self.lastActivity = time.time()

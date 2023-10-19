@@ -14,7 +14,7 @@ class ChangeVisualisationType:
         action_dict = {
             'Type': 'Change Visualisation Type',
             'Visualisation Index': self.visualisationIndex,
-            'Visualisation Type': VisualisationType(self.visualisationType).name
+            'Visualisation Type': self.visualisationType
         }
         return action_dict
 

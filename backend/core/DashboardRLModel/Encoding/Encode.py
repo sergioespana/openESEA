@@ -16,8 +16,11 @@ def boolean(boolean_value: bool):
 
 def integer_and_normalise(integer_value: int, max_value: int):
     # Normalise value
-    value = integer_value / max_value
-    # Ensure that value is between 0 and 1
-    value = max(0, min(1, value))
+    if max_value == 0:
+        value = 0
+    else:
+        value = integer_value / max_value
+        # Ensure that value is between 0 and 1
+        value = max(0, min(1, value))
     # Return array with value
     return np.array([value])

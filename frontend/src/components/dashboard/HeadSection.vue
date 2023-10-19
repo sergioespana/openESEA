@@ -1,5 +1,5 @@
 <template>
-    <div class="head-section">
+    <div class="head-section" :style="styleObject">
         <div class="head-section-overview-selection">
             <OverviewSelection
                 :config="config">
@@ -34,10 +34,27 @@ export default {
         },
         headsectionText: {
             get () { return this.getHeadSectionText()(this.config) }
+        },
+        position: {
+            get () { return this.getHeadSectionPosition()(this.config) }
+        },
+        styleObject: {
+            get () {
+                var styleObject = {}
+                const position = this.position
+                if (position) {
+                    styleObject.position = 'absolute'
+                    styleObject.left = position['X Start'] + '%'
+                    styleObject.right = (100 - position['X End']) + '%'
+                    styleObject.bottom = position['Y Start'] + '%'
+                    styleObject.top = (100 - position['Y End']) + '%'
+                }
+                return styleObject
+            }
         }
     },
     methods: {
-        ...mapGetters('dashboardModel', ['getHeadSectionTitle', 'getHeadSectionText'])
+        ...mapGetters('dashboardModel', ['getHeadSectionTitle', 'getHeadSectionText', 'getHeadSectionPosition'])
     }
 }
 </script>

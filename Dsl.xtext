@@ -3,20 +3,28 @@ grammar org.example.domainmodel.Domainmodel with
  
 generate domainmodel "http://www.example.org/domainmodel/Domainmodel"
 
+//---------------------------METHOD----------------------------------------
+ 
 ESEA_method: 
 	'Name:' STRING 
 	'Version:' DOUBLE
 	'isPublic:' BOOLEAN
 	'Description:' STRING
-	'AuditingScoreThreshold:' DOUBLE
-	'AuditingIndicatorThreshold:' INT	
+	'GPcreateNetwork:' BOOLEAN
+	'GPcreateMembers:' BOOLEAN
+	'Origin:' origin=ORIGIN
+	('NameMethod1' STRING)?
+	('NameMethod2' STRING)?
 	list_of_topics+=List_of_topics
 	list_of_indicators+=List_of_indicators
 	list_of_surveys+=List_of_surveys
-	list_of_certification_levels+=List_of_certification_levels
-	list_of_validation_rules+=List_of_validation_rules
+	(list_of_certification_levels+=List_of_certification_levels)?
+	(list_of_validation_rules+=List_of_validation_rules)?
 	(registration_survey=Survey)?
-	//Constraint: The registration survey should be single respondent
+	dashboard+=Dashboard
+	//Constraint: The registration survey should be single respondent	
+	//NameMethod1 and NameMethod2 are used in the case of a merge
+	//They indicate the original methods that the merged method is based upon 
 ;
 
 
@@ -59,7 +67,17 @@ Indicator:
 	'Topic:' linkTopic=[Topic]
 	'Indicator_type:' indicator_type=Indicator_type
 	'DataType:' datatype=Datatype
+	'LowerThresholds:' DOUBLE
+	'UpperThresholds:' DOUBLE
+	('Indicator1:' STRING)?
+	('Indicator2:' STRING)?
+	('FormulaIndicator1:' formula1=Formula)?
+	('FormulaIndicator2:' formula2=Formula)?
 	//Constraint: only direct indicators can have datatype list
+	//Indicator1 and Indicator2 are only used for methods that are produced as part of a merge
+	//In the case of a merge, indicator1 and indicator2 refer to the indicators from method1 and method 2 that are the source for this indicator
+	//In the case of a merge, FormulaIndicator1 shows how the indicator can be reconstructed to the indicator from method1
+	//FormulaIndicator2 shows how the indicator can be reconstructed to the indicator from method2	
 ;
 
 Datatype:
@@ -68,17 +86,17 @@ Datatype:
 
 MultipleChoice:
 	'multipleChoice'
-	'Answer_options:'
-	(answer_option+=Answer_option)+
+	'List_items:'
+	(list_item+=List_item)+
 ;
 
 SingleChoice:
 	'singleChoice'
-	'Answer_options:'
-	(answer_option+=Answer_option)+
+	'List_items:'
+	(list_item+=List_item)+
 ;
 
-Answer_option:
+List_item:
 	'Order:' INT
 	'Text:' STRING
 ;
@@ -177,7 +195,21 @@ Section:
 	'section_id:' name=ID
 	'Title:' STRING
 	'Order:' INT
-	list_of_questions+=List_of_questions
+	("Topic:" linkTopic=[Topic])?
+	(list_of_subsections+=List_of_subsections)+
+;
+
+
+List_of_subsections:
+	"Subsections:"
+	(subsection+=Subsection)+
+;
+
+Subsection:
+	"subsection_id:" name=ID
+	"Title:" STRING
+    ("Topic:" linkTopic=[Topic])?
+    (list_of_questions+=List_of_questions)
 	(list_of_fragments+=List_of_fragments)?
 ;
 
@@ -238,14 +270,236 @@ ValidationRule:
 ;
 //So far, the validation rules should only be triggered when the user validates the data or submits the survey response. It should only be possible to submit when there are no errors. And when there are warnings someone should confirm that they want to submit the data with the warnings
 
+//--------------------------DASHBOARD--------------------------------
+
+Dashboard:
+	"Dashboard:"
+	'Id:' id=ID
+	'Name:' name=STRING
+	'Methods:' methodIdList=MethodIdList
+	overviews=Overviews
+;
+
+MethodIdList:
+	(methodIds+=ID)+
+;
+
+Overviews:
+	'Overviews:'
+	(overview+=Overview)+
+;
+
+Overview:
+	'Name:' name=STRING
+	'HeadSection:' headsection=HeadSection
+	'BodySection:' bodysection=BodySection
+	('SidePanel:' sidepanel=SidePanel)?
+;
+
+HeadSection:
+	'Title:' title=STRING
+	'Text:' text=STRING?
+	(overviewselection=OverviewSelection)?
+	(dataFilterSection=DataFilterSection)?
+	('Visualisation:' visualisation=Visualisation)?
+	('DownloadButton:' downloadbuttonconfiguration=DownloadButtonConfiguration)?
+	// Buttons (Other than download button)
+;
+
+SidePanel:
+	overviewselection=OverviewSelection
+	dataFilterSection=DataFilterSection
+;
+
+OverviewSelection:
+	'OverviewSelection:'
+	overviewselectionconfiguration=OverviewSelectionConfiguration
+;
+
+OverviewSelectionConfiguration:
+	'Enabled:' enabled=BOOLEAN
+	// Possibly a list or hierarchy of overview names
+;
+
+DataFilterSection:
+	'Filters:'
+	(datafilter+=DataFilter)+
+;
+
+DataFilter:
+	'Field:' STRING
+	'Values:' ARRAY
+	// Possibly extend with filter conditions, instead of a list of values?
+;
+
+DownloadButtonConfiguration:
+	'Enabled:' enabled=BOOLEAN
+;
+
+BodySection:
+	'Containers:'
+	(container+=Container)+
+;
+
+Container:
+	'Position:' position=POSITION
+	'Title:' STRING?
+	visualisations=Visualisations
+	(textparagraphs=TextParagraphs)?
+	(images=Images)?
+	// ('Video:' video=Video)?
+	// Buttons
+	// VisualisationConfigurationElements
+;
+
+TextParagraphs:
+	'TextParagraphs:'
+	(textparagraph+=TextParagraph)+
+;
+
+TextParagraph:
+	'Position:' position=POSITION
+	'Text:' STRING
+;
+
+Images:
+	'Images:' 
+	(image+=Image)+
+;
+
+Image:
+	'Position:' position=POSITION
+	'Path:' STRING
+;
+
+// Video:
+// 	'Position:' position=POSITION
+// 	'Url:' STRING
+// ;
+
+Visualisations:
+	'Visualisations:'
+	(visualisation+=Visualisation)+
+;
+
+Visualisation:
+	'Position:' position=POSITION
+	'Title:' STRING?
+	'Type:' visualisationType=VISUALISATIONTYPE
+	'Configuration:' visualisationConfiguration=VisualisationConfiguration
+	(dataFilterSection=DataFilterSection)?
+	// ('Download Button:' downloadbuttonconfiguration=DownloadButtonConfiguration)?
+	// Data Entry Navigation
+;
+
+DataDisplay:
+	'Type:' visualisationType=VISUALISATIONTYPE
+	'DataConfiguration:' visualisationConfiguration=VisualisationConfiguration
+	// ('Axis System:' axissystem=AxisSystem)?
+;
+
+// AxisSystem:
+// 	'Visible:' BOOLEAN
+// ;
+
+VisualisationConfiguration:
+	SingleValueDisplayConfiguration | FractionalValueDisplayConfiguration | ProgressBarConfiguration | PieChartConfiguration | BarChartConfiguration | LineChartConfiguration // | MultiSeriesLineChartConfiguration
+;
+
+SingleValueDisplayConfiguration:
+	'SingleValueDisplay'
+	'ValueField:' singlevaluefield=SingleValueField
+	(dataFilterSection=DataFilterSection)?
+;
+
+FractionalValueDisplayConfiguration:
+	'FractionalValueDisplay'
+	'FractionalValueField:' singlevaluefield=SingleValueField
+	'TotalValueField:' singlevaluefield=SingleValueField
+	(dataFilterSection=DataFilterSection)?
+;
+
+ProgressBarConfiguration:
+	'ProgressBar'
+	'CurrentValueField:' singlevaluefield=SingleValueField
+	('TargetValueField:' singlevaluefield=SingleValueField)?
+	(dataFilterSection=DataFilterSection)?
+;
+
+PieChartConfiguration:
+	'PieChart'
+	'ValueField:' valuefield=ValueField
+	'CategoryField' categoryfield=CategoryField
+	('CategoryLimit:' INT)?
+	(dataFilterSection=DataFilterSection)?
+;
+
+BarChartConfiguration:
+	'BarChart'
+	'ValueField:' valuefield=ValueField
+	'CategoryField:' categoryfield=CategoryField
+	// ('Grouping Categories:' FIELD)?
+	// ('Stacking Categories:' FIELD)?
+	('CategoryLimit:' INT)?
+	(dataFilterSection=DataFilterSection)?
+;
+
+LineChartConfiguration:
+	'LineChart'
+	'ValueField:' valuefield=ValueField
+	'CategoryField:' categoryfield=CategoryField
+	('CategoryLimit:' INT)?
+	(dataFilterSection=DataFilterSection)?
+;
+
+// MultiSeriesLineChartConfiguration:
+// 	'Value Fields:' (FIELD+)+
+// 	('Categories:' FIELD+)?
+// 	('Category Limit:' INT)?
+// 	(dataFilterSection=DataFilterSection)?
+// ;
+
+POSITION:
+	'XStart:' xstart=INT
+	'XEnd:' xendpos=INT
+	'YStart:' ystart=INT
+	'YEnd:' yend=INT
+;
+
+SingleValueField:
+	('Name:' name=STRING)?
+	'Indicator:' linkIndicator=[Indicator]
+;
+
+ValueField:
+	('Name:' name=STRING)?
+	'Indicators:' (linkIndicator+=[Indicator])+
+;
+
+CategoryField:
+	categorynamedfield=CategoryNamedField | categoryvalues=CategoryValuesField
+;
+
+CategoryNamedField:
+	'Name:' name=STRING
+;
+
+CategoryValuesField:
+	('Name:' name=STRING)?
+	'Values:' (value+=STRING)+
+;
 
 
+
+enum VISUALISATIONTYPE: singlevaluedisplay='Single Value Display' | fractionalvaluedisplay='Fractional Value Display' | progressbar='Progress Bar' | piechart='Pie Chart' | barchart='Bar Chart' | linechart='Line Chart' | scatterplot='Scatter Plot'; // | multiserieslinechart='Multi-Series Line Chart'; 
+enum ORIGIN: extended='extended' | original='original'| merged='merged';
 enum INDICATORCLASSIFICATION: performance='performance' | score='scoring' | certification='certification';
 enum RULETYPE: warning='warning' | error='error' ;
 enum UNARY_NUMERIC_FUNCTION: absolute='abs' | int='int' ; //abs explanation: https://support.google.com/docs/answer/3093459 , int explanation: https://support.google.com/docs/answer/3093490
 enum BINARY_NUMERIC_FUNCTION: roundup='roundUp' | rounddown='roundDown' | round='round' | countif='countIf' ; // Round up explanation: https://support.google.com/docs/answer/3093443 , round down: https://support.google.com/docs/answer/3093442 , round: https://support.google.com/docs/answer/3093440, countIf: https://support.google.com/docs/answer/3093480?hl=en-GB
-enum UICOMPONENT: field='field' | line='line' | textBox='textBox' | checkBox='checkBox' | dropDown='dropDown' | radioButton='radioButton';
+enum UICOMPONENT: field='field' | line='line' | textBox='textBox' | checkBox='checkBox' | dropDown='dropDown' | radioButton='radioButton' | radioTextBox = 'radioTextBox' | checkTextBox = 'checkTextBox';
 enum STATISTICAL_FUNCTION: minimum='min' | maximum='max' | sum='sum' | mean='avg' | mode='mode' | median='median';
 enum SURVEYTYPE: multi='multi' | single='single' ;
 terminal BOOLEAN : ('true'|'false');
 terminal DOUBLE: INT '.' INT;
+terminal ARRAY: '['STRING(','STRING)*']';

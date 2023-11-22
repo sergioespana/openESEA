@@ -85,6 +85,13 @@ export default {
         getOverviewFilters: (state, getters) => (payload) => {
             return getters.getOverview(payload)?.Filters
         },
+        getOverviewStyle: (state, getters) => (payload) => {
+            return getters.getOverview(payload)?.Style
+        },
+
+        getOverviewBackgroundColor: (state, getters) => (payload) => {
+            return getters.getOverviewStyle(payload)?.['Background Color']
+        },
 
         getHeadSectionTitle: (state, getters) => (payload) => {
             return getters.getHeadSection(payload)?.Title
@@ -871,6 +878,140 @@ export default {
                 dataConfigurationPayload.value = {}
                 await dispatch('updateDataConfiguration', dataConfigurationPayload)
             }
+        },
+
+        async changeVisualisationType ({ commit, dispatch, getters }, payload) {
+            // Set visualisation type
+            await commit('setVisualisationType', payload)
+            // Furthermore change fields to suit new visualisation type
+            var dataConfiguration = getters.getDataConfiguration(payload)
+            const currentVisualisationType = getters.getVisualisationType(payload)
+            console.log(currentVisualisationType)
+            // const currentVisualisationType = getters.getVisualisationType()(payload)
+            const possibleFieldsList = [
+                'Value Field',
+                'Fractional Value Field',
+                'Total Value Field',
+                'Current Value Field',
+                'Target Value Field',
+                'Value Fields',
+                'Category Field',
+                'Grouping Field',
+                'Stacking Field'
+            ]
+            // Collect all existing fields
+            var groupingFields = []
+            var valueFields = []
+            valueFields.push(getters.getValueField(payload))
+            valueFields.push(getters.getFractionalValueField(payload))
+            valueFields.push(getters.getTotalValueField(payload))
+            valueFields.push(getters.getCurrentValueField(payload))
+            valueFields.push(getters.getTargetValueField(payload))
+            valueFields.concat(getters.getValueFields(payload) ?? [])
+            groupingFields.push(getters.getCategoryField(payload))
+            groupingFields.push(getters.getGroupingField(payload))
+            groupingFields.push(getters.getStackingField(payload))
+            groupingFields = groupingFields.filter(field => field !== null && field !== undefined)
+            valueFields = valueFields.filter(field => field !== null && field !== undefined)
+            console.log('Value Fields', valueFields)
+            console.log('Grouping Fields', groupingFields)
+            // Map fields to new fields
+            var valueFieldList = []
+            var groupingFieldList = []
+            var fieldList = false
+            var singleIndicator = false
+            const newVisualisationType = payload.value
+            switch (newVisualisationType) {
+                case 'Single Value Display':
+                    valueFieldList = ['Value Field']
+                    singleIndicator = true
+                    break
+                case 'Fractional Value Display':
+                    valueFieldList = ['Fractional Value Field', 'Total Value Field']
+                    singleIndicator = true
+                    break
+                case 'Progress Bar':
+                case 'Radial Progress Bar':
+                    valueFieldList = ['Current Value Field', 'Target Value Field']
+                    singleIndicator = true
+                    break
+                case 'Pie Chart':
+                case 'Bar Chart':
+                case 'Line Chart':
+                    valueFieldList = ['Value Field']
+                    groupingFieldList = ['Category Field']
+                    break
+                case 'Grouped Bar Chart':
+                    valueFieldList = ['Value Field']
+                    groupingFieldList = ['Category Field', 'Grouping Field']
+                    break
+                case 'Stacked Bar Chart':
+                    valueFieldList = ['Value Field']
+                    groupingFieldList = ['Category Field', 'Stacking Field']
+                    break
+                case 'Multi-Series Line Chart':
+                    valueFieldList = ['Value Fields']
+                    fieldList = true
+                    break
+                case 'Table':
+                    valueFieldList = ['Value Field']
+                    groupingFieldList = ['Category Field']
+                    break
+            }
+            console.log(fieldList)
+            for (let i = 0; i < valueFieldList.length; i++) {
+                const fieldName = valueFieldList[i]
+                const field = (valueFields?.[i] !== null && valueFields?.[i] !== undefined) ? valueFields?.[i] : valueFields?.[valueFields.length - 1]
+                console.log('Field to add:', fieldName, field)
+                dataConfiguration[fieldName] = field
+                // Get the first indicator if going from multiple to one
+                if (dataConfiguration[fieldName]?.Indicators && singleIndicator) {
+                    dataConfiguration[fieldName].Indicator = dataConfiguration[fieldName]?.Indicators?.[i]
+                    delete dataConfiguration[fieldName].Indicators
+                }
+                if (fieldList) {
+                    dataConfiguration[fieldName] = [dataConfiguration[fieldName]]
+                }
+            }
+            // for (let i = 0; i < valueFieldList.length; i++) {
+            //     // Original field, if no more, get last field
+            //     const field = valueFields?.[i] ?? valueFields?.[valueFields.length - 1]
+            //     // Field to create
+            //     const fieldName = valueFieldList[i]
+            //     dataConfiguration[fieldName] = dataConfiguration[fieldName] ?? null
+            //     var fieldTarget = dataConfiguration[fieldName]
+            //     fieldTarget = fieldList ? [field] : field // Determine if target field is part of list or not
+            //     console.log('Field to add:', fieldName, field)
+            //     // Convert to a single indicator if going from multiple to one in multiple fields
+            //     if (!dataConfiguration[fieldName]?.Indicators && singleIndicator) {
+            //         fieldTarget.Indicator = fieldTarget.Indicators[i]
+            //     }
+            //     // Collect indicators going from multiple fields to one field
+            //     if (valueFieldList.length === 1 && valueFields.length > 1) {
+            //         if (!fieldTarget.Indicators) {
+            //             fieldTarget.Indicators = []
+            //         }
+            //         fieldTarget.Indicators.push(valueFields.Indicator)
+            //     }
+            // }
+            for (let i = 0; i < groupingFieldList.length; i++) {
+                const fieldName = groupingFieldList[i]
+                const field = groupingFields?.[i]
+                console.log('Field to add:', fieldName, field)
+                dataConfiguration[fieldName] = field
+            }
+            // Delete fields that are not applicable to the new visualisation type
+            const allFields = valueFieldList.concat(groupingFieldList)
+            const fieldsToDelete = possibleFieldsList.filter(field => !allFields.includes(field))
+            for (var fieldToDelete of fieldsToDelete) {
+                delete dataConfiguration[fieldToDelete]
+            }
+            // Update data configuration
+            console.log('to delete', fieldsToDelete)
+            console.log('Data Config After', dataConfiguration)
+            // Set payload value to data configuration
+            payload.value = dataConfiguration
+            await dispatch('updateDataConfiguration', payload)
         }
     }
 }

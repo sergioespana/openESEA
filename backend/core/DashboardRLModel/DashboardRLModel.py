@@ -37,7 +37,7 @@ class DashboardRLModel:
         self.running_reward = 10
 
         # Set parameters
-        self.num_episodes = None # 100
+        self.num_episodes = 100 # None # 100
         self.num_time_steps = 200 # 10000
         self.render = False
 

@@ -62,7 +62,7 @@ export default {
                     left: 'center',
                     top: '55%',
                     style: {
-                        text: currentValueText + (targetValue ? ' / ' + targetValue : ''),
+                        text: currentValueText + (!isPercentage ? ' / ' + targetValue : ''),
                         fontSize: 15,
                         fontWeight: 'normal',
                         fill: '#888'

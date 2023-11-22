@@ -160,16 +160,22 @@ export default {
             // Add sideways indicator
             const sideways = await this.getSideways()(this.config)
             if (sideways !== null && sideways !== undefined) { options.sideways = sideways }
+            const dataDisplayOptions = await this.getDataDisplay()(this.config)?.Options
             // Add showValue indicator
-            const showValue = null
+            const showValue = dataDisplayOptions?.ShowValue
             if (showValue !== null && showValue !== undefined) { options.showValue = showValue }
             // Add showArea indicator
-            const showArea = null
+            const showArea = dataDisplayOptions?.ShowArea
             if (showArea !== null && showArea !== undefined) { options.showArea = showArea }
             // Add showBoundaryGap indicator
-            const showBoundaryGap = null
+            const showBoundaryGap = dataDisplayOptions?.ShowBoundaryGap
             if (showBoundaryGap !== null && showBoundaryGap !== undefined) { options.showBoundaryGap = showBoundaryGap }
-
+            for (const optionKey in dataDisplayOptions) {
+                const option = dataDisplayOptions[optionKey]
+                if (option !== null && option !== undefined) {
+                    options[optionKey] = option
+                }
+            }
             return options
         },
         // For each visualisation type create the corresponding dataset
@@ -242,11 +248,12 @@ export default {
         async retrieveIndicatorInfo (field) {
             const fieldIndicator = field.Indicator
             const fieldName = field.Name
+            const fieldFilters = field.Filters
 
             // Get dataset for the current value field indicator
             const indicatorDataSet = await this.getIndicatorDataSet()(fieldIndicator)
             const indicatorName = indicatorDataSet.name
-            const indicatorData = await this.applyVisualisationFilters(indicatorDataSet.data)
+            const indicatorData = await this.applyVisualisationFilters(indicatorDataSet.data, fieldFilters)
 
             // Devise mapping for field
             const fieldKey = indicatorName
@@ -308,8 +315,8 @@ export default {
             return info
         },
         // Apply filters to a dataset
-        async applyVisualisationFilters (dataSet) {
-            const filters = await this.collectVisualisationFilters()
+        async applyVisualisationFilters (dataSet, fieldFilters) {
+            const filters = await this.collectVisualisationFilters(fieldFilters)
             if (filters && dataSet?.[0]) {
                 for (const filter of filters) {
                     const filterField = filter.Field
@@ -321,12 +328,12 @@ export default {
             return dataSet
         },
         // Collect filters
-        async collectVisualisationFilters () {
+        async collectVisualisationFilters (fieldFilters) {
             // Get filters
             const overviewFilters = await this.getOverviewFilters()(this.config) ?? []
             const visualisationFilters = await this.getVisualisationFilters()(this.config) ?? []
             // Combine and return filters
-            const combinedFilters = overviewFilters.concat(visualisationFilters)
+            const combinedFilters = overviewFilters.concat(visualisationFilters).concat(fieldFilters ?? [])
             return combinedFilters
         },
         // Summarize data by summing value fields for each grouping in the grouping fields

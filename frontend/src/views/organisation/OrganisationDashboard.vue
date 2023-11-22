@@ -1,7 +1,7 @@
 <template>
 
     <!-- Dashboard -->
-    <div class="organisation-dashboard">
+    <div class="organisation-dashboard" ref="dashboard">
 
         <!-- Show spinner while loading dashboard -->
         <div v-if="!dashboardLoaded" class="spinner-div">
@@ -152,6 +152,8 @@ export default {
         async initializeRLModel () {
             // Wait 2 seconds before visualisations are loaded
             const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+            console.log('datasets:')
+            console.log(await this.getIndicatorDataSets()())
             await sleep(2000)
             // Build new RL Model and set interval for fetching suggestions
             const dashboard = await this.collectDashboardInfo()
@@ -216,6 +218,11 @@ export default {
                     const visualisationTitle = await this.getVisualisationTitle()(selectionConfigCurrent)
                     const categoryLimit = await this.getCategoryLimit()(selectionConfigCurrent)
 
+                    const categoryField = Object.keys(visualisationData?.mapping).find(fieldKey => fieldKey === 'Category Field')
+                    const allCategories = categoryField ? visualisationData?.data?.map(row => row[categoryField]) : []
+                    const distinctCategories = new Set(allCategories)
+
+                    const numberOfCategories = distinctCategories?.size
                     const numberOfDataPoints = visualisationData?.data?.length ?? 0
                     const amountOfValueFields = Object.keys(visualisationData?.mapping).filter(fieldKey => fieldKey.includes('Value Field')).length
 
@@ -224,6 +231,7 @@ export default {
                     visualisationInfo['Selection Configuration'] = cloneDeep(selectionConfigCurrent) // For applying this to the correct visualisation
                     visualisationInfo['Visualisation Type'] = visualisationType
                     visualisationInfo['Visualisation Title'] = visualisationTitle
+                    visualisationInfo['Category Items'] = numberOfCategories
                     visualisationInfo['Data Items'] = numberOfDataPoints * amountOfValueFields
                     visualisationInfo['Item Limit Enabled'] = categoryLimit > 0
                     visualisationInfo['Item Limit'] = categoryLimit ?? 0
@@ -235,6 +243,9 @@ export default {
             return { Visualisations: visualisationInfoList, 'Display Area': dashboardDisplayArea }
         },
         async updateRLModel () {
+            // Wait 2 seconds before visualisations are loaded
+            const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+            await sleep(2000)
             // Update RL Model and set interval for fetching suggestions
             const dashboard = await this.collectDashboardInfo()
             await this.updateDashboardRLModel({ data: { dashboard: dashboard } })
@@ -395,7 +406,6 @@ export default {
     position: relative;
 
     font-family: Arial, Helvetica, sans-serif;
-    background-color: white;
     height: 100%;
 
     /* Handle edit area element */

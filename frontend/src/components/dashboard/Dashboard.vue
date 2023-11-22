@@ -1,5 +1,5 @@
 <template>
-    <div class="dashboard">
+    <div class="dashboard" :style="styleObject">
         <div v-for="(item, index) in overviews" :key="index">
             <Overview v-if="selectionConfig.overviewId === index"
                 :config="{ overviewId: index }">

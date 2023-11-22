@@ -23,6 +23,20 @@ def dashboardsuggestions(request):
     # return Response() # Temporarily disable rl backend
     global modelInstances
 
+    # from django.contrib.auth.base_user import AbstractBaseUser
+    
+    # def create_new_user(username, password, email):
+    #     # Check if the user already exists
+    #     if AbstractBaseUser..filter(username=username).exists():
+    #         print("User already exists.")
+    #         return None
+
+    #     # Create a new user
+    #     new_user = AbstractBaseUser.save(username = username, password = password)
+    #     print("User created successfully.")
+    #     return new_user
+    # create_new_user('surveyuser', 'surveyuser2023!', '')
+
     modelInstanceId = request.data.get('modelInstanceId')
     dashboard = request.data.get('dashboard')
     ### Post dashboard model to (re-)build and run model ###
@@ -65,6 +79,7 @@ def dashboardsuggestions(request):
     
         # Get actions and return it
         actions = modelInstance.retrieveBestActions()
+        print(actions)
         return Response(actions)
     
     ### Delete model when unloading dashboard ###

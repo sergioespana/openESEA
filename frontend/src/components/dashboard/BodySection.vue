@@ -1,5 +1,5 @@
 <template>
-    <div class="body-section">
+    <div class="body-section" :style="styleObject">
         <Container v-for="(item, index) in containers"
             :key="index"
             :config="{ ...config, containerId: index }">
@@ -56,6 +56,12 @@ export default {
                         styleObject.bottom = '0%'
                         styleObject.top = (100 - this.headSectionPosition['Y End']) + '%'
                     }
+                } else {
+                    styleObject.position = 'absolute'
+                    styleObject.left = '0%'
+                    styleObject.right = '0%'
+                    styleObject.bottom = '0%'
+                    styleObject.top = '25%'
                 }
                 return styleObject
             }
@@ -66,12 +72,3 @@ export default {
     }
 }
 </script>
-
-<style>
-.body-section {
-    position: absolute;
-    width: 100%;
-    height: 75%;
-    top: 25%;
-}
-</style>

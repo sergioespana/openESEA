@@ -320,7 +320,7 @@ class AgentNetwork(nn.Module):
         if mask_list is None: return None
         return torch.tensor(mask_list, dtype = float)
     
-    def forward_predict(self, state, top = 5):
+    def forward_predict(self, state, top = 10):
         # Pytorch Tensor from Numpy array state
         tensor_state = torch.as_tensor(state, dtype = torch.float)
         TESTING = True
@@ -494,7 +494,7 @@ class AgentNetwork(nn.Module):
 
         # Add user feedback
         # Weight to give more value to user rewards, user rewards -> 50%
-        user_weight = len(self.rewards) / len(self.user_rewards)
+        user_weight = len(self.rewards) / (len(self.user_rewards) + EPSILON)
         # Create reward tensor and multiply rewards by this weight
         user_returns = torch.tensor(self.user_rewards).float()
         user_returns = torch.mul(user_returns, torch.tensor(user_weight))

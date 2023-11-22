@@ -1,5 +1,5 @@
 <template>
-    <div class="overview" v-on:click="isClicked">
+    <div class="overview" v-on:click="isClicked" :style="styleObject">
         <HeadSection v-if="headsection !== null"
             :config="config">
         </HeadSection>
@@ -37,10 +37,24 @@ export default {
         },
         sidepanel: {
             get () { return this.getSidePanel()(this.config) }
+        },
+        backgroundColor: {
+            get () { return this.getOverviewBackgroundColor()(this.config) }
+        },
+        styleObject: {
+            get () {
+                var styleObject = {}
+                if (this.backgroundColor) {
+                    styleObject['background-color'] = this.backgroundColor
+                } else {
+                    styleObject['background-color'] = '\'#eeeeee\''
+                }
+                return styleObject
+            }
         }
     },
     methods: {
-        ...mapGetters('dashboardModel', ['getHeadSection', 'getBodySection', 'getSidePanel']),
+        ...mapGetters('dashboardModel', ['getHeadSection', 'getBodySection', 'getSidePanel', 'getOverviewBackgroundColor']),
         ...mapActions('dashboardModel', ['updateSelectionConfig']),
         async isClicked (event) {
             event.stopPropagation()
@@ -49,3 +63,11 @@ export default {
     }
 }
 </script>
+
+<style>
+.overview {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+</style>

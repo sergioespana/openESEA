@@ -24,7 +24,7 @@ class DashboardEnvironment:
             },
             {
                 'Name': 'Chart Variety',
-                'Weight': 0.3,
+                'Weight': 0.5,
                 'Function': DashboardEnvironment.reward_visualisation_variety
             },
             {
@@ -34,7 +34,7 @@ class DashboardEnvironment:
             },
             {
                 'Name': 'Appropriate Visualisation Types',
-                'Weight': 0.5,
+                'Weight': 0.8,
                 'Function': DashboardEnvironment.reward_appropriate_visualisation_types
             }
         ]
@@ -313,9 +313,9 @@ class DashboardEnvironment:
                     if data_items == 1:
                         return newType in progressBarVisualisations or newType == VisualisationType.SINGLE
                     return newType in fractionalVisualisations or newType == VisualisationType.PIE
-                # Categorical to categorical or if 1 item -> single
+                # Categorical to categorical/table or if 1 item -> single
                 if visualisation_type in categoricalVisualisations:
-                    if newType in categoricalVisualisations:
+                    if newType in categoricalVisualisations or newType == VisualisationType.TABLE:
                         return True
                     if data_items == 1:
                         return newType == VisualisationType.SINGLE
@@ -323,9 +323,9 @@ class DashboardEnvironment:
                 if visualisation in groupedBarVisualisations:
                     if newType in groupedBarVisualisations or newType == VisualisationType.TABLE:
                         return True
-                # Categorical to categorical or if 1 item -> single
+                # Line to categorical/temporal/table or if 1 item -> single
                 if visualisation_type == VisualisationType.LINE:
-                    if newType in categoricalVisualisations or newType in temporalVisualisations:
+                    if newType in categoricalVisualisations or newType in temporalVisualisations or newType == VisualisationType.TABLE:
                         return True
                     if data_items == 1:
                         return newType == VisualisationType.SINGLE

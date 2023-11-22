@@ -5,7 +5,7 @@
                 :config="config">
             </OverviewSelection>
         </div>
-        <h1 class="head-section-title"
+        <h1 class="head-section-title" :style="{ margin: 0 }"
             :hidden="headsectionTitle === null">
             {{ headsectionTitle }}
         </h1>
@@ -48,6 +48,12 @@ export default {
                     styleObject.right = (100 - position['X End']) + '%'
                     styleObject.bottom = position['Y Start'] + '%'
                     styleObject.top = (100 - position['Y End']) + '%'
+                } else {
+                    styleObject.position = 'absolute'
+                    styleObject.left = '0%'
+                    styleObject.right = '0%'
+                    styleObject.bottom = '75%'
+                    styleObject.top = '0%'
                 }
                 return styleObject
             }
@@ -60,11 +66,6 @@ export default {
 </script>
 
 <style>
-.head-section {
-    position: absolute;
-    height: 25%;
-    width: 100%;
-}
 .head-section-title {
     height: 50%;
     width: 100%;

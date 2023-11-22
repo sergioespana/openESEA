@@ -17,7 +17,7 @@
 
     import DashboardList from '../../components/lists/DashboardList.vue'
     import DashboardForm from '../../components/forms/DashboardForm.vue'
-    import CalculatedIndicatorService from '../../services/CalculatedIndicatorService'
+    // import CalculatedIndicatorService from '../../services/CalculatedIndicatorService'
 
     export default {
         components: {
@@ -44,7 +44,7 @@
         },
         async created () {
             await this.fetchDashboards()
-            console.log(CalculatedIndicatorService.get({ mId: 5, oId: this.organisation.id }))
+            // console.log(CalculatedIndicatorService.get({ mId: 5, oId: this.organisation.id }))
         },
         methods: {
             ...mapGetters('dashboard', ['getDashboard']),

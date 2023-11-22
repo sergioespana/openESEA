@@ -397,7 +397,6 @@ export default {
                 'Grouped Bar Chart',
                 'Stacked Bar Chart',
                 'Line Chart',
-                // 'Multi-Series Line Chart',
                 'Table'
             ],
             multiSeriesVisualisations: [
@@ -416,7 +415,7 @@ export default {
         },
         visualisationType: {
             get () { return this.getVisualisationType()() },
-            set (value) { this.setVisualisationType({ value: value }) }
+            set (value) { this.changeVisualisationType({ value: value }) }
         },
 
         visualisationXStart: {
@@ -552,11 +551,12 @@ export default {
             'getCategoryLimit', // Category Limit
             'getSideways' // Bar chart sideways
         ]),
-        ...mapMutations('dashboardModel', ['setVisualisationTitle', 'setVisualisationType', // Title & Type
+        ...mapMutations('dashboardModel', ['setVisualisationTitle', // Title
             'setVisualisationXStart', 'setVisualisationXEnd', 'setVisualisationYStart', 'setVisualisationYEnd', // Position
             'setValueFieldName', 'setFractionalValueFieldName', 'setTotalValueFieldName', 'setCurrentValueFieldName', 'setTargetValueFieldName', 'setCategoryFieldName', 'setGroupingFieldName', 'setStackingFieldName' // Field Names
         ]),
         ...mapActions('dashboardModel', ['addVisualisation', 'deleteVisualisation', // Add / Delete
+            'changeVisualisationType', // Change type
             'updateValueField', 'updateValueFields', 'updateFractionalValueField', 'updateTotalValueField', 'updateCurrentValueField', 'updateTargetValueField', 'updateCategoryField', 'updateGroupingField', 'updateStackingField', // Fields
             'updateCategoryLimit', // Category Limit
             'updateSideways' // Bar chart sideways

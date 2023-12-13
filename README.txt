@@ -21,17 +21,18 @@ NEWS: As of July 2023, we reached an agreement with the Spanish Network of Netwo
 If you want to collaborate in this project, please contact us.
 
 Some of the current and past project members:
-Sergio España, Assistant Professor in Utrecht University, is the project leader and manager. Sergio is a visiting researcher in Universitat Politècnica de València during 2023 and 2024, supported by a María Zambrano grant of the Spanish Ministry of Universities, co-funded by the Next Generation EU European Recovery Plan.
-Vijanti Ramautar, doctoral researcher in Utrecht University is the product owner. 
-Sietse Overbeek, Assistant Professor in Utrecht University, has supervised the development of some features of the tool.
-Niels Bik developed the first version, including features to register organisations and networks, specify basic method components such as topics and indicators, and interpret the method specifications in runtime; his code is kept in a separate github repository https://github.com/nielsrowinbik/open-sea
-Henny Kruiper developed a feature to specify and deliver stakeholder surveys; his code is kept in a separate github repository https://github.com/nielsrowinbik/open-sea
-Tijmen Derikx developed a feature to specify and automatically generate infographics that present the account results; ; his code is kept in a separate github repository https://github.com/nielsrowinbik/open-sea
-Diederik van Rijen has merged branches (i) and (ii) onto a new version of the tool, retaining most of the features from each branch and improving the usability. 
-Jelle Verschragen (user interface designer), Tjeerd Verschragen (user interface developer), Tino Trok (backend developer), Matthew Kunkeler (business manager), Michiel Auerbach (project manager), Andy Haxby (Director at Competa), all contributed to the development of the tool while working for Competa IT https://competa.com
-Sara Martín, Yulie Anneria Sinaga and Gudrun Thorsteinsdottir contributed theoretical knowledge on ESEA methods that is valuable for the tool development and valorisation.
-Ties van Dijk and Artur Moeijes have extended openESEA with features to audit accounts.
-Óscar Pastor, full professor in Universitat Politècnica de València, acts as scientific advisor, requirements engineer and conceptual modeller within the project.
-
+ - Sergio España, Assistant Professor in Utrecht University, is the project leader and manager. Sergio is a visiting researcher in Universitat Politècnica de València during 2023 and 2024, supported by a María Zambrano grant of the Spanish Ministry of Universities, co-funded by the Next Generation EU European Recovery Plan.
+ - Vijanti Ramautar, doctoral researcher in Utrecht University is the product owner. 
+ - Sietse Overbeek, Assistant Professor in Utrecht University, has supervised the development of some features of the tool.
+ - Niels Bik developed the first version, including features to register organisations and networks, specify basic method components such as topics and indicators, and interpret the method specifications in runtime; his code is kept in a separate github repository https://github.com/nielsrowinbik/open-sea
+ - Henny Kruiper developed a feature to specify and deliver stakeholder surveys; his code is kept in a separate github repository https://github.com/nielsrowinbik/open-sea
+ - Tijmen Derikx developed a feature to specify and automatically generate infographics that present the account results; ; his code is kept in a separate github repository https://github.com/nielsrowinbik/open-sea
+ - Diederik van Rijen has merged branches (i) and (ii) onto a new version of the tool, retaining most of the features from each branch and improving the usability. 
+ - Jelle Verschragen (user interface designer), Tjeerd Verschragen (user interface developer), Tino Trok (backend developer), Matthew Kunkeler (business manager), Michiel Auerbach (project manager), Andy Haxby (Director at Competa), all contributed to the development of the tool while working for Competa IT https://competa.com
+ - Sara Martín, Yulie Anneria Sinaga and Gudrun Thorsteinsdottir contributed theoretical knowledge on ESEA methods that is valuable for the tool development and valorisation.
+ - Ties van Dijk and Artur Moeijes have extended openESEA with features to audit ESEA accounts.
+ - Óscar Pastor, full professor in Universitat Politècnica de València, acts as scientific advisor, requirements engineer and conceptual modeller within the project.
+ - Marc de Fluiter is developing a feature to model sustainability reporting dashboards (and thus has extended the openESEA domain-specific modelling language), and a feature that uses a reinforcement learning algorithm to recommend improvements to the dashboard.
+ - Noah Ritfeld is developing a separate tool that allows combining two openESEA method models to reduce the workload of organsiations that intend to apply two or more ESEA methods in the same reporting period. This tool first finds matches among direct indicators (i.e. questions) of both methods, and then proceeds to merging the matching questions.
 
 If we are forgetting you, please contact us and we will update this list ;-)

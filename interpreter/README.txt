@@ -35,4 +35,8 @@ Some of the current and past project members:
  - Marc de Fluiter is developing a feature to model sustainability reporting dashboards (and thus has extended the openESEA domain-specific modelling language), and a feature that uses a reinforcement learning algorithm to recommend improvements to the dashboard.
  - Noah Ritfeld is developing a separate tool that allows combining two openESEA method models to reduce the workload of organsiations that intend to apply two or more ESEA methods in the same reporting period. This tool first finds matches among direct indicators (i.e. questions) of both methods, and then proceeds to merging the matching questions.
 
+<<<<<<< HEAD
 If we are forgetting you, please contact us and we will update this list ;-)
+=======
+If we are forgetting you, please contact us and we will update this list ;-)
+>>>>>>> 22ec0ff515ef6ea05cb22980779b029ce154071b

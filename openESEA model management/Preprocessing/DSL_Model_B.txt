@@ -1,0 +1,290 @@
+Name:"Model B Assessment"
+Version:4.0
+isPublic:true
+Description: "This is a description about method B"
+GPcreateNetwork:true
+GPcreateMembers:true
+Origin:original
+
+Topics: 
+Topic_id:governance
+Name:"Governance"
+Description:"This topic is about Governance"
+
+Topic_id:governance_metrics
+Name:"Governance Metrics"
+Description:"This topic is about Governance Metrics"
+Parent_topic:governance
+
+Topic_id:ethics_and_transparency
+Name:"Ethics and Transparency"
+Description:"This topic is about Ethics & Transparency"
+Parent_topic:governance
+
+Topic_id:environment
+Name:"Environment"
+Description:"This topic is about the environment"
+
+Topic_id:environmental_management
+Name:"Environmental Management"
+Description:"This topic is about environmental management"
+Parent_topic:environment
+
+Topic_id:air_and_climate
+Name:"Air & Climate"
+Description:"This topic is about the air and climate"
+Parent_topic:environment
+
+Topic_id:water
+Name:"Water"
+Description:"This topic is about water"
+Parent_topic:environment
+
+Topic_id:land_and_life
+Name:"land & life"
+Description:"This topic is about land and life"
+Parent_topic:environment
+
+Indicators:
+Indicator_id:reviewed_audited_financials
+Name:"Reviewed Audited Financials"
+Description:"Does the company produce financials that are verified annually by an independent source through an Audit or Review?"
+Topic:ethics_and_transparency
+Indicator_type:Direct
+DataType:singleChoice
+List_items:
+Order:1
+Text: "Yes"
+Order:2 
+Text: "No"
+
+Indicator_id:company_transparency
+Name:"Company transparency"
+Description:"does the company make information publicly available and transparent"
+Topic:ethics_and_transparency
+Indicator_type:Direct
+DataType:multipleChoice
+List_items:
+Order:1
+Text: "Beneficial ownership of the company"
+Order:2 
+Text: "Financial performance (must be transparent to employees at minimum)"
+Order:3 
+Text: "Social and environmental performance (e.g. impact reports)"
+Order:4 
+Text: "Membership of the Board of Directors"
+Order:5 
+Text: "None of the above"
+
+Indicator_id:Earned_revenue
+Name:"Total earned Revenue"
+Description:"Total earned revenue"
+PreUnit:"dollar"
+Topic:governance_metrics
+Indicator_type:Direct 
+DataType: integer
+
+Indicator_id:environmental_management_systems
+Name:"Environmental Management Systems"
+Description:"Having an environmental management system that covers waste generation"
+Topic:environmental_management
+Indicator_type:Direct 
+DataType: multipleChoice 
+List_items: 
+Order:1
+Text: "Policy statement documenting our organization's commitment to the environment"
+Order:2
+Text: "Assessment undertaken of the environmental impact of our organization's business activities"
+Order:3
+Text: "Stated objectives and quantifiable targets for environmental aspects of our organization's operations"
+Order:4
+Text: "Periodic compliance and auditing to evaluate programs conducted"
+Order:5
+Text: "We have no environmental management system"
+
+Indicator_id:renewable_energy_usage
+Name:"Renewable energy usage"
+Description:"Percentage of energy that is produced from renewable sources"
+PostUnit:"%"
+Topic:air_and_climate
+Indicator_type:Direct 
+DataType: singleChoice 
+List_items: 
+Order:1
+Text: "0%"
+Order:2
+Text: "1-24%"
+Order:3
+Text: "25-49%"
+Order:4
+Text: "50-74%"
+Order:5
+Text: "75-99%"
+Order:6
+Text: "100%"
+Order:7
+Text: "Don't know"
+
+Indicator_id:renewable_energy_percentage
+Name:"Percentage of renewable energy"
+Description:"The percentage of renewable energy from renewable sources"
+PostUnit:"megawatt hour"
+Topic:air_and_climate
+Indicator_type:Indirect
+Formula: ([renewable_energy_usage] / [renewable_energy_usage]) * 100
+Type:certification
+DataType:double
+
+Indicator_id:reducing_impact_travel
+Name:"Reducing impact of travel"
+Description:"Programs or policies in place to reduce enivornmental footprint"
+Topic:air_and_climate
+Indicator_type:Direct 
+DataType: multipleChoice
+List_items: 
+Order:1
+Text: "Employees are subsidized/incentivized for use of public transportation, carpooling, or biking to work"
+Order:2
+Text: "Facilities are designed to facilitate use of public transportation, biking, or cleaner burning vehicles (e.g. electric chargers)"
+Order:3
+Text: "Employees are encouraged to use virtual meeting technology to reduce in person meetings"
+Order:4
+Text: "Company has a written policy limiting corporate travel"
+Order:5
+Text: "None of the above"
+
+Indicator_id:Monitoring_and_Managing_Water_Use
+Name:"Monitoring and Managing Water Use"
+Description:"Total water use in liters during the last 12 months"
+PostUnit:"liter"
+Topic:water
+Indicator_type:Direct 
+DataType: integer
+
+Indicator_id:Company_Monitoring_and_Managing_Water_Use
+Name:"Company Monitoring and Managing Water Use"
+Description:"Monitoring and managing water usage"
+Topic:water
+Indicator_type:Direct 
+DataType:multipleChoice
+List_items: 
+Order:1
+Text: "We do not currently monitor and record water usage"
+Order:2
+Text: "We regularly monitor and record water usage but have not set any reduction targets"
+Order:3
+Text: "We monitor and record water usage and have set specific reduction targets relative to previous performance (e.g. a 5% reduction of water usage from baseline year)"
+Order:4
+Text: "We regularly monitor and record emissions and have set science-based targets necessary to achieve sustainable usage linked to our local watershed"
+Order:5
+Text: "We have met specific reduction targets set during this reporting period"
+
+Indicator_id:Total_waste_recycled
+Name:"Total waste recycled during last month"
+Description:"Total waste recycled during last month in metric tonnes"
+PostUnit:"tonne"
+Topic:land_and_life
+Indicator_type:Direct 
+DataType: integer
+
+Surveys:
+survey_id:Method_B_survey
+Name:"Method B survey"
+Description:"This is the Method B survey"
+SurveyType:multi
+MinThreshold:0.8
+Anonymous: true
+
+Questions:
+Question_id:Q1_Method_B
+Name:"Question 1 Method B"
+Description:"Does the company produce financials that are verified annually by an independent source through an Audit or Review?"
+isMandatory:true
+UIComponent:radioButton
+Order:1
+Indicator:reviewed_audited_financials
+Instruction:""
+
+Question_id:Q2_Method_B
+Name:"Question 2 b Method B"
+Description:"What information does the company make publicly available and transparent?"
+isMandatory:true
+UIComponent:radioButton
+Order:2
+Indicator:company_transparency
+Instruction:""
+
+Question_id:Q3_Method_B
+Name:"Question 3 Method B"
+Description:"Total Earned Revenue from the last fiscal year"
+isMandatory:true
+UIComponent:field
+Order:3
+Indicator:Earned_revenue
+Instruction:"This question will be used for scored calculation questions later in the assessment. Please complete for accurate scoring. If your company has not yet completed its first fiscal year, please put $0"
+
+Question_id:Q4_Method_B
+Name:"Question 4 Method B"
+Description:"Does your company have an environmental management system (EMS) covering waste generation, energy usage, water usage, and carbon emissions that includes any of the following?"
+isMandatory:true
+UIComponent:radioButton
+Order:4
+Indicator:environmental_management_systems
+Instruction:"Please check all that apply."
+
+Question_id:Q5_Method_B
+Name:"Question 5 Method B"
+Description:"What percentage of energy use is produced from renewable sources?"
+isMandatory:true
+UIComponent:radioButton
+Order:5
+Indicator:renewable_energy_usage
+Instruction:"Include electricity and other energy consumption from heating, hot water, etc."
+
+Question_id:Q6_Method_B
+Name:"Question 6 Method B"
+Description:"the percentage of renewable energy from renewable sources"
+isMandatory:true
+UIComponent:field
+Order:6
+Indicator:renewable_energy_percentage
+Instruction:""
+
+Question_id:Q7_Method_B
+Name:"Question 7 Method B"
+Description:"Does your company have any programs or policies in place to reduce the environmental footprint caused by travel/commuting?"
+isMandatory:true
+UIComponent:radioButton
+Order:7
+Indicator:reducing_impact_travel
+Instruction:""
+
+Question_id:Q8_Method_B
+Name:"Question 8 Method B"
+Description:"Total water use (liters) during the last 12 months"
+isMandatory:true
+UIComponent:field
+Order:8
+Indicator:Monitoring_and_Managing_Water_Use
+Instruction:""
+
+Question_id:Q9_Method_B
+Name:"Question 9 Method B"
+Description:"Does your company monitor and manage your water usage?"
+isMandatory:true
+UIComponent:radioButton
+Order:9
+Indicator:Company_Monitoring_and_Managing_Water_Use
+Instruction:"Your answers determine which future questions in the assessment are applicable to your company."
+
+Question_id:Q10_Method_B
+Name:"Question 10 Method B"
+Description:"Waste Disposed: Recycled/Reused (metric tonnes) during the last 12 months"
+isMandatory:true
+UIComponent:field
+Order:10
+Indicator:Total_waste_recycled
+Instruction:""
+
+
+

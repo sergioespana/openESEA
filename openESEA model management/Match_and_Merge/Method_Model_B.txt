@@ -1,0 +1,252 @@
+topic_Topic_id:governance_metrics
+topic_Name:"Governance Metrics"
+topic_Description:"This topic is about Governance Metrics"
+topic_Parent_topic:governance
+indicator_Indicator_id:Earned_revenue
+indicator_Name:"Total earned Revenue"
+indicator_Description:"Total earned revenue"
+indicator_PreUnit:dollar
+indicator_Topic:governance_metrics
+indicator_Indicator_type:Direct
+indicator_DataType:integer
+question_Question_id:Q3_Method_B
+question_Name:"Question 3 Method B"
+question_Description:"Total Earned Revenue from the last fiscal year"
+question_isMandatory:true
+question_UIComponent:field
+question_Order_3:3
+question_Indicator:Earned_revenue
+question_Instruction:"This question will be used for scored calculation questions later in the assessment. Please complete for accurate scoring. If your company has not yet completed its first fiscal year, please put $0"
+
+topic_Topic_id:ethics_and_transparency
+topic_Name:"Ethics and Transparency"
+topic_Description:"This topic is about Ethics & Transparency"
+topic_Parent_topic:governance
+indicator_Indicator_id:reviewed_audited_financials
+indicator_Name:"Reviewed Audited Financials"
+indicator_Description:"Does the company produce financials that are verified annually by an independent source through an Audit or Review?"
+indicator_Topic:ethics_and_transparency
+indicator_Indicator_type:Direct
+indicator_DataType:singleChoice
+indicator_List_items:
+indicator_Order_1:1
+indicator_Text_1:"Yes"
+indicator_Order_2:2
+indicator_Text_2:"No"
+question_Question_id:Q1_Method_B
+question_Name:"Question 1 Method B"
+question_Description:"Does the company produce financials that are verified annually by an independent source through an Audit or Review?"
+question_isMandatory:true
+question_UIComponent:radioButton
+question_Order_1:1
+question_Indicator:reviewed_audited_financials
+question_Instruction:""
+
+topic_Topic_id:ethics_and_transparency
+topic_Name:"Ethics and Transparency"
+topic_Description:"This topic is about Ethics & Transparency"
+topic_Parent_topic:governance
+indicator_Indicator_id:company_transparency
+indicator_Name:"Company transparency"
+indicator_Description:"does the company make information publicly available and transparent"
+indicator_Topic:ethics_and_transparency
+indicator_Indicator_type:Direct
+indicator_DataType:multipleChoice
+indicator_List_items:
+indicator_Order_1:1
+indicator_Text_1:"Beneficial ownership of the company"
+indicator_Order_2:2
+indicator_Text_2:"Financial performance (must be transparent to employees at minimum)"
+indicator_Order_3:3
+indicator_Text_3:"Social and environmental performance (e.g. impact reports)"
+indicator_Order_4:4
+indicator_Text_4:"Membership of the Board of Directors"
+indicator_Order_5:5
+indicator_Text_5:"None of the above"
+question_Question_id:Q2_Method_B
+question_Name:"Question 2 b Method B"
+question_Description:"What information does the company make publicly available and transparent?"
+question_isMandatory:true
+question_UIComponent:radioButton
+question_Order_2:2
+question_Indicator:company_transparency
+question_Instruction:""
+
+topic_Topic_id:environmental_management
+topic_Name:"Environmental Management"
+topic_Description:"This topic is about environmental management"
+topic_Parent_topic:environment
+indicator_Indicator_id:environmental_management_systems
+indicator_Name:"Environmental Management Systems"
+indicator_Description:"Having an environmental management system that covers waste generation"
+indicator_Topic:environmental_management
+indicator_Indicator_type:Direct
+indicator_DataType:multipleChoice
+indicator_List_items:
+indicator_Order_1:1
+indicator_Text_1:"Policy statement documenting our organization's commitment to the environment"
+indicator_Order_2:2
+indicator_Text_2:"Assessment undertaken of the environmental impact of our organization's business activities"
+indicator_Order_3:3
+indicator_Text_3:"Stated objectives and quantifiable targets for environmental aspects of our organization's operations"
+indicator_Order_4:4
+indicator_Text_4:"Periodic compliance and auditing to evaluate programs conducted"
+indicator_Order_5:5
+indicator_Text_5:"We have no environmental management system"
+question_Question_id:Q4_Method_B
+question_Name:"Question 4 Method B"
+question_Description:"Does your company have an environmental management system (EMS) covering waste generation, energy usage, water usage, and carbon emissions that includes any of the following?"
+question_isMandatory:true
+question_UIComponent:radioButton
+question_Order_4:4
+question_Indicator:environmental_management_systems
+question_Instruction:"Please check all that apply."
+
+topic_Topic_id:air_and_climate
+topic_Name:"Air & Climate"
+topic_Description:"This topic is about the air and climate"
+topic_Parent_topic:environment
+indicator_Indicator_id:renewable_energy_usage
+indicator_Name:"Renewable energy usage"
+indicator_Description:"Percentage of energy that is produced from renewable sources"
+indicator_PostUnit:%
+indicator_Topic:air_and_climate
+indicator_Indicator_type:Direct
+indicator_DataType:singleChoice
+indicator_List_items:
+indicator_Order_1:1
+indicator_Text_1:"0%"
+indicator_Order_2:2
+indicator_Text_2:"1-24%"
+indicator_Order_3:3
+indicator_Text_3:"25-49%"
+indicator_Order_4:4
+indicator_Text_4:"50-74%"
+indicator_Order_5:5
+indicator_Text_5:"75-99%"
+indicator_Order_6:6
+indicator_Text_6:"100%"
+indicator_Order_7:7
+indicator_Text_7:"Don't know"
+question_Question_id:Q5_Method_B
+question_Name:"Question 5 Method B"
+question_Description:"What percentage of energy use is produced from renewable sources?"
+question_isMandatory:true
+question_UIComponent:radioButton
+question_Order_5:5
+question_Indicator:renewable_energy_usage
+question_Instruction:"Include electricity and other energy consumption from heating, hot water, etc."
+
+topic_Topic_id:air_and_climate
+topic_Name:"Air & Climate"
+topic_Description:"This topic is about the air and climate"
+topic_Parent_topic:environment
+indicator_Indicator_id:renewable_energy_percentage
+indicator_Name:"Percentage of renewable energy"
+indicator_Description:"The percentage of renewable energy from renewable sources"
+indicator_PostUnit:megawatt hour
+indicator_Topic:air_and_climate
+indicator_Indicator_type:Indirect
+indicator_Formula:([renewable_energy_usage] / [renewable_energy_usage]) * 100
+indicator_Type:certification
+indicator_DataType:double
+
+topic_Topic_id:air_and_climate
+topic_Name:"Air & Climate"
+topic_Description:"This topic is about the air and climate"
+topic_Parent_topic:environment
+indicator_Indicator_id:reducing_impact_travel
+indicator_Name:"Reducing impact of travel"
+indicator_Description:"Programs or policies in place to reduce enivornmental footprint"
+indicator_Topic:air_and_climate
+indicator_Indicator_type:Direct
+indicator_DataType:multipleChoice
+indicator_List_items:
+indicator_Order_1:1
+indicator_Text_1:"Employees are subsidized/incentivized for use of public transportation, carpooling, or biking to work"
+indicator_Order_2:2
+indicator_Text_2:"Facilities are designed to facilitate use of public transportation, biking, or cleaner burning vehicles (e.g. electric chargers)"
+indicator_Order_3:3
+indicator_Text_3:"Employees are encouraged to use virtual meeting technology to reduce in person meetings"
+indicator_Order_4:4
+indicator_Text_4:"Company has a written policy limiting corporate travel"
+indicator_Order_5:5
+indicator_Text_5:"None of the above"
+question_Question_id:Q7_Method_B
+question_Name:"Question 7 Method B"
+question_Description:"Does your company have any programs or policies in place to reduce the environmental footprint caused by travel/commuting?"
+question_isMandatory:true
+question_UIComponent:radioButton
+question_Order_7:7
+question_Indicator:reducing_impact_travel
+question_Instruction:""
+
+topic_Topic_id:water
+topic_Name:"Water"
+topic_Description:"This topic is about water"
+topic_Parent_topic:environment
+indicator_Indicator_id:Monitoring_and_Managing_Water_Use
+indicator_Name:"Monitoring and Managing Water Use"
+indicator_Description:"Total water use in liters during the last 12 months"
+indicator_PostUnit:liter
+indicator_Topic:water
+indicator_Indicator_type:Direct
+indicator_DataType:integer
+question_Question_id:Q8_Method_B
+question_Name:"Question 8 Method B"
+question_Description:"Total water use (liters) during the last 12 months"
+question_isMandatory:true
+question_UIComponent:field
+question_Order_8:8
+question_Indicator:Monitoring_and_Managing_Water_Use
+question_Instruction:""
+
+topic_Topic_id:water
+topic_Name:"Water"
+topic_Description:"This topic is about water"
+topic_Parent_topic:environment
+indicator_Indicator_id:Company_Monitoring_and_Managing_Water_Use
+indicator_Name:"Company Monitoring and Managing Water Use"
+indicator_Description:"Monitoring and managing water usage"
+indicator_Topic:water
+indicator_Indicator_type:Direct
+indicator_DataType:multipleChoice
+indicator_List_items:
+indicator_Order_1:1
+indicator_Text_1:"We do not currently monitor and record water usage"
+indicator_Order_2:2
+indicator_Text_2:"We regularly monitor and record water usage but have not set any reduction targets"
+indicator_Order_3:3
+indicator_Text_3:"We monitor and record water usage and have set specific reduction targets relative to previous performance (e.g. a 5% reduction of water usage from baseline year)"
+indicator_Order_4:4
+indicator_Text_4:"We regularly monitor and record emissions and have set science-based targets necessary to achieve sustainable usage linked to our local watershed"
+indicator_Order_5:5
+indicator_Text_5:"We have met specific reduction targets set during this reporting period"
+question_Question_id:Q9_Method_B
+question_Name:"Question 9 Method B"
+question_Description:"Does your company monitor and manage your water usage?"
+question_isMandatory:true
+question_UIComponent:radioButton
+question_Order_9:9
+question_Indicator:Company_Monitoring_and_Managing_Water_Use
+question_Instruction:"Your answers determine which future questions in the assessment are applicable to your company."
+
+topic_Topic_id:land_and_life
+topic_Name:"land & life"
+topic_Description:"This topic is about land and life"
+topic_Parent_topic:environment
+indicator_Indicator_id:Total_waste_recycled
+indicator_Name:"Total waste recycled during last month"
+indicator_Description:"Total waste recycled during last month in metric tonnes"
+indicator_PostUnit:tonne
+indicator_Topic:land_and_life
+indicator_Indicator_type:Direct
+indicator_DataType:integer
+question_Question_id:Q10_Method_B
+question_Name:"Question 10 Method B"
+question_Description:"Waste Disposed: Recycled/Reused (metric tonnes) during the last 12 months"
+question_isMandatory:true
+question_UIComponent:field
+question_Order_10:10
+question_Indicator:Total_waste_recycled
+question_Instruction:""

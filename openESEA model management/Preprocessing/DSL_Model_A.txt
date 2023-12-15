@@ -1,0 +1,278 @@
+Name:"Model A Assessment"
+Version:6.0
+isPublic:true
+Description: "This is a description about method A"
+GPcreateNetwork:true
+GPcreateMembers:true
+Origin:original
+
+
+Topics: 
+Topic_id:Administration
+Name:"Administration"
+Description:"This topic is about Administration"\
+
+
+Topic_id:Management_benchmarks
+Name:"management benchmarks"
+Description:"This topic is about Management benchmarks"
+Parent_topic:Administration
+
+Topic_id:Integrity_and_openness
+Name:"Integrity and openness
+Description:"This topic is about integrity and openness
+Parent_topic:Administration
+
+Topic_id:Environment
+Name:"Environment"
+Description:"This topic is about the environment"
+
+Topic_id:Facility_improvement
+Name:"Facility improvement"
+Description:"This topic is Facility improvement"
+Parent_topic:environment
+
+Topic_id:Conditions_and_climate
+Name:"Conditions & Climate"
+Description:"This topic is about conditions and climate"
+Parent_topic:environment
+
+Topic_id:Water
+Name:"Water"
+Description:"This topic is about water"
+Parent_topic:environment
+
+Topic_id:Landscape_and_existence
+Name:"landscape & existence"
+Description:"This topic is about landscape and existence"
+Parent_topic:environment
+
+Indicators:
+Indicator_id:Revised_financial_audit_report
+Name:"Revised Financial Audit Report"
+Description:"Is the company subject to an annual independent financial verification process, such as an audit or review?"
+Topic:Integrity_and_openness
+Indicator_type:Direct
+DataType:multipleChoice
+List_items:
+Order:1
+Text: "Yes"
+Order:2 
+Text: "No"
+
+Indicator_id:Organisation_transparency
+Name:"Organisation transparency"
+Description:" Is the company committed to providing public access to transparent information?"
+Topic:Integrity_and_openness
+Indicator_type:Direct
+DataType:multipleChoice
+List_items:
+Order:1
+Text: "Ownership that provides advantages to the organisation"
+Order:2 
+Text: " Financial performance (with a minimum requirement of transparency to employees) "
+Order:3 
+Text: " Social and environmental performance, including impact reports"
+Order:4 
+Text: "Board of Directors Membership"
+Order:5 
+Text: "None of the above"
+
+Indicator_id:Revenue_earnings
+Name:"Aggregate revenue earning"
+Description:"Aggregate revenue earning"
+PreUnit:"euro"
+Topic:Management_benchmarks
+Indicator_type:Direct 
+DataType: double
+
+Indicator_id:Facility_improvement_landlord
+Name:"Facility Improvement with Landlord"
+Description:" If you lease your facilities, have you worked with your landlord to implement or maintain any of the following?"
+Topic:Facility_improvement 
+Indicator_type:Direct 
+DataType: multipleChoice 
+List_items: 
+Order:1
+Text: "Energy efficiency improvements"
+Order: 2
+Text: "Water efficiency improvements"
+Order:3
+Text: "Waste reduction programs (including recycling)"
+Order:4
+Text: "None of the above"
+Order:5
+Text: "N/A - Company does not lease majority of facilities"
+
+Indicator_id:Renewable_energy_usage
+Name:"Usage of renewable energy"
+Description:"Proportion of energy generated from renewable sources."
+PostUnit:"kilowatt hour"
+Topic:Conditions_and_climate
+Indicator_type:Direct 
+DataType: text
+
+Indicator_id:Renewable_energy_proportion
+Name:"Proportion of energy from renewable sources."
+Description:"The percentage of renewable energy from renewable sources"
+PostUnit:"kilowatt hour"
+Topic:Conditions_and_climate
+Indicator_type:Indirect
+Formula: ([renewable_energy_usage] / [renewable_energy_usage]) * 500
+Type:performance
+DataType:double
+
+Indicator_id:Mitigating_footprint_travel
+Name:" Mitigating the environmental footprint of travel"
+Description:"Implemented initiatives or policies aimed at minimizing environmental impact."
+Topic:Conditions_and_climate
+Indicator_type:Direct 
+DataType: multipleChoice
+List_items: 
+Order:1
+Text: "Employees are provided subsidies or incentives to encourage the use of public transportation, carpooling, or biking as their means of commuting to work."
+Order:2
+Text: " The facilities are purposefully designed to promote the use of public transportation, biking, or cleaner-burning vehicles (e.g., electric vehicle charging stations)." 
+Order:3
+Text: "Employees are actively encouraged to utilize virtual meeting technology to minimize the need for in-person meetings."
+Order:4
+Text: "The company has an established written policy that restricts corporate travel."
+Order:5
+Text: "None of the above"
+
+Indicator_id:Monitoring_and_controlling_Water_consumption
+Name:" Monitoring and Controlling Water Consumption"
+Description:"Total water consumption during the last 12 months"
+PostUnit:"gallon"
+Topic:Water
+Indicator_type:Direct 
+DataType: integer
+
+
+Indicator_id:Organisation_Monitoring_and_controlling_Water_consumption
+Name:" Organisation Monitoring and Controlling Water Consumption"
+Description:"Monitoring and Controlling Water Consumption "
+Topic:Water
+Indicator_type:Direct 
+DataType: multipleChoice
+List_items: 
+Order:1
+Text: "We do not have systems in place for actively tracking and documenting our water consumption."
+Order:2
+Text: "We consistently track and document our water consumption; however, we have not established any reduction objectives."
+Order:3
+Text: " We track and document our water consumption while also establishing precise reduction targets compared to previous performance, such as achieving a 5% reduction in water usage from the baseline year." 
+Order:4
+Text: " We consistently monitor and document emissions, and we have established science-based targets to ensure sustainable practices in connection with our local watershed." 
+Order:5
+Text: " We have successfully achieved the reduction targets set for this reporting period." 
+
+Indicator_id:Waste_recycling 
+Name:" Total waste recycled in the previous month." 
+Description:"Total waste recycled during previous month in kilograms"
+PostUnit:"kg"
+Topic:Landscape_and_existence
+Indicator_type:Direct 
+DataType: integer
+
+Surveys:
+survey_id:Method_A_survey
+Name:"Method A survey"
+Description:"This is the Method A survey"
+SurveyType:multi
+MinThreshold:0.8
+Anonymous: true
+
+Questions:
+Question_id:Q1_Method_A
+Name:"Question 1 Method A"
+Description:"Is the company subject to an annual independent financial verification process, such as an audit or review?"
+isMandatory:true
+UIComponent:radioButton
+Order:1
+Indicator:Revised_financial_audit_report
+Instruction:""
+
+Question_id:Q2_Method_A
+Name:"Question 2 Method A"
+Description:" Is the company committed to providing public access to transparent information?"
+isMandatory:true
+UIComponent:radioButton
+Order:2
+Indicator:Organisation_transparency
+Instruction:""
+
+Question_id:Q3_Method_A
+Name:"Question 3 Method A"
+Description:"Total Earned Revenue from the last fiscal year"
+isMandatory:true
+UIComponent:field
+Order:3
+Indicator:Revenue_earnings
+Instruction:"This question is essential for calculating scores later in the assessment. Please provide a response for accurate scoring. If your company has not completed its first fiscal year yet, please enter €0."
+
+Question_id:Q4_Method_A
+Name:"Question 4 Method A"
+Description:"If you lease your facilities, have you worked with your landlord to implement or maintain any of the following?"
+isMandatory:true
+UIComponent:radioButton
+Order:4
+Indicator:Facility_improvement_landlord
+Instruction:" "
+
+Question_id:Q5_Method_A
+Name:"Question 5 Method A"
+Description:"What portion of energy consumption comes from renewable sources? "
+isMandatory: false
+UIComponent:textbox
+Order:5
+Indicator:Renewable_energy_usage
+Instruction:" Incorporate electricity and other energy consumption for heating, hot water, etc." 
+
+Question_id:Q6_Method_A
+Name:"Question 6 Method A"
+Description:"The proportion of renewable energy derived from sustainable sources"
+isMandatory:true
+UIComponent:field
+Order:6
+Indicator:Renewable_energy_proportion
+Instruction:""
+
+Question_id:Q7_Method_A
+Name:"Question 7 Method A"
+Description:"Has your company implemented any initiatives or policies to mitigate the environmental impact of travel and commuting?"
+isMandatory:true
+UIComponent:radioButton
+Order:7
+Indicator:Mitigating_footprint_travel
+Instruction:""
+
+Question_id:Q8_Method_A
+Name:"Question 8 Method A"
+Description:"Total water use (kiloliters) during the last 12 months"
+isMandatory:true
+UIComponent:textbox
+Order:8
+Indicator:Monitoring_and_controlling_Water_consumption
+Instruction:""
+
+Question_id:Q9_Method_A
+Name:"Question 9 Method A"
+Description:"Does your organisation monitor and control your water usage?"
+isMandatory:true
+UIComponent:radioButton
+Order:9
+Indicator:Organisation_Monitoring_and_controlling_Water_consumption
+Instruction:"Your responses guide the relevance of future questions in the assessment for your company."
+
+Question_id:Q10_Method_A
+Name:"Question 10 Method A" 
+Description:"Amount of Waste Recycled or Reused (in kilograms) in the Past 12 Months"
+isMandatory:true
+UIComponent:field
+Order:10
+Indicator:Waste_recycling
+Instruction:"
+
+
+

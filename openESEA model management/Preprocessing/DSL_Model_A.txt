@@ -10,8 +10,7 @@ Origin:original
 Topics: 
 Topic_id:Administration
 Name:"Administration"
-Description:"This topic is about Administration"\
-
+Description:"This topic is about Administration"
 
 Topic_id:Management_benchmarks
 Name:"management benchmarks"
@@ -19,8 +18,8 @@ Description:"This topic is about Management benchmarks"
 Parent_topic:Administration
 
 Topic_id:Integrity_and_openness
-Name:"Integrity and openness
-Description:"This topic is about integrity and openness
+Name:"Integrity and openness"
+Description:"This topic is about integrity and openness"
 Parent_topic:Administration
 
 Topic_id:Environment
@@ -29,7 +28,7 @@ Description:"This topic is about the environment"
 
 Topic_id:Facility_improvement
 Name:"Facility improvement"
-Description:"This topic is Facility improvement"
+Description:
 Parent_topic:environment
 
 Topic_id:Conditions_and_climate
@@ -81,7 +80,7 @@ Text: "None of the above"
 Indicator_id:Revenue_earnings
 Name:"Aggregate revenue earning"
 Description:"Aggregate revenue earning"
-PreUnit:"euro"
+PreUnit:euro
 Topic:Management_benchmarks
 Indicator_type:Direct 
 DataType: double
@@ -107,7 +106,7 @@ Text: "N/A - Company does not lease majority of facilities"
 Indicator_id:Renewable_energy_usage
 Name:"Usage of renewable energy"
 Description:"Proportion of energy generated from renewable sources."
-PostUnit:"kilowatt hour"
+PostUnit:kilowatt hour
 Topic:Conditions_and_climate
 Indicator_type:Direct 
 DataType: text
@@ -115,7 +114,7 @@ DataType: text
 Indicator_id:Renewable_energy_proportion
 Name:"Proportion of energy from renewable sources."
 Description:"The percentage of renewable energy from renewable sources"
-PostUnit:"kilowatt hour"
+PostUnit:kilowatt hour
 Topic:Conditions_and_climate
 Indicator_type:Indirect
 Formula: ([renewable_energy_usage] / [renewable_energy_usage]) * 500
@@ -143,7 +142,7 @@ Text: "None of the above"
 Indicator_id:Monitoring_and_controlling_Water_consumption
 Name:" Monitoring and Controlling Water Consumption"
 Description:"Total water consumption during the last 12 months"
-PostUnit:"gallon"
+PostUnit:gallon
 Topic:Water
 Indicator_type:Direct 
 DataType: integer
@@ -170,7 +169,7 @@ Text: " We have successfully achieved the reduction targets set for this reporti
 Indicator_id:Waste_recycling 
 Name:" Total waste recycled in the previous month." 
 Description:"Total waste recycled during previous month in kilograms"
-PostUnit:"kg"
+PostUnit:kg
 Topic:Landscape_and_existence
 Indicator_type:Direct 
 DataType: integer
@@ -224,7 +223,7 @@ Question_id:Q5_Method_A
 Name:"Question 5 Method A"
 Description:"What portion of energy consumption comes from renewable sources? "
 isMandatory: false
-UIComponent:textbox
+UIComponent:textBox
 Order:5
 Indicator:Renewable_energy_usage
 Instruction:" Incorporate electricity and other energy consumption for heating, hot water, etc." 
@@ -272,7 +271,7 @@ isMandatory:true
 UIComponent:field
 Order:10
 Indicator:Waste_recycling
-Instruction:"
+Instruction:""
 
 
 

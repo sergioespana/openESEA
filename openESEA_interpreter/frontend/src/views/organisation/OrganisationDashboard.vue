@@ -80,10 +80,12 @@ export default {
         }
     },
     computed: {
+        // ...mapState('network', ['networks']),
+        ...mapState('organisation', ['organisation']),
         ...mapState('dashboardModel', ['dashboard', 'selectionConfig']),
             permission () {
-                if (this.network.accesLevel) {
-                    const accesLevel = this.network.accesLevel
+                if (this.organisation.accesLevel) {
+                    const accesLevel = this.organisation.accesLevel
                     if (accesLevel === 'admin' || accesLevel === 'network admin') {
                         return true
                     }

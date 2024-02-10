@@ -19,8 +19,8 @@ question_Indicator:Revenue_earnings
 question_Instruction:"This question is essential for calculating scores later in the assessment. Please provide a response for accurate scoring. If your company has not completed its first fiscal year yet, please enter €0."
 
 topic_Topic_id:Integrity_and_openness
-topic_Name:"Integrity and openness
-topic_Description:"This topic is about integrity and openness
+topic_Name:"Integrity and openness"
+topic_Description:"This topic is about integrity and openness"
 topic_Parent_topic:Administration
 indicator_Indicator_id:Revised_financial_audit_report
 indicator_Name:"Revised Financial Audit Report"
@@ -43,8 +43,8 @@ question_Indicator:Revised_financial_audit_report
 question_Instruction:""
 
 topic_Topic_id:Integrity_and_openness
-topic_Name:"Integrity and openness
-topic_Description:"This topic is about integrity and openness
+topic_Name:"Integrity and openness"
+topic_Description:"This topic is about integrity and openness"
 topic_Parent_topic:Administration
 indicator_Indicator_id:Organisation_transparency
 indicator_Name:"Organisation transparency"
@@ -74,7 +74,7 @@ question_Instruction:""
 
 topic_Topic_id:Facility_improvement
 topic_Name:"Facility improvement"
-topic_Description:"This topic is Facility improvement"
+topic_Description:
 topic_Parent_topic:environment
 indicator_Indicator_id:Facility_improvement_landlord
 indicator_Name:"Facility Improvement with Landlord"
@@ -117,7 +117,7 @@ question_Question_id:Q5_Method_A
 question_Name:"Question 5 Method A"
 question_Description:"What portion of energy consumption comes from renewable sources? "
 question_isMandatory:false
-question_UIComponent:textbox
+question_UIComponent:textBox
 question_Order_5:5
 question_Indicator:Renewable_energy_usage
 question_Instruction:" Incorporate electricity and other energy consumption for heating, hot water, etc."
@@ -234,4 +234,4 @@ question_isMandatory:true
 question_UIComponent:field
 question_Order_10:10
 question_Indicator:Waste_recycling
-question_Instruction:"
+question_Instruction:""

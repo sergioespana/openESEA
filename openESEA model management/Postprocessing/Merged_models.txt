@@ -2,31 +2,6 @@ topic_Topic_id:Water
 topic_Name:"Water"
 topic_Description:"This topic is about water"
 topic_Parent_topic:environment
-indicator_Indicator_id:Monitoring_and_controlling_Water_consumption
-indicator_Name:" Monitoring and Controlling Water Consumption"
-indicator_Description:"Total water consumption during the last 12 months"
-indicator_PostUnit:gallon
-indicator_Topic:Water
-indicator_Indicator_type:Direct
-indicator_DataType:integer
-question_Question_id:Q8_Method_A
-question_Name:"Question 8 Method A"
-question_Description:"Total water use (kiloliters) during the last 12 months"
-question_isMandatory:true
-question_UIComponent:textbox
-question_Order_8:8
-question_Indicator:Monitoring_and_controlling_Water_consumption
-question_Instruction:""
-name:Model_A8
-indicator_Indicator1: " Monitoring and Controlling Water Consumption"
-indicator_Indicator2: "Monitoring and Managing Water Use"
-indicator_FormulaIndicator1: "gallon * 1"
-indicator_FormulaIndicator2: "Formula: gallon to liter = 3.785411783999999 liter"
-
-topic_Topic_id:Water
-topic_Name:"Water"
-topic_Description:"This topic is about water"
-topic_Parent_topic:environment
 indicator_Indicator_id:Organisation_Monitoring_and_controlling_Water_consumption
 indicator_Name:" Organisation Monitoring and Controlling Water Consumption"
 indicator_Description:"Monitoring and Controlling Water Consumption "
@@ -48,34 +23,40 @@ question_Order_9:9
 question_Indicator:Organisation_Monitoring_and_controlling_Water_consumption
 question_Instruction:"Your responses guide the relevance of future questions in the assessment for your company."
 name:Model_A9
-indicator_Text_1:" We have successfully achieved the reduction targets set for this reporting period."
-indicator_Text_2:" We consistently monitor and document emissions, and we have established science-based targets to ensure sustainable practices in connection with our local watershed."
-indicator_Text_3:" We track and document our water consumption while also establishing precise reduction targets compared to previous performance, such as achieving a 5% reduction in water usage from the baseline year."
-indicator_Text_4:"We consistently track and document our water consumption; however, we have not established any reduction objectives."
-indicator_Text_5:"We do not have systems in place for actively tracking and documenting our water consumption."
+indicator_Text_1:" We consistently monitor and document emissions, and we have established science-based targets to ensure sustainable practices in connection with our local watershed."
+indicator_Text_2:" We track and document our water consumption while also establishing precise reduction targets compared to previous performance, such as achieving a 5% reduction in water usage from the baseline year."
+indicator_Text_3:" We have successfully achieved the reduction targets set for this reporting period."
+indicator_Text_4:"We do not have systems in place for actively tracking and documenting our water consumption."
+indicator_Text_5:"We consistently track and document our water consumption; however, we have not established any reduction objectives."
 indicator_Indicator1: " Organisation Monitoring and Controlling Water Consumption"
 indicator_Indicator2: "Company Monitoring and Managing Water Use"
 indicator_FormulaIndicator1: "Not found"
 indicator_FormulaIndicator2: "Not found"
 
-topic_Topic_id:Conditions_and_climate
-topic_Name:"Conditions & Climate"
-topic_Description:"This topic is about conditions and climate"
+topic_Topic_id:Water
+topic_Name:"Water"
+topic_Description:"This topic is about water"
 topic_Parent_topic:environment
-indicator_Indicator_id:Renewable_energy_proportion
-indicator_Name:"Proportion of energy from renewable sources."
-indicator_Description:"The percentage of renewable energy from renewable sources"
-indicator_PostUnit:kilowatt hour
-indicator_Topic:Conditions_and_climate
-indicator_Indicator_type:Indirect
-indicator_Formula:([renewable_energy_usage] / [renewable_energy_usage]) * 500
-indicator_Type:performance
-indicator_DataType:double
-name:Model_A6
-indicator_Indicator1: "Proportion of energy from renewable sources."
-indicator_Indicator2: "Percentage of renewable energy"
-indicator_FormulaIndicator1: "kilowatt hour * 1"
-indicator_FormulaIndicator2: "Formula: kilowatt hour to megawatt hour = 0.001 hour * megawatt"
+indicator_Indicator_id:Monitoring_and_controlling_Water_consumption
+indicator_Name:" Monitoring and Controlling Water Consumption"
+indicator_Description:"Total water consumption during the last 12 months"
+indicator_PostUnit:gallon
+indicator_Topic:Water
+indicator_Indicator_type:Direct
+indicator_DataType:integer
+question_Question_id:Q8_Method_A
+question_Name:"Question 8 Method A"
+question_Description:"Total water use (kiloliters) during the last 12 months"
+question_isMandatory:true
+question_UIComponent:textbox
+question_Order_8:8
+question_Indicator:Monitoring_and_controlling_Water_consumption
+question_Instruction:""
+name:Model_A8
+indicator_Indicator1: " Monitoring and Controlling Water Consumption"
+indicator_Indicator2: "Monitoring and Managing Water Use"
+indicator_FormulaIndicator1: "gallon * 1"
+indicator_FormulaIndicator2: "Formula: gallon to liter = 3.785411783999999 liter"
 
 topic_Topic_id:air_and_climate
 topic_Name:"Air & Climate"
@@ -117,6 +98,25 @@ indicator_Indicator2: "Renewable energy usage"
 indicator_FormulaIndicator1: "Not found"
 indicator_FormulaIndicator2: "Not found"
 
+topic_Topic_id:Conditions_and_climate
+topic_Name:"Conditions & Climate"
+topic_Description:"This topic is about conditions and climate"
+topic_Parent_topic:environment
+indicator_Indicator_id:Renewable_energy_proportion
+indicator_Name:"Proportion of energy from renewable sources."
+indicator_Description:"The percentage of renewable energy from renewable sources"
+indicator_PostUnit:kilowatt hour
+indicator_Topic:Conditions_and_climate
+indicator_Indicator_type:Indirect
+indicator_Formula:([renewable_energy_usage] / [renewable_energy_usage]) * 500
+indicator_Type:performance
+indicator_DataType:double
+name:Model_A6
+indicator_Indicator1: "Proportion of energy from renewable sources."
+indicator_Indicator2: "Percentage of renewable energy"
+indicator_FormulaIndicator1: "kilowatt hour * 1"
+indicator_FormulaIndicator2: "Formula: kilowatt hour to megawatt hour = 0.001 hour * megawatt"
+
 topic_Topic_id:Landscape_and_existence
 topic_Name:"landscape & existence"
 topic_Description:"This topic is about landscape and existence"
@@ -135,7 +135,7 @@ question_isMandatory:true
 question_UIComponent:field
 question_Order_10:10
 question_Indicator:Waste_recycling
-question_Instruction:"
+question_Instruction:""
 name:Model_A10
 indicator_Indicator1: " Total waste recycled in the previous month."
 indicator_Indicator2: "Total waste recycled during last month"
@@ -143,8 +143,8 @@ indicator_FormulaIndicator1: "kg * 1"
 indicator_FormulaIndicator2: "Formula: kg to tonne = 0.001 metric_ton"
 
 topic_Topic_id:Integrity_and_openness
-topic_Name:"Integrity and openness
-topic_Description:"This topic is about integrity and openness
+topic_Name:"Integrity and openness"
+topic_Description:"This topic is about integrity and openness"
 topic_Parent_topic:Administration
 indicator_Indicator_id:Organisation_transparency
 indicator_Name:"Organisation transparency"
@@ -168,48 +168,41 @@ question_Indicator:Organisation_transparency
 question_Instruction:""
 name:Model_A3
 indicator_Text_1:"None of the above"
-indicator_Text_2:" Financial performance (with a minimum requirement of transparency to employees) "
+indicator_Text_2:"Board of Directors Membership"
 indicator_Text_3:" Social and environmental performance, including impact reports"
-indicator_Text_4:"Board of Directors Membership"
+indicator_Text_4:" Financial performance (with a minimum requirement of transparency to employees) "
 indicator_Text_5:"Ownership that provides advantages to the organisation"
-indicator_Text_6:"Beneficial ownership of the company"
 indicator_Indicator1: "Organisation transparency"
 indicator_Indicator2: "Company transparency"
 indicator_FormulaIndicator1: "Not found"
 indicator_FormulaIndicator2: "Not found"
 
-topic_Topic_id:Conditions_and_climate
-topic_Name:"Conditions & Climate"
-topic_Description:"This topic is about conditions and climate"
-topic_Parent_topic:environment
-indicator_Indicator_id:Mitigating_footprint_travel
-indicator_Name:" Mitigating the environmental footprint of travel"
-indicator_Description:"Implemented initiatives or policies aimed at minimizing environmental impact."
-indicator_Topic:Conditions_and_climate
+topic_Topic_id:ethics_and_transparency
+topic_Name:"Ethics and Transparency"
+topic_Description:"This topic is about Ethics & Transparency"
+topic_Parent_topic:governance
+indicator_Indicator_id:reviewed_audited_financials
+indicator_Name:"Reviewed Audited Financials"
+indicator_Description:"Does the company produce financials that are verified annually by an independent source through an Audit or Review?"
+indicator_Topic:ethics_and_transparency
 indicator_Indicator_type:Direct
-indicator_DataType:multipleChoice
+indicator_DataType:singleChoice
 indicator_List_items:
 indicator_Order_1:1
+indicator_Text_1:"Yes"
 indicator_Order_2:2
-indicator_Order_3:3
-indicator_Order_4:4
-indicator_Order_5:5
-question_Question_id:Q7_Method_A
-question_Name:"Question 7 Method A"
-question_Description:"Has your company implemented any initiatives or policies to mitigate the environmental impact of travel and commuting?"
+indicator_Text_2:"No"
+question_Question_id:Q1_Method_B
+question_Name:"Question 1 Method B"
+question_Description:"Does the company produce financials that are verified annually by an independent source through an Audit or Review?"
 question_isMandatory:true
 question_UIComponent:radioButton
-question_Order_7:7
-question_Indicator:Mitigating_footprint_travel
+question_Order_1:1
+question_Indicator:reviewed_audited_financials
 question_Instruction:""
-name:Model_A7
-indicator_Text_1:"None of the above"
-indicator_Text_2:" The facilities are purposefully designed to promote the use of public transportation, biking, or cleaner-burning vehicles (e.g., electric vehicle charging stations)."
-indicator_Text_3:"Employees are actively encouraged to utilize virtual meeting technology to minimize the need for in-person meetings."
-indicator_Text_4:"Employees are provided subsidies or incentives to encourage the use of public transportation, carpooling, or biking as their means of commuting to work."
-indicator_Text_5:"The company has an established written policy that restricts corporate travel."
-indicator_Indicator1: " Mitigating the environmental footprint of travel"
-indicator_Indicator2: "Reducing impact of travel"
+name:Model_B2
+indicator_Indicator1: "Revised Financial Audit Report"
+indicator_Indicator2: "Reviewed Audited Financials"
 indicator_FormulaIndicator1: "Not found"
 indicator_FormulaIndicator2: "Not found"
 
@@ -238,34 +231,9 @@ indicator_Indicator2: "Total earned Revenue"
 indicator_FormulaIndicator1: "Not found"
 indicator_FormulaIndicator2: "Not found"
 
-topic_Topic_id:Integrity_and_openness
-topic_Name:"Integrity and openness
-topic_Description:"This topic is about integrity and openness
-topic_Parent_topic:Administration
-indicator_Indicator_id:Revised_financial_audit_report
-indicator_Name:"Revised Financial Audit Report"
-indicator_Description:"Is the company subject to an annual independent financial verification process, such as an audit or review?"
-indicator_Topic:Integrity_and_openness
-indicator_Indicator_type:Direct
-indicator_DataType:multipleChoice
-indicator_List_items:
-indicator_Order_1:1
-indicator_Text_1:"Yes"
-indicator_Order_2:2
-indicator_Text_2:"No"
-question_Question_id:Q1_Method_A
-question_Name:"Question 1 Method A"
-question_Description:"Is the company subject to an annual independent financial verification process, such as an audit or review?"
-question_isMandatory:true
-question_UIComponent:radioButton
-question_Order_1:1
-question_Indicator:Revised_financial_audit_report
-question_Instruction:""
-name:Model_A2
-
 topic_Topic_id:Facility_improvement
 topic_Name:"Facility improvement"
-topic_Description:"This topic is Facility improvement"
+topic_Description:
 topic_Parent_topic:environment
 indicator_Indicator_id:Facility_improvement_landlord
 indicator_Name:"Facility Improvement with Landlord"
@@ -294,30 +262,36 @@ question_Indicator:Facility_improvement_landlord
 question_Instruction:" "
 name:Model_A4
 
-topic_Topic_id:ethics_and_transparency
-topic_Name:"Ethics and Transparency"
-topic_Description:"This topic is about Ethics & Transparency"
-topic_Parent_topic:governance
-indicator_Indicator_id:reviewed_audited_financials
-indicator_Name:"Reviewed Audited Financials"
-indicator_Description:"Does the company produce financials that are verified annually by an independent source through an Audit or Review?"
-indicator_Topic:ethics_and_transparency
+topic_Topic_id:Conditions_and_climate
+topic_Name:"Conditions & Climate"
+topic_Description:"This topic is about conditions and climate"
+topic_Parent_topic:environment
+indicator_Indicator_id:Mitigating_footprint_travel
+indicator_Name:" Mitigating the environmental footprint of travel"
+indicator_Description:"Implemented initiatives or policies aimed at minimizing environmental impact."
+indicator_Topic:Conditions_and_climate
 indicator_Indicator_type:Direct
-indicator_DataType:singleChoice
+indicator_DataType:multipleChoice
 indicator_List_items:
 indicator_Order_1:1
-indicator_Text_1:"Yes"
+indicator_Text_1:"Employees are provided subsidies or incentives to encourage the use of public transportation, carpooling, or biking as their means of commuting to work."
 indicator_Order_2:2
-indicator_Text_2:"No"
-question_Question_id:Q1_Method_B
-question_Name:"Question 1 Method B"
-question_Description:"Does the company produce financials that are verified annually by an independent source through an Audit or Review?"
+indicator_Text_2:" The facilities are purposefully designed to promote the use of public transportation, biking, or cleaner-burning vehicles (e.g., electric vehicle charging stations)."
+indicator_Order_3:3
+indicator_Text_3:"Employees are actively encouraged to utilize virtual meeting technology to minimize the need for in-person meetings."
+indicator_Order_4:4
+indicator_Text_4:"The company has an established written policy that restricts corporate travel."
+indicator_Order_5:5
+indicator_Text_5:"None of the above"
+question_Question_id:Q7_Method_A
+question_Name:"Question 7 Method A"
+question_Description:"Has your company implemented any initiatives or policies to mitigate the environmental impact of travel and commuting?"
 question_isMandatory:true
 question_UIComponent:radioButton
-question_Order_1:1
-question_Indicator:reviewed_audited_financials
+question_Order_7:7
+question_Indicator:Mitigating_footprint_travel
 question_Instruction:""
-name:Model_B2
+name:Model_A7
 
 topic_Topic_id:environmental_management
 topic_Name:"Environmental Management"
@@ -349,4 +323,35 @@ question_Order_4:4
 question_Indicator:environmental_management_systems
 question_Instruction:"Please check all that apply."
 name:Model_B4
+
+topic_Topic_id:air_and_climate
+topic_Name:"Air & Climate"
+topic_Description:"This topic is about the air and climate"
+topic_Parent_topic:environment
+indicator_Indicator_id:reducing_impact_travel
+indicator_Name:"Reducing impact of travel"
+indicator_Description:"Programs or policies in place to reduce enivornmental footprint"
+indicator_Topic:air_and_climate
+indicator_Indicator_type:Direct
+indicator_DataType:multipleChoice
+indicator_List_items:
+indicator_Order_1:1
+indicator_Text_1:"Employees are subsidized/incentivized for use of public transportation, carpooling, or biking to work"
+indicator_Order_2:2
+indicator_Text_2:"Facilities are designed to facilitate use of public transportation, biking, or cleaner burning vehicles (e.g. electric chargers)"
+indicator_Order_3:3
+indicator_Text_3:"Employees are encouraged to use virtual meeting technology to reduce in person meetings"
+indicator_Order_4:4
+indicator_Text_4:"Company has a written policy limiting corporate travel"
+indicator_Order_5:5
+indicator_Text_5:"None of the above"
+question_Question_id:Q7_Method_B
+question_Name:"Question 7 Method B"
+question_Description:"Does your company have any programs or policies in place to reduce the environmental footprint caused by travel/commuting?"
+question_isMandatory:true
+question_UIComponent:radioButton
+question_Order_7:7
+question_Indicator:reducing_impact_travel
+question_Instruction:""
+name:Model_B7
 

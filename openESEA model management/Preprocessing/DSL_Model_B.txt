@@ -79,7 +79,7 @@ Text: "None of the above"
 Indicator_id:Earned_revenue
 Name:"Total earned Revenue"
 Description:"Total earned revenue"
-PreUnit:"dollar"
+PreUnit:dollar
 Topic:governance_metrics
 Indicator_type:Direct 
 DataType: integer
@@ -105,7 +105,7 @@ Text: "We have no environmental management system"
 Indicator_id:renewable_energy_usage
 Name:"Renewable energy usage"
 Description:"Percentage of energy that is produced from renewable sources"
-PostUnit:"%"
+PostUnit:%
 Topic:air_and_climate
 Indicator_type:Direct 
 DataType: singleChoice 
@@ -128,7 +128,7 @@ Text: "Don't know"
 Indicator_id:renewable_energy_percentage
 Name:"Percentage of renewable energy"
 Description:"The percentage of renewable energy from renewable sources"
-PostUnit:"megawatt hour"
+PostUnit:megawatt hour
 Topic:air_and_climate
 Indicator_type:Indirect
 Formula: ([renewable_energy_usage] / [renewable_energy_usage]) * 100
@@ -156,7 +156,7 @@ Text: "None of the above"
 Indicator_id:Monitoring_and_Managing_Water_Use
 Name:"Monitoring and Managing Water Use"
 Description:"Total water use in liters during the last 12 months"
-PostUnit:"liter"
+PostUnit:liter
 Topic:water
 Indicator_type:Direct 
 DataType: integer
@@ -182,7 +182,7 @@ Text: "We have met specific reduction targets set during this reporting period"
 Indicator_id:Total_waste_recycled
 Name:"Total waste recycled during last month"
 Description:"Total waste recycled during last month in metric tonnes"
-PostUnit:"tonne"
+PostUnit:tonne
 Topic:land_and_life
 Indicator_type:Direct 
 DataType: integer

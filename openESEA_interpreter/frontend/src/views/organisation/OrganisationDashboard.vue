@@ -80,7 +80,16 @@ export default {
         }
     },
     computed: {
-        ...mapState('dashboardModel', ['dashboard', 'selectionConfig'])
+        ...mapState('dashboardModel', ['dashboard', 'selectionConfig']),
+            permission () {
+                if (this.network.accesLevel) {
+                    const accesLevel = this.network.accesLevel
+                    if (accesLevel === 'admin' || accesLevel === 'network admin') {
+                        return true
+                    }
+                }
+                return false
+            }
     },
     watch: {
         dashboard: {
@@ -287,6 +296,10 @@ export default {
             this.dashboardLoaded = true
         },
         async saveDashboardToDatabase () {
+            if (!this.permission) {
+                console.log('No permission to save dashboards!')
+                return
+            }
             // Get current dashboard model
             const dashboardModel = await this.getDashboardModel()()
             // Combine dashboard id with dashboard model specification

@@ -299,6 +299,8 @@ export default {
             if (!this.permission) {
                 console.log('No permission to save dashboards!')
                 return
+            } else {
+                console.log('Permission to save dashboard!')
             }
             // Get current dashboard model
             const dashboardModel = await this.getDashboardModel()()

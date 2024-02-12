@@ -3,7 +3,7 @@
         <DataTable showGridlines
             :value="data"
             :paginator="true" :rows="10"
-            :rowsPerPageOptions="[5,10]">
+            :rowsPerPageOptions="[lowerRowLimit, higherRowLimit]">
             <template #header v-if="title">
                 <div class="flex flex-wrap align-items-center justify-content-between gap-2">
                     <span class="text-xl text-900 font-bold">{{ title }}</span>
@@ -32,6 +32,12 @@ export default {
         }
     },
     computed: {
+        lowerRowLimit: {
+            get () { return (this.chartData.options?.categoryLimit === null || this.chartData.options?.categoryLimit === undefined) ? 5 : this.chartData.options?.categoryLimit }
+        },
+        higherRowLimit: {
+            get () { return (this.chartData.options?.categoryLimit === null || this.chartData.options?.categoryLimit === undefined) ? 10 : (this.chartData.options?.categoryLimit * 2) }
+        },
         data: {
             get () { return this.getData(this.chartData) }
         },

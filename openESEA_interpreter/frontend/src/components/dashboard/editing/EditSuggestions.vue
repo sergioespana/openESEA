@@ -145,8 +145,8 @@ export default {
             recommendations: this.testing ? this.manualRecommendations : []
         }
     },
-    created() {
-        this.updateRecommendations();
+    created () {
+        this.updateRecommendations()
     },
     methods: {
         ...mapGetters('dashboardSuggestions', ['getDashboardSuggestions']),

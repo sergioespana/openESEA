@@ -146,7 +146,7 @@ export default {
         }
     },
     created () {
-        this.updateRecommendations()
+        this.recommendations = this.testing ? this.manualRecommendations : []
     },
     methods: {
         ...mapGetters('dashboardSuggestions', ['getDashboardSuggestions']),
@@ -157,7 +157,7 @@ export default {
             if (!this.testing) {
                 this.recommendations = this.dashboardRecommendations
             } else {
-                this.recommendations = this.manualRecommendations
+                // this.recommendations = this.manualRecommendations
             }
         },
         async acceptSuggestion (index) {

@@ -76,7 +76,9 @@ export default {
 
             showDialog: false,
 
-            fetchSuggestionsTimer: null
+            fetchSuggestionsTimer: null,
+
+            testing: true
         }
     },
     computed: {
@@ -100,10 +102,14 @@ export default {
         }
     },
     async mounted () {
-        this.fetchSuggestionsTimer = setInterval(this.fetchDashboardSuggestions, 10000)
+        if (!this.testing) {
+            this.fetchSuggestionsTimer = setInterval(this.fetchDashboardSuggestions, 10000)
+        }
     },
     async unmounted () {
-        clearInterval(this.fetchSuggestionsTimer)
+        if (!this.testing) {
+            clearInterval(this.fetchSuggestionsTimer)
+        }
     },
     async beforeUnmount () {
         window.removeEventListener('beforeunload', this.unload)
@@ -118,7 +124,9 @@ export default {
         await this.setInitialDashboard()
 
         // Initialize RL model
-        await this.initializeRLModel()
+        if (!this.testing) {
+            await this.initializeRLModel()
+        }
     },
     async beforeRouteLeave (to, from, next) {
         console.log('Leaving route')
@@ -127,7 +135,9 @@ export default {
             this.showDialog = true
             next(false)
         } else {
-            await this.stopRLModel()
+            if (!this.testing) {
+                await this.stopRLModel()
+            }
             next(true)
         }
     },
@@ -169,7 +179,9 @@ export default {
             // Build new RL Model and set interval for fetching suggestions
             const dashboard = await this.collectDashboardInfo()
             console.log(dashboard)
-            await this.buildDashboardRLModel({ data: { dashboard: dashboard } })
+            if (!this.testing) {
+                await this.buildDashboardRLModel({ data: { dashboard: dashboard } })
+            }
         },
         async collectDashboardInfo () {
             // Initialize list with info for all visualisations
@@ -254,6 +266,7 @@ export default {
             return { Visualisations: visualisationInfoList, 'Display Area': dashboardDisplayArea }
         },
         async updateRLModel () {
+            if (this.testing) return
             // Wait 2 seconds before visualisations are loaded
             const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
             await sleep(2000)
@@ -261,8 +274,10 @@ export default {
             const dashboard = await this.collectDashboardInfo()
             await this.updateDashboardRLModel({ data: { dashboard: dashboard } })
             // Reset timer for fetching suggestions
-            clearInterval(this.fetchSuggestionsTimer)
-            this.fetchSuggestionsTimer = setInterval(this.fetchDashboardSuggestions, 10000)
+            if (!this.testing) {
+                clearInterval(this.fetchSuggestionsTimer)
+                this.fetchSuggestionsTimer = setInterval(this.fetchDashboardSuggestions, 10000)
+            }
         },
         async stopRLModel () {
             // Delete RL model and clear timer

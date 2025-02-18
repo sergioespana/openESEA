@@ -4,7 +4,7 @@
   "private": true,
   "engines": {
     "node": "16.x",
-    "npm": "8.19.4"
+    "npm": "10.x"
   },
   "scripts": {
     "serve": "vue-cli-service serve",

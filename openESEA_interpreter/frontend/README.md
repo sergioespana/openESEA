@@ -22,3 +22,24 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+
+
+
+
+### Fresh Install
+
+```
+rm .\node_modules 
+```
+or
+``` 
+rm -rf node_modules
+```
+
+```
+rm package-lock.json
+
+npm cache clear --force
+```
+

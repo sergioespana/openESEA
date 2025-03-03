@@ -15,9 +15,10 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "@achrinza/node-ipc": "^10.1.11",
     "@vuelidate/core": "^2.0.0-alpha.15",
     "@vuelidate/validators": "^2.0.0-alpha.13",
-    "axios": "^0.21.1",
+    "axios": "^1.8.1",
     "chart.js": "^3.0.1",
     "core-js": "^3.6.5",
     "echarts": "^5.4.2",
@@ -28,7 +29,7 @@
     "moment": "^2.29.1",
     "primeflex": "^2.0.0",
     "primeicons": "^4.1.0",
-    "puppeteer": "^20.7.4",
+    "puppeteer": "^24.3.1",
     "serve-static": "^1.14.1",
     "verbose": "^0.2.3",
     "vue": "^3.2.36",
@@ -42,13 +43,13 @@
   "devDependencies": {
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.18.6",
     "@babel/plugin-proposal-optional-chaining": "^7.21.0",
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-plugin-router": "~4.5.0",
-    "@vue/cli-plugin-vuex": "~4.5.0",
-    "@vue/cli-service": "^4.5.12",
+    "@vue/cli-plugin-babel": "^5.0.8",
+    "@vue/cli-plugin-eslint": "^5.0.8",
+    "@vue/cli-plugin-router": "^5.0.8",
+    "@vue/cli-plugin-vuex": "^5.0.8",
+    "@vue/cli-service": "^5.0.8",
     "@vue/compiler-sfc": "^3.3.4",
-    "@vue/eslint-config-standard": "^5.1.2",
+    "@vue/eslint-config-standard": "^9.0.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.8.0",
     "eslint-plugin-import": "^2.20.2",
@@ -59,7 +60,7 @@
     "primevue": "^3.29.2",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
-    "webpack": "^4.42.0",
+    "webpack": "^5.98.0",
     "yaml": "^2.3.1"
   }
 }

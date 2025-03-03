@@ -12,7 +12,8 @@
     "clean_build": "npm run clean && npm run build",
     "lint": "vue-cli-service lint",
     "clean": "npm cache clear --force",
-    "start": "node server.js"
+    "remove": "rm ./node_modules && rm ./package-lock.json",
+    "start": "npm run remove && npm run clean && node server.js"
   },
   "dependencies": {
     "@vuelidate/core": "^2.0.0-alpha.15",

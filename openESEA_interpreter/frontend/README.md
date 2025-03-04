@@ -30,10 +30,10 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 ### Fresh Install
 
 ```
-rm .\node_modules 
+rm .\node_modules
 ```
 or
-``` 
+```
 rm -rf node_modules
 ```
 
@@ -49,3 +49,12 @@ npm update
 npm i
 ```
 
+
+
+
+
+<!-- heroku config:set NODE_ENV=production -->
+<!-- heroku config:set NPM_CONFIG_PRODUCTION=false -->
+<!-- heroku config:set YARN_PRODUCTION=true -->
+<!-- heroku config:unset NODE_MODULES_CACHE -->
+<!-- heroku config:set BUILDPACK_TIMEOUT=30 -->

@@ -12,6 +12,7 @@
     "lint": "vue-cli-service lint",
     "clean": "npm cache clear --force",
     "clean_build": "npm run clean && npm run build",
+    "heroku-postbuild": "npm run build",
     "start": "node server.js"
   },
   "dependencies": {

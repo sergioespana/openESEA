@@ -29,7 +29,6 @@
     "moment": "^2.29.1",
     "primeflex": "^2.0.0",
     "primeicons": "^4.1.0",
-    "puppeteer": "^20.7.4",
     "serve-static": "^1.14.1",
     "verbose": "^0.2.3",
     "vue": "^3.2.36",

@@ -117,18 +117,18 @@ export default {
             visualisationId: 0
         }
     },
-    {
-        Type: 'Change Visualisation Type',
-        'Visualisation Index': 3,
-        'Visualisation Type': 'Table',
-        Explanation: 'Action chosen because of higher rewards w.r.t.:\n',
-        'Visualisation Title': 'Energy Consumption over Time',
-        'Selection Configuration': {
-            overviewId: 0,
-            containerId: 0,
-            visualisationId: 3
-        }
-    },
+    // {
+    //     Type: 'Change Visualisation Type',
+    //     'Visualisation Index': 3,
+    //     'Visualisation Type': 'Table',
+    //     Explanation: 'Action chosen because of higher rewards w.r.t.:\n',
+    //     'Visualisation Title': 'Energy Consumption over Time',
+    //     'Selection Configuration': {
+    //         overviewId: 0,
+    //         containerId: 0,
+    //         visualisationId: 3
+    //     }
+    // },
     {
         Type: 'Add Item Limit',
         'Visualisation Index': 5,
@@ -145,7 +145,7 @@ export default {
             recommendations: this.testing ? this.manualRecommendations : []
         }
     },
-    created () {
+    mounted () {
         this.recommendations = this.testing ? this.manualRecommendations : []
     },
     methods: {

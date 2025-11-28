@@ -75,7 +75,8 @@ def mask_probabilities(probabilities, mask):
     probabilities = probabilities * mask
     # If the available options have no probability, return to mask to sample from possible options
     if torch.sum(probabilities) == 0: return mask
-    # Else return probabilities
+    # Else return (normalized) probabilities
+    probabilities /= torch.sum(probabilities)
     return probabilities
 
 class FeedForwardLayer(nn.Module):
@@ -344,7 +345,8 @@ class AgentNetwork(nn.Module):
                     "values": [sampled_visualisation["value"]], 
                     "one_hots": [sampled_visualisation["one_hot"]], 
                     "log_probs": [sampled_visualisation["log_prob"]], 
-                    "probs": [sampled_visualisation["prob"]] 
+                    "probs": [sampled_visualisation["prob"]],
+                    "hidden_state": hidden_state
                 }
             )
         # If top is set, sort by probability and get top K
@@ -364,8 +366,10 @@ class AgentNetwork(nn.Module):
         for sampled_information in sampled_information_list:
             extra_inputs = sampled_information['one_hots']
 
+            branch_hidden_state = sampled_information["hidden_state"]
+
             ### Feed forward: Action layer ###
-            hidden_state, action_probs = self.action_layer(hidden_state, extra_inputs)
+            new_hidden_state, action_probs = self.action_layer(branch_hidden_state.clone(), extra_inputs)
 
             ### Masking probabilities: Action ###
             action_probs = mask_probabilities(action_probs, self.get_action_mask(sampled_information['values'][0]))
@@ -381,7 +385,8 @@ class AgentNetwork(nn.Module):
                         "values": sampled_information["values"] + [new_information['value']], 
                         "one_hots": sampled_information["one_hots"] + [new_information['one_hot']], 
                         "log_probs": sampled_information["log_probs"] + [new_information['log_prob']], 
-                        "probs": sampled_information["probs"] + [new_information['prob']] 
+                        "probs": sampled_information["probs"] + [new_information['prob']],
+                        "hidden_state": new_hidden_state
                     }
                 )
 
@@ -404,12 +409,14 @@ class AgentNetwork(nn.Module):
             sampled_action = sampled_values[1]
             extra_inputs = sampled_information['one_hots']
 
+            branch_hidden_state = sampled_information["hidden_state"]
+
             ### FOR NOW 1 PARAM, BUT MAY BECOME MORE COMPLEX
             ### Parameter layers ###
             for param_index, param_layer in enumerate(self.action_layers_list[sampled_action][0]): # [0] to get parameter layers
 
                 ### Feed forward: Parameter layer ###
-                hidden_state, parameter_probs = param_layer(hidden_state, extra_inputs)
+                new_hidden_state, parameter_probs = param_layer(branch_hidden_state.clone(), extra_inputs)
 
                 ### Masking probabilities: Parameter ###
                 parameter_probs = mask_probabilities(parameter_probs, self.get_parameter_mask(sampled_visualisation, sampled_action, sampled_values[2:], param_index))
@@ -429,7 +436,8 @@ class AgentNetwork(nn.Module):
                         "values": sampled_information["values"] + [new_information['value']], 
                         "one_hots": sampled_information["one_hots"] + [new_information['one_hot']], 
                         "log_probs": sampled_information["log_probs"] + [new_information['log_prob']], 
-                        "probs": sampled_information["probs"] + [new_information['prob']] 
+                        "probs": sampled_information["probs"] + [new_information['prob']]
+                      #,"hidden_state": new_hidden_state 
                     }
                 )
 
@@ -507,7 +515,7 @@ class AgentNetwork(nn.Module):
         value_losses = []
         # Calculate losses for each time step
         for (log_probs, critic_value), R in zip(saved_actions, returns):
-            advantage = R - critic_value.item()
+            advantage = R - critic_value.detach()
 
             log_prob = sum(log_probs)
 
@@ -515,7 +523,8 @@ class AgentNetwork(nn.Module):
             policy_losses.append(-log_prob * advantage)
 
             # Calculate critic (value) loss using L1 smooth loss
-            value_losses.append(F.smooth_l1_loss(critic_value, torch.tensor([R])))
+            target = torch.tensor([R], dtype = critic_value.dtype, device = critic_value.device)
+            value_losses.append(F.smooth_l1_loss(critic_value, target))
 
         # Sum up the policy losses and value losses over all time steps
         loss = torch.stack(policy_losses).sum() + torch.stack(value_losses).sum()

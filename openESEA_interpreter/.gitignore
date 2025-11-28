@@ -13,7 +13,8 @@ frontend/node_modules/**
 backend/venv_esea/**
 # Cache
 **/__pycache__/**
-
+# Test File
+**/test.py
 
 
 ### Other ###

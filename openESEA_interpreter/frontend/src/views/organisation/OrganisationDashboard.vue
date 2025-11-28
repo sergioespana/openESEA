@@ -78,7 +78,7 @@ export default {
 
             fetchSuggestionsTimer: null,
 
-            testing: true
+            testing: false
         }
     },
     computed: {

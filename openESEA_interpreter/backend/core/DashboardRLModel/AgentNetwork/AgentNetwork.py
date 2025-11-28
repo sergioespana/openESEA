@@ -328,7 +328,7 @@ class AgentNetwork(nn.Module):
         if not TESTING:
 
             # Sample action parameters using the current model(/policy) by feeding state to itself
-            parameter_values, _, _ = self(ForwardPass.PREDICT, tensor_state)
+            parameter_values, _, _ = self(ForwardPass.SAMPLE, tensor_state)
 
             # Return action parameters values
             return parameter_values
@@ -517,14 +517,13 @@ class AgentNetwork(nn.Module):
         for (log_probs, critic_value), R in zip(saved_actions, returns):
             advantage = R - critic_value.detach()
 
-            log_prob = sum(log_probs)
+            log_prob = torch.stack(log_probs).sum()
 
             # Calculate actor (policy) loss
             policy_losses.append(-log_prob * advantage)
 
             # Calculate critic (value) loss using L1 smooth loss
-            target = torch.tensor([R], dtype = critic_value.dtype, device = critic_value.device)
-            value_losses.append(F.smooth_l1_loss(critic_value, target))
+            value_losses.append(F.smooth_l1_loss(critic_value, torch.tensor([R])))
 
         # Sum up the policy losses and value losses over all time steps
         loss = torch.stack(policy_losses).sum() + torch.stack(value_losses).sum()

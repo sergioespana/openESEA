@@ -67,7 +67,7 @@ export default {
         return {
             oldDashboard: null,
             clicked: null,
-            testing: true,
+            testing: false,
             manualRecommendations: [
     {
         Type: 'Add Item Limit',

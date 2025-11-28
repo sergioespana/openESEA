@@ -25,17 +25,26 @@ export default {
     },
     actions: {
         async buildDashboardRLModel ({ commit, dispatch, getters }, payload) {
+            // If an old model exists, delete it first
+            const oldModelInstanceId = getters.getModelInstanceId()
+            if (oldModelInstanceId) {
+                console.log('Deleting old RL model before creating new one:', oldModelInstanceId)
+                await dispatch('deleteDashboardRLModel')
+            }
             const { response, error } = await DashboardSuggestionsService.post(payload)
             if (error) {
+                console.log('Building RLModel failed')
                 await commit('setError', { error })
                 return
             }
             const modelInstanceId = response.data.modelInstanceId
+            console.log('Building RLModel', modelInstanceId)
             commit('setModelInstanceId', modelInstanceId)
         },
         async updateDashboardRLModel ({ commit, dispatch, getters }, payload) {
             const dashboard = payload.data.dashboard
             const modelInstanceId = getters.getModelInstanceId()
+            console.log('Updating RLModel', modelInstanceId)
             var newPayload = {}
             newPayload.data = {
                 dashboard: dashboard,
@@ -50,6 +59,7 @@ export default {
         },
         async deleteDashboardRLModel ({ commit, dispatch, getters }, payload) {
             const modelInstanceId = getters.getModelInstanceId()
+            console.log('Deleting RLModel', modelInstanceId)
             var newPayload = {}
             newPayload.data = {
                 modelInstanceId: modelInstanceId

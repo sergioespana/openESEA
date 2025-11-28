@@ -11,8 +11,10 @@ import uuid
 
 from ..DashboardRLModel import DashboardRLModel
 
+# Threshold for inactive time in seconds
 INACTIVITY_THRESHOLD = 60 # 60 # 1 minute
-INACTIVE_CHECK_INTERVAL = 20 # 10 seconds
+# Interval for checking on inactive RL models
+INACTIVE_CHECK_INTERVAL = 20 # 60 # 60 seconds
 modelInstances = {}
 
 @method_decorator(csrf_exempt, name = 'dispatch')
@@ -102,11 +104,14 @@ class DashboardRLModelInstance():
         self.thread = None
         self.buildAndRunRLModel(dashboard)
 
+    # Always builds a new model...
     def buildAndRunRLModel(self, dashboard):
         self.updateLastActivity()
 
         # Terminate existing thread
-        if self.thread is not None: self.terminate(wait = True)
+        if self.thread is not None:
+            print('Terminating existing model...')
+            self.terminate(wait = True)
 
         # Exit if dashboard is empty
         self.dashboard = dashboard
@@ -149,17 +154,22 @@ class DashboardRLModelInstance():
     def terminate(self, wait = False):
         # Terminate model after last episode is done
         if self.model is not None: self.model.kill()
-        # Wait for episode to finish
-        if wait and self.thread is not None: self.thread.join()
+        # If thread no longer active, return
+        if self.thread is None: return
+        # Otherwise wait for thread to finish after waiting for model to finish episode
+        if wait: self.thread.join()
+        else: self.thread.join() # Even if wait = False, wait for thread to finish after signaling terminate with kill method
 
 # Keep track of active model instances, and terminate instances which have been inactive for some time
 def stopInactiveModelInstances():
     while True:
+        # print('Checking on inactive models')
         currentTime = time.time()
         # Identify inactive model instances
         inactiveModelInstanceIds = []
         for modelInstanceId in modelInstances:
             modelInstance = modelInstances[modelInstanceId]
+            # print(currentTime, modelInstance.lastActivity, INACTIVITY_THRESHOLD)
             if currentTime - modelInstance.lastActivity > INACTIVITY_THRESHOLD:
                 inactiveModelInstanceIds.append(modelInstanceId)
         # Delete from dict of active models

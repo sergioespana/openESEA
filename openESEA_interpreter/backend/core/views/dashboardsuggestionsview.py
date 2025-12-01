@@ -61,7 +61,8 @@ def dashboardsuggestions(request):
         else: 
             # Rebuild model from dashboard & run model
             modelInstance = modelInstances[modelInstanceId]
-            modelInstance.buildAndRunRLModel(dashboard)
+            modelInstance.updateRLModel(dashboard)
+            modelInstance.model.original_dashboard = dashboard
             # Return succesful response
             return Response()
     
@@ -88,6 +89,8 @@ def dashboardsuggestions(request):
     elif request.method == 'DELETE':
         # If there is no model instance yet, return error message
         if modelInstanceId not in modelInstances:
+            print(modelInstanceId)
+            print(request.data)
             return Response(f'Model instance with identifier {modelInstanceId} not found!', status = status.HTTP_404_NOT_FOUND)
         
         modelInstance = modelInstances[modelInstanceId]
@@ -101,6 +104,7 @@ def dashboardsuggestions(request):
 
 class DashboardRLModelInstance():
     def __init__(self, dashboard):
+        self.model = None
         self.thread = None
         self.buildAndRunRLModel(dashboard)
 
@@ -140,10 +144,10 @@ class DashboardRLModelInstance():
             return
 
         # Determine if we need to rebuild model (to make room for more visualisations)
-        if len(dashboard) >= self.model.visualisation_capacity:
-            rebuild_model = False
-        else:
+        if len(dashboard['Visualisations']) >= self.model.visualisation_capacity:
             rebuild_model = True
+        else:
+            rebuild_model = False
         
         # Renew dashboard
         self.dashboard = dashboard
@@ -152,8 +156,8 @@ class DashboardRLModelInstance():
         if rebuild_model:
             self.buildRLModel()
 
-        # Run the model again based on new dashboard
-        self.runRLModel()
+            # Run the model again based on new dashboard
+            self.runRLModel()
 
     # def rebuildAndRunRLModel(self, dashboard):
     #     self.updateLastActivity()
@@ -162,13 +166,13 @@ class DashboardRLModelInstance():
     #     self.buildAndRunRLModel(dashboard) # Override previous model and run model
         
     def buildRLModel(self):
+        # Terminate model if already running
+        self.terminateModel()
         # Build RL model
         self.model = DashboardRLModel.DashboardRLModel(self.dashboard)
         print('Model is built!')
 
     def runRLModel(self):
-        # Terminate model if already running
-        self.terminateModel()
         # Start running model in separate thread
         self.thread = threading.Thread(target = self.model.run)
         self.thread.daemon = True

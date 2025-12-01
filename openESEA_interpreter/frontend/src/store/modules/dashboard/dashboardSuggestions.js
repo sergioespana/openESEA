@@ -5,17 +5,20 @@ export default {
     state: {
         dashboardSuggestions: [],
         modelInstanceId: null,
+        oldModelInstanceId: null,
         error: []
     },
     getters: {
         getDashboardSuggestions: state => state.dashboardSuggestions,
-        getModelInstanceId: (state, getters) => () => state.modelInstanceId
+        getModelInstanceId: (state, getters) => () => state.modelInstanceId,
+        getOldModelInstanceId: (state, getters) => () => state.oldModelInstanceId
     },
     mutations: {
         setDashboardSuggestions (state, { data }) {
             state.dashboardSuggestions = data || []
         },
         setModelInstanceId (state, modelInstanceId) {
+            state.oldModelInstanceId = state.modelInstanceId
             state.modelInstanceId = modelInstanceId
         },
         setError (state, { error }) {
@@ -58,7 +61,13 @@ export default {
             return response
         },
         async deleteDashboardRLModel ({ commit, dispatch, getters }, payload) {
-            const modelInstanceId = getters.getModelInstanceId()
+            var modelInstanceId = getters.getModelInstanceId()
+            if (modelInstanceId === null) {
+                modelInstanceId = getters.getOldModelInstanceId()
+            }
+            if (modelInstanceId === null) {
+                return
+            }
             console.log('Deleting RLModel', modelInstanceId)
             var newPayload = {}
             newPayload.data = {

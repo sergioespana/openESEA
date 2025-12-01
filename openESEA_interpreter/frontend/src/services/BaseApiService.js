@@ -36,6 +36,6 @@ export default class BaseApiService {
 
     delete (payload) {
         const url = this.createUrl(payload)
-        return apiCall({ method: 'delete', url })
+        return apiCall({ method: 'delete', url, data: payload.data })
     }
 }

@@ -3,8 +3,11 @@
 
         <!-- Edit area title -->
         <div class="edit-area-title">Suggestions</div>
-        <div v-if="recommendations === null || recommendations === undefined || recommendations.length === 0">
+        <div v-if="recommendations === null || recommendations === undefined">
             <div class="edit-area-field">Waiting for suggestions...</div>
+        </div>
+        <div v-else-if="recommendations.length === 0">
+            <div class="edit-area-field">No suggestions as of yet!</div>
         </div>
         <div v-else>
             <!-- <div class="edit-area-field">Suggestions: </div> -->

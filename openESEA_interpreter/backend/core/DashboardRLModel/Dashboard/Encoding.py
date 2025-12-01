@@ -34,11 +34,18 @@ def visualisationToArray(dashboard: Dashboard, visualisation: Visualisation):
     
     return total_array
 
-def dashboardToArray(dashboard: Dashboard):
+def dashboardToArray(dashboard: Dashboard, visualisation_capacity: int):
     array = np.array([])
 
+    if len(dashboard.visualisations) == 0:
+        raise ValueError("Dashboard has no visualisations to infer vector length")
+
     for visualisation in dashboard.visualisations:
-        array = np.append(array, visualisationToArray(dashboard, visualisation))
+        visualisation_array = visualisationToArray(dashboard, visualisation)
+        array = np.append(array, visualisation_array)
+
+    for _ in range(0, visualisation_capacity - len(dashboard.visualisations)):
+        array = np.append(array, np.zeros(visualisation_array.size))
 
     return array
 

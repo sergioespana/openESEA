@@ -16,20 +16,21 @@ class DashboardRLModel:
     def __init__(self, dashboard):
         # print(visualisations)
         self.original_dashboard = dashboard
+        self.visualisation_capacity = len(dashboard['Visualisations']) * 2
 
         # Create dashboard object from visualisations info and encode into array
         dashboard: Dashboard = parseDashboard(dashboard)
-        dashboardArray = dashboardToArray(dashboard)
+        dashboardArray = dashboardToArray(dashboard, self.visualisation_capacity)
 
         # Determine the different sizes for the agent network
-        num_visualisations = len(dashboard.visualisations)
+        num_visualisations = self.visualisation_capacity # len(dashboard.visualisations)
         num_inputs = len(dashboardArray)
         num_hidden = num_inputs
         num_actions = NUM_ACTIONS
         num_params_list = ACTIONS_PARAMETERS
 
         # Create the dashboard environment
-        self.dashboard_environment = DashboardEnvironment(dashboard)
+        self.dashboard_environment = DashboardEnvironment(dashboard, self.visualisation_capacity)
         # Create the agent network
         self.agent_network = AgentNetwork(num_inputs, num_hidden, num_actions, num_visualisations, num_params_list, self.dashboard_environment)
 

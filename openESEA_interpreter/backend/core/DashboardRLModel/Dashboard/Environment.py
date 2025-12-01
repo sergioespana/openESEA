@@ -10,11 +10,13 @@ from .Actions.Classes import *
 import copy
 
 class DashboardEnvironment:
-    def __init__(self, dashboard: Dashboard):
+    def __init__(self, dashboard: Dashboard, visualisation_capacity: int):
         self.initial_dashboard: Dashboard = copy.deepcopy(dashboard)
 
-        self.dashboard: Dashboard = copy.deepcopy(dashboard)
-        self.state = dashboardToArray(dashboard)
+        self.dashboard: Dashboard = copy.deepcopy(self.initial_dashboard)
+        self.visualisation_capacity = visualisation_capacity
+
+        self.state = self.initial()
 
         self.state_rewards_info = [
             {
@@ -47,7 +49,7 @@ class DashboardEnvironment:
         ]
 
     def initial(self):
-        return dashboardToArray(self.initial_dashboard)
+        return dashboardToArray(self.initial_dashboard, self.visualisation_capacity)
 
     def step(self, outputs):
         # Construct the action from the model outputs
@@ -82,7 +84,7 @@ class DashboardEnvironment:
         action.act(self.dashboard)
 
         # Update state for new dashboard
-        self.state = dashboardToArray(self.dashboard)
+        self.state = dashboardToArray(self.dashboard, self.visualisation_capacity)
 
         # Determine reward for this step
         reward, explanation = self.reward(previous_dashboard, action)
@@ -252,6 +254,11 @@ class DashboardEnvironment:
 
 
     ### MASKING
+
+    def get_visualisation_mask(self):
+
+        return [1 for _ in range(0, len(self.dashboard.visualisations))] + [0 for i in range(0, self.visualisation_capacity - len(self.dashboard.visualisations))]
+
     def get_action_mask(self, visualisation_index):
 
         visualisation = self.dashboard.visualisations[visualisation_index]

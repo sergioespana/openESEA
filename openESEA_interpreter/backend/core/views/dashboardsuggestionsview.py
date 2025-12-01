@@ -109,17 +109,50 @@ class DashboardRLModelInstance():
         self.updateLastActivity()
 
         # Terminate existing thread
-        if self.thread is not None:
-            print('Terminating existing model...')
-            self.terminate(wait = True)
+        self.terminateModel()
 
         # Exit if dashboard is empty
-        self.dashboard = dashboard
-        if self.dashboard == []: 
+        if dashboard == []: 
             self.model = None
             return
 
+        # Update dashboard model
+        self.dashboard = dashboard
+
         self.buildRLModel()
+        self.runRLModel()
+
+    def terminateModel(self):
+        
+        if self.thread is None:
+            print('No thread to terminate...')
+        else:
+            print('Terminating existing model!')
+            self.terminate(wait = True)
+
+    # Alter dashboard model on update dashboard
+    def updateRLModel(self, dashboard):
+        self.updateLastActivity()
+
+        # Exit if dashboard is empty
+        if dashboard == []: 
+            self.model = None
+            return
+
+        # Determine if we need to rebuild model (to make room for more visualisations)
+        if len(dashboard) >= self.model.visualisation_capacity:
+            rebuild_model = False
+        else:
+            rebuild_model = True
+        
+        # Renew dashboard
+        self.dashboard = dashboard
+
+        # Rebuild and run model if needed
+        if rebuild_model:
+            self.buildRLModel()
+
+        # Run the model again based on new dashboard
         self.runRLModel()
 
     # def rebuildAndRunRLModel(self, dashboard):
@@ -134,6 +167,8 @@ class DashboardRLModelInstance():
         print('Model is built!')
 
     def runRLModel(self):
+        # Terminate model if already running
+        self.terminateModel()
         # Start running model in separate thread
         self.thread = threading.Thread(target = self.model.run)
         self.thread.daemon = True

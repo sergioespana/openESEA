@@ -264,6 +264,11 @@ class AgentNetwork(nn.Module):
         ### Feed forward: Visualisation Layer ###
         hidden_state, visualisation_probs = self.visualisation_layer(state)
 
+        ### Masking probabilities: Visualisation ###
+        visualisation_probs = mask_probabilities(visualisation_probs, self.get_visualisation_mask())
+        # If no options, return
+        if visualisation_probs is None: return None, None, None
+
         ### Sampling: Visualisation ###
         sampled_visualisation, log_prob_vis = sample_categorical(visualisation_probs)
         # Keep track of probabilities, sampled value and encoded input
@@ -277,8 +282,6 @@ class AgentNetwork(nn.Module):
 
         ### Masking probabilities: Action ###
         action_probs = mask_probabilities(action_probs, self.get_action_mask(sampled_visualisation))
-        # If no options, return
-        if action_probs is None: return None, None, None
 
         ### Sampling: Action ###
         sampled_action, log_prob_action = sample_categorical(action_probs)
@@ -312,6 +315,10 @@ class AgentNetwork(nn.Module):
 
         return sampled_values, log_probabilities, critic_value
     
+    def get_visualisation_mask(self):
+        mask_list = self.dashboard_environment.get_visualisation_mask()
+        return torch.tensor(mask_list, dtype = float)
+
     def get_action_mask(self, sampled_visualisation):
         mask_list = self.dashboard_environment.get_action_mask(sampled_visualisation)
         return torch.tensor(mask_list, dtype = float)
@@ -336,10 +343,16 @@ class AgentNetwork(nn.Module):
         ### Feed forward: Visualisation Layer ###
         hidden_state, visualisation_probs = self.visualisation_layer(tensor_state)
 
+        ### Masking probabilities: Visualisation ###
+        visualisation_probs = mask_probabilities(visualisation_probs, self.get_visualisation_mask())
+
         ### Sampling: Visualisation ###
         sampled_visualisations = collect_categorical(visualisation_probs)
         sampled_information_list = []
         for sampled_visualisation in sampled_visualisations:
+            # Prevent sampling of non-existent visualisations as top K may use these
+            if sampled_visualisation["value"] >= len(self.dashboard_environment.dashboard.visualisations):
+                continue
             sampled_information_list.append(
                 { 
                     "values": [sampled_visualisation["value"]], 

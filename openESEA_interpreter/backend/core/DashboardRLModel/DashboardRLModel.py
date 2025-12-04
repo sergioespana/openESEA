@@ -16,7 +16,9 @@ class DashboardRLModel:
     def __init__(self, dashboard):
         # print(visualisations)
         self.original_dashboard = dashboard
-        self.visualisation_capacity = len(dashboard['Visualisations']) * 2
+        self.visualisation_capacity = int(len(dashboard['Visualisations']) * 1.2) # Default to 1.2 times amount of visualisations
+        if self.visualisation_capacity < 20:
+            self.visualisation_capacity = 20
 
         # Create dashboard object from visualisations info and encode into array
         dashboard: Dashboard = parseDashboard(dashboard)

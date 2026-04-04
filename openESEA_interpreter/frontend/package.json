@@ -4,14 +4,15 @@
   "private": true,
   "engines": {
     "node": "16.x",
-    "npm": "8.19.4"
+    "npm": "8.x"
   },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "clean_build": "npm run clean && npm run build",
     "lint": "vue-cli-service lint",
     "clean": "npm cache clear --force",
+    "clean_build": "npm run clean && npm run build",
+    "heroku-postbuild": "npm run build",
     "start": "node server.js"
   },
   "dependencies": {
@@ -28,7 +29,6 @@
     "moment": "^2.29.1",
     "primeflex": "^2.0.0",
     "primeicons": "^4.1.0",
-    "puppeteer": "^20.7.4",
     "serve-static": "^1.14.1",
     "verbose": "^0.2.3",
     "vue": "^3.2.36",

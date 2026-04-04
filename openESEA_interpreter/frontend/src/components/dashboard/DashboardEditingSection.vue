@@ -33,9 +33,9 @@
         </div>
 
         <!-- Editing area which is shown in editing mode -->
-        <div v-if="editing" class="edit-area-position edit-area-style">
+        <div v-show="editing" class="edit-area-position edit-area-style">
             <div v-for="(editElement, index) in editElements" v-bind:key="index">
-                <div v-if="index === selectedEditElementIndex">
+                <div v-show="index === selectedEditElementIndex">
                     <div v-for="component in editElement.components" v-bind:key="component">
                         <component :is="component"></component>
                     </div>

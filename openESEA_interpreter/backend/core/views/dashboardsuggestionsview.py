@@ -2,8 +2,6 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 
 import time
 import threading
@@ -17,7 +15,6 @@ INACTIVITY_THRESHOLD = 60 # 60 # 1 minute
 INACTIVE_CHECK_INTERVAL = 20 # 60 # 60 seconds
 modelInstances = {}
 
-@method_decorator(csrf_exempt, name = 'dispatch')
 @api_view(['POST', 'PUT', 'DELETE'])
 @permission_classes((AllowAny, ))
 def dashboardsuggestions(request):

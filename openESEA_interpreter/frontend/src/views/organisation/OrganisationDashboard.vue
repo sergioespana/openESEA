@@ -102,9 +102,7 @@ export default {
         }
     },
     async mounted () {
-        if (!this.testing) {
-            this.fetchSuggestionsTimer = setInterval(this.fetchDashboardSuggestions, 10000)
-        }
+        // Timer is started after RL model is built, not here
     },
     async unmounted () {
         if (!this.testing) {
@@ -153,6 +151,7 @@ export default {
         ...mapActions('dashboardModel', ['createDashboardModel']),
 
         ...mapActions('dashboardSuggestions', ['buildDashboardRLModel', 'updateDashboardRLModel', 'deleteDashboardRLModel', 'fetchDashboardSuggestions']),
+        ...mapGetters('dashboardSuggestions', ['getModelInstanceId']),
 
         setInitialDashboard () {
             this.initialDashboard = cloneDeep(this.dashboard)
@@ -176,12 +175,13 @@ export default {
             console.log('datasets:')
             console.log(await this.getIndicatorDataSets()())
             await sleep(2000)
-            // Build new RL Model and set interval for fetching suggestions
+            // Build new RL Model and start polling for suggestions
             const dashboard = await this.collectDashboardInfo()
             console.log(dashboard)
-            if (!this.testing) {
-                await this.buildDashboardRLModel({ data: { dashboard: dashboard } })
-            }
+            await this.buildDashboardRLModel({ data: { dashboard: dashboard } })
+            // Only start polling after model is successfully initialized
+            clearInterval(this.fetchSuggestionsTimer)
+            this.fetchSuggestionsTimer = setInterval(this.fetchDashboardSuggestions, 10000)
         },
         async collectDashboardInfo () {
             // Initialize list with info for all visualisations
@@ -266,7 +266,9 @@ export default {
             return { Visualisations: visualisationInfoList, 'Display Area': dashboardDisplayArea }
         },
         async updateRLModel () {
-            if (this.testing) return
+            // Skip if RL model has not been initialized yet
+            const modelInstanceId = await this.getModelInstanceId()()
+            if (!modelInstanceId) return
             // Wait 2 seconds before visualisations are loaded
             const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
             await sleep(2000)
@@ -274,10 +276,8 @@ export default {
             const dashboard = await this.collectDashboardInfo()
             await this.updateDashboardRLModel({ data: { dashboard: dashboard } })
             // Reset timer for fetching suggestions
-            if (!this.testing) {
-                clearInterval(this.fetchSuggestionsTimer)
-                this.fetchSuggestionsTimer = setInterval(this.fetchDashboardSuggestions, 10000)
-            }
+            clearInterval(this.fetchSuggestionsTimer)
+            this.fetchSuggestionsTimer = setInterval(this.fetchDashboardSuggestions, 10000)
         },
         async stopRLModel () {
             // Delete RL model and clear timer

@@ -82,6 +82,7 @@ export default {
         },
         async fetchDashboardSuggestions ({ commit, dispatch, getters }, payload) {
             const modelInstanceId = getters.getModelInstanceId()
+            if (!modelInstanceId) return
             var newPayload = {}
             newPayload.data = {
                 modelInstanceId: modelInstanceId

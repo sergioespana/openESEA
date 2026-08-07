@@ -22,6 +22,13 @@ export default {
         }
     },
     methods: {
+        formatValue (v) {
+            const n = parseFloat(v)
+            if (isNaN(n)) return v
+            if (Math.abs(n) >= 10000) return Math.round(n).toLocaleString()
+            if (Math.abs(n) >= 100) return parseFloat(n.toFixed(1))
+            return parseFloat(n.toFixed(2))
+        },
         createOptions (chartData) {
             const title = chartData.title
             const titleOptions = {
@@ -44,6 +51,7 @@ export default {
 
             const data = chartData.data
             const value = data[0][field] // Single value
+            const displayValue = this.formatValue(value)
 
             const options = {
                 graphic: [
@@ -53,7 +61,7 @@ export default {
                         left: 'center',
                         top: '40%',
                         style: {
-                            text: (name ? name + ': ' : '') + value,
+                            text: (name ? name + ': ' : '') + displayValue,
                             fontSize: 20,
                             fontWeight: 'normal',
                             fill: '#888'

@@ -22,6 +22,13 @@ export default {
         }
     },
     methods: {
+        formatValue (v) {
+            const n = parseFloat(v)
+            if (isNaN(n)) return v
+            if (Math.abs(n) >= 10000) return Math.round(n).toLocaleString()
+            if (Math.abs(n) >= 100) return parseFloat(n.toFixed(1))
+            return parseFloat(n.toFixed(2))
+        },
         createOptions (chartData) {
             const title = chartData?.title
             const titleOptions = {
@@ -47,10 +54,11 @@ export default {
 
             const currentValue = data[0][currentValueField]
             const targetValue = isPercentage ? 100 : data[0][targetValueField]
+            const displayValue = this.formatValue(currentValue)
 
             const currentValueNameRevised = !currentValueName ? [isPercentage ? 'Progress' : 'Current'] : currentValueName
             const targetValueNameRevised = !targetValueName ? [isPercentage ? '' : 'Target'] : targetValueName
-            var formattedText = '<b>' + currentValueNameRevised + '</b> ' + currentValue + (isPercentage ? '%' : '')
+            var formattedText = '<b>' + currentValueNameRevised + '</b> ' + displayValue + (isPercentage ? '%' : '')
             if (!isPercentage) {
                 formattedText += '<br />' +
                     '<b>' + targetValueNameRevised + '</b> ' + targetValue

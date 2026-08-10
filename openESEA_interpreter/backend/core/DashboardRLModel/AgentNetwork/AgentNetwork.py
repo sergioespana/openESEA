@@ -498,6 +498,19 @@ class AgentNetwork(nn.Module):
     
     # @torch.jit.script
     def update_network_gradients(self):
+        # Guard against degenerate episodes with fewer than 2 valid actions:
+        # return normalisation below divides by returns.std(), which is
+        # undefined (NaN) for a 0- or 1-element tensor and would otherwise
+        # propagate NaN into the backward pass. Skip the gradient update for
+        # this episode - there's no meaningful advantage to estimate from
+        # 0-1 samples anyway - and just clear the buffers.
+        if len(self.rewards) < 2:
+            del self.rewards[:]
+            del self.saved_actions[:]
+            del self.user_rewards[:]
+            del self.saved_user_actions[:]
+            return
+
         # Initialise return value to 0 and create a list for the accumulated returns
         R = 0
         returns = []

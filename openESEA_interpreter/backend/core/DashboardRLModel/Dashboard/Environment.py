@@ -160,7 +160,7 @@ class DashboardEnvironment:
             state_reward_function = state_reward_info.get('Function')
             if state_reward_function is None: continue
             state_reward_weight = state_reward_info.get('Weight', 1)
-            state_reward = state_reward_weight * state_reward_function(self, state)
+            state_reward = state_reward_function(self, state)
 
             state_rewards.append((state_reward, state_reward_weight))
         return state_rewards
@@ -177,7 +177,7 @@ class DashboardEnvironment:
         reward = 0
         for visualisation in state.visualisations:
             reward += 0.5 * int(visualisation.itemLimitEnabled)
-            reward += 0.5 * (0 if visualisation.dataItems <= visualisation.itemLimit else ((visualisation.dataItems - visualisation.itemLimit) / visualisation.dataItems))
+            reward += 0.5 * (0 if visualisation.itemLimit <= 0 or visualisation.dataItems <= visualisation.itemLimit else ((visualisation.dataItems - visualisation.itemLimit) / visualisation.dataItems))
             # The less items (the lower the item limit), the higher the reward
         normalized_reward = reward / len(state.visualisations)
         return normalized_reward

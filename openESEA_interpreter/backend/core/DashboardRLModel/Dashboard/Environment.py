@@ -49,6 +49,14 @@ class DashboardEnvironment:
         ]
 
     def initial(self):
+        # Reset the live dashboard back to its initial state. Without this,
+        # self.dashboard keeps accumulating every action applied across every
+        # previous episode (perform_action() mutates it and nothing else
+        # resets it), while the state vector fed to the network here always
+        # represents initial_dashboard - a mismatch between what the network
+        # is trained/queried against and what get_*_mask() actually reflects,
+        # which compounds across episodes.
+        self.dashboard = copy.deepcopy(self.initial_dashboard)
         return dashboardToArray(self.initial_dashboard, self.visualisation_capacity)
 
     def step(self, outputs):

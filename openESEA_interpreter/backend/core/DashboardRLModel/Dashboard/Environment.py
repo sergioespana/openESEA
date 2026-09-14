@@ -338,7 +338,7 @@ class DashboardEnvironment:
                     if data_items == 1:
                         return newType == VisualisationType.SINGLE
                 # Grouped/stacked bar to grouped/stacked bar or table
-                if visualisation in groupedBarVisualisations:
+                if visualisation_type in groupedBarVisualisations:
                     if newType in groupedBarVisualisations or newType == VisualisationType.TABLE:
                         return True
                 # Line to categorical/temporal/table or if 1 item -> single

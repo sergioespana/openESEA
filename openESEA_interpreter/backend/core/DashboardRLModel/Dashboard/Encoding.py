@@ -29,9 +29,12 @@ def visualisationToArray(dashboard: Dashboard, visualisation: Visualisation):
     array = Encode.integer_and_normalise(visualisation.dataItems, MAX_DATA_ITEMS)
     total_array = np.append(total_array, array) 
 
-    array = Encode.integer_and_normalise(visualisation.displayArea, dashboard.displayArea)
-    total_array = np.append(total_array, array) 
-    
+    # displayArea is encoded into the state vector but no reward function reads it,
+    # so it has no effect on training. Left disabled until either a reward function
+    # uses it or it's removed from the Visualisation/Dashboard classes entirely.
+    # array = Encode.integer_and_normalise(visualisation.displayArea, dashboard.displayArea)
+    # total_array = np.append(total_array, array)
+
     return total_array
 
 def dashboardToArray(dashboard: Dashboard, visualisation_capacity: int):

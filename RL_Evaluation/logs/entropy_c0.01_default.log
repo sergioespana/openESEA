@@ -1,0 +1,15 @@
+Starting run "entropy_c0.01_default": dashboard=small episodes=100 seed=42 lr=0.01 gamma=1.0 entropy_coef=0.01
+Episode 1	reward_final=0.4148	mean_entropy=3.3511	valid=78	invalid=122	elapsed=5.7s
+Episode 10	reward_final=0.4620	mean_entropy=1.4625	valid=91	invalid=170	elapsed=91.9s
+Episode 20	reward_final=0.3893	mean_entropy=0.6056	valid=1	invalid=3999	elapsed=1354.0s
+Episode 30	reward_final=0.3893	mean_entropy=0.4202	valid=1	invalid=3999	elapsed=2757.8s
+Episode 40	reward_final=0.3960	mean_entropy=0.2517	valid=2	invalid=3998	elapsed=4172.3s
+Episode 50	reward_final=0.3893	mean_entropy=0.9013	valid=1	invalid=3999	elapsed=5961.1s
+Episode 60	reward_final=0.3893	mean_entropy=0.9013	valid=1	invalid=3999	elapsed=10053.6s
+Episode 70	reward_final=0.3893	mean_entropy=1.1149	valid=1	invalid=3999	elapsed=11909.1s
+Episode 80	reward_final=0.3893	mean_entropy=1.2121	valid=1	invalid=3999	elapsed=13881.4s
+Episode 90	reward_final=0.4338	mean_entropy=0.6821	valid=1	invalid=3999	elapsed=15812.1s
+Episode 100	reward_final=0.4427	mean_entropy=1.3889	valid=1	invalid=3999	elapsed=18651.7s
+Wrote 100 rows to ../results/goal5_training_log_entropy_default_c0.01.csv
+Appended summary row to ../results/goal5d_entropy_bonus.csv
+DONE run="entropy_c0.01_default" collapse_episode=never std_last20pct=0.00448999 final_reward=0.442667 wallclock=18657.8s

@@ -1,0 +1,122 @@
+{
+  "Display Area": 10000,
+  "Visualisations": [
+    {
+      "Visualisation Title": "Energy kWh",
+      "Selection Configuration": {},
+      "Visualisation Type": "Single Value Display",
+      "Data Items": 1,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    },
+    {
+      "Visualisation Title": "CO\u2082 Tonnes",
+      "Selection Configuration": {},
+      "Visualisation Type": "Single Value Display",
+      "Data Items": 1,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    },
+    {
+      "Visualisation Title": "Incidents",
+      "Selection Configuration": {},
+      "Visualisation Type": "Single Value Display",
+      "Data Items": 1,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    },
+    {
+      "Visualisation Title": "Training Hrs",
+      "Selection Configuration": {},
+      "Visualisation Type": "Single Value Display",
+      "Data Items": 1,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    },
+    {
+      "Visualisation Title": "Energy Mix",
+      "Selection Configuration": {},
+      "Visualisation Type": "Pie Chart",
+      "Data Items": 4,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    },
+    {
+      "Visualisation Title": "Renewable %",
+      "Selection Configuration": {},
+      "Visualisation Type": "Bar Chart",
+      "Data Items": 4,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    },
+    {
+      "Visualisation Title": "Local Supp.",
+      "Selection Configuration": {},
+      "Visualisation Type": "Progress Bar",
+      "Data Items": 2,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    },
+    {
+      "Visualisation Title": "Female %",
+      "Selection Configuration": {},
+      "Visualisation Type": "Radial Progress Bar",
+      "Data Items": 2,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    },
+    {
+      "Visualisation Title": "Water by Year",
+      "Selection Configuration": {},
+      "Visualisation Type": "Bar Chart",
+      "Data Items": 4,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    },
+    {
+      "Visualisation Title": "Recycling",
+      "Selection Configuration": {},
+      "Visualisation Type": "Radial Progress Bar",
+      "Data Items": 2,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    },
+    {
+      "Visualisation Title": "R&D Investment",
+      "Selection Configuration": {},
+      "Visualisation Type": "Single Value Display",
+      "Data Items": 1,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    },
+    {
+      "Visualisation Title": "Local Suppliers",
+      "Selection Configuration": {},
+      "Visualisation Type": "Progress Bar",
+      "Data Items": 2,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    },
+    {
+      "Visualisation Title": "Female Employees",
+      "Selection Configuration": {},
+      "Visualisation Type": "Radial Progress Bar",
+      "Data Items": 2,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    }
+  ]
+}

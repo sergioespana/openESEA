@@ -1,0 +1,68 @@
+{
+  "Display Area": 10000,
+  "Visualisations": [
+    {
+      "Visualisation Title": "Female Employees",
+      "Selection Configuration": {},
+      "Visualisation Type": "Radial Progress Bar",
+      "Data Items": 2,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    },
+    {
+      "Visualisation Title": "Avg Training Hours",
+      "Selection Configuration": {},
+      "Visualisation Type": "Single Value Display",
+      "Data Items": 1,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 4224
+    },
+    {
+      "Visualisation Title": "Work Incidents",
+      "Selection Configuration": {},
+      "Visualisation Type": "Single Value Display",
+      "Data Items": 1,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 4224
+    },
+    {
+      "Visualisation Title": "Local Suppliers",
+      "Selection Configuration": {},
+      "Visualisation Type": "Progress Bar",
+      "Data Items": 2,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    },
+    {
+      "Visualisation Title": "Work-Related Incidents",
+      "Selection Configuration": {},
+      "Visualisation Type": "Single Value Display",
+      "Data Items": 1,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    },
+    {
+      "Visualisation Title": "R&D Investment",
+      "Selection Configuration": {},
+      "Visualisation Type": "Single Value Display",
+      "Data Items": 1,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    },
+    {
+      "Visualisation Title": "Local Supplier Share",
+      "Selection Configuration": {},
+      "Visualisation Type": "Radial Progress Bar",
+      "Data Items": 2,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    }
+  ]
+}

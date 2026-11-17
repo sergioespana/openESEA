@@ -1,0 +1,182 @@
+[
+  {
+    "slug": "real_energy_climate",
+    "name": "Energy & Climate",
+    "num_overviews": 2,
+    "num_visualisations": 7,
+    "type_counts": {
+      "Single Value Display": 3,
+      "Radial Progress Bar": 2,
+      "Progress Bar": 2
+    }
+  },
+  {
+    "slug": "real_social_workforce_dashboard",
+    "name": "Social Workforce Dashboard",
+    "num_overviews": 2,
+    "num_visualisations": 7,
+    "type_counts": {
+      "Radial Progress Bar": 2,
+      "Single Value Display": 4,
+      "Progress Bar": 1
+    }
+  },
+  {
+    "slug": "real_sustainability_scorecard",
+    "name": "Sustainability Scorecard",
+    "num_overviews": 2,
+    "num_visualisations": 8,
+    "type_counts": {
+      "Radial Progress Bar": 1,
+      "Progress Bar": 3,
+      "Single Value Display": 4
+    }
+  },
+  {
+    "slug": "real_accuvio_resource_overview",
+    "name": "Accuvio Resource Overview",
+    "num_overviews": 2,
+    "num_visualisations": 7,
+    "type_counts": {
+      "Bar Chart": 3,
+      "Pie Chart": 1,
+      "Progress Bar": 2,
+      "Radial Progress Bar": 1
+    }
+  },
+  {
+    "slug": "real_apambu_sustainability_rows",
+    "name": "Apambu Sustainability Rows",
+    "num_overviews": 1,
+    "num_visualisations": 8,
+    "type_counts": {
+      "Single Value Display": 4,
+      "Radial Progress Bar": 2,
+      "Progress Bar": 2
+    }
+  },
+  {
+    "slug": "real_archerirm_administrator",
+    "name": "ArcherIRM Administrator",
+    "num_overviews": 2,
+    "num_visualisations": 8,
+    "type_counts": {
+      "Single Value Display": 3,
+      "Bar Chart": 2,
+      "Radial Progress Bar": 2,
+      "Progress Bar": 1
+    }
+  },
+  {
+    "slug": "real_cority_compliance_tracker",
+    "name": "Cority Compliance Tracker",
+    "num_overviews": 2,
+    "num_visualisations": 8,
+    "type_counts": {
+      "Radial Progress Bar": 2,
+      "Bar Chart": 1,
+      "Single Value Display": 3,
+      "Line Chart": 2
+    }
+  },
+  {
+    "slug": "real_cority_quality_monitor",
+    "name": "Cority Quality Monitor",
+    "num_overviews": 1,
+    "num_visualisations": 6,
+    "type_counts": {
+      "Radial Progress Bar": 2,
+      "Bar Chart": 1,
+      "Line Chart": 1,
+      "Single Value Display": 2
+    }
+  },
+  {
+    "slug": "real_deloitte_emissions_executive",
+    "name": "Deloitte Emissions Executive",
+    "num_overviews": 2,
+    "num_visualisations": 8,
+    "type_counts": {
+      "Pie Chart": 3,
+      "Single Value Display": 4,
+      "Bar Chart": 1
+    }
+  },
+  {
+    "slug": "real_diligent_ghg_analytics",
+    "name": "Diligent GHG Analytics",
+    "num_overviews": 2,
+    "num_visualisations": 6,
+    "type_counts": {
+      "Pie Chart": 2,
+      "Bar Chart": 4
+    }
+  },
+  {
+    "slug": "real_envizi_utility_performance",
+    "name": "Envizi Utility Performance",
+    "num_overviews": 2,
+    "num_visualisations": 6,
+    "type_counts": {
+      "Bar Chart": 3,
+      "Single Value Display": 3
+    }
+  },
+  {
+    "slug": "real_envizi_net_zero_pathway",
+    "name": "Envizi Net Zero Pathway",
+    "num_overviews": 2,
+    "num_visualisations": 6,
+    "type_counts": {
+      "Single Value Display": 1,
+      "Bar Chart": 2,
+      "Radial Progress Bar": 3
+    }
+  },
+  {
+    "slug": "real_esgbook_score_analytics",
+    "name": "ESGBook Score Analytics",
+    "num_overviews": 2,
+    "num_visualisations": 6,
+    "type_counts": {
+      "Radial Progress Bar": 4,
+      "Line Chart": 2
+    }
+  },
+  {
+    "slug": "real_measurabl_data_cards",
+    "name": "Measurabl Data Cards",
+    "num_overviews": 2,
+    "num_visualisations": 14,
+    "type_counts": {
+      "Single Value Display": 5,
+      "Bar Chart": 6,
+      "Radial Progress Bar": 2,
+      "Progress Bar": 1
+    }
+  },
+  {
+    "slug": "real_navex_esg_analytics",
+    "name": "Navex ESG Analytics",
+    "num_overviews": 2,
+    "num_visualisations": 13,
+    "type_counts": {
+      "Single Value Display": 5,
+      "Pie Chart": 1,
+      "Bar Chart": 2,
+      "Progress Bar": 2,
+      "Radial Progress Bar": 3
+    }
+  },
+  {
+    "slug": "real_rimm_topic_scorecard",
+    "name": "RIMM Topic Scorecard",
+    "num_overviews": 2,
+    "num_visualisations": 13,
+    "type_counts": {
+      "Radial Progress Bar": 1,
+      "Progress Bar": 8,
+      "Single Value Display": 4
+    }
+  }
+]

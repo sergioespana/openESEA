@@ -1,0 +1,48 @@
+dashboard,rank,action,reward_final,reward_decluttering,reward_data_completeness,reward_chart_variety,reward_appropriate_vis_types
+small,1,"AddItemLimit(vis=1, limit=2)",0.44766666666666666,0.14583333333333334,0.8333333333333334,0.6,0.6333333333333333
+small,2,"AddItemLimit(vis=2, limit=2)",0.4526666666666667,0.15833333333333333,0.8333333333333334,0.6,0.6333333333333333
+small,3,"AddItemLimit(vis=0, limit=2)",0.44266666666666665,0.13333333333333333,0.8333333333333334,0.6,0.6333333333333333
+small,4,"AddItemLimit(vis=5, limit=2)",0.45044444444444454,0.1527777777777778,0.8333333333333334,0.6,0.6333333333333333
+small,5,"ChangeVisualisationType(vis=4, to=Pie Chart)",0.38933333333333336,0.0,1.0,0.8,0.4666666666666666
+small,6,"ChangeVisualisationType(vis=1, to=Table)",0.44266666666666665,0.0,1.0,0.8,0.6333333333333333
+small,7,"ChangeVisualisationType(vis=2, to=Pie Chart)",0.38933333333333336,0.0,1.0,0.8,0.4666666666666666
+small,8,"ChangeVisualisationType(vis=0, to=Pie Chart)",0.44266666666666665,0.0,1.0,0.8,0.6333333333333333
+large,1,"AddItemLimit(vis=12, limit=6)",0.28551111111111116,0.13944444444444445,0.8,0.05,0.4866666666666667
+large,2,"ChangeVisualisationType(vis=9, to=Single Value Display)",0.2741777777777778,0.09777777777777778,0.8666666666666667,0.05,0.4866666666666667
+large,3,"AddItemLimit(vis=11, limit=6)",0.28751111111111116,0.14444444444444443,0.8,0.05,0.4866666666666667
+large,4,"AddItemLimit(vis=13, limit=6)",0.29284444444444446,0.15777777777777777,0.8,0.05,0.4866666666666667
+large,5,"AddItemLimit(vis=0, limit=2)",0.2901777777777778,0.1511111111111111,0.8,0.05,0.4866666666666667
+real_energy_climate,1,"ChangeVisualisationType(vis=4, to=Pie Chart)",0.5542857142857143,0.0,1.0,1,0.8571428571428571
+real_energy_climate,2,"ChangeVisualisationType(vis=6, to=Pie Chart)",0.5542857142857143,0.0,1.0,1,0.8571428571428571
+real_energy_climate,3,"AddItemLimit(vis=4, limit=2)",0.6171428571428572,0.07142857142857142,0.8571428571428571,1,1.0
+real_energy_climate,4,"AddItemLimit(vis=6, limit=2)",0.6171428571428572,0.07142857142857142,0.8571428571428571,1,1.0
+real_cority_quality_monitor,1,"ChangeVisualisationType(vis=1, to=Pie Chart)",0.4746666666666667,0.0,1.0,0.8,0.7333333333333334
+real_cority_quality_monitor,2,"AddItemLimit(vis=1, limit=2)",0.5880000000000001,0.08333333333333333,0.8333333333333334,1,0.9
+real_cority_quality_monitor,3,"ChangeVisualisationType(vis=0, to=Pie Chart)",0.4746666666666667,0.0,1.0,0.8,0.7333333333333334
+real_accuvio_resource_overview,1,"AddItemLimit(vis=6, limit=3)",0.5785714285714285,0.08928571428571429,0.8571428571428571,1,0.8571428571428571
+real_accuvio_resource_overview,2,"ChangeVisualisationType(vis=6, to=Pie Chart)",0.5634285714285714,0.0,1.0,1,0.8857142857142858
+real_accuvio_resource_overview,3,"ChangeVisualisationType(vis=0, to=Pie Chart)",0.5634285714285714,0.0,1.0,1,0.8857142857142858
+real_accuvio_resource_overview,4,"AddItemLimit(vis=0, limit=3)",0.5785714285714285,0.08928571428571429,0.8571428571428571,1,0.8571428571428571
+real_accuvio_resource_overview,5,"ChangeVisualisationType(vis=1, to=Bar Chart)",0.5451428571428572,0.0,1.0,1,0.8285714285714286
+real_accuvio_resource_overview,6,"AddItemLimit(vis=1, limit=3)",0.5785714285714285,0.08928571428571429,0.8571428571428571,1,0.8571428571428571
+real_accuvio_resource_overview,7,"ChangeVisualisationType(vis=2, to=Pie Chart)",0.5085714285714287,0.0,1.0,1,0.7142857142857143
+real_esgbook_score_analytics,1,"ChangeVisualisationType(vis=4, to=Pie Chart)",0.5146666666666667,0.0,1.0,1,0.7333333333333334
+real_esgbook_score_analytics,2,"AddItemLimit(vis=2, limit=4)",0.5680000000000001,0.08333333333333333,0.8333333333333334,0.9,0.9
+real_esgbook_score_analytics,3,"ChangeVisualisationType(vis=2, to=Pie Chart)",0.5786666666666667,0.0,1.0,1,0.9333333333333335
+real_esgbook_score_analytics,4,"ChangeVisualisationType(vis=3, to=Pie Chart)",0.5146666666666667,0.0,1.0,1,0.7333333333333334
+real_esgbook_score_analytics,5,"ChangeVisualisationType(vis=0, to=Pie Chart)",0.5146666666666667,0.0,1.0,1,0.7333333333333334
+real_esgbook_score_analytics,6,"AddItemLimit(vis=5, limit=4)",0.5680000000000001,0.08333333333333333,0.8333333333333334,0.9,0.9
+real_esgbook_score_analytics,7,"ChangeVisualisationType(vis=1, to=Pie Chart)",0.5146666666666667,0.0,1.0,1,0.7333333333333334
+real_esgbook_score_analytics,8,"ChangeVisualisationType(vis=5, to=Pie Chart)",0.5786666666666667,0.0,1.0,1,0.9333333333333335
+real_esgbook_score_analytics,9,"AddItemLimit(vis=4, limit=2)",0.5680000000000001,0.08333333333333333,0.8333333333333334,0.9,0.9
+real_rimm_topic_scorecard,1,"ChangeVisualisationType(vis=11, to=Radial Progress Bar)",0.6,0.0,1.0,1,1.0
+real_rimm_topic_scorecard,2,"AddItemLimit(vis=11, limit=2)",0.6092307692307692,0.038461538461538464,0.9230769230769231,1,1.0
+real_rimm_topic_scorecard,3,"ChangeVisualisationType(vis=0, to=Progress Bar)",0.5800000000000001,0.0,1.0,0.9,1.0
+real_rimm_topic_scorecard,4,"AddItemLimit(vis=0, limit=2)",0.6092307692307692,0.038461538461538464,0.9230769230769231,1,1.0
+real_rimm_topic_scorecard,5,"ChangeVisualisationType(vis=1, to=Radial Progress Bar)",0.6,0.0,1.0,1,1.0
+real_rimm_topic_scorecard,6,"AddItemLimit(vis=1, limit=2)",0.6092307692307692,0.038461538461538464,0.9230769230769231,1,1.0
+real_rimm_topic_scorecard,7,"ChangeVisualisationType(vis=2, to=Radial Progress Bar)",0.6,0.0,1.0,1,1.0
+real_measurabl_data_cards,1,"AddItemLimit(vis=11, limit=2)",0.5745714285714285,0.05357142857142857,0.9285714285714286,1,0.8714285714285713
+real_measurabl_data_cards,2,"ChangeVisualisationType(vis=11, to=Table)",0.5028571428571429,0.0,1.0,0.8,0.8214285714285714
+real_measurabl_data_cards,3,"ChangeVisualisationType(vis=1, to=Table)",0.5028571428571429,0.0,1.0,0.8,0.8214285714285713
+real_measurabl_data_cards,4,"AddItemLimit(vis=1, limit=2)",0.5745714285714285,0.05357142857142857,0.9285714285714286,1,0.8714285714285713

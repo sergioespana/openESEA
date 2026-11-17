@@ -1,0 +1,140 @@
+{
+  "Display Area": 1500,
+  "Visualisations": [
+    {
+      "Visualisation Title": "Quarterly Revenue",
+      "Selection Configuration": {},
+      "Visualisation Type": "Bar Chart",
+      "Data Items": 5,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 100
+    },
+    {
+      "Visualisation Title": "Product Sales (All SKUs)",
+      "Selection Configuration": {},
+      "Visualisation Type": "Bar Chart",
+      "Data Items": 25,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 100
+    },
+    {
+      "Visualisation Title": "Emissions by Scope",
+      "Selection Configuration": {},
+      "Visualisation Type": "Pie Chart",
+      "Data Items": 4,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 100
+    },
+    {
+      "Visualisation Title": "Supplier Breakdown",
+      "Selection Configuration": {},
+      "Visualisation Type": "Pie Chart",
+      "Data Items": 12,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 100
+    },
+    {
+      "Visualisation Title": "Short-Term Trend",
+      "Selection Configuration": {},
+      "Visualisation Type": "Line Chart",
+      "Data Items": 3,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 100
+    },
+    {
+      "Visualisation Title": "Daily Active Users (Full History)",
+      "Selection Configuration": {},
+      "Visualisation Type": "Line Chart",
+      "Data Items": 50,
+      "Item Limit Enabled": true,
+      "Item Limit": 20,
+      "Display Area": 100
+    },
+    {
+      "Visualisation Title": "Total Employees",
+      "Selection Configuration": {},
+      "Visualisation Type": "Single Value Display",
+      "Data Items": 1,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 100
+    },
+    {
+      "Visualisation Title": "Malformed KPI Card",
+      "Selection Configuration": {},
+      "Visualisation Type": "Single Value Display",
+      "Data Items": 3,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 100
+    },
+    {
+      "Visualisation Title": "Onboarding Completion",
+      "Selection Configuration": {},
+      "Visualisation Type": "Progress Bar",
+      "Data Items": 2,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 100
+    },
+    {
+      "Visualisation Title": "Target Attainment",
+      "Selection Configuration": {},
+      "Visualisation Type": "Radial Progress Bar",
+      "Data Items": 1,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 100
+    },
+    {
+      "Visualisation Title": "Water Usage Fraction",
+      "Selection Configuration": {},
+      "Visualisation Type": "Fractional Value Display",
+      "Data Items": 2,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 100
+    },
+    {
+      "Visualisation Title": "Headcount by Department",
+      "Selection Configuration": {},
+      "Visualisation Type": "Grouped Bar Chart",
+      "Data Items": 10,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 100
+    },
+    {
+      "Visualisation Title": "Revenue by Region (Stacked)",
+      "Selection Configuration": {},
+      "Visualisation Type": "Stacked Bar Chart",
+      "Data Items": 8,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 100
+    },
+    {
+      "Visualisation Title": "Raw Transactions Table",
+      "Selection Configuration": {},
+      "Visualisation Type": "Table",
+      "Data Items": 30,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 100
+    },
+    {
+      "Visualisation Title": "Multi-Region Sales Trend",
+      "Selection Configuration": {},
+      "Visualisation Type": "Multi-Series Line Chart",
+      "Data Items": 15,
+      "Item Limit Enabled": true,
+      "Item Limit": 10,
+      "Display Area": 100
+    }
+  ]
+}

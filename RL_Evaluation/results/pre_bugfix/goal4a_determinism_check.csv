@@ -1,0 +1,8 @@
+dashboard,deterministic,consistency_fraction,repeats
+small,True,1.0,3
+large,True,1.0,3
+real_energy_climate,True,1.0,3
+real_cority_quality_monitor,True,1.0,3
+real_accuvio_resource_overview,True,1.0,3
+real_esgbook_score_analytics,True,1.0,3
+real_rimm_topic_scorecard,True,1.0,3

@@ -1,0 +1,68 @@
+{
+  "Display Area": 10000,
+  "Visualisations": [
+    {
+      "Visualisation Title": "Energy Consumption by Year",
+      "Selection Configuration": {},
+      "Visualisation Type": "Bar Chart",
+      "Data Items": 4,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    },
+    {
+      "Visualisation Title": "Waste Recycled",
+      "Selection Configuration": {},
+      "Visualisation Type": "Pie Chart",
+      "Data Items": 4,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    },
+    {
+      "Visualisation Title": "Water Recycling",
+      "Selection Configuration": {},
+      "Visualisation Type": "Progress Bar",
+      "Data Items": 2,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    },
+    {
+      "Visualisation Title": "Local Suppliers",
+      "Selection Configuration": {},
+      "Visualisation Type": "Progress Bar",
+      "Data Items": 2,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    },
+    {
+      "Visualisation Title": "Gender Diversity",
+      "Selection Configuration": {},
+      "Visualisation Type": "Radial Progress Bar",
+      "Data Items": 2,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    },
+    {
+      "Visualisation Title": "Energy (kWh) by Year",
+      "Selection Configuration": {},
+      "Visualisation Type": "Bar Chart",
+      "Data Items": 4,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    },
+    {
+      "Visualisation Title": "CO\u2082 Emissions by Year",
+      "Selection Configuration": {},
+      "Visualisation Type": "Bar Chart",
+      "Data Items": 4,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    }
+  ]
+}

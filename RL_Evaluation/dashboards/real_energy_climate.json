@@ -1,0 +1,68 @@
+{
+  "Display Area": 10000,
+  "Visualisations": [
+    {
+      "Visualisation Title": "Energy Consumption",
+      "Selection Configuration": {},
+      "Visualisation Type": "Single Value Display",
+      "Data Items": 1,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 4224
+    },
+    {
+      "Visualisation Title": "CO\u2082 Emissions",
+      "Selection Configuration": {},
+      "Visualisation Type": "Single Value Display",
+      "Data Items": 1,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 4224
+    },
+    {
+      "Visualisation Title": "Renewable Energy Share",
+      "Selection Configuration": {},
+      "Visualisation Type": "Radial Progress Bar",
+      "Data Items": 2,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    },
+    {
+      "Visualisation Title": "Water Consumption",
+      "Selection Configuration": {},
+      "Visualisation Type": "Single Value Display",
+      "Data Items": 1,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 4224
+    },
+    {
+      "Visualisation Title": "Waste Recycled",
+      "Selection Configuration": {},
+      "Visualisation Type": "Progress Bar",
+      "Data Items": 2,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 4224
+    },
+    {
+      "Visualisation Title": "Renewable Energy",
+      "Selection Configuration": {},
+      "Visualisation Type": "Radial Progress Bar",
+      "Data Items": 2,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    },
+    {
+      "Visualisation Title": "Waste Recycling Rate",
+      "Selection Configuration": {},
+      "Visualisation Type": "Progress Bar",
+      "Data Items": 2,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 10000
+    }
+  ]
+}

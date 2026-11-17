@@ -1,0 +1,8 @@
+dashboard,num_visualisations,total_episodes,wallclock_seconds_total,wallclock_seconds_to_convergence,convergence_episode_estimate
+small,6,100,1191.5177054405212,88.86941814422607,8
+large,15,100,3278.829113960266,279.86229944229126,11
+real_energy_climate,7,100,22493.09234070778,18.19859266281128,2
+real_cority_quality_monitor,6,100,48113.61388015747,48113.61388015747,100
+real_accuvio_resource_overview,7,100,22341.765410900116,504.4940438270569,24
+real_esgbook_score_analytics,6,100,53802.90635895729,29.338759899139404,2
+real_rimm_topic_scorecard,13,100,74931.99443221092,49316.45180416107,2

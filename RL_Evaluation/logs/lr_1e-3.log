@@ -1,0 +1,15 @@
+Starting run "lr_1e-3": dashboard=small episodes=100 seed=42 lr=0.001 gamma=1.0 entropy_coef=0.0
+Episode 1	reward_final=0.4148	valid=78	invalid=122	elapsed=10.2s
+Episode 10	reward_final=0.3917	valid=59	invalid=144	elapsed=171.4s
+Episode 20	reward_final=0.3957	valid=76	invalid=124	elapsed=459.2s
+Episode 30	reward_final=0.3787	valid=21	invalid=373	elapsed=733.2s
+Episode 40	reward_final=0.4632	valid=132	invalid=130	elapsed=994.5s
+Episode 50	reward_final=0.4461	valid=43	invalid=2226	elapsed=2819.8s
+Episode 60	reward_final=0.4725	valid=60	invalid=153	elapsed=3279.6s
+Episode 70	reward_final=0.4521	valid=86	invalid=115	elapsed=3612.6s
+Episode 80	reward_final=0.4439	valid=84	invalid=123	elapsed=3864.7s
+Episode 90	reward_final=0.4498	valid=75	invalid=125	elapsed=4108.5s
+Episode 100	reward_final=0.4428	valid=68	invalid=144	elapsed=4353.1s
+Wrote 100 rows to ../results/goal5_training_log_lr1e-3.csv
+Appended summary row to ../results/goal5a_learning_rate_sweep.csv
+DONE run="lr_1e-3" collapse_episode=never std_last20pct=0.01683305 final_reward=0.442838 wallclock=4359.4s

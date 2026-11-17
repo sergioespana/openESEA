@@ -1,0 +1,15 @@
+Starting run "gamma_0.99": dashboard=small episodes=100 seed=42 lr=0.01 gamma=0.99 entropy_coef=0.0
+Episode 1	reward_final=0.4148	valid=78	invalid=122	elapsed=8.8s
+Episode 10	reward_final=0.4431	valid=61	invalid=155	elapsed=200.2s
+Episode 20	reward_final=0.4259	valid=76	invalid=127	elapsed=758.0s
+Episode 30	reward_final=0.4254	valid=1	invalid=3999	elapsed=4202.8s
+Episode 40	reward_final=0.0000	valid=0	invalid=4000	elapsed=11391.8s
+Episode 50	reward_final=0.0000	valid=0	invalid=4000	elapsed=14001.9s
+Episode 60	reward_final=0.4254	valid=1	invalid=3999	elapsed=16492.3s
+Episode 70	reward_final=0.0000	valid=0	invalid=4000	elapsed=18695.8s
+Episode 80	reward_final=0.4254	valid=1	invalid=3999	elapsed=20340.4s
+Episode 90	reward_final=0.4282	valid=1	invalid=3999	elapsed=22123.3s
+Episode 100	reward_final=0.4254	valid=1	invalid=3999	elapsed=23935.1s
+Wrote 100 rows to ../results/goal5_training_log_gamma0.99.csv
+Appended summary row to ../results/goal5b_gamma_sweep.csv
+DONE run="gamma_0.99" collapse_episode=never std_last20pct=0.19538877 final_reward=0.425444 wallclock=23956.2s

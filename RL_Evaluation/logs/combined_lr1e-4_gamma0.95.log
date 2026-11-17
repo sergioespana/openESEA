@@ -1,0 +1,15 @@
+Starting run "combined_lr1e-4_gamma0.95": dashboard=small episodes=100 seed=42 lr=0.0001 gamma=0.95 entropy_coef=0.0
+Episode 1	reward_final=0.4148	valid=78	invalid=122	elapsed=10.6s
+Episode 10	reward_final=0.4128	valid=98	invalid=102	elapsed=184.5s
+Episode 20	reward_final=0.4300	valid=81	invalid=124	elapsed=490.4s
+Episode 30	reward_final=0.4143	valid=75	invalid=125	elapsed=758.2s
+Episode 40	reward_final=0.4097	valid=79	invalid=121	elapsed=954.6s
+Episode 50	reward_final=0.4261	valid=80	invalid=120	elapsed=1248.1s
+Episode 60	reward_final=0.4019	valid=81	invalid=120	elapsed=1653.3s
+Episode 70	reward_final=0.3871	valid=56	invalid=147	elapsed=2006.2s
+Episode 80	reward_final=0.4006	valid=49	invalid=159	elapsed=2280.3s
+Episode 90	reward_final=0.3986	valid=22	invalid=245	elapsed=2537.1s
+Episode 100	reward_final=0.3928	valid=21	invalid=294	elapsed=2843.6s
+Wrote 100 rows to ../results/goal5_training_log_combined_lr1e-4_gamma0.95.csv
+Appended summary row to ../results/goal5c_combined_configs.csv
+DONE run="combined_lr1e-4_gamma0.95" collapse_episode=never std_last20pct=0.01599421 final_reward=0.392794 wallclock=2849.7s

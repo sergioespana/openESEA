@@ -1,0 +1,4 @@
+run_label,dashboard,episodes,seed,learning_rate,gamma,entropy_coef,first10_mean,last10_mean,pct_change,final_reward,collapse_episode,std_last20pct,mean_entropy_last20pct,wallclock_seconds,log_file,min_valid_actions,max_invalid_attempts
+combined_lr1e-4_gamma0.95,small,100,42,0.0001,0.95,0.0,0.4114185817041022,0.4079405893670224,-0.845365885681184,0.3927936507936508,never,0.015994207871241076,,2849.691109418869,goal5_training_log_combined_lr1e-4_gamma0.95.csv,21,294
+combined_lr1e-3_gamma0.99,small,100,42,0.001,0.99,0.0,0.40602319722474683,0.4655626260045322,14.664046090654365,0.46578551336146307,never,0.018106483752925225,,49610.6665430069,goal5_training_log_combined_lr1e-3_gamma0.99.csv,21,3977
+baseline_lr1e-2_gamma1.0,small,100,42,0.01,1.0,0.0,0.4076973999248973,0.4251666666666665,4.2848609642806865,0.42516666666666647,31,5.551115123125783e-17,,,"goal1_training_log_100ep.csv (reused, NOT re-run - see brief)",32,421

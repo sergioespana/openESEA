@@ -1,0 +1,9 @@
+dashboard,trained_model_top1_reward,random_baseline_mean,random_baseline_std,random_baseline_samples,rule_based_reward,rule_based_action
+small,0.44766666666666666,0.4224172222222222,0.025623039515489665,100,0.44266666666666665,"ChangeVisualisationType(vis=0, to=Pie Chart)"
+large,0.28551111111111116,0.27401622222222227,0.010845549968694844,100,0.2741777777777778,"ChangeVisualisationType(vis=0, to=Pie Chart)"
+real_energy_climate,0.5542857142857143,0.5844571428571428,0.021655258116255103,100,0.5542857142857143,"ChangeVisualisationType(vis=2, to=Pie Chart)"
+real_cority_quality_monitor,0.4746666666666667,0.54487,0.038568089717335566,100,0.4746666666666667,"ChangeVisualisationType(vis=0, to=Pie Chart)"
+real_accuvio_resource_overview,0.5785714285714285,0.5421914285714285,0.033961996888479014,100,0.5634285714285714,"ChangeVisualisationType(vis=0, to=Pie Chart)"
+real_esgbook_score_analytics,0.5146666666666667,0.5586133333333334,0.022033293998956326,100,0.5146666666666667,"ChangeVisualisationType(vis=0, to=Pie Chart)"
+real_rimm_topic_scorecard,0.6,0.5915230769230769,0.011577360073530971,100,0.5753846153846154,"ChangeVisualisationType(vis=0, to=Pie Chart)"
+real_measurabl_data_cards,0.5745714285714285,0.5409242857142857,0.029471608302201045,100,0.5234285714285714,"ChangeVisualisationType(vis=1, to=Pie Chart)"

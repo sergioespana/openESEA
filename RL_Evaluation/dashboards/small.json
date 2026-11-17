@@ -1,0 +1,59 @@
+{
+  "Display Area": 2000,
+  "Visualisations": [
+    {
+      "Visualisation Title": "Revenue by Quarter",
+      "Selection Configuration": {},
+      "Visualisation Type": "Bar Chart",
+      "Data Items": 5,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 400
+    },
+    {
+      "Visualisation Title": "Cost Breakdown",
+      "Selection Configuration": {},
+      "Visualisation Type": "Pie Chart",
+      "Data Items": 8,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 300
+    },
+    {
+      "Visualisation Title": "Daily Active Users",
+      "Selection Configuration": {},
+      "Visualisation Type": "Line Chart",
+      "Data Items": 20,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 500
+    },
+    {
+      "Visualisation Title": "Total Headcount",
+      "Selection Configuration": {},
+      "Visualisation Type": "Single Value Display",
+      "Data Items": 1,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 200
+    },
+    {
+      "Visualisation Title": "Onboarding Completion",
+      "Selection Configuration": {},
+      "Visualisation Type": "Progress Bar",
+      "Data Items": 2,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 200
+    },
+    {
+      "Visualisation Title": "Regional Sales Table",
+      "Selection Configuration": {},
+      "Visualisation Type": "Table",
+      "Data Items": 12,
+      "Item Limit Enabled": false,
+      "Item Limit": 0,
+      "Display Area": 400
+    }
+  ]
+}

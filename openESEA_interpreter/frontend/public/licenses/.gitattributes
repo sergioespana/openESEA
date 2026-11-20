@@ -1,0 +1,2 @@
+# Keep upstream licence files unchanged, including their original line endings.
+** -text whitespace=cr-at-eol

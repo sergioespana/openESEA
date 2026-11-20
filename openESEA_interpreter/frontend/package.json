@@ -2,6 +2,7 @@
   "name": "vue_frontend",
   "version": "0.1.0",
   "private": true,
+  "license": "AGPL-3.0-only",
   "engines": {
     "node": "16.x",
     "npm": "8.x"

@@ -1,0 +1,51 @@
+openESEA frontend: charting dependency notices
+============================================
+
+Original openESEA frontend source code is licensed under GNU AGPL version 3
+(AGPL-3.0-only). The Apache licence accompanying Apache ECharts applies to
+that dependency, not to the original openESEA frontend code.
+
+The upstream licence and notice files listed below are preserved verbatim.
+Versions refer to the repository's package-lock.json when these notices
+were prepared. The package archives were verified against the integrity
+values in that lockfile. This is a scoped record of the charting packages
+listed here, not a complete dependency inventory.
+
+Apache ECharts 5.6.0
+  Website: https://echarts.apache.org/
+  Source: https://github.com/apache/echarts
+  Licence: Apache-2.0, with separately licensed embedded subcomponents
+  Files:
+    licenses/echarts/LICENSE
+    licenses/echarts/NOTICE
+    licenses/echarts/licenses/LICENSE-d3
+  Archive: https://registry.npmjs.org/echarts/-/echarts-5.6.0.tgz
+
+zrender 5.6.1 (ECharts rendering dependency)
+  Source: https://github.com/ecomfe/zrender
+  Licence: BSD-3-Clause
+  File: licenses/zrender/LICENSE
+  Archive: https://registry.npmjs.org/zrender/-/zrender-5.6.1.tgz
+
+vue-echarts 6.7.3 (Vue integration)
+  Source: https://github.com/ecomfe/vue-echarts
+  Licence: MIT
+  File: licenses/vue-echarts/LICENSE
+  Archive: https://registry.npmjs.org/vue-echarts/-/vue-echarts-6.7.3.tgz
+
+tslib 2.3.0 (dependency of ECharts and zrender)
+  Source: https://github.com/microsoft/tslib
+  Licence: 0BSD
+  File: licenses/tslib/LICENSE.txt
+  Archive: https://registry.npmjs.org/tslib/-/tslib-2.3.0.tgz
+
+openESEA AGPL licence copy:
+  licenses/openESEA/AGPL-3.0.txt
+
+Other dependencies and bundled materials retain their respective licences
+and notices. Preserve those alongside the applicable package contents.
+When upgrading these packages, refresh their licence and notice files from
+the exact versions being distributed, including any subcomponent notices.
+
+Keep this document and the applicable licence files with distributed
+frontend builds. Vue CLI copies them from public/ to the build output.

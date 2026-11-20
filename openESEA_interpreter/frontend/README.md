@@ -58,3 +58,9 @@ npm i
 <!-- heroku config:set YARN_PRODUCTION=true -->
 <!-- heroku config:unset NODE_MODULES_CACHE -->
 <!-- heroku config:set BUILDPACK_TIMEOUT=30 -->
+
+## Licensing
+
+Original openESEA frontend code is licensed under GNU AGPLv3 (`AGPL-3.0-only`); see [LICENSE.txt](LICENSE.txt) and the [repository licensing guide](../../LICENSING.md).
+
+Apache ECharts is a separately licensed dependency under Apache 2.0. See [third-party notices](public/THIRD_PARTY_NOTICES.txt) for the charting dependencies. The files in `public/licenses/` and `public/THIRD_PARTY_NOTICES.txt` are included in standard Vue CLI builds; preserve them when publishing or redistributing those builds.
